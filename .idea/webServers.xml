@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="f9c436c6-e0bd-4e69-a5e6-198bc06a6219" name="joebuntu (dev)" url="http://joebuntu.igb.illinois.edu/connect-dev">
+        <fileTransfer rootFolder="/var/www/connect_dev" accessType="SFTP" host="joebuntu.igb.illinois.edu" port="22" sshConfigId="cc39bf36-ead8-4719-bc03-aeaf376c124c" sshConfig="joe@joebuntu.igb.illinois.edu:22 key" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
