@@ -6,9 +6,10 @@ use App\Repository\PersonRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: PersonRepository::class)]
-class Person
+class Person implements UserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -27,7 +28,7 @@ class Person
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $netid;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 180, unique: true, nullable: true)] // TODO make sure we can make multiple null values
     private $username;
 
     #[ORM\Column(type: 'integer', nullable: true)]
@@ -98,6 +99,9 @@ class Person
 
     #[ORM\Column(type: 'string', length: 255)]
     private $preferredAddress; // TODO create enum for which address is preferred
+
+    #[ORM\Column(type: 'json')]
+    private $roles = [];
 
     public function __construct()
     {
@@ -651,5 +655,43 @@ class Person
         $this->preferredAddress = $preferredAddress;
 
         return $this;
+    }
+
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->username;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials()
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
     }
 }
