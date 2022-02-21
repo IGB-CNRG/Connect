@@ -15,4 +15,10 @@ class DefaultController extends AbstractController
             'controller_name' => 'DefaultController',
         ]);
     }
+
+    #[Route('/copyright', name: 'copyright')]
+    public function copyright()
+    {
+        return $this->render('default/copyright.html.twig');
+    }
 }
