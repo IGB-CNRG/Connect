@@ -6,10 +6,12 @@ use App\Repository\PersonRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: PersonRepository::class)]
-class Person implements UserInterface
+class Person implements UserInterface, PasswordAuthenticatedUserInterface
+// TODO Is it a bug that we have to implement PasswordAuthenticatedUserInterface even though this entity doesn't handle authentication?
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -664,7 +666,7 @@ class Person implements UserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->username;
+        return (string)$this->username;
     }
 
     /**
@@ -693,5 +695,10 @@ class Person implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getPassword(): ?string
+    {
+        return ''; // TODO I have no idea why it's necessary to implement this
     }
 }

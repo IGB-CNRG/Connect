@@ -2,12 +2,26 @@
 @import "~bootstrap/scss/functions";
 //@import "~bootstrap/scss/variables";
 
-$cyan: #28aae2;
+$blue: #13294B;
 $teal: #20c997;
+$orange: #DD3403;
 
-$primary: $cyan;
+$primary: $blue;
 $info: $teal;
+
+$theme-colors: (
+        "primary": $primary,
+        "info": $info,
+);
 
 @import "~bootstrap/scss/bootstrap";
 
 @import "cnrg";
+
+.placeholder-image {
+  background-color: $gray-300;
+  color: $gray-600;
+  font-size: x-large;
+  font-weight: bold;
+  padding: 3rem;
+}

@@ -17,6 +17,15 @@ security:
         main:
             lazy: true
             provider: app_user_provider
+            form_login_ldap:
+                login_path: login
+                check_path: login
+                enable_csrf: true
+                service: Symfony\Component\Ldap\Ldap
+                dn_string: '%env(LDAP_DN)%'
+            switch_user: true
+            logout:
+                path: logout
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -27,8 +36,8 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/login, roles: PUBLIC_ACCESS } # Anyone can see the login page
+        - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:

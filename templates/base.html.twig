@@ -1,51 +1,74 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {# todo how do we do icons with webpack? #}
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
-        {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
-        {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
-        {% endblock %}
+<html lang="en" class="h-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}CONNECT{% endblock %}</title>
+    {# todo how do we do icons with webpack? #}
+    <link rel="icon"
+          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+    {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+    {% endblock %}
 
-        {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
-        {% endblock %}
-    </head>
-    <body>
-        <nav class="navbar fixed-top navbar-dark navbar-expand-md bg-primary border-igb">
-            <div class="container">
-                <a class="navbar-brand" href="{{ path("default") }}">CONNECT</a>
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+    {% endblock %}
+</head>
+<body class="d-flex flex-column h-100">
+<header>
+    <nav class="navbar fixed-top navbar-dark navbar-expand-md bg-primary border-igb">
+        <div class="container">
+            <a class="navbar-brand" href="{{ path("default") }}">CONNECT</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto">
+
+                </ul>
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a href="{{ path('logout') }}" class="nav-link">
+                                <span class="fa fa-right-from-bracket"></span> Logout
+                            </a>
+                        </li>
+                    </ul>
+                {% endif %}
             </div>
-        </nav>
-        {% block body %}
-            {# jumbotron #}
-            <div class="minijumbo d-print-none">
-                <div class="container">
-                    {% block jumbotron %}
-                    {% endblock %}
+
+        </div>
+    </nav>
+    {# jumbotron #}
+    <div class="minijumbo d-print-none">
+        <div class="container-xl">
+            {% block jumbotron %}
+            {% endblock %}
+        </div>
+    </div>
+</header>
+{% block body %}
+    <main class="flex-shrink-0">
+        {# Main content box #}
+        <div class="container">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </main>
+
+    {# Copyright footer #}
+    <footer class="copyright d-print-none mt-auto">
+        <div class="container">
+            <div class="row">
+                <div class="col text-center">
+                    IGB CONNECT v0.1&alpha;<br/> &copy; 2022 University of Illinois Board of Trustees
                 </div>
             </div>
-
-            {# Main content box #}
-            <div class="container">
-                {% block content %}
-                {% endblock %}
-            </div>
-
-            {# Copyright footer #}
-            <div class="copyright d-print-none">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-12 text-center">
-                            IGB CONNECT v0.1&alpha;<br/> &copy; 2022 University of Illinois Board of Trustees
-                        </div>
-                    </div>
-                </div>
-            </div>
-        {% endblock %}
-    </body>
+        </div>
+    </footer>
+{% endblock %}
+</body>
 </html>

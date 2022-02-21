@@ -6,10 +6,6 @@
 @import "~bootstrap/scss/functions";
 @import "~bootstrap/scss/variables";
 
-body {
-  background-color: $gray-100;
-}
-
 $content-padding: 1rem;
 $header-border: 2px solid;
 
@@ -60,15 +56,16 @@ $header-border: 2px solid;
 }
 
 .copyright {
-  background-color: white;
+  background-color: $blue;
+  color: color-contrast($blue);
   margin-top: 1.5rem;
   padding: 1rem 0;
-  box-shadow: 3px 3px 8px #eee;
+  //box-shadow: 3px 3px 8px #eee;
 }
 
 /* Navbar restyle */
 .border-igb {
-  border-bottom: $header-border darken($primary, 10%);
+  border-bottom: $header-border $orange;
 }
 
 /* Jumbotron restyle */
