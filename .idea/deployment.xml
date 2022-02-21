@@ -13,6 +13,7 @@
             <excludedPath path="/.env.local" />
             <excludedPath path="/node_modules" />
             <excludedPath path="/public/build" />
+            <excludedPath path="/package-lock.json" />
           </excludedPaths>
         </serverdata>
       </paths>

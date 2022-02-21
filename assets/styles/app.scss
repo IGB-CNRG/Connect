@@ -1,0 +1,13 @@
+// Customize bootstrap variables
+@import "~bootstrap/scss/functions";
+//@import "~bootstrap/scss/variables";
+
+$cyan: #28aae2;
+$teal: #20c997;
+
+$primary: $cyan;
+$info: $teal;
+
+@import "~bootstrap/scss/bootstrap";
+
+@import "cnrg";

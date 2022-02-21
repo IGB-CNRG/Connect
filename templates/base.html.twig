@@ -2,7 +2,9 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{% block title %}Welcome!{% endblock %}</title>
+        {# todo how do we do icons with webpack? #}
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
         {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
         {% block stylesheets %}
@@ -14,6 +16,36 @@
         {% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+        <nav class="navbar fixed-top navbar-dark navbar-expand-md bg-primary border-igb">
+            <div class="container">
+                <a class="navbar-brand" href="{{ path("default") }}">CONNECT</a>
+            </div>
+        </nav>
+        {% block body %}
+            {# jumbotron #}
+            <div class="minijumbo d-print-none">
+                <div class="container">
+                    {% block jumbotron %}
+                    {% endblock %}
+                </div>
+            </div>
+
+            {# Main content box #}
+            <div class="container">
+                {% block content %}
+                {% endblock %}
+            </div>
+
+            {# Copyright footer #}
+            <div class="copyright d-print-none">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12 text-center">
+                            IGB CONNECT v0.1&alpha;<br/> &copy; 2022 University of Illinois Board of Trustees
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
     </body>
 </html>
