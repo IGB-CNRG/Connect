@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | People{% endblock %}
+
+{% block content %}
+    <table id="people" class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            {% if is_granted('ROLE_CNRG') %}
+                <th>Username</th>
+            {% endif %}
+            <th>Email</th>
+            <th>Theme</th>
+            <th>Type</th>
+            <th>Room</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for person in people %}
+            <tr>
+                <td>
+                    <a href="#">{% if person.lastName is not empty %}{{ person.firstName }} {{ person.lastName }}{% else %}No name{% endif %}</a>
+                </td>
+                <td>{{ person.username }}</td>
+                <td>{{ person.email }}</td>
+                <td>
+                    {% for themeAffiliation in person.currentThemeAffiliations %}
+                        {{ themeAffiliation.theme.shortName }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for themeAffiliation in person.currentThemeAffiliations %}
+                        {{ themeAffiliation.memberCategory.name }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for roomAffiliation in person.currentRoomAffiliations %}
+                        {{ roomAffiliation.room.number }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ encore_entry_link_tags('personIndex') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('personIndex') }}
+{% endblock %}

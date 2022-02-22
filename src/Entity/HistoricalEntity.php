@@ -37,4 +37,8 @@ trait HistoricalEntity
     }
 
     //TODO add some common helper functions here
+    public function isCurrent(): bool
+    {
+        return $this->getEndedAt() === null;
+    }
 }

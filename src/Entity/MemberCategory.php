@@ -21,16 +21,12 @@ class MemberCategory
     #[ORM\OneToMany(mappedBy: 'memberCategory', targetEntity: ThemeAffiliation::class, orphanRemoval: true)]
     private $themeAffiliations;
 
-    #[ORM\ManyToMany(targetEntity: WorkflowStep::class, mappedBy: 'memberCategories')]
-    private $workflowSteps;
-
     #[ORM\OneToMany(mappedBy: 'memberCategory', targetEntity: WorkflowStepCategory::class, orphanRemoval: true)]
     private $workflowStepCategories;
 
     public function __construct()
     {
         $this->themeAffiliations = new ArrayCollection();
-        $this->workflowSteps = new ArrayCollection();
         $this->workflowStepCategories = new ArrayCollection();
     }
 
@@ -76,33 +72,6 @@ class MemberCategory
             if ($themeAffiliation->getMemberCategory() === $this) {
                 $themeAffiliation->setMemberCategory(null);
             }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, WorkflowStep>
-     */
-    public function getWorkflowSteps(): Collection
-    {
-        return $this->workflowSteps;
-    }
-
-    public function addWorkflowStep(WorkflowStep $workflowStep): self
-    {
-        if (!$this->workflowSteps->contains($workflowStep)) {
-            $this->workflowSteps[] = $workflowStep;
-            $workflowStep->addMemberCategory($this);
-        }
-
-        return $this;
-    }
-
-    public function removeWorkflowStep(WorkflowStep $workflowStep): self
-    {
-        if ($this->workflowSteps->removeElement($workflowStep)) {
-            $workflowStep->removeMemberCategory($this);
         }
 
         return $this;

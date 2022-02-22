@@ -19,6 +19,17 @@ class PersonRepository extends ServiceEntityRepository
         parent::__construct($registry, Person::class);
     }
 
+    public function findAllForIndex()
+    {
+        return $this->createQueryBuilder('p')
+            ->leftJoin('p.themeAffiliations', 'ta')
+            ->leftJoin('ta.theme', 't')
+            ->select('p,ta,t')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     // /**
     //  * @return Person[] Returns an array of Person objects
     //  */

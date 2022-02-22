@@ -701,4 +701,18 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return ''; // TODO I have no idea why it's necessary to implement this
     }
+
+    public function getCurrentThemeAffiliations()
+    {
+        return $this->getThemeAffiliations()->filter(function (ThemeAffiliation $themeAffiliation) {
+            return $themeAffiliation->isCurrent();
+        });
+    }
+
+    public function getCurrentRoomAffiliations()
+    {
+        return $this->getRoomAffiliations()->filter(function (RoomAffiliation $roomAffiliation) {
+            return $roomAffiliation->isCurrent();
+        });
+    }
 }

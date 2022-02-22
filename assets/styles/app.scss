@@ -9,11 +9,12 @@ $orange: #DD3403;
 $primary: $blue;
 $info: $teal;
 
-$theme-colors: (
-        "primary": $primary,
-        "info": $info,
-);
-
+//$custom-colors: (
+//        "primary": $primary,
+//        "info": $info,
+//);
+//$theme-colors: map-merge($theme-colors, $custom-colors);
+@import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/bootstrap";
 
 @import "cnrg";

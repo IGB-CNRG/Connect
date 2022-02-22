@@ -26,10 +26,13 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto">
-
-                </ul>
                 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a href="{{ path('person') }}" class="nav-link">People</a>
+                        </li>
+                    </ul>
+
                     <ul class="navbar-nav">
                         <li class="nav-item">
                             <a href="{{ path('logout') }}" class="nav-link">
