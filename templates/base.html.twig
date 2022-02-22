@@ -29,7 +29,7 @@
                 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a href="{{ path('person') }}" class="nav-link">People</a>
+                            <a href="{{ path('person') }}" class="nav-link"><span class="fa fa-user"></span> Members</a>
                         </li>
                     </ul>
 
@@ -46,10 +46,14 @@
         </div>
     </nav>
     {# jumbotron #}
-    <div class="minijumbo d-print-none">
-        <div class="container-xl">
-            {% block jumbotron %}
-            {% endblock %}
+    <div class="breadcrumb-bar d-print-none">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    {% block jumbotron %}
+                    {% endblock %}
+                </ol>
+            </nav>
         </div>
     </div>
 </header>

@@ -2,6 +2,10 @@
 
 {% block title %}{{ parent() }} | People{% endblock %}
 
+{% block jumbotron %}
+    <li class="breadcrumb-item active" aria-current="page">IGB Members</li>
+{% endblock %}
+
 {% block content %}
     <table id="people" class="table">
         <thead>
