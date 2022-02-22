@@ -120,6 +120,11 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
         $this->workflowProgress = new ArrayCollection();
     }
 
+    public function __toString()
+    {
+        return $this->getFirstName() . ' ' . $this->getLastName();
+    }
+
     public function getId(): ?int
     {
         return $this->id;

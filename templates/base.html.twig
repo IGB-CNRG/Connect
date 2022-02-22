@@ -35,6 +35,10 @@
 
                     <ul class="navbar-nav">
                         <li class="nav-item">
+                            <a href="{{ ea_url().setDashboard('App\\Controller\\Admin\\DashboardController') }}"
+                               class="nav-link"><span class="fa fa-gears"></span> Admin</a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{ path('logout') }}" class="nav-link">
                                 <span class="fa fa-right-from-bracket"></span> Logout
                             </a>

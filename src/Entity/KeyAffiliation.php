@@ -23,6 +23,11 @@ class KeyAffiliation
     #[ORM\JoinColumn(nullable: false)]
     private $cylinderKey;
 
+    public function __toString()
+    {
+        return $this->getCylinderKey()->__toString();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
