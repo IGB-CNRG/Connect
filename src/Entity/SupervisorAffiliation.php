@@ -15,11 +15,11 @@ class SupervisorAffiliation
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'supervisorAffiliations')]
+    #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'superviseeAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
     private $supervisor;
 
-    #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'superviseeAffiliations')]
+    #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'supervisorAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
     private $supervisee;
 

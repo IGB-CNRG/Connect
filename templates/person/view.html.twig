@@ -1,0 +1,232 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <h1>{{ person.name }}</h1>
+    <div class="row">
+        <div class="col-lg"> {# todo play with the columns a bit for different sizes #}
+            <div class="card mb-3">
+                <div class="card-header">
+                    Personal Info
+                </div>
+                <table class="table">
+                    <tr>
+                        <th>IGB Username</th>
+                        <td>{{ person.username }}</td>
+                    </tr>
+                    <tr>
+                        <th>NetID</th>
+                        <td>{{ person.netid }}</td>
+                    </tr>
+                    <tr>
+                        <th>UIN</th>
+                        <td>{{ person.uin }}</td>
+                    </tr>
+                    {% for themeAffiliation in person.themeAffiliations|current %}
+                        <tr>
+                            <th>Theme</th>
+                            <td>{{ themeAffiliation.theme.shortName }} - {{ themeAffiliation.memberCategory.name }}</td>
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <th>Position</th>
+                        <td>{# todo person.position #}</td>
+                    </tr>
+                    {# todo only visible for key manager, super admins #}
+                    <tr>
+                        <th>Keys</th>
+                        <td>
+                            {% for keyAffiliation in person.keyAffiliations|current %}
+                                {{ keyAffiliation.cylinderKey.name }}{% if not loop.last %}, {% endif %}
+                            {% else %}
+                                None
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% if person.supervisorAffiliations|current is not empty %}
+                        <tr>
+                            <th>Supervisor</th>
+                            <td>
+                                {% for supervisorAffiliation in person.supervisorAffiliations|current %}
+                                    <a
+                                    href="{{ path('person_view', {'id': supervisorAffiliation.supervisor.id}) }}">{{ supervisorAffiliation.supervisor }}</a>{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% if person.superviseeAffiliations|current is not empty %}
+                        <tr>
+                            <th>Supervisee(s)</th>
+                            <td>
+                                {% for superviseeAffiliation in person.superviseeAffiliations|current %}
+                                    <a
+                                    href="{{ path('person_view', {'id': superviseeAffiliation.supervisee.id}) }}">{{ superviseeAffiliation.supervisee }}</a>{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+        <div class="col-lg">
+            <div class="card mb-3">
+                <div class="card-header">
+                    Contact Info
+                </div>
+                <table class="table">
+                    <tr>
+                        <th>Email</th>
+                        <td>{{ person.email }}</td>
+                    </tr>
+                    <tr>
+                        <th>Room</th>
+                        <td>
+                            {% for roomAffiliation in person.roomAffiliations|current %}
+                                {{ roomAffiliation.room.number }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Office Phone</th>
+                        <td>{{ person.officePhone }}</td>
+                    </tr>
+                    {# todo private information should be hidden based on some voter #}
+                    <tr>
+                        <th>Home Address</th>
+                        <td>{{ person.homeAddress|nl2br }}</td>
+                    </tr>
+                    <tr>
+                        <th>Campus Address</th>
+                        <td>{{ person.workAddress }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg">
+            <div class="card mb-3">
+                <div class="card-header">Documents</div>
+                {# todo add some documents #}
+            </div>
+        </div>
+        <div class="col-lg">
+            <div class="card mb-3">
+                <div class="card-header">Notes</div>
+                <div class="card-body">
+                    {# todo notes need to be shown/hidden based on their type and some voter #}
+                    {# todo display notes #}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <h2>Historical Data</h2>
+
+
+    <div class="card mb-3">
+        <div class="card-header">Log</div>
+        {# todo show the log #}
+        {# todo does everyone see the log? #}
+    </div>
+
+    {# Historical Info #}
+    <div class="card mb-3">
+        <div class="card-header">Themes</div>
+        <table class="table">
+            <tr>
+                <th>Theme</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+            </tr>
+            {% for themeAffiliation in person.themeAffiliations %}
+                <tr>
+                    <td>{{ themeAffiliation.theme.shortName }}</td>
+                    <td>{{ themeAffiliation.startedAt|date('n/j/Y') }}</td>
+                    <td>{% if themeAffiliation.endedAt is not null %}{{ themeAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% if person.keyAffiliations is not empty %} {# todo restrict to key manager #}
+        <div class="card mb-3">
+            <div class="card-header">Keys</div>
+            <table class="table">
+                <tr>
+                    <th>Key</th>
+                    <th>Room</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                </tr>
+                {% for keyAffiliation in person.keyAffiliations %}
+                    <tr>
+                        <td>{{ keyAffiliation.cylinderKey.name }}</td>
+                        <td>{# todo show something else if there are many rooms (>3) #}
+                            {% if keyAffiliation.cylinderKey.roomKeyAffiliations|length > 3 or keyAffiliation.cylinderKey.roomKeyAffiliations|length < 1 %}
+                                {{ keyAffiliation.cylinderKey.description }}
+                            {% else %}
+                                {% for roomAffiliation in keyAffiliation.cylinderKey.roomKeyAffiliations %}
+                                    {{ roomAffiliation.room.number }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </td>
+                        <td>{{ keyAffiliation.startedAt|date('n/j/Y') }}</td>
+                        <td>{% if keyAffiliation.endedAt is not null %}{{ keyAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% endif %}
+    {% if person.supervisorAffiliations is not empty %}
+        <div class="card mb-3">
+            <div class="card-header">Supervisors</div>
+            <table class="table"> {# todo maybe these tables should be grids so they line up with each other #}
+                <tr>
+                    <th>Supervisor</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                </tr>
+                {% for supervisorAffiliation in person.supervisorAffiliations %}
+                    <tr>
+                        <td>{{ supervisorAffiliation.supervisor }}</td>
+                        <td>{{ supervisorAffiliation.startedAt|date('n/j/Y') }}</td>
+                        <td>{% if supervisorAffiliation.endedAt is not null %}{{ supervisorAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% endif %}
+    {% if person.superviseeAffiliations is not empty %}
+        <div class="card mb-3">
+            <div class="card-header">Supervisees</div> {# todo this is not a great label #}
+            <table class="table">
+                <tr>
+                    <th>Supervisee</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                </tr>
+                {% for superviseeAffiliation in person.superviseeAffiliations %}
+                    <tr>
+                        <td>{{ superviseeAffiliation.supervisee }}</td>
+                        <td>{{ superviseeAffiliation.startedAt|date('n/j/Y') }}</td>
+                        <td>{% if superviseeAffiliation.endedAt is not null %}{{ superviseeAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% endif %}
+
+
+{% endblock %}
+
+{% block title %}
+    {{ parent() }} | {{ person.name }}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item" aria-current="page">
+        <a href="{{ path('person') }}">IGB Members</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">{{ person.name }}</li>
+{% endblock %}

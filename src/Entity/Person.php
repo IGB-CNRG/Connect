@@ -75,10 +75,10 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: ThemeLeaderAffiliation::class, orphanRemoval: true)]
     private $themeLeaderAffiliations;
 
-    #[ORM\OneToMany(mappedBy: 'supervisor', targetEntity: SupervisorAffiliation::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'supervisee', targetEntity: SupervisorAffiliation::class, orphanRemoval: true)]
     private $supervisorAffiliations;
 
-    #[ORM\OneToMany(mappedBy: 'supervisee', targetEntity: SupervisorAffiliation::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'supervisor', targetEntity: SupervisorAffiliation::class, orphanRemoval: true)]
     private $superviseeAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: DepartmentAffiliation::class, orphanRemoval: true)]
@@ -311,7 +311,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, RoomAffiliation>
+     * @return Collection<int, RoomAffiliation>|RoomAffiliation[]
      */
     public function getRoomAffiliations(): Collection
     {
@@ -341,7 +341,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, KeyAffiliation>
+     * @return Collection<int, KeyAffiliation>|KeyAffiliation[]
      */
     public function getKeyAffiliations(): Collection
     {
@@ -371,7 +371,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, ThemeAffiliation>
+     * @return Collection<int, ThemeAffiliation>|ThemeAffiliation[]
      */
     public function getThemeAffiliations(): Collection
     {
@@ -401,7 +401,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, ThemeLeaderAffiliation>
+     * @return Collection<int, ThemeLeaderAffiliation>|ThemeLeaderAffiliation[]
      */
     public function getThemeLeaderAffiliations(): Collection
     {
@@ -431,7 +431,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, SupervisorAffiliation>
+     * @return Collection<int, SupervisorAffiliation>|SupervisorAffiliation[]
      */
     public function getSupervisorAffiliations(): Collection
     {
@@ -461,7 +461,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, SupervisorAffiliation>
+     * @return Collection<int, SupervisorAffiliation>|SupervisorAffiliation[]
      */
     public function getSuperviseeAffiliations(): Collection
     {
@@ -491,7 +491,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, DepartmentAffiliation>
+     * @return Collection<int, DepartmentAffiliation>|DepartmentAffiliation[]
      */
     public function getDepartmentAffiliations(): Collection
     {
@@ -521,7 +521,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Note>
+     * @return Collection<int, Note>|Note[]
      */
     public function getNotes(): Collection
     {
@@ -551,7 +551,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Log>
+     * @return Collection<int, Log>|Log[]
      */
     public function getOwnedLogs(): Collection
     {
@@ -581,7 +581,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Log>
+     * @return Collection<int, Log>|Log[]
      */
     public function getLogs(): Collection
     {
@@ -707,17 +707,10 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
         return ''; // TODO I have no idea why it's necessary to implement this
     }
 
-    public function getCurrentThemeAffiliations()
-    {
-        return $this->getThemeAffiliations()->filter(function (ThemeAffiliation $themeAffiliation) {
-            return $themeAffiliation->isCurrent();
-        });
-    }
+    /* Helper Functions */
 
-    public function getCurrentRoomAffiliations()
+    public function getName()
     {
-        return $this->getRoomAffiliations()->filter(function (RoomAffiliation $roomAffiliation) {
-            return $roomAffiliation->isCurrent();
-        });
+        return $this->getFirstName() . ' ' . $this->getLastName(); // TODO this should be a little smarter
     }
 }

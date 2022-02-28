@@ -2,7 +2,7 @@
 
 {% block title %}{{ parent() }} | People{% endblock %}
 
-{% block jumbotron %}
+{% block breadcrumb %}
     <li class="breadcrumb-item active" aria-current="page">IGB Members</li>
 {% endblock %}
 
@@ -24,22 +24,22 @@
         {% for person in people %}
             <tr>
                 <td>
-                    <a href="#">{% if person.lastName is not empty %}{{ person.firstName }} {{ person.lastName }}{% else %}No name{% endif %}</a>
+                    <a href="{{ path('person_view', {'id': person.id}) }}">{% if person.lastName is not empty %}{{ person.firstName }} {{ person.lastName }}{% else %}No name{% endif %}</a>
                 </td>
                 <td>{{ person.username }}</td>
                 <td>{{ person.email }}</td>
                 <td>
-                    {% for themeAffiliation in person.currentThemeAffiliations %}
+                    {% for themeAffiliation in person.themeAffiliations|current %}
                         {{ themeAffiliation.theme.shortName }}{% if not loop.last %}, {% endif %}
                     {% endfor %}
                 </td>
                 <td>
-                    {% for themeAffiliation in person.currentThemeAffiliations %}
+                    {% for themeAffiliation in person.themeAffiliations|current %}
                         {{ themeAffiliation.memberCategory.name }}{% if not loop.last %}, {% endif %}
                     {% endfor %}
                 </td>
                 <td>
-                    {% for roomAffiliation in person.currentRoomAffiliations %}
+                    {% for roomAffiliation in person.roomAffiliations|current %}
                         {{ roomAffiliation.room.number }}{% if not loop.last %}, {% endif %}
                     {% endfor %}
                 </td>
