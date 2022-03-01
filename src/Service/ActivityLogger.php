@@ -4,6 +4,8 @@ namespace App\Service;
 
 use App\Entity\Log;
 use App\Entity\Person;
+use App\Entity\Theme;
+use App\Entity\ThemeAffiliation;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Symfony\Contracts\Service\ServiceSubscriberTrait;
 
@@ -18,11 +20,48 @@ class ActivityLogger implements ServiceSubscriberInterface
         'isIgbTrainingComplete' => 'IGB training',
     ];
 
+    public function logNewThemeAffiliation(ThemeAffiliation $themeAffiliation)
+    {
+        $endString = '';
+        if ($themeAffiliation->getEndedAt()) {
+            $endString = sprintf(' and ending %s', $themeAffiliation->getEndedAt()->format('n/j/Y'));
+        }
+        $this->logPersonActivity(
+            $themeAffiliation->getPerson(),
+            sprintf(
+                'Added affiliation with theme %s (%s), beginning %s',
+                $themeAffiliation->getTheme()->getShortName(),
+                $themeAffiliation->getMemberCategory()->getName(),
+                $themeAffiliation->getStartedAt()->format('n/j/Y')
+            ) . $endString
+        );
+        $this->logThemeActivity(
+            $themeAffiliation->getTheme(),
+            sprintf(
+                'Added member affiliation with %s (%s), beginning %s',
+                $themeAffiliation->getPerson()->getName(),
+                $themeAffiliation->getMemberCategory()->getName(),
+                $themeAffiliation->getStartedAt()->format('n/j/Y')
+            )
+        );
+    }
+
     public function logPersonActivity(Person $person, string $message)
     {
         $owner = $this->security()->getUser();
         $log = (new Log())
             ->setPerson($person)
+            ->setUser($owner)
+            ->setText($message);
+        $this->entityManager()->persist($log);
+        $this->entityManager()->flush();
+    }
+
+    public function logThemeActivity(Theme $theme, string $message)
+    {
+        $owner = $this->security()->getUser();
+        $log = (new Log())
+            ->setTheme($theme)
             ->setUser($owner)
             ->setText($message);
         $this->entityManager()->persist($log);

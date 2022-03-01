@@ -6,6 +6,7 @@ use App\Entity\Person;
 use App\Entity\ThemeAffiliation;
 use App\Form\EndThemeAffiliationType;
 use App\Form\PersonType;
+use App\Form\ThemeAffiliationType;
 use App\Repository\PersonRepository;
 use App\Service\ActivityLogger;
 use Doctrine\ORM\EntityManagerInterface;
@@ -74,6 +75,33 @@ class PersonController extends AbstractController
             return $this->redirectToRoute('person_view', ['id' => $person->getId()]);
         }
         return $this->render('person/new.html.twig', [
+            'person' => $person,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/person/{id}/new-theme-affiliation', name: 'person_new_theme_affiliation')]
+    public function newThemeAffiliation(
+        Person $person,
+        Request $request,
+        EntityManagerInterface $em,
+        ActivityLogger $logger
+    ): Response {
+        $themeAffiliation = (new ThemeAffiliation())
+            ->setPerson($person);
+        $form = $this->createForm(ThemeAffiliationType::class, $themeAffiliation);
+        $form->add('Add', SubmitType::class);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($themeAffiliation);
+            $logger->logNewThemeAffiliation($themeAffiliation);
+            $em->flush();
+
+            return $this->redirectToRoute('person_view', ['id' => $person->getId()]);
+        }
+
+        return $this->render('person/addThemeAffiliation.html.twig', [
             'person' => $person,
             'form' => $form->createView(),
         ]);

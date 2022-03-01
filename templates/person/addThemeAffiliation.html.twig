@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <div class="callout callout-info">Please indicate the theme with which {{ person.name }} is affiliated, their role
+        within that theme, and the date that role began. If no end date is known, leave blank.
+    </div>
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col-lg">{{ form_row(form.theme) }}</div>
+        <div class="col-lg">{{ form_row(form.memberCategory) }}</div>
+    </div>
+    <div class="row">
+        <div class="col-lg">{{ form_row(form.startedAt) }}</div>
+        <div class="col-lg">{{ form_row(form.endedAt) }}</div>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}
+
+
+{% block title %}
+    {{ parent() }} | Add Theme Affiliation
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item" aria-current="page">
+        <a href="{{ path('person') }}">IGB Members</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        <a href="{{ path('person_view', {'id': person.id}) }}">{{ person.name }}</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        Add Theme Affiliation
+    </li>
+{% endblock %}
+

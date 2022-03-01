@@ -30,7 +30,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $netid;
 
-    #[ORM\Column(type: 'string', length: 180, unique: true, nullable: true)] // TODO make sure we can make multiple null values
+    #[ORM\Column(type: 'string', length: 180, unique: true, nullable: true)]
     private $username;
 
     #[ORM\Column(type: 'integer', nullable: true)]

@@ -4,20 +4,20 @@ namespace App\Form;
 
 use App\Entity\ThemeAffiliation;
 use App\Form\Fields\EndDateType;
+use App\Form\Fields\StartDateType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class EndThemeAffiliationType extends AbstractType
+class ThemeAffiliationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('endedAt', EndDateType::class, [
-                'data' => new \DateTime(),
-                'required' => true,
-                'help' => null,
-            ])
+            ->add('startedAt', StartDateType::class)
+            ->add('endedAt', EndDateType::class)
+            ->add('theme')
+            ->add('memberCategory')
         ;
     }
 
