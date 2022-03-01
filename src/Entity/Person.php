@@ -48,9 +48,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'text', nullable: true)]
     private $homeAddress;
 
-    #[ORM\Column(type: 'text', nullable: true)]
-    private $workAddress;
-
     #[ORM\Column(type: 'boolean')]
     private $isDrsTrainingComplete;
 
@@ -91,6 +88,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
     private $ownedLogs;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: Log::class)]
+    #[ORM\OrderBy(['createdAt' => 'DESC'])]
     private $logs;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: WorkflowProgress::class, orphanRemoval: true)]
@@ -99,11 +97,14 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(targetEntity: Building::class, inversedBy: 'people')]
     private $officeBuilding;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private $preferredAddress; // TODO create enum for which address is preferred
+    #[ORM\Column(type: 'string', length: 255, enumType: PreferredAddress::class)]
+    private $preferredAddress = PreferredAddress::IGB;
 
     #[ORM\Column(type: 'json')]
     private $roles = [];
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $preferredFirstName;
 
     public function __construct()
     {
@@ -122,8 +123,21 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __toString()
     {
-        return $this->getFirstName() . ' ' . $this->getLastName();
+        return $this->getName();
     }
+
+    /* Helper Functions */
+
+    public function getName()
+    {
+        if ($this->getPreferredFirstName()) {
+            return $this->getPreferredFirstName() . ' ' . $this->getLastName();
+        } else {
+            return $this->getFirstName() . ' ' . $this->getLastName(); // TODO this should be a little smarter
+        }
+    }
+
+    /* Getters/Setters */
 
     public function getId(): ?int
     {
@@ -246,18 +260,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
     public function setHomeAddress(?string $homeAddress): self
     {
         $this->homeAddress = $homeAddress;
-
-        return $this;
-    }
-
-    public function getWorkAddress(): ?string
-    {
-        return $this->workAddress;
-    }
-
-    public function setWorkAddress(string $workAddress): self
-    {
-        $this->workAddress = $workAddress;
 
         return $this;
     }
@@ -652,12 +654,12 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPreferredAddress(): ?string
+    public function getPreferredAddress(): ?PreferredAddress
     {
         return $this->preferredAddress;
     }
 
-    public function setPreferredAddress(string $preferredAddress): self
+    public function setPreferredAddress(PreferredAddress $preferredAddress): self
     {
         $this->preferredAddress = $preferredAddress;
 
@@ -707,10 +709,15 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
         return ''; // TODO I have no idea why it's necessary to implement this
     }
 
-    /* Helper Functions */
-
-    public function getName()
+    public function getPreferredFirstName(): ?string
     {
-        return $this->getFirstName() . ' ' . $this->getLastName(); // TODO this should be a little smarter
+        return $this->preferredFirstName;
+    }
+
+    public function setPreferredFirstName(?string $preferredFirstName): self
+    {
+        $this->preferredFirstName = $preferredFirstName;
+
+        return $this;
     }
 }

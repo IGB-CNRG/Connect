@@ -1,7 +1,11 @@
 {% extends 'base.html.twig' %}
 
 {% block content %}
-    <h1>{{ person.name }}</h1>
+    <div class="float-end"><a class="btn btn-primary" href="{{ path('person_edit', {'id': person.id}) }}"><span
+                    class="fa fa-pencil"></span> Edit</a></div>
+    <h1>
+        {{ person.name }}
+    </h1>
     <div class="row">
         <div class="col-lg"> {# todo play with the columns a bit for different sizes #}
             <div class="card mb-3">
@@ -9,6 +13,22 @@
                     Personal Info
                 </div>
                 <table class="table">
+                    <tr>
+                        <th>First Name</th>
+                        <td>{{ person.firstName }}</td>
+                    </tr>
+                    <tr>
+                        <th>Last Name</th>
+                        <td>{{ person.lastName }}</td>
+                    </tr>
+                    <tr>
+                        <th>Middle Initial</th>
+                        <td>{{ person.middleInitial }}</td>
+                    </tr>
+                    <tr>
+                        <th>Preferred First Name</th>
+                        <td>{{ person.preferredFirstName }}</td>
+                    </tr>
                     <tr>
                         <th>IGB Username</th>
                         <td>{{ person.username }}</td>
@@ -96,7 +116,7 @@
                     </tr>
                     <tr>
                         <th>Campus Address</th>
-                        <td>{{ person.workAddress }}</td>
+                        <td>{{ person.officeBuilding }}</td> {# todo this should be a combination of building/officenumber #}
                     </tr>
                 </table>
             </div>
@@ -257,6 +277,7 @@
             </div>
         </div>
     {% endif %}
+    {# todo rooms #}
 
 {% endblock %}
 

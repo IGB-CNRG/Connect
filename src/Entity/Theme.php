@@ -42,6 +42,11 @@ class Theme
         $this->logs = new ArrayCollection();
     }
 
+    public function __toString()
+    {
+        return $this->getShortName();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
