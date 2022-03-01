@@ -49,16 +49,16 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
     private $homeAddress;
 
     #[ORM\Column(type: 'boolean')]
-    private $isDrsTrainingComplete;
+    private $isDrsTrainingComplete = false;
 
     #[ORM\Column(type: 'boolean')]
-    private $isIgbTrainingComplete;
+    private $isIgbTrainingComplete = false;
 
     #[ORM\Column(type: 'date', nullable: true)]
     private $offerLetterDate;
 
     #[ORM\Column(type: 'boolean')]
-    private $hasGivenKeyDeposit;
+    private $hasGivenKeyDeposit = false;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: RoomAffiliation::class, orphanRemoval: true)]
     private $roomAffiliations;

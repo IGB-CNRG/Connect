@@ -40,7 +40,7 @@ class PersonController extends AbstractController
         Request $request,
         EntityManagerInterface $em,
         ActivityLogger $logger
-    ) {
+    ): Response {
         $form = $this->createForm(PersonType::class, $person);
         $form->add('save', SubmitType::class);
 
@@ -53,6 +53,27 @@ class PersonController extends AbstractController
             return $this->redirectToRoute('person_view', ['id' => $person->getId()]);
         }
         return $this->render('person/edit.html.twig', [
+            'person' => $person,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/person/new', name: 'person_new', priority: 1)]
+    public function new(Request $request, EntityManagerInterface $em, ActivityLogger $logger): Response
+    {
+        $person = new Person();
+        $form = $this->createForm(PersonType::class, $person);
+        $form->add('save', SubmitType::class);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($person);
+            $logger->logPersonActivity($person, 'Created record');
+            $em->flush();
+
+            return $this->redirectToRoute('person_view', ['id' => $person->getId()]);
+        }
+        return $this->render('person/new.html.twig', [
             'person' => $person,
             'form' => $form->createView(),
         ]);

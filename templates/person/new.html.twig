@@ -2,7 +2,7 @@
 {% use 'person/_editForm.html.twig' %}
 
 {% block title %}
-    {{ parent() }} | Edit {{ person.name }}
+    {{ parent() }} | New Member
 {% endblock %}
 
 {% block breadcrumb %}
@@ -10,9 +10,6 @@
         <a href="{{ path('person') }}">IGB Members</a>
     </li>
     <li class="breadcrumb-item active" aria-current="page">
-        <a href="{{ path('person_view', {'id': person.id}) }}">{{ person.name }}</a>
-    </li>
-    <li class="breadcrumb-item active" aria-current="page">
-        Edit
+        New Member
     </li>
 {% endblock %}
