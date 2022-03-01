@@ -6,13 +6,15 @@ if (!Encore.isRuntimeEnvironmentConfigured()) {
     Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
 }
 
+const prefix = process.env.npm_lifecycle_event === "build" ? 'connect/' : 'connect_dev/';
+
 Encore
     // directory where compiled assets will be stored
     .setOutputPath('public/build/')
     // public path used by the web server to access the output path
-    .setPublicPath('build')
+    .setPublicPath('/' + prefix + 'build')
     // only needed for CDN's or sub-directory deploy
-    //.setManifestKeyPrefix('build/')
+    .setManifestKeyPrefix(prefix + 'build/')
 
     /*
      * ENTRY CONFIG

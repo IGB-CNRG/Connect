@@ -108,6 +108,9 @@
             <div class="card mb-3">
                 <div class="card-header">Documents</div>
                 {# todo add some documents #}
+                <div class="card-body">
+                    TBD
+                </div>
             </div>
         </div>
         <div class="col-lg">
@@ -116,6 +119,7 @@
                 <div class="card-body">
                     {# todo notes need to be shown/hidden based on their type and some voter #}
                     {# todo display notes #}
+                    TBD
                 </div>
             </div>
         </div>
@@ -123,100 +127,136 @@
 
 
     <h2>Historical Data</h2>
-
-
     <div class="card mb-3">
-        <div class="card-header">Log</div>
-        {# todo show the log #}
+        <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#log_table"
+             aria-expanded="false" role="button">Log
+        </div>
+        <div class="collapse" id="log_table">
+            <table class="table">
+                <tr>
+                    <th>Time</th>
+                    <th>User</th>
+                    <th>Log</th>
+                </tr>
+                {% for log in person.logs %}
+                    <tr>
+                        <td>{{ log.createdAt|date('n/j/Y g:i a') }}</td>
+                        <td>{{ log.user }}</td>
+                        <td>{{ log.text }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
         {# todo does everyone see the log? #}
     </div>
 
     {# Historical Info #}
     <div class="card mb-3">
-        <div class="card-header">Themes</div>
-        <table class="table">
-            <tr>
-                <th>Theme</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-            </tr>
-            {% for themeAffiliation in person.themeAffiliations %}
-                <tr>
-                    <td>{{ themeAffiliation.theme.shortName }}</td>
-                    <td>{{ themeAffiliation.startedAt|date('n/j/Y') }}</td>
-                    <td>{% if themeAffiliation.endedAt is not null %}{{ themeAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
-                </tr>
-            {% endfor %}
-        </table>
-    </div>
-    {% if person.keyAffiliations is not empty %} {# todo restrict to key manager #}
-        <div class="card mb-3">
-            <div class="card-header">Keys</div>
+        <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#theme_table"
+             aria-expanded="false" role="button">Themes
+        </div>
+        <div class="collapse" id="theme_table">
             <table class="table">
                 <tr>
-                    <th>Key</th>
-                    <th>Room</th>
+                    <th>Theme</th>
                     <th>Start Date</th>
                     <th>End Date</th>
+                    <th class="shrink"></th>
                 </tr>
-                {% for keyAffiliation in person.keyAffiliations %}
+                {% for themeAffiliation in person.themeAffiliations %}
                     <tr>
-                        <td>{{ keyAffiliation.cylinderKey.name }}</td>
-                        <td>{# todo show something else if there are many rooms (>3) #}
-                            {% if keyAffiliation.cylinderKey.roomKeyAffiliations|length > 3 or keyAffiliation.cylinderKey.roomKeyAffiliations|length < 1 %}
-                                {{ keyAffiliation.cylinderKey.description }}
-                            {% else %}
-                                {% for roomAffiliation in keyAffiliation.cylinderKey.roomKeyAffiliations %}
-                                    {{ roomAffiliation.room.number }}{% if not loop.last %}, {% endif %}
-                                {% endfor %}
+                        <td>{{ themeAffiliation.theme.shortName }}</td>
+                        <td>{{ themeAffiliation.startedAt|date('n/j/Y') }}</td>
+                        <td>{% if themeAffiliation.endedAt is not null %}{{ themeAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
+                        <td class="shrink">
+                            {% if themeAffiliation.endedAt is null %}
+                                <a href="{{ path('person_end_theme_affiliation', {'id': themeAffiliation.id}) }}">End</a>
                             {% endif %}
                         </td>
-                        <td>{{ keyAffiliation.startedAt|date('n/j/Y') }}</td>
-                        <td>{% if keyAffiliation.endedAt is not null %}{{ keyAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
                     </tr>
                 {% endfor %}
             </table>
+        </div>
+    </div>
+    {% if person.keyAffiliations is not empty %} {# todo restrict to key manager #}
+        <div class="card mb-3">
+            <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#key_table"
+                 aria-expanded="false" role="button">Keys
+            </div>
+            <div class="collapse" id="key_table">
+                <table class="table">
+                    <tr>
+                        <th>Key</th>
+                        <th>Room</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                    </tr>
+                    {% for keyAffiliation in person.keyAffiliations %}
+                        <tr>
+                            <td>{{ keyAffiliation.cylinderKey.name }}</td>
+                            <td>{# todo show something else if there are many rooms (>3) #}
+                                {% if keyAffiliation.cylinderKey.roomKeyAffiliations|length > 3 or keyAffiliation.cylinderKey.roomKeyAffiliations|length < 1 %}
+                                    {{ keyAffiliation.cylinderKey.description }}
+                                {% else %}
+                                    {% for roomAffiliation in keyAffiliation.cylinderKey.roomKeyAffiliations %}
+                                        {{ roomAffiliation.room.number }}{% if not loop.last %}, {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            </td>
+                            <td>{{ keyAffiliation.startedAt|date('n/j/Y') }}</td>
+                            <td>{% if keyAffiliation.endedAt is not null %}{{ keyAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
         </div>
     {% endif %}
     {% if person.supervisorAffiliations is not empty %}
         <div class="card mb-3">
-            <div class="card-header">Supervisors</div>
-            <table class="table"> {# todo maybe these tables should be grids so they line up with each other #}
-                <tr>
-                    <th>Supervisor</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                </tr>
-                {% for supervisorAffiliation in person.supervisorAffiliations %}
+            <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#supervisor_table"
+                 aria-expanded="false" role="button">Supervisors
+            </div>
+            <div class="collapse" id="supervisor_table">
+                <table class="table"> {# todo maybe these tables should be grids so they line up with each other #}
                     <tr>
-                        <td>{{ supervisorAffiliation.supervisor }}</td>
-                        <td>{{ supervisorAffiliation.startedAt|date('n/j/Y') }}</td>
-                        <td>{% if supervisorAffiliation.endedAt is not null %}{{ supervisorAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
+                        <th>Supervisor</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
                     </tr>
-                {% endfor %}
-            </table>
+                    {% for supervisorAffiliation in person.supervisorAffiliations %}
+                        <tr>
+                            <td>{{ supervisorAffiliation.supervisor }}</td>
+                            <td>{{ supervisorAffiliation.startedAt|date('n/j/Y') }}</td>
+                            <td>{% if supervisorAffiliation.endedAt is not null %}{{ supervisorAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
         </div>
     {% endif %}
     {% if person.superviseeAffiliations is not empty %}
         <div class="card mb-3">
-            <div class="card-header">Supervisees</div> {# todo this is not a great label #}
-            <table class="table">
-                <tr>
-                    <th>Supervisee</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                </tr>
-                {% for superviseeAffiliation in person.superviseeAffiliations %}
+            <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#supervisee_table"
+                 aria-expanded="false" role="button">Supervisees
+            </div> {# todo this is not a great label #}
+            <div class="collapse" id="supervisee_table">
+                <table class="table">
                     <tr>
-                        <td>{{ superviseeAffiliation.supervisee }}</td>
-                        <td>{{ superviseeAffiliation.startedAt|date('n/j/Y') }}</td>
-                        <td>{% if superviseeAffiliation.endedAt is not null %}{{ superviseeAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
+                        <th>Supervisee</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
                     </tr>
-                {% endfor %}
-            </table>
+                    {% for superviseeAffiliation in person.superviseeAffiliations %}
+                        <tr>
+                            <td>{{ superviseeAffiliation.supervisee }}</td>
+                            <td>{{ superviseeAffiliation.startedAt|date('n/j/Y') }}</td>
+                            <td>{% if superviseeAffiliation.endedAt is not null %}{{ superviseeAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
         </div>
     {% endif %}
-
 
 {% endblock %}
 

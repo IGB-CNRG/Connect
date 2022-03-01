@@ -1,6 +1,5 @@
 // Customize bootstrap variables
 @import "~bootstrap/scss/functions";
-//@import "~bootstrap/scss/variables";
 
 $blue: #13294B;
 $teal: #20c997;
@@ -9,15 +8,10 @@ $orange: #DD3403;
 $primary: $blue;
 $info: $teal;
 
-//$custom-colors: (
-//        "primary": $primary,
-//        "info": $info,
-//);
-//$theme-colors: map-merge($theme-colors, $custom-colors);
 @import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/bootstrap";
 
-@import "cnrg";
+@import "cnrg"; // todo can we just move these styles in here?
 
 .placeholder-image {
   background-color: $gray-300;
@@ -33,7 +27,40 @@ $info: $teal;
   padding-top: 1rem;
   margin-top: 3.5rem;
   margin-bottom: 1.5rem;
-  //font-weight: 500;
-  //line-height: 1.2;
   box-shadow: 3px 3px 8px #eee;
+}
+
+.callout {
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+  border: 1px solid $gray-300;
+  border-left-width: 0.25rem;
+  border-radius: $border-radius;
+}
+
+$callout-background-lighten: 40%;
+@each $color, $value in $theme-colors {
+  .callout-#{$color} {
+    border-left-color: $value;
+    background-color: lighten($value, $callout-background-lighten);
+    color: color-contrast(lighten($value, $callout-background-lighten));
+  }
+}
+
+.collapse-header {
+  &[aria-expanded="false"] {
+    &::after {
+      content: "\f107"; // angle-down
+      font: var(--fa-font-solid);
+      float: right;
+    }
+  }
+
+  &[aria-expanded="true"] {
+    &::after {
+      content: "\f106"; // angle-up
+      font: var(--fa-font-solid);
+      float: right;
+    }
+  }
 }
