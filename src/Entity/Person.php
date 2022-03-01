@@ -13,6 +13,20 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class Person implements UserInterface, PasswordAuthenticatedUserInterface
 // TODO Is it a bug that we have to implement PasswordAuthenticatedUserInterface even though this entity doesn't handle authentication?
 {
+    const USER_ROLES = [
+        'CONNECT Admin' => 'ROLE_ADMIN',
+        'Theme Admin' => 'ROLE_THEME_ADMIN',
+        'CNRG' => 'ROLE_CNRG',
+        'Op/Fac' => 'ROLE_OP_FAC',
+        'Key Manager' => 'ROLE_KEY_MANAGER',
+        'Director\'s Office' => 'ROLE_DIRECTORS_OFFICE',
+        'Human Resources' => 'ROLE_HUMAN_RESOURCES',
+        'Business Office' => 'ROLE_BUSINESS_OFFICE',
+        'Communications' => 'ROLE_COMMUNICATIONS',
+        'Outreach' => 'ROLE_OUTREACH',
+        'Core Facilities' => 'ROLE_CORE_FACILITIES',
+    ];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]

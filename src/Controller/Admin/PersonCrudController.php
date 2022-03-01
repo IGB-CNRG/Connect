@@ -7,7 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
@@ -37,12 +37,13 @@ class PersonCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id'),
+            IdField::new('id')->hideOnForm(),
             TextField::new('firstName'),
             TextField::new('lastName'),
             TextField::new('netid'),
             TextField::new('username')->onlyOnDetail(),
-            CollectionField::new('keyAffiliations')->hideOnIndex(), // TODO this form needs to be better
+//            CollectionField::new('keyAffiliations')->hideOnIndex(), // TODO this form needs to be better
+            ChoiceField::new('roles')->allowMultipleChoices(true)->setChoices(Person::USER_ROLES)
         ];
     }
 }

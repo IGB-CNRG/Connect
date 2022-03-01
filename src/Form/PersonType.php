@@ -8,6 +8,7 @@ use App\Entity\PreferredAddress;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -85,6 +86,17 @@ class PersonType extends AbstractType
             ])
         ;
         // todo hide fields based on user roles
+        if ($this->security->isGranted('ROLE_ADMIN')) {
+            $builder
+                ->add('roles', ChoiceType::class, [
+                    'choices' => Person::USER_ROLES,
+                    'multiple' => true,
+                    'attr' => [
+                        'class' => 'connect-select2'
+                    ]
+                ])
+            ;
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
