@@ -24,7 +24,7 @@
         {% for person in people %}
             <tr>
                 <td>
-                    <a href="{{ path('person_view', {'id': person.id}) }}">{% if person.lastName is not empty %}{{ person.firstName }} {{ person.lastName }}{% else %}No name{% endif %}</a>
+                    <a href="{{ path('person_view', {'id': person.id}) }}">{% if person.lastName is not empty %}{{ person.name }}{% else %}No name{% endif %}</a>
                 </td>
                 <td>{{ person.username }}</td>
                 <td>{{ person.email }}</td>
@@ -35,7 +35,7 @@
                 </td>
                 <td>
                     {% for themeAffiliation in person.themeAffiliations|current %}
-                        {{ themeAffiliation.memberCategory.name }}{% if not loop.last %}, {% endif %}
+                        {{ themeAffiliation.memberCategory.name }}{% if not loop.last %}, {% endif %} {# todo do we want titles? #}
                     {% endfor %}
                 </td>
                 <td>

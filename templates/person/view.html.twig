@@ -1,8 +1,11 @@
 {% extends 'base.html.twig' %}
 
 {% block content %}
-    <div class="float-end"><a class="btn btn-primary" href="{{ path('person_edit', {'id': person.id}) }}"><span
-                    class="fa fa-pencil"></span> Edit</a></div>
+    <div class="float-end">
+        <a class="btn btn-primary" href="{{ path('person_edit', {'id': person.id}) }}"><span class="fa fa-pencil"></span>
+            Edit
+        </a>
+    </div>
     <h1>
         {{ person.name }}
     </h1>
@@ -44,14 +47,18 @@
                     {% for themeAffiliation in person.themeAffiliations|current %}
                         <tr>
                             <th>Theme</th>
-                            <td>{{ themeAffiliation.theme.shortName }} - {{ themeAffiliation.memberCategory.name }}</td>
+                            <td>
+                                {{ themeAffiliation.theme.shortName }}<br/>
+                                {% if themeAffiliation.title %}
+                                    {{ themeAffiliation.title }} ({{ themeAffiliation.memberCategory.name }})
+                                {% else %}
+                                    {{ themeAffiliation.memberCategory.name }}
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
-                    <tr>
-                        <th>Position</th>
-                        <td>{# todo person.position #}</td>
-                    </tr>
                     {# todo only visible for key manager, super admins #}
+                    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_KEY_MANAGER') %}
                     <tr>
                         <th>Keys</th>
                         <td>
@@ -62,6 +69,7 @@
                             {% endfor %}
                         </td>
                     </tr>
+                    {% endif %}
                     {% if person.supervisorAffiliations|current is not empty %}
                         <tr>
                             <th>Supervisor</th>
@@ -118,6 +126,7 @@
                         <th>Campus Address</th>
                         <td>{{ person.officeBuilding }}</td> {# todo this should be a combination of building/officenumber #}
                     </tr>
+                    {# todo display preferred address #}
                 </table>
             </div>
         </div>
@@ -148,8 +157,8 @@
 
     <h2>Historical Data</h2>
     <div class="card mb-3">
-        <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#log_table"
-             aria-expanded="false" role="button">Log
+        <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#log_table" aria-expanded="false" role="button">
+            Log
         </div>
         <div class="collapse" id="log_table">
             <table class="table">
@@ -172,13 +181,18 @@
 
     {# Historical Info #}
     <div class="card mb-3">
-        <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#theme_table"
-             aria-expanded="false" role="button">Themes
+        <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#theme_table" aria-expanded="false" role="button">
+            Themes
         </div>
         <div class="collapse" id="theme_table">
+            <div class="card-body">
+                <a href="{{ path('person_new_theme_affiliation', {'id': person.id}) }}" class="btn btn-primary"><span class="fa fa-plus"></span> Add</a>
+            </div>
             <table class="table">
                 <tr>
                     <th>Theme</th>
+                    <th>Member Type</th>
+                    <th>Title</th>
                     <th>Start Date</th>
                     <th>End Date</th>
                     <th class="shrink"></th>
@@ -186,11 +200,14 @@
                 {% for themeAffiliation in person.themeAffiliations %}
                     <tr>
                         <td>{{ themeAffiliation.theme.shortName }}</td>
+                        <td>{{ themeAffiliation.memberCategory.name }}</td>
+                        <td>{{ themeAffiliation.title }}</td>
                         <td>{{ themeAffiliation.startedAt|date('n/j/Y') }}</td>
                         <td>{% if themeAffiliation.endedAt is not null %}{{ themeAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
                         <td class="shrink">
                             {% if themeAffiliation.endedAt is null %}
-                                <a href="{{ path('person_end_theme_affiliation', {'id': themeAffiliation.id}) }}">End</a>
+                                <a href="{{ path('person_end_theme_affiliation', {'id': themeAffiliation.id}) }}">End
+                                </a>
                             {% endif %}
                         </td>
                     </tr>
@@ -200,8 +217,8 @@
     </div>
     {% if person.keyAffiliations is not empty %} {# todo restrict to key manager #}
         <div class="card mb-3">
-            <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#key_table"
-                 aria-expanded="false" role="button">Keys
+            <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#key_table" aria-expanded="false" role="button">
+                Keys
             </div>
             <div class="collapse" id="key_table">
                 <table class="table">
@@ -233,8 +250,8 @@
     {% endif %}
     {% if person.supervisorAffiliations is not empty %}
         <div class="card mb-3">
-            <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#supervisor_table"
-                 aria-expanded="false" role="button">Supervisors
+            <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#supervisor_table" aria-expanded="false" role="button">
+                Supervisors
             </div>
             <div class="collapse" id="supervisor_table">
                 <table class="table"> {# todo maybe these tables should be grids so they line up with each other #}
@@ -256,8 +273,8 @@
     {% endif %}
     {% if person.superviseeAffiliations is not empty %}
         <div class="card mb-3">
-            <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#supervisee_table"
-                 aria-expanded="false" role="button">Supervisees
+            <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#supervisee_table" aria-expanded="false" role="button">
+                Supervisees
             </div> {# todo this is not a great label #}
             <div class="collapse" id="supervisee_table">
                 <table class="table">

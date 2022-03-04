@@ -81,6 +81,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
     private $keyAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: ThemeAffiliation::class, orphanRemoval: true)]
+    #[ORM\OrderBy(['startedAt' => 'DESC'])]
     private $themeAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: ThemeLeaderAffiliation::class, orphanRemoval: true)]

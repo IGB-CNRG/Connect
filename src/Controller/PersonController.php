@@ -80,7 +80,7 @@ class PersonController extends AbstractController
         ]);
     }
 
-    #[Route('/person/{id}/new-theme-affiliation', name: 'person_new_theme_affiliation')]
+    #[Route('/person/{id}/add-theme-affiliation', name: 'person_new_theme_affiliation')]
     public function newThemeAffiliation(
         Person $person,
         Request $request,
@@ -89,13 +89,20 @@ class PersonController extends AbstractController
     ): Response {
         $themeAffiliation = (new ThemeAffiliation())
             ->setPerson($person);
-        $form = $this->createForm(ThemeAffiliationType::class, $themeAffiliation);
+        $form = $this->createForm(ThemeAffiliationType::class, $themeAffiliation, ['person'=>$person]);
         $form->add('Add', SubmitType::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($themeAffiliation);
             $logger->logNewThemeAffiliation($themeAffiliation);
+            foreach ($form->get('endPreviousAffiliations')->getData() as $endingAffiliation){
+                /** @var ThemeAffiliation $endingAffiliation */
+                $endingAffiliation->setEndedAt($themeAffiliation->getStartedAt());
+                $em->persist($endingAffiliation);
+                $logger->logEndThemeAffiliation($endingAffiliation);
+            }
+
             $em->flush();
 
             return $this->redirectToRoute('person_view', ['id' => $person->getId()]);
@@ -120,14 +127,7 @@ class PersonController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($themeAffiliation);
-            $logger->logPersonActivity(
-                $themeAffiliation->getPerson(),
-                sprintf(
-                    "Ended theme affiliation with %s on %s",
-                    $themeAffiliation->getTheme()->getShortName(),
-                    $themeAffiliation->getEndedAt()->format('n/j/Y')
-                )
-            );
+            $logger->logEndThemeAffiliation($themeAffiliation);
             $em->flush();
 
             return $this->redirectToRoute('person_view', ['id' => $themeAffiliation->getPerson()->getId()]);

@@ -36,9 +36,13 @@ $info: $teal;
   border: 1px solid $gray-300;
   border-left-width: 0.25rem;
   border-radius: $border-radius;
+
+  ul {
+    margin: 0;
+  }
 }
 
-$callout-background-lighten: 40%;
+$callout-background-lighten: 50%;
 @each $color, $value in $theme-colors {
   .callout-#{$color} {
     border-left-color: $value;

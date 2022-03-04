@@ -1,13 +1,19 @@
 {% extends 'base.html.twig' %}
 
 {% block content %}
-    <div class="callout callout-info">Please indicate the theme with which {{ person.name }} is affiliated, their role
-        within that theme, and the date that role began. If no end date is known, leave blank.
+    <div class="callout callout-info">
+        <ul>
+            <li>Please indicate the theme with which {{ person.name }} is affiliated, their role
+                within that theme, and the date that role begins.</li>
+            <li>If no end date is known, leave blank. </li>
+            <li>If any previous theme affiliations should end when this one begins, select them below.</li>
+        </ul>
     </div>
     {{ form_start(form) }}
     <div class="row">
         <div class="col-lg">{{ form_row(form.theme) }}</div>
         <div class="col-lg">{{ form_row(form.memberCategory) }}</div>
+        <div class="col-lg">{{ form_row(form.title) }}</div>
     </div>
     <div class="row">
         <div class="col-lg">{{ form_row(form.startedAt) }}</div>

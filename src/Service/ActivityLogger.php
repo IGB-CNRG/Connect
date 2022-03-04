@@ -46,6 +46,18 @@ class ActivityLogger implements ServiceSubscriberInterface
         );
     }
 
+    public function logEndThemeAffiliation(ThemeAffiliation $themeAffiliation)
+    {
+        $this->logPersonActivity(
+            $themeAffiliation->getPerson(),
+            sprintf(
+                "Ended theme affiliation with %s on %s",
+                $themeAffiliation->getTheme()->getShortName(),
+                $themeAffiliation->getEndedAt()->format('n/j/Y')
+            )
+        );
+    }
+
     public function logPersonActivity(Person $person, string $message)
     {
         $owner = $this->security()->getUser();
@@ -54,7 +66,6 @@ class ActivityLogger implements ServiceSubscriberInterface
             ->setUser($owner)
             ->setText($message);
         $this->entityManager()->persist($log);
-        $this->entityManager()->flush();
     }
 
     public function logThemeActivity(Theme $theme, string $message)
@@ -65,7 +76,6 @@ class ActivityLogger implements ServiceSubscriberInterface
             ->setUser($owner)
             ->setText($message);
         $this->entityManager()->persist($log);
-        $this->entityManager()->flush();
     }
 
     private function getEntityEditMessage($entity): string

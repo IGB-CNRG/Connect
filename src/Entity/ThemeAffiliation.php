@@ -27,6 +27,18 @@ class ThemeAffiliation
     #[ORM\JoinColumn(nullable: false)]
     private $memberCategory;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $title;
+
+    public function __toString()
+    {
+        if($this->getTitle()){
+            return sprintf('%s - %s (%s)', $this->getTheme()->getShortName(), $this->getTitle(), $this->getMemberCategory()->getName());
+        } else {
+            return sprintf('%s (%s)', $this->getTheme()->getShortName(), $this->getMemberCategory()->getName());
+        }
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -64,6 +76,18 @@ class ThemeAffiliation
     public function setMemberCategory(?MemberCategory $memberCategory): self
     {
         $this->memberCategory = $memberCategory;
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(?string $title): self
+    {
+        $this->title = $title;
 
         return $this;
     }
