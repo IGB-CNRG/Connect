@@ -20,6 +20,14 @@ class ActivityLogger implements ServiceSubscriberInterface
         'isIgbTrainingComplete' => 'IGB training',
     ];
 
+    const PERSON_FIELD_IGNORE = [
+        'imageName',
+        'mimeType',
+        'imageSize',
+        'updatedAt',
+        'createdAt',
+    ];
+
     public function logNewThemeAffiliation(ThemeAffiliation $themeAffiliation)
     {
         $endString = '';
@@ -85,13 +93,15 @@ class ActivityLogger implements ServiceSubscriberInterface
         $changeset = $uow->getEntityChangeSet($entity);
         $changes = [];
         foreach ($changeset as $field => $change) {
-            if (array_key_exists($field, self::PERSON_FIELD)) {
-                $fieldName = self::PERSON_FIELD[$field];
-            } else {
-                // convert camelCase to lower case by default
-                $fieldName = strtolower(join(" ", preg_split('/(?=[A-Z])/', $field)));
+            if(!in_array($field, self::PERSON_FIELD_IGNORE)) {
+                if (array_key_exists($field, self::PERSON_FIELD)) {
+                    $fieldName = self::PERSON_FIELD[$field];
+                } else {
+                    // convert camelCase to lower case by default
+                    $fieldName = strtolower(join(" ", preg_split('/(?=[A-Z])/', $field)));
+                }
+                $changes[] = sprintf("%s from '%s' to '%s'", $fieldName, $change[0], $change[1]);
             }
-            $changes[] = sprintf("%s from '%s' to '%s'", $fieldName, $change[0], $change[1]);
         }
         return sprintf('Changed %s', join(', ', $changes));
     }

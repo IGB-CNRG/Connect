@@ -16,6 +16,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Security;
+use Vich\UploaderBundle\Form\Type\VichFileType;
 
 class PersonType extends AbstractType
 {
@@ -83,6 +84,12 @@ class PersonType extends AbstractType
                 'required' => false,
                 'class' => Building::class,
                 'help' => 'Non-IGB campus address building',
+            ])
+            ->add('imageFile', VichFileType::class, [
+                'required' => false,
+                'download_uri' => false,
+                'allow_delete' => true,
+                'label' => 'Portrait',
             ])
         ;
         // todo hide fields based on user roles

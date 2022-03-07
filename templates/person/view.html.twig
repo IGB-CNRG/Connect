@@ -8,6 +8,9 @@
         </a>
     </div>
     <h1>
+        {% if person.imageName is not null %}
+        <img class="portrait-lg me-2" src="{{ asset(vich_uploader_asset(person, 'imageFile')) }}">
+        {% endif %}
         {{ person.name }}
     </h1>
     <div class="row">

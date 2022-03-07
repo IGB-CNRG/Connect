@@ -6,13 +6,20 @@ use App\Repository\PersonRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Ignore;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: PersonRepository::class)]
-class Person implements UserInterface, PasswordAuthenticatedUserInterface
+#[Vich\Uploadable]
+class Person implements UserInterface, PasswordAuthenticatedUserInterface, \Serializable
 // TODO Is it a bug that we have to implement PasswordAuthenticatedUserInterface even though this entity doesn't handle authentication?
 {
+    use TimestampableEntity;
+
     const USER_ROLES = [
         'CONNECT Admin' => 'ROLE_ADMIN',
         'Theme Admin' => 'ROLE_THEME_ADMIN',
@@ -124,6 +131,19 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: Document::class, orphanRemoval: true)]
     private $documents;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $imageName;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $mimeType;
+
+    #[Vich\UploadableField(mapping: 'person_image', fileNameProperty: 'imageName', size: 'imageSize', mimeType: 'mimeType')]
+    #[Ignore]
+    private $imageFile;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $imageSize;
+
     public function __construct()
     {
         $this->roomAffiliations = new ArrayCollection();
@@ -154,6 +174,22 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
         } else {
             return $this->getFirstName() . ' ' . $this->getLastName(); // TODO this should be a little smarter
         }
+    }
+
+    public function setImageFile(?File $imageFile = null): void
+    {
+        $this->imageFile = $imageFile;
+
+        if (null !== $imageFile) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
     }
 
     /* Getters/Setters */
@@ -768,5 +804,56 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    public function getImageName(): ?string
+    {
+        return $this->imageName;
+    }
+
+    public function setImageName(?string $imageName): self
+    {
+        $this->imageName = $imageName;
+
+        return $this;
+    }
+
+    public function getMimeType(): ?string
+    {
+        return $this->mimeType;
+    }
+
+    public function setMimeType(?string $mimeType): self
+    {
+        $this->mimeType = $mimeType;
+
+        return $this;
+    }
+
+    public function getImageSize(): ?int
+    {
+        return $this->imageSize;
+    }
+
+    public function setImageSize(?int $imageSize): self
+    {
+        $this->imageSize = $imageSize;
+
+        return $this;
+    }
+
+    public function serialize()
+    {
+        return serialize([
+            'id' => $this->id,
+            'username' => $this->username,
+        ]);
+    }
+
+    public function unserialize(string $serialized)
+    {
+        $data = unserialize($serialized);
+        $this->id = $data['id'];
+        $this->username = $data['username'];
     }
 }
