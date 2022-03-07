@@ -2,7 +2,8 @@
 
 {% block content %}
     <div class="float-end">
-        <a class="btn btn-primary" href="{{ path('person_edit', {'id': person.id}) }}"><span class="fa fa-pencil"></span>
+        <a class="btn btn-primary" href="{{ path('person_edit', {'id': person.id}) }}"><span
+                    class="fa fa-pencil"></span>
             Edit
         </a>
     </div>
@@ -59,16 +60,16 @@
                     {% endfor %}
                     {# todo only visible for key manager, super admins #}
                     {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_KEY_MANAGER') %}
-                    <tr>
-                        <th>Keys</th>
-                        <td>
-                            {% for keyAffiliation in person.keyAffiliations|current %}
-                                {{ keyAffiliation.cylinderKey.name }}{% if not loop.last %}, {% endif %}
-                            {% else %}
-                                None
-                            {% endfor %}
-                        </td>
-                    </tr>
+                        <tr>
+                            <th>Keys</th>
+                            <td>
+                                {% for keyAffiliation in person.keyAffiliations|current %}
+                                    {{ keyAffiliation.cylinderKey.name }}{% if not loop.last %}, {% endif %}
+                                {% else %}
+                                    None
+                                {% endfor %}
+                            </td>
+                        </tr>
                     {% endif %}
                     {% if person.supervisorAffiliations|current is not empty %}
                         <tr>
@@ -138,8 +139,32 @@
                 <div class="card-header">Documents</div>
                 {# todo add some documents #}
                 <div class="card-body">
-                    TBD
+                    <a href="{{ path('person_upload_document', {'id': person.id}) }}" class="btn btn-primary">
+                        <span class="fa fa-upload"></span> Upload
+                    </a>
                 </div>
+                <table class="table">
+                    {% for document in person.documents %}
+                        <tr>
+                            <td><a href="{{ asset(vich_uploader_asset(document, 'file')) }}">{{ document }}</a></td>
+                            <td class="shrink text-end text-muted">
+                                Uploaded by {{ document.uploadedBy }}<br/>
+                                {{ document.createdAt|date('n/j/Y') }}<br/>
+                                {% if document.type != constant('App\\Entity\\DocumentCategory::Other') %}
+                                    {{ document.type.choiceLabel }}
+                                {% endif %}
+                            </td>
+                            <td class="shrink">
+                                <a class="text-decoration-none" href="{{ path('person_edit_document', {'id': document.id}) }}">
+                                    <span class="fa fa-pencil"></span>
+                                </a>
+                                <a class="text-decoration-none" href="{{ path('person_delete_document', {'id': document.id}) }}">
+                                    <span class="fa fa-trash"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
             </div>
         </div>
         <div class="col-lg">
@@ -157,7 +182,8 @@
 
     <h2>Historical Data</h2>
     <div class="card mb-3">
-        <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#log_table" aria-expanded="false" role="button">
+        <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#log_table"
+             aria-expanded="false" role="button">
             Log
         </div>
         <div class="collapse" id="log_table">
@@ -181,12 +207,14 @@
 
     {# Historical Info #}
     <div class="card mb-3">
-        <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#theme_table" aria-expanded="false" role="button">
+        <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#theme_table"
+             aria-expanded="false" role="button">
             Themes
         </div>
         <div class="collapse" id="theme_table">
             <div class="card-body">
-                <a href="{{ path('person_new_theme_affiliation', {'id': person.id}) }}" class="btn btn-primary"><span class="fa fa-plus"></span> Add</a>
+                <a href="{{ path('person_new_theme_affiliation', {'id': person.id}) }}" class="btn btn-primary"><span
+                            class="fa fa-plus"></span> Add</a>
             </div>
             <table class="table">
                 <tr>
@@ -217,7 +245,8 @@
     </div>
     {% if person.keyAffiliations is not empty %} {# todo restrict to key manager #}
         <div class="card mb-3">
-            <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#key_table" aria-expanded="false" role="button">
+            <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#key_table"
+                 aria-expanded="false" role="button">
                 Keys
             </div>
             <div class="collapse" id="key_table">
@@ -250,7 +279,8 @@
     {% endif %}
     {% if person.supervisorAffiliations is not empty %}
         <div class="card mb-3">
-            <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#supervisor_table" aria-expanded="false" role="button">
+            <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#supervisor_table"
+                 aria-expanded="false" role="button">
                 Supervisors
             </div>
             <div class="collapse" id="supervisor_table">
@@ -273,7 +303,8 @@
     {% endif %}
     {% if person.superviseeAffiliations is not empty %}
         <div class="card mb-3">
-            <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#supervisee_table" aria-expanded="false" role="button">
+            <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#supervisee_table"
+                 aria-expanded="false" role="button">
                 Supervisees
             </div> {# todo this is not a great label #}
             <div class="collapse" id="supervisee_table">

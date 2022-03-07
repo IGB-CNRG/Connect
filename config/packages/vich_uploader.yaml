@@ -1,0 +1,13 @@
+vich_uploader:
+    db_driver: orm
+    metadata:
+        type: attribute
+    mappings:
+        person_document:
+            uri_prefix: uploads/documents
+            upload_destination: '%kernel.project_dir%/public/uploads/documents'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            directory_namer: # place uploads in a directory based on the person's id number
+                service: vich_uploader.namer_directory_property
+                options:
+                    property: person.id

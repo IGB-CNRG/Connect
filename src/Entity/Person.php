@@ -121,6 +121,9 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $preferredFirstName;
 
+    #[ORM\OneToMany(mappedBy: 'person', targetEntity: Document::class, orphanRemoval: true)]
+    private $documents;
+
     public function __construct()
     {
         $this->roomAffiliations = new ArrayCollection();
@@ -134,6 +137,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
         $this->ownedLogs = new ArrayCollection();
         $this->logs = new ArrayCollection();
         $this->workflowProgress = new ArrayCollection();
+        $this->documents = new ArrayCollection();
     }
 
     public function __toString()
@@ -732,6 +736,36 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPreferredFirstName(?string $preferredFirstName): self
     {
         $this->preferredFirstName = $preferredFirstName;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Document>|Document[]
+     */
+    public function getDocuments(): Collection
+    {
+        return $this->documents;
+    }
+
+    public function addDocument(Document $document): self
+    {
+        if (!$this->documents->contains($document)) {
+            $this->documents[] = $document;
+            $document->setPerson($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDocument(Document $document): self
+    {
+        if ($this->documents->removeElement($document)) {
+            // set the owning side to null (unless already changed)
+            if ($document->getPerson() === $this) {
+                $document->setPerson(null);
+            }
+        }
 
         return $this;
     }
