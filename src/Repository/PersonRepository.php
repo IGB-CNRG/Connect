@@ -21,6 +21,7 @@ class PersonRepository extends ServiceEntityRepository
 
     public function findAllForIndex()
     {
+        // todo currently this shows everyone past and present
         return $this->createQueryBuilder('p')
             ->leftJoin('p.themeAffiliations', 'ta')
             ->leftJoin('ta.theme', 't')

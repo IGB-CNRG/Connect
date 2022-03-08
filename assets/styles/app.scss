@@ -40,6 +40,12 @@ $info: $teal;
   ul {
     margin: 0;
   }
+
+  .table.callout-table {
+    td {
+      border: 0;
+    }
+  }
 }
 
 $callout-background-lighten: 50%;

@@ -198,6 +198,10 @@
                                 <a class="text-decoration-none" href="{{ path('person_edit_note', {'id': note.id}) }}">
                                     <span class="fa fa-pencil"></span>
                                 </a>
+                                <a class="text-decoration-none"
+                                   href="{{ path('person_delete_note', {'id': note.id}) }}">
+                                    <span class="fa fa-trash"></span>
+                                </a>
                             </td>
                         </tr>
                     {% endfor %}

@@ -218,7 +218,7 @@ class PersonController extends AbstractController
         ]);
     }
 
-    #[Route('/person/{id}/add-note', name:'person_add_note')]
+    #[Route('/person/{id}/add-note', name: 'person_add_note')]
     public function addNote(Person $person, Request $request, EntityManagerInterface $em, ActivityLogger $logger)
     {
         /** @noinspection PhpParamsInspection */
@@ -229,12 +229,12 @@ class PersonController extends AbstractController
         $form->add('save', SubmitType::class);
 
         $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($note);
             $logger->logPersonActivity($person, 'Added note'); // todo a little more detail?
             $em->flush();
 
-            return $this->redirectToRoute('person_view', ['id'=>$person->getId()]);
+            return $this->redirectToRoute('person_view', ['id' => $person->getId()]);
         }
 
         return $this->render('person/note/edit.html.twig', [
@@ -243,7 +243,7 @@ class PersonController extends AbstractController
         ]);
     }
 
-    #[Route('/note/{id}/edit', name:'person_edit_note')]
+    #[Route('/note/{id}/edit', name: 'person_edit_note')]
     public function editNote(Note $note, Request $request, EntityManagerInterface $em, ActivityLogger $logger)
     {
         $person = $note->getPerson();
@@ -251,18 +251,39 @@ class PersonController extends AbstractController
         $form->add('save', SubmitType::class);
 
         $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($note);
             $logger->logPersonActivity($person, 'Added note'); // todo a little more detail?
             $em->flush();
 
-            return $this->redirectToRoute('person_view', ['id'=>$person->getId()]);
+            return $this->redirectToRoute('person_view', ['id' => $person->getId()]);
         }
 
         return $this->render('person/note/edit.html.twig', [
             'person' => $person,
             'note' => $note,
             'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/note/{id}/delete', name: 'person_delete_note')]
+    public function deleteNote(Note $note, Request $request, EntityManagerInterface $em, ActivityLogger $logger)
+    {
+        $person = $note->getPerson();
+        if ($request->isMethod(Request::METHOD_POST)) {
+            $em->remove($note);
+            $logger->logPersonActivity(
+                $person,
+                sprintf('Removed note from %s', $note->getCreatedAt()->format('n/j/Y'))
+            );
+            $em->flush();
+
+            return $this->redirectToRoute('person_view', ['id' => $person->getId()]);
+        }
+
+        return $this->render('person/note/delete.html.twig', [
+            'person' => $person,
+            'note' => $note,
         ]);
     }
 }
