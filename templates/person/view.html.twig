@@ -9,7 +9,7 @@
     </div>
     <h1>
         {% if person.imageName is not null %}
-        <img class="portrait-lg me-2" src="{{ asset(vich_uploader_asset(person, 'imageFile')) }}">
+            <img class="portrait-lg me-2" src="{{ asset(vich_uploader_asset(person, 'imageFile')) }}">
         {% endif %}
         {{ person.name }}
     </h1>
@@ -152,16 +152,18 @@
                             <td><a href="{{ asset(vich_uploader_asset(document, 'file')) }}">{{ document }}</a></td>
                             <td class="shrink text-end text-muted">
                                 Uploaded by {{ document.uploadedBy }}<br/>
-                                {{ document.createdAt|date('n/j/Y') }}<br/>
-                                {% if document.type != constant('App\\Entity\\DocumentCategory::Other') %}
-                                    {{ document.type.choiceLabel }}
+                                {{ document.createdAt|date('n/j/Y') }}
+                                {% if document.type != constant('App\\Enum\\DocumentCategory::Other') %}
+                                    <br/>{{ document.type.choiceLabel }}
                                 {% endif %}
                             </td>
                             <td class="shrink">
-                                <a class="text-decoration-none" href="{{ path('person_edit_document', {'id': document.id}) }}">
+                                <a class="text-decoration-none"
+                                   href="{{ path('person_edit_document', {'id': document.id}) }}">
                                     <span class="fa fa-pencil"></span>
                                 </a>
-                                <a class="text-decoration-none" href="{{ path('person_delete_document', {'id': document.id}) }}">
+                                <a class="text-decoration-none"
+                                   href="{{ path('person_delete_document', {'id': document.id}) }}">
                                     <span class="fa fa-trash"></span>
                                 </a>
                             </td>
@@ -174,10 +176,32 @@
             <div class="card mb-3">
                 <div class="card-header">Notes</div>
                 <div class="card-body">
-                    {# todo notes need to be shown/hidden based on their type and some voter #}
-                    {# todo display notes #}
-                    TBD
+                    <a href="{{ path('person_add_note', {'id': person.id}) }}" class="btn btn-primary">
+                        <span class="fa fa-plus"></span> Add Note
+                    </a>
                 </div>
+                {# todo notes need to be shown/hidden based on their type and some voter #}
+                <table class="table border-top border-1">
+                    {% for note in person.notes %}
+                        <tr>
+                            <td>
+                                {{ note.text|nl2br }}
+                            </td>
+                            <td class="shrink text-end text-muted">
+                                {{ note.createdBy }}<br/>
+                                {{ note.createdAt|date('n/j/Y') }}
+                                {% if note.type != constant('App\\Enum\\NoteCategory::General') %}
+                                    <br/>{{ note.type }}
+                                {% endif %}
+                            </td>
+                            <td class="shrink">
+                                <a class="text-decoration-none" href="{{ path('person_edit_note', {'id': note.id}) }}">
+                                    <span class="fa fa-pencil"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
             </div>
         </div>
     </div>

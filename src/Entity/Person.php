@@ -164,6 +164,9 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, \Seri
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $imageSize;
 
+    #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: Note::class)]
+    private $createdNotes;
+
     #[Pure] public function __construct()
     {
         $this->roomAffiliations = new ArrayCollection();
@@ -178,6 +181,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, \Seri
         $this->logs = new ArrayCollection();
         $this->workflowProgress = new ArrayCollection();
         $this->documents = new ArrayCollection();
+        $this->createdNotes = new ArrayCollection();
     }
 
     #[Pure] public function __toString()
@@ -875,5 +879,35 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, \Seri
         $data = unserialize($serialized);
         $this->id = $data['id'];
         $this->username = $data['username'];
+    }
+
+    /**
+     * @return Collection<int, Note>
+     */
+    public function getCreatedNotes(): Collection
+    {
+        return $this->createdNotes;
+    }
+
+    public function addCreatedNote(Note $createdNote): self
+    {
+        if (!$this->createdNotes->contains($createdNote)) {
+            $this->createdNotes[] = $createdNote;
+            $createdNote->setCreatedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCreatedNote(Note $createdNote): self
+    {
+        if ($this->createdNotes->removeElement($createdNote)) {
+            // set the owning side to null (unless already changed)
+            if ($createdNote->getCreatedBy() === $this) {
+                $createdNote->setCreatedBy(null);
+            }
+        }
+
+        return $this;
     }
 }

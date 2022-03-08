@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    {{ form(form) }}
+{% endblock %}
+
+{% block title %}
+    {{ parent() }} | {% if note is defined %}Edit Note{% else %}Add Note{% endif %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item" aria-current="page">
+        <a href="{{ path('person') }}">IGB Members</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        <a href="{{ path('person_view', {'id': person.id}) }}">{{ person.name }}</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        {% if note is defined %}Edit Note{% else %}Add Note{% endif %}
+    </li>
+{% endblock %}
+

@@ -3,11 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Document;
+use App\Entity\Note;
 use App\Entity\Person;
 use App\Entity\ThemeAffiliation;
 use App\Form\DocumentMetadataType;
 use App\Form\DocumentType;
 use App\Form\EndThemeAffiliationType;
+use App\Form\NoteType;
 use App\Form\PersonType;
 use App\Form\ThemeAffiliationType;
 use App\Repository\PersonRepository;
@@ -111,7 +113,7 @@ class PersonController extends AbstractController
             return $this->redirectToRoute('person_view', ['id' => $person->getId()]);
         }
 
-        return $this->render('person/addThemeAffiliation.html.twig', [
+        return $this->render('person/themeAffiliation/add.html.twig', [
             'person' => $person,
             'form' => $form->createView(),
         ]);
@@ -136,7 +138,7 @@ class PersonController extends AbstractController
             return $this->redirectToRoute('person_view', ['id' => $themeAffiliation->getPerson()->getId()]);
         }
 
-        return $this->render('person/endThemeAffiliation.html.twig', [
+        return $this->render('person/themeAffiliation/end.html.twig', [
             'person' => $themeAffiliation->getPerson(),
             'themeAffiliation' => $themeAffiliation,
             'form' => $form->createView(),
@@ -162,7 +164,7 @@ class PersonController extends AbstractController
             return $this->redirectToRoute('person_view', ['id' => $person->getId()]);
         }
 
-        return $this->render('person/uploadDocument.html.twig', [
+        return $this->render('person/document/add.html.twig', [
             'person' => $person,
             'form' => $form->createView(),
         ]);
@@ -187,7 +189,7 @@ class PersonController extends AbstractController
             return $this->redirectToRoute('person_view', ['id' => $document->getPerson()->getId()]);
         }
 
-        return $this->render('person/uploadDocument.html.twig', [
+        return $this->render('person/document/add.html.twig', [
             'person' => $document->getPerson(),
             'form' => $form->createView(),
         ]);
@@ -210,9 +212,57 @@ class PersonController extends AbstractController
             return $this->redirectToRoute('person_view', ['id' => $person->getId()]);
         }
 
-        return $this->render('person/deleteDocument.html.twig', [
+        return $this->render('person/document/delete.html.twig', [
             'person' => $person,
             'document' => $document,
+        ]);
+    }
+
+    #[Route('/person/{id}/add-note', name:'person_add_note')]
+    public function addNote(Person $person, Request $request, EntityManagerInterface $em, ActivityLogger $logger)
+    {
+        /** @noinspection PhpParamsInspection */
+        $note = (new Note())
+            ->setPerson($person)
+            ->setCreatedBy($this->getUser());
+        $form = $this->createForm(NoteType::class, $note);
+        $form->add('save', SubmitType::class);
+
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+            $em->persist($note);
+            $logger->logPersonActivity($person, 'Added note'); // todo a little more detail?
+            $em->flush();
+
+            return $this->redirectToRoute('person_view', ['id'=>$person->getId()]);
+        }
+
+        return $this->render('person/note/edit.html.twig', [
+            'person' => $person,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/note/{id}/edit', name:'person_edit_note')]
+    public function editNote(Note $note, Request $request, EntityManagerInterface $em, ActivityLogger $logger)
+    {
+        $person = $note->getPerson();
+        $form = $this->createForm(NoteType::class, $note);
+        $form->add('save', SubmitType::class);
+
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+            $em->persist($note);
+            $logger->logPersonActivity($person, 'Added note'); // todo a little more detail?
+            $em->flush();
+
+            return $this->redirectToRoute('person_view', ['id'=>$person->getId()]);
+        }
+
+        return $this->render('person/note/edit.html.twig', [
+            'person' => $person,
+            'note' => $note,
+            'form' => $form->createView(),
         ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\NoteCategory;
 use App\Repository\NoteRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -22,8 +23,12 @@ class Note
     #[ORM\Column(type: 'text')]
     private $text;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private $type; // TODO create an enum for note types
+    #[ORM\Column(type: 'string', length: 255, enumType: NoteCategory::class)]
+    private $type = NoteCategory::General;
+
+    #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'createdNotes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $createdBy; // TODO create an enum for note types
 
     public function getId(): ?int
     {
@@ -54,14 +59,26 @@ class Note
         return $this;
     }
 
-    public function getType(): ?string
+    public function getType(): ?NoteCategory
     {
         return $this->type;
     }
 
-    public function setType(string $type): self
+    public function setType(NoteCategory $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getCreatedBy(): ?Person
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?Person $createdBy): self
+    {
+        $this->createdBy = $createdBy;
 
         return $this;
     }
