@@ -32,7 +32,7 @@
         <a href="{{ path('person') }}">IGB Members</a>
     </li>
     <li class="breadcrumb-item active" aria-current="page">
-        <a href="{{ path('person_view', {'id': person.id}) }}">{{ person.name }}</a>
+        <a href="{{ path('person_view', {'slug': person.slug}) }}">{{ person.name }}</a>
     </li>
     <li class="breadcrumb-item active" aria-current="page">
         Add Theme Affiliation

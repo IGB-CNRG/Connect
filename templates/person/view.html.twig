@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="float-end">
-        <a class="btn btn-primary" href="{{ path('person_edit', {'id': person.id}) }}"><span
+        <a class="btn btn-primary" href="{{ path('person_edit', {'slug': person.slug}) }}"><span
                     class="fa fa-pencil"></span>
             Edit
         </a>
@@ -80,7 +80,7 @@
                             <td>
                                 {% for supervisorAffiliation in person.supervisorAffiliations|current %}
                                     <a
-                                    href="{{ path('person_view', {'id': supervisorAffiliation.supervisor.id}) }}">{{ supervisorAffiliation.supervisor }}</a>{% if not loop.last %}, {% endif %}
+                                    href="{{ path('person_view', {'slug': supervisorAffiliation.supervisor.slug}) }}">{{ supervisorAffiliation.supervisor }}</a>{% if not loop.last %}, {% endif %}
                                 {% endfor %}
                             </td>
                         </tr>
@@ -91,7 +91,7 @@
                             <td>
                                 {% for superviseeAffiliation in person.superviseeAffiliations|current %}
                                     <a
-                                    href="{{ path('person_view', {'id': superviseeAffiliation.supervisee.id}) }}">{{ superviseeAffiliation.supervisee }}</a>{% if not loop.last %}, {% endif %}
+                                    href="{{ path('person_view', {'slug': superviseeAffiliation.supervisee.slug}) }}">{{ superviseeAffiliation.supervisee }}</a>{% if not loop.last %}, {% endif %}
                                 {% endfor %}
                             </td>
                         </tr>
@@ -142,7 +142,7 @@
                 <div class="card-header">Documents</div>
                 {# todo add some documents #}
                 <div class="card-body">
-                    <a href="{{ path('person_upload_document', {'id': person.id}) }}" class="btn btn-primary">
+                    <a href="{{ path('person_upload_document', {'slug': person.slug}) }}" class="btn btn-primary">
                         <span class="fa fa-upload"></span> Upload
                     </a>
                 </div>
@@ -176,7 +176,7 @@
             <div class="card mb-3">
                 <div class="card-header">Notes</div>
                 <div class="card-body">
-                    <a href="{{ path('person_add_note', {'id': person.id}) }}" class="btn btn-primary">
+                    <a href="{{ path('person_add_note', {'slug': person.slug}) }}" class="btn btn-primary">
                         <span class="fa fa-plus"></span> Add Note
                     </a>
                 </div>
@@ -244,7 +244,7 @@
         </div>
         <div class="collapse" id="theme_table">
             <div class="card-body">
-                <a href="{{ path('person_new_theme_affiliation', {'id': person.id}) }}" class="btn btn-primary"><span
+                <a href="{{ path('person_new_theme_affiliation', {'slug': person.slug}) }}" class="btn btn-primary"><span
                             class="fa fa-plus"></span> Add</a>
             </div>
             <table class="table">

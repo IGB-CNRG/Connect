@@ -32,7 +32,7 @@ class PersonController extends AbstractController
         ]);
     }
 
-    #[Route('/person/{id}', name: 'person_view')]
+    #[Route('/person/{slug}', name: 'person_view')]
     public function view(Person $person): Response
     {
         return $this->render('person/view.html.twig', [
@@ -40,7 +40,7 @@ class PersonController extends AbstractController
         ]);
     }
 
-    #[Route('/person/{id}/edit', name: 'person_edit')]
+    #[Route('/person/{slug}/edit', name: 'person_edit')]
     public function edit(
         Person $person,
         Request $request,
@@ -56,7 +56,7 @@ class PersonController extends AbstractController
             $logger->logPersonEdit($person);
             $em->flush();
 
-            return $this->redirectToRoute('person_view', ['id' => $person->getId()]);
+            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
         return $this->render('person/edit.html.twig', [
             'person' => $person,
@@ -77,7 +77,7 @@ class PersonController extends AbstractController
             $logger->logPersonActivity($person, 'Created record');
             $em->flush();
 
-            return $this->redirectToRoute('person_view', ['id' => $person->getId()]);
+            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
         return $this->render('person/new.html.twig', [
             'person' => $person,
@@ -85,7 +85,7 @@ class PersonController extends AbstractController
         ]);
     }
 
-    #[Route('/person/{id}/add-theme-affiliation', name: 'person_new_theme_affiliation')]
+    #[Route('/person/{slug}/add-theme-affiliation', name: 'person_new_theme_affiliation')]
     public function newThemeAffiliation(
         Person $person,
         Request $request,
@@ -110,7 +110,7 @@ class PersonController extends AbstractController
 
             $em->flush();
 
-            return $this->redirectToRoute('person_view', ['id' => $person->getId()]);
+            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
 
         return $this->render('person/themeAffiliation/add.html.twig', [
@@ -135,7 +135,7 @@ class PersonController extends AbstractController
             $logger->logEndThemeAffiliation($themeAffiliation);
             $em->flush();
 
-            return $this->redirectToRoute('person_view', ['id' => $themeAffiliation->getPerson()->getId()]);
+            return $this->redirectToRoute('person_view', ['slug' => $themeAffiliation->getPerson()->getSlug()]);
         }
 
         return $this->render('person/themeAffiliation/end.html.twig', [
@@ -146,7 +146,7 @@ class PersonController extends AbstractController
     }
 
     /** @noinspection PhpParamsInspection */
-    #[Route('/person/{id}/upload-document', name: 'person_upload_document')]
+    #[Route('/person/{slug}/upload-document', name: 'person_upload_document')]
     public function uploadDocument(Person $person, Request $request, EntityManagerInterface $em, ActivityLogger $logger)
     {
         $document = (new Document())
@@ -161,7 +161,7 @@ class PersonController extends AbstractController
             $logger->logPersonActivity($person, sprintf("Uploaded document '%s'", $document));
             $em->flush();
 
-            return $this->redirectToRoute('person_view', ['id' => $person->getId()]);
+            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
 
         return $this->render('person/document/add.html.twig', [
@@ -186,7 +186,7 @@ class PersonController extends AbstractController
             $logger->logPersonActivity($document->getPerson(), sprintf("Edited document '%s'", $document));
             $em->flush();
 
-            return $this->redirectToRoute('person_view', ['id' => $document->getPerson()->getId()]);
+            return $this->redirectToRoute('person_view', ['slug' => $document->getPerson()->getSlug()]);
         }
 
         return $this->render('person/document/add.html.twig', [
@@ -209,7 +209,7 @@ class PersonController extends AbstractController
             $logger->logPersonActivity($person, sprintf("Removed document '%s'", $document));
             $em->flush();
 
-            return $this->redirectToRoute('person_view', ['id' => $person->getId()]);
+            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
 
         return $this->render('person/document/delete.html.twig', [
@@ -218,7 +218,7 @@ class PersonController extends AbstractController
         ]);
     }
 
-    #[Route('/person/{id}/add-note', name: 'person_add_note')]
+    #[Route('/person/{slug}/add-note', name: 'person_add_note')]
     public function addNote(Person $person, Request $request, EntityManagerInterface $em, ActivityLogger $logger)
     {
         /** @noinspection PhpParamsInspection */
@@ -234,7 +234,7 @@ class PersonController extends AbstractController
             $logger->logPersonActivity($person, 'Added note'); // todo a little more detail?
             $em->flush();
 
-            return $this->redirectToRoute('person_view', ['id' => $person->getId()]);
+            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
 
         return $this->render('person/note/edit.html.twig', [
@@ -256,7 +256,7 @@ class PersonController extends AbstractController
             $logger->logPersonActivity($person, 'Added note'); // todo a little more detail?
             $em->flush();
 
-            return $this->redirectToRoute('person_view', ['id' => $person->getId()]);
+            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
 
         return $this->render('person/note/edit.html.twig', [
@@ -278,7 +278,7 @@ class PersonController extends AbstractController
             );
             $em->flush();
 
-            return $this->redirectToRoute('person_view', ['id' => $person->getId()]);
+            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
 
         return $this->render('person/note/delete.html.twig', [

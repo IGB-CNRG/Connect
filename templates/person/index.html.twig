@@ -24,7 +24,7 @@
         {% for person in people %}
             <tr>
                 <td>
-                    <a href="{{ path('person_view', {'id': person.id}) }}">{% if person.lastName is not empty %}{{ person.name }}{% else %}No name{% endif %}</a>
+                    <a href="{{ path('person_view', {'slug': person.slug}) }}">{% if person.lastName is not empty %}{{ person.name }}{% else %}No name{% endif %}</a>
                 </td>
                 <td>{{ person.username }}</td>
                 <td>{{ person.email }}</td>
