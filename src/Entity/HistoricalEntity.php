@@ -39,6 +39,8 @@ trait HistoricalEntity
     //TODO add some common helper functions here
     public function isCurrent(): bool
     {
-        return $this->getEndedAt() === null || $this->getEndedAt()>(new \DateTimeImmutable());
+        $now = new \DateTimeImmutable();
+        return $this->getStartedAt() === null ||
+            ($this->getStartedAt() < $now && ($this->getEndedAt() === null || $this->getEndedAt() > $now));
     }
 }
