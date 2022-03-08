@@ -244,7 +244,7 @@
         </div>
         <div class="collapse" id="theme_table">
             <div class="card-body">
-                <a href="{{ path('person_new_theme_affiliation', {'slug': person.slug}) }}" class="btn btn-primary"><span
+                <a href="{{ path('person_add_theme_affiliation', {'slug': person.slug}) }}" class="btn btn-primary"><span
                             class="fa fa-plus"></span> Add</a>
             </div>
             <table class="table">
@@ -315,6 +315,10 @@
                 Supervisors
             </div>
             <div class="collapse" id="supervisor_table">
+                <div class="card-body">
+                    <a href="{{ path('person_add_supervisor', {'slug': person.slug}) }}" class="btn btn-primary"><span
+                                class="fa fa-plus"></span> Add Supervisor</a>
+                </div>
                 <table class="table"> {# todo maybe these tables should be grids so they line up with each other #}
                     <tr>
                         <th>Supervisor</th>
@@ -339,6 +343,10 @@
                 Supervisees
             </div> {# todo this is not a great label #}
             <div class="collapse" id="supervisee_table">
+                <div class="card-body">
+                    <a href="{{ path('person_add_supervisee', {'slug': person.slug}) }}" class="btn btn-primary"><span
+                                class="fa fa-plus"></span> Add Supervisee</a>
+                </div>
                 <table class="table">
                     <tr>
                         <th>Supervisee</th>

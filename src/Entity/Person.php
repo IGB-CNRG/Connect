@@ -11,7 +11,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Slug;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
-use JetBrains\PhpStorm\Pure;
+use Serializable;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -20,7 +20,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: PersonRepository::class)]
 #[Vich\Uploadable]
-class Person implements UserInterface, PasswordAuthenticatedUserInterface, \Serializable
+class Person implements UserInterface, PasswordAuthenticatedUserInterface, Serializable
 // TODO Is it a bug that we have to implement PasswordAuthenticatedUserInterface even though this entity doesn't handle authentication?
 {
     use TimestampableEntity;
@@ -169,10 +169,10 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, \Seri
     private $createdNotes;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Slug(fields: ['preferredFirstName', 'lastName'], unique_base: 'id')]
+    #[Slug(fields: ['firstName', 'lastName'], unique_base: 'id')]
     private $slug;
 
-    #[Pure] public function __construct()
+    public function __construct()
     {
         $this->roomAffiliations = new ArrayCollection();
         $this->keyAffiliations = new ArrayCollection();
@@ -189,14 +189,14 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, \Seri
         $this->createdNotes = new ArrayCollection();
     }
 
-    #[Pure] public function __toString()
+    public function __toString()
     {
         return $this->getName();
     }
 
     /* Helper Functions */
 
-    #[Pure] public function getName(): string
+    public function getName(): string
     {
         if ($this->getPreferredFirstName()) {
             return $this->getPreferredFirstName() . ' ' . $this->getLastName();
@@ -926,5 +926,19 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, \Seri
         $this->slug = $slug;
 
         return $this;
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            'id' => $this->id,
+            'username' => $this->username,
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->id = $data['id'];
+        $this->username = $data['username'];
     }
 }

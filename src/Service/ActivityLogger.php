@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Attribute\Loggable;
 use App\Entity\Log;
 use App\Entity\Person;
+use App\Entity\SupervisorAffiliation;
 use App\Entity\Theme;
 use App\Entity\ThemeAffiliation;
 use ReflectionException;
@@ -15,6 +16,30 @@ use Symfony\Contracts\Service\ServiceSubscriberTrait;
 class ActivityLogger implements ServiceSubscriberInterface
 {
     use ServiceSubscriberTrait, EntityManagerAware, SecurityAware;
+
+    public function logNewSupervisorAffiliation(SupervisorAffiliation $supervisorAffiliation)
+    {
+        $endString = '';
+        if ($supervisorAffiliation->getEndedAt()) {
+            $endString = sprintf(' and ending %s', $supervisorAffiliation->getEndedAt()->format('n/j/Y'));
+        }
+        $this->logPersonActivity(
+            $supervisorAffiliation->getSupervisor(),
+            sprintf(
+                'Added supervisee %s, beginning %s',
+                $supervisorAffiliation->getSupervisee(),
+                $supervisorAffiliation->getStartedAt()->format('n/j/Y')
+            ) . $endString
+        );
+        $this->logPersonActivity(
+            $supervisorAffiliation->getSupervisee(),
+            sprintf(
+                'Added supervisor %s, beginning %s',
+                $supervisorAffiliation->getSupervisor()->getName(),
+                $supervisorAffiliation->getStartedAt()->format('n/j/Y')
+            )
+        );
+    }
 
     public function logNewThemeAffiliation(ThemeAffiliation $themeAffiliation)
     {

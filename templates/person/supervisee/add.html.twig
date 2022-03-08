@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <div class="callout callout-info">
+        <ul>
+            <li>Please indicate the new supervisee for {{ person.name }}, and their start date.</li>
+            <li>If no end date is known, leave blank. </li>
+        </ul>
+    </div>
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col-lg">{{ form_row(form.supervisee) }}</div>
+    </div>
+    <div class="row">
+        <div class="col-lg">{{ form_row(form.startedAt) }}</div>
+        <div class="col-lg">{{ form_row(form.endedAt) }}</div>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}
+
+
+{% block title %}
+    {{ parent() }} | Add Supervisee
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item" aria-current="page">
+        <a href="{{ path('person') }}">IGB Members</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        <a href="{{ path('person_view', {'slug': person.slug}) }}">{{ person.name }}</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        Add Supervisee
+    </li>
+{% endblock %}
+

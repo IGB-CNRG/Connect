@@ -5,12 +5,15 @@ namespace App\Controller;
 use App\Entity\Document;
 use App\Entity\Note;
 use App\Entity\Person;
+use App\Entity\SupervisorAffiliation;
 use App\Entity\ThemeAffiliation;
 use App\Form\DocumentMetadataType;
 use App\Form\DocumentType;
 use App\Form\EndThemeAffiliationType;
 use App\Form\NoteType;
 use App\Form\PersonType;
+use App\Form\SuperviseeType;
+use App\Form\SupervisorType;
 use App\Form\ThemeAffiliationType;
 use App\Repository\PersonRepository;
 use App\Service\ActivityLogger;
@@ -64,7 +67,7 @@ class PersonController extends AbstractController
         ]);
     }
 
-    #[Route('/person/new', name: 'person_new', priority: 1)]
+    #[Route('/person/new', name: 'person_add', priority: 1)]
     public function new(Request $request, EntityManagerInterface $em, ActivityLogger $logger): Response
     {
         $person = new Person();
@@ -85,7 +88,7 @@ class PersonController extends AbstractController
         ]);
     }
 
-    #[Route('/person/{slug}/add-theme-affiliation', name: 'person_new_theme_affiliation')]
+    #[Route('/person/{slug}/add-theme-affiliation', name: 'person_add_theme_affiliation')]
     public function newThemeAffiliation(
         Person $person,
         Request $request,
@@ -284,6 +287,52 @@ class PersonController extends AbstractController
         return $this->render('person/note/delete.html.twig', [
             'person' => $person,
             'note' => $note,
+        ]);
+    }
+
+    #[Route('/person/{slug}/add-supervisor', name: 'person_add_supervisor')]
+    public function addSupervisor(Person $person, Request $request, EntityManagerInterface $em, ActivityLogger $logger)
+    {
+        $supervisorAffiliation = (new SupervisorAffiliation())
+            ->setSupervisee($person);
+        $form = $this->createForm(SupervisorType::class, $supervisorAffiliation, ['person'=>$person]);
+        $form->add('save', SubmitType::class);
+
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+            $em->persist($supervisorAffiliation);
+            $logger->logNewSupervisorAffiliation($supervisorAffiliation);
+            $em->flush();
+
+            return $this->redirectToRoute('person_view', ['slug'=>$person->getSlug()]);
+        }
+
+        return $this->render('person/supervisor/add.html.twig', [
+            'person' => $person,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/person/{slug}/add-supervisee', name: 'person_add_supervisee')]
+    public function addSupervisee(Person $person, Request $request, EntityManagerInterface $em, ActivityLogger $logger)
+    {
+        $supervisorAffiliation = (new SupervisorAffiliation())
+            ->setSupervisor($person);
+        $form = $this->createForm(SuperviseeType::class, $supervisorAffiliation, ['person'=>$person]);
+        $form->add('save', SubmitType::class);
+
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+            $em->persist($supervisorAffiliation);
+            $logger->logNewSupervisorAffiliation($supervisorAffiliation);
+            $em->flush();
+
+            return $this->redirectToRoute('person_view', ['slug'=>$person->getSlug()]);
+        }
+
+        return $this->render('person/supervisee/add.html.twig', [
+            'person' => $person,
+            'form' => $form->createView(),
         ]);
     }
 }
