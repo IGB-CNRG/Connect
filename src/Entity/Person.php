@@ -2,11 +2,15 @@
 
 namespace App\Entity;
 
+use App\Attribute\Loggable;
+use App\Enum\PreferredAddress;
 use App\Repository\PersonRepository;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use JetBrains\PhpStorm\Pure;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -37,114 +41,130 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, \Seri
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $firstName;
+    #[Loggable]
+    private ?string $firstName;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $lastName;
+    #[Loggable]
+    private ?string $lastName;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $middleInitial;
+    #[Loggable]
+    private ?string $middleInitial;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $netid;
+    #[Loggable(displayName: 'netID')]
+    private ?string $netid;
 
     #[ORM\Column(type: 'string', length: 180, unique: true, nullable: true)]
-    private $username;
+    #[Loggable]
+    private ?string $username;
 
     #[ORM\Column(type: 'integer', nullable: true)]
-    private $uin;
+    #[Loggable(displayName: 'UIN')]
+    private ?int $uin;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $email;
+    #[Loggable]
+    private ?string $email;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $officeNumber;
+    #[Loggable]
+    private ?string $officeNumber;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $officePhone;
+    #[Loggable]
+    private ?string $officePhone;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private $homeAddress;
+    #[Loggable]
+    private ?string $homeAddress;
 
     #[ORM\Column(type: 'boolean')]
-    private $isDrsTrainingComplete = false;
+    #[Loggable(displayName: 'DRS training')]
+    private bool $isDrsTrainingComplete = false;
 
     #[ORM\Column(type: 'boolean')]
-    private $isIgbTrainingComplete = false;
+    #[Loggable(displayName: 'IGB training')]
+    private bool $isIgbTrainingComplete = false;
 
     #[ORM\Column(type: 'date', nullable: true)]
-    private $offerLetterDate;
+    #[Loggable]
+    private ?DateTimeInterface $offerLetterDate;
 
     #[ORM\Column(type: 'boolean')]
-    private $hasGivenKeyDeposit = false;
+    #[Loggable(displayName: 'key deposit')]
+    private bool $hasGivenKeyDeposit = false;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: RoomAffiliation::class, orphanRemoval: true)]
-    private $roomAffiliations;
+    private Collection $roomAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: KeyAffiliation::class, orphanRemoval: true)]
-    private $keyAffiliations;
+    private Collection $keyAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: ThemeAffiliation::class, orphanRemoval: true)]
     #[ORM\OrderBy(['startedAt' => 'DESC'])]
-    private $themeAffiliations;
+    private Collection $themeAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: ThemeLeaderAffiliation::class, orphanRemoval: true)]
-    private $themeLeaderAffiliations;
+    private Collection $themeLeaderAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'supervisee', targetEntity: SupervisorAffiliation::class, orphanRemoval: true)]
-    private $supervisorAffiliations;
+    private Collection $supervisorAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'supervisor', targetEntity: SupervisorAffiliation::class, orphanRemoval: true)]
-    private $superviseeAffiliations;
+    private Collection $superviseeAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: DepartmentAffiliation::class, orphanRemoval: true)]
-    private $departmentAffiliations;
+    private Collection $departmentAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: Note::class, orphanRemoval: true)]
-    private $notes;
+    private Collection $notes;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Log::class, orphanRemoval: true)]
-    private $ownedLogs;
+    private Collection $ownedLogs;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: Log::class)]
     #[ORM\OrderBy(['createdAt' => 'DESC'])]
-    private $logs;
+    private Collection $logs;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: WorkflowProgress::class, orphanRemoval: true)]
-    private $workflowProgress;
+    private Collection $workflowProgress;
 
     #[ORM\ManyToOne(targetEntity: Building::class, inversedBy: 'people')]
-    private $officeBuilding;
+    private ?Building $officeBuilding;
 
     #[ORM\Column(type: 'string', length: 255, enumType: PreferredAddress::class)]
-    private $preferredAddress = PreferredAddress::IGB;
+    #[Loggable]
+    private PreferredAddress $preferredAddress = PreferredAddress::IGB;
 
     #[ORM\Column(type: 'json')]
-    private $roles = [];
+    private array $roles = [];
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $preferredFirstName;
+    private ?string $preferredFirstName;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: Document::class, orphanRemoval: true)]
-    private $documents;
+    private Collection $documents;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $imageName;
+    #[Loggable(displayName: 'portrait', details: false)]
+    private ?string $imageName;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $mimeType;
+    private ?string $mimeType;
 
     #[Vich\UploadableField(mapping: 'person_image', fileNameProperty: 'imageName', size: 'imageSize', mimeType: 'mimeType')]
     #[Ignore]
     private $imageFile;
 
     #[ORM\Column(type: 'integer', nullable: true)]
-    private $imageSize;
+    private ?int $imageSize;
 
-    public function __construct()
+    #[Pure] public function __construct()
     {
         $this->roomAffiliations = new ArrayCollection();
         $this->keyAffiliations = new ArrayCollection();
@@ -160,14 +180,14 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, \Seri
         $this->documents = new ArrayCollection();
     }
 
-    public function __toString()
+    #[Pure] public function __toString()
     {
         return $this->getName();
     }
 
     /* Helper Functions */
 
-    public function getName()
+    #[Pure] public function getName(): string
     {
         if ($this->getPreferredFirstName()) {
             return $this->getPreferredFirstName() . ' ' . $this->getLastName();
@@ -343,12 +363,12 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, \Seri
         return $this;
     }
 
-    public function getOfferLetterDate(): ?\DateTimeInterface
+    public function getOfferLetterDate(): ?DateTimeInterface
     {
         return $this->offerLetterDate;
     }
 
-    public function setOfferLetterDate(?\DateTimeInterface $offerLetterDate): self
+    public function setOfferLetterDate(?DateTimeInterface $offerLetterDate): self
     {
         $this->offerLetterDate = $offerLetterDate;
 

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\DocumentCategory;
 use App\Repository\DocumentRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;

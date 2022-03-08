@@ -4,7 +4,7 @@ namespace App\Form;
 
 use App\Entity\Building;
 use App\Entity\Person;
-use App\Entity\PreferredAddress;
+use App\Enum\PreferredAddress;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;

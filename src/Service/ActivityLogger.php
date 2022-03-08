@@ -2,31 +2,19 @@
 
 namespace App\Service;
 
+use App\Attribute\Loggable;
 use App\Entity\Log;
 use App\Entity\Person;
 use App\Entity\Theme;
 use App\Entity\ThemeAffiliation;
+use ReflectionException;
+use ReflectionProperty;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Symfony\Contracts\Service\ServiceSubscriberTrait;
 
 class ActivityLogger implements ServiceSubscriberInterface
 {
     use ServiceSubscriberTrait, EntityManagerAware, SecurityAware;
-
-    const PERSON_FIELD = [
-        'uin' => 'UIN',
-        'netid' => 'netID',
-        'isDrsTrainingComplete' => 'DRS training',
-        'isIgbTrainingComplete' => 'IGB training',
-    ];
-
-    const PERSON_FIELD_IGNORE = [
-        'imageName',
-        'mimeType',
-        'imageSize',
-        'updatedAt',
-        'createdAt',
-    ];
 
     public function logNewThemeAffiliation(ThemeAffiliation $themeAffiliation)
     {
@@ -66,6 +54,7 @@ class ActivityLogger implements ServiceSubscriberInterface
         );
     }
 
+    /** @noinspection PhpParamsInspection */
     public function logPersonActivity(Person $person, string $message)
     {
         $owner = $this->security()->getUser();
@@ -76,6 +65,7 @@ class ActivityLogger implements ServiceSubscriberInterface
         $this->entityManager()->persist($log);
     }
 
+    /** @noinspection PhpParamsInspection */
     public function logThemeActivity(Theme $theme, string $message)
     {
         $owner = $this->security()->getUser();
@@ -90,17 +80,27 @@ class ActivityLogger implements ServiceSubscriberInterface
     {
         $uow = $this->entityManager()->getUnitOfWork();
         $uow->computeChangeSets();
-        $changeset = $uow->getEntityChangeSet($entity);
+        $changeSet = $uow->getEntityChangeSet($entity);
         $changes = [];
-        foreach ($changeset as $field => $change) {
-            if(!in_array($field, self::PERSON_FIELD_IGNORE)) {
-                if (array_key_exists($field, self::PERSON_FIELD)) {
-                    $fieldName = self::PERSON_FIELD[$field];
-                } else {
-                    // convert camelCase to lower case by default
-                    $fieldName = strtolower(join(" ", preg_split('/(?=[A-Z])/', $field)));
+        foreach ($changeSet as $field => $change) {
+            try {
+                $reflection = new ReflectionProperty($entity::class, $field);
+                $loggableAttributes = $reflection->getAttributes(Loggable::class);
+                if (count($loggableAttributes) > 0) {
+                    $loggableArguments = $loggableAttributes[0]->getArguments();
+                    if (array_key_exists('displayName', $loggableArguments)) {
+                        $fieldName = $loggableArguments['displayName'];
+                    } else {
+                        // convert camelCase to lower case by default
+                        $fieldName = strtolower(join(" ", preg_split('/(?=[A-Z])/', $field)));
+                    }
+                    if (!array_key_exists('details', $loggableArguments) || $loggableArguments['details'] === true) {
+                        $changes[] = sprintf("%s from '%s' to '%s'", $fieldName, $change[0], $change[1]);
+                    } else {
+                        $changes[] = sprintf("%s", $fieldName);
+                    }
                 }
-                $changes[] = sprintf("%s from '%s' to '%s'", $fieldName, $change[0], $change[1]);
+            } catch (ReflectionException) {
             }
         }
         return sprintf('Changed %s', join(', ', $changes));

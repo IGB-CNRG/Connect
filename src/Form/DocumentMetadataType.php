@@ -3,7 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Document;
-use App\Entity\DocumentCategory;
+use App\Enum\DocumentCategory;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
