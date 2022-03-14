@@ -2,14 +2,17 @@
 
 namespace App\Entity;
 
+use App\Attribute\Loggable;
 use Doctrine\ORM\Mapping as ORM;
 
 trait HistoricalEntity
 {
     #[ORM\Column(type: 'date', nullable: true)]
+    #[Loggable(displayName: 'start date', type: 'date')]
     private $startedAt;
 
     #[ORM\Column(type: 'date', nullable: true)]
+    #[Loggable(displayName: 'end date', type: 'date')]
     private $endedAt;
 
     public function getStartedAt(): ?\DateTimeInterface

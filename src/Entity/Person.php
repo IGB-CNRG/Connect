@@ -103,7 +103,8 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: RoomAffiliation::class, orphanRemoval: true)]
     private $roomAffiliations;
 
-    #[ORM\OneToMany(mappedBy: 'person', targetEntity: KeyAffiliation::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'person', targetEntity: KeyAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['startedAt'=>'ASC'])]
     private $keyAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: ThemeAffiliation::class, orphanRemoval: true)]
