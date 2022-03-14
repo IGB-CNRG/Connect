@@ -37,6 +37,7 @@ class PersonController extends AbstractController
     }
 
     #[Route('/person/{slug}', name: 'person_view')]
+    #[IsGranted('PERSON_VIEW', subject: 'person')]
     public function view(Person $person): Response
     {
         return $this->render('person/view.html.twig', [
@@ -45,6 +46,7 @@ class PersonController extends AbstractController
     }
 
     #[Route('/person/{slug}/edit', name: 'person_edit')]
+    #[IsGranted('PERSON_EDIT', subject: 'person')]
     public function edit(
         Person $person,
         Request $request,
@@ -90,6 +92,7 @@ class PersonController extends AbstractController
     }
 
     #[Route('/person/{slug}/add-theme-affiliation', name: 'person_add_theme_affiliation')]
+    #[IsGranted('PERSON_EDIT', 'person')]
     public function newThemeAffiliation(
         Person $person,
         Request $request,
@@ -130,6 +133,7 @@ class PersonController extends AbstractController
         EntityManagerInterface $em,
         ActivityLogger $logger
     ): Response {
+        $this->denyAccessUnlessGranted('PERSON_EDIT', $themeAffiliation->getPerson());
         $form = $this->createForm(EndThemeAffiliationType::class, $themeAffiliation);
         $form->add('save', SubmitType::class);
 
@@ -151,8 +155,13 @@ class PersonController extends AbstractController
 
     /** @noinspection PhpParamsInspection */
     #[Route('/person/{slug}/upload-document', name: 'person_upload_document')]
-    public function uploadDocument(Person $person, Request $request, EntityManagerInterface $em, ActivityLogger $logger)
-    {
+    #[IsGranted('PERSON_EDIT', subject: 'person')]
+    public function uploadDocument(
+        Person $person,
+        Request $request,
+        EntityManagerInterface $em,
+        ActivityLogger $logger
+    ): Response {
         $document = (new Document())
             ->setPerson($person)
             ->setUploadedBy($this->getUser());
@@ -181,6 +190,7 @@ class PersonController extends AbstractController
         EntityManagerInterface $em,
         ActivityLogger $logger
     ): Response {
+        $this->denyAccessUnlessGranted('PERSON_EDIT', $document->getPerson());
         $form = $this->createForm(DocumentMetadataType::class, $document);
         $form->add('save', SubmitType::class);
 
@@ -207,6 +217,7 @@ class PersonController extends AbstractController
         ActivityLogger $logger
     ): Response {
         $person = $document->getPerson();
+        $this->denyAccessUnlessGranted('PERSON_EDIT', $person);
 
         if ($request->isMethod(Request::METHOD_POST)) {
             $em->remove($document);
@@ -303,8 +314,13 @@ class PersonController extends AbstractController
     }
 
     #[Route('/person/{slug}/add-supervisor', name: 'person_add_supervisor')]
-    public function addSupervisor(Person $person, Request $request, EntityManagerInterface $em, ActivityLogger $logger)
-    {
+    #[IsGranted("PERSON_EDIT", 'person')]
+    public function addSupervisor(
+        Person $person,
+        Request $request,
+        EntityManagerInterface $em,
+        ActivityLogger $logger
+    ): Response {
         $supervisorAffiliation = (new SupervisorAffiliation())
             ->setSupervisee($person);
         $form = $this->createForm(SupervisorType::class, $supervisorAffiliation, ['person' => $person]);
@@ -326,8 +342,13 @@ class PersonController extends AbstractController
     }
 
     #[Route('/person/{slug}/add-supervisee', name: 'person_add_supervisee')]
-    public function addSupervisee(Person $person, Request $request, EntityManagerInterface $em, ActivityLogger $logger)
-    {
+    #[IsGranted("PERSON_EDIT", 'person')]
+    public function addSupervisee(
+        Person $person,
+        Request $request,
+        EntityManagerInterface $em,
+        ActivityLogger $logger
+    ): Response {
         $supervisorAffiliation = (new SupervisorAffiliation())
             ->setSupervisor($person);
         $form = $this->createForm(SuperviseeType::class, $supervisorAffiliation, ['person' => $person]);

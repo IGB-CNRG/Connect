@@ -2,14 +2,15 @@
 
 {% block content %}
     <div class="float-end">
-        <a class="btn btn-primary" href="{{ path('person_edit', {'slug': person.slug}) }}"><span
-                    class="fa fa-pencil"></span>
-            Edit
-        </a>
+        {% if is_granted('PERSON_EDIT', person) %}
+            <a class="btn btn-primary" href="{{ path('person_edit', {'slug': person.slug}) }}">
+                <span class="fa fa-pencil"></span> Edit
+            </a>
+        {% endif %}
     </div>
     <h1>
         {% if person.imageName is not null %}
-            <img class="portrait-lg me-2" src="{{ asset(vich_uploader_asset(person, 'imageFile')) }}">
+            <img class="portrait-lg me-2" src="{{ asset(vich_uploader_asset(person, 'imageFile')) }}" alt="Portrait"/>
         {% endif %}
         {{ person.name }}
     </h1>
@@ -79,8 +80,9 @@
                             <th>Supervisor</th>
                             <td>
                                 {% for supervisorAffiliation in person.supervisorAffiliations|current %}
-                                    <a
-                                    href="{{ path('person_view', {'slug': supervisorAffiliation.supervisor.slug}) }}">{{ supervisorAffiliation.supervisor }}</a>{% if not loop.last %}, {% endif %}
+                                <a href="{{ path('person_view', {'slug': supervisorAffiliation.supervisor.slug}) }}">
+                                    {{ supervisorAffiliation.supervisor }}
+                                    </a>{% if not loop.last %}, {% endif %}
                                 {% endfor %}
                             </td>
                         </tr>
@@ -90,8 +92,9 @@
                             <th>Supervisee(s)</th>
                             <td>
                                 {% for superviseeAffiliation in person.superviseeAffiliations|current %}
-                                    <a
-                                    href="{{ path('person_view', {'slug': superviseeAffiliation.supervisee.slug}) }}">{{ superviseeAffiliation.supervisee }}</a>{% if not loop.last %}, {% endif %}
+                                <a href="{{ path('person_view', {'slug': superviseeAffiliation.supervisee.slug}) }}">
+                                    {{ superviseeAffiliation.supervisee }}
+                                    </a>{% if not loop.last %}, {% endif %}
                                 {% endfor %}
                             </td>
                         </tr>
@@ -140,12 +143,13 @@
         <div class="col-lg">
             <div class="card mb-3">
                 <div class="card-header">Documents</div>
-                {# todo add some documents #}
-                <div class="card-body">
-                    <a href="{{ path('person_upload_document', {'slug': person.slug}) }}" class="btn btn-primary">
-                        <span class="fa fa-upload"></span> Upload
-                    </a>
-                </div>
+                {% if is_granted('PERSON_EDIT', person) %}
+                    <div class="card-body">
+                        <a href="{{ path('person_upload_document', {'slug': person.slug}) }}" class="btn btn-primary">
+                            <span class="fa fa-upload"></span> Upload
+                        </a>
+                    </div>
+                {% endif %}
                 <table class="table">
                     {% for document in person.documents %}
                         <tr>
@@ -158,14 +162,16 @@
                                 {% endif %}
                             </td>
                             <td class="shrink">
-                                <a class="text-decoration-none"
-                                   href="{{ path('person_edit_document', {'id': document.id}) }}">
-                                    <span class="fa fa-pencil"></span>
-                                </a>
-                                <a class="text-decoration-none"
-                                   href="{{ path('person_delete_document', {'id': document.id}) }}">
-                                    <span class="fa fa-trash"></span>
-                                </a>
+                                {% if is_granted("PERSON_EDIT", person) %}
+                                    <a class="text-decoration-none"
+                                       href="{{ path('person_edit_document', {'id': document.id}) }}">
+                                        <span class="fa fa-pencil"></span>
+                                    </a>
+                                    <a class="text-decoration-none"
+                                       href="{{ path('person_delete_document', {'id': document.id}) }}">
+                                        <span class="fa fa-trash"></span>
+                                    </a>
+                                {% endif %}
                             </td>
                         </tr>
                     {% endfor %}
@@ -250,11 +256,13 @@
             Themes
         </div>
         <div class="collapse" id="theme_table">
-            <div class="card-body">
-                <a href="{{ path('person_add_theme_affiliation', {'slug': person.slug}) }}"
-                   class="btn btn-primary"><span
-                            class="fa fa-plus"></span> Add</a>
-            </div>
+            {% if is_granted("PERSON_EDIT") %}
+                <div class="card-body">
+                    <a href="{{ path('person_add_theme_affiliation', {'slug': person.slug}) }}"
+                       class="btn btn-primary"><span
+                                class="fa fa-plus"></span> Add</a>
+                </div>
+            {% endif %}
             <table class="table">
                 <tr>
                     <th>Theme</th>
@@ -272,8 +280,9 @@
                         <td>{{ themeAffiliation.startedAt|date('n/j/Y') }}</td>
                         <td>{% if themeAffiliation.endedAt is not null %}{{ themeAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
                         <td class="shrink">
-                            {% if themeAffiliation.endedAt is null %}
-                                <a href="{{ path('person_end_theme_affiliation', {'id': themeAffiliation.id}) }}">End
+                            {% if themeAffiliation.endedAt is null and is_granted("PERSON_EDIT") %}
+                                <a href="{{ path('person_end_theme_affiliation', {'id': themeAffiliation.id}) }}">
+                                    End
                                 </a>
                             {% endif %}
                         </td>
@@ -323,10 +332,13 @@
                 Supervisors
             </div>
             <div class="collapse" id="supervisor_table">
-                <div class="card-body">
-                    <a href="{{ path('person_add_supervisor', {'slug': person.slug}) }}" class="btn btn-primary"><span
-                                class="fa fa-plus"></span> Add Supervisor</a>
-                </div>
+                {% if is_granted("PERSON_EDIT") %}
+                    <div class="card-body">
+                        <a href="{{ path('person_add_supervisor', {'slug': person.slug}) }}" class="btn btn-primary">
+                            <span class="fa fa-plus"></span> Add Supervisor
+                        </a>
+                    </div>
+                {% endif %}
                 <table class="table"> {# todo maybe these tables should be grids so they line up with each other #}
                     <tr>
                         <th>Supervisor</th>
@@ -351,10 +363,13 @@
                 Supervisees
             </div> {# todo this is not a great label #}
             <div class="collapse" id="supervisee_table">
-                <div class="card-body">
-                    <a href="{{ path('person_add_supervisee', {'slug': person.slug}) }}" class="btn btn-primary"><span
-                                class="fa fa-plus"></span> Add Supervisee</a>
-                </div>
+                {% if is_granted("PERSON_EDIT") %}
+                    <div class="card-body">
+                        <a href="{{ path('person_add_supervisee', {'slug': person.slug}) }}" class="btn btn-primary">
+                            <span class="fa fa-plus"></span> Add Supervisee
+                        </a>
+                    </div>
+                {% endif %}
                 <table class="table">
                     <tr>
                         <th>Supervisee</th>
