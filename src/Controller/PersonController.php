@@ -18,6 +18,7 @@ use App\Form\ThemeAffiliationType;
 use App\Repository\PersonRepository;
 use App\Service\ActivityLogger;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
@@ -222,8 +223,13 @@ class PersonController extends AbstractController
     }
 
     #[Route('/person/{slug}/add-note', name: 'person_add_note')]
-    public function addNote(Person $person, Request $request, EntityManagerInterface $em, ActivityLogger $logger)
-    {
+    #[IsGranted('NOTE_ADD', subject: 'person')]
+    public function addNote(
+        Person $person,
+        Request $request,
+        EntityManagerInterface $em,
+        ActivityLogger $logger
+    ): Response {
         /** @noinspection PhpParamsInspection */
         $note = (new Note())
             ->setPerson($person)
@@ -247,7 +253,8 @@ class PersonController extends AbstractController
     }
 
     #[Route('/note/{id}/edit', name: 'person_edit_note')]
-    public function editNote(Note $note, Request $request, EntityManagerInterface $em, ActivityLogger $logger)
+    #[IsGranted('NOTE_EDIT', subject: 'note')]
+    public function editNote(Note $note, Request $request, EntityManagerInterface $em, ActivityLogger $logger): Response
     {
         $person = $note->getPerson();
         $form = $this->createForm(NoteType::class, $note);
@@ -270,8 +277,13 @@ class PersonController extends AbstractController
     }
 
     #[Route('/note/{id}/delete', name: 'person_delete_note')]
-    public function deleteNote(Note $note, Request $request, EntityManagerInterface $em, ActivityLogger $logger)
-    {
+    #[IsGranted('NOTE_EDIT', subject: 'note')]
+    public function deleteNote(
+        Note $note,
+        Request $request,
+        EntityManagerInterface $em,
+        ActivityLogger $logger
+    ): Response {
         $person = $note->getPerson();
         if ($request->isMethod(Request::METHOD_POST)) {
             $em->remove($note);
@@ -295,16 +307,16 @@ class PersonController extends AbstractController
     {
         $supervisorAffiliation = (new SupervisorAffiliation())
             ->setSupervisee($person);
-        $form = $this->createForm(SupervisorType::class, $supervisorAffiliation, ['person'=>$person]);
+        $form = $this->createForm(SupervisorType::class, $supervisorAffiliation, ['person' => $person]);
         $form->add('save', SubmitType::class);
 
         $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($supervisorAffiliation);
             $logger->logNewSupervisorAffiliation($supervisorAffiliation);
             $em->flush();
 
-            return $this->redirectToRoute('person_view', ['slug'=>$person->getSlug()]);
+            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
 
         return $this->render('person/supervisor/add.html.twig', [
@@ -318,16 +330,16 @@ class PersonController extends AbstractController
     {
         $supervisorAffiliation = (new SupervisorAffiliation())
             ->setSupervisor($person);
-        $form = $this->createForm(SuperviseeType::class, $supervisorAffiliation, ['person'=>$person]);
+        $form = $this->createForm(SuperviseeType::class, $supervisorAffiliation, ['person' => $person]);
         $form->add('save', SubmitType::class);
 
         $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($supervisorAffiliation);
             $logger->logNewSupervisorAffiliation($supervisorAffiliation);
             $em->flush();
 
-            return $this->redirectToRoute('person_view', ['slug'=>$person->getSlug()]);
+            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
 
         return $this->render('person/supervisee/add.html.twig', [
