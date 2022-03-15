@@ -2,9 +2,11 @@
 
 namespace App\Form\Person;
 
+use App\Entity\Key;
 use App\Entity\KeyAffiliation;
 use App\Form\Fields\EndDateType;
 use App\Form\Fields\StartDateType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -28,7 +30,12 @@ class KeyAffiliationType extends AbstractType
                 $form = $event->getForm();
 
                 if (!$keyAffiliation || $keyAffiliation->getId() === null) {
-                    $form->add('cylinderKey');
+                    $form->add('cylinderKey', EntityType::class, [
+                        'class' => Key::class,
+                        'attr' => [
+                            'class' => 'connect-select2',
+                        ],
+                    ]);
                 }
             })
         ;

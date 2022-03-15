@@ -6,6 +6,7 @@ use App\Entity\Person;
 use App\Entity\ThemeAffiliation;
 use App\Form\Fields\EndDateType;
 use App\Form\Fields\StartDateType;
+use App\Form\Fields\ThemeRoleType;
 use App\Service\HistoricityManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -15,7 +16,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ThemeAffiliationType extends AbstractType
 {
-    public function __construct(public HistoricityManager $historicityManager){}
+    public function __construct(public HistoricityManager $historicityManager)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var Person $person */
@@ -35,8 +39,9 @@ class ThemeAffiliationType extends AbstractType
                 'multiple' => true,
                 'expanded' => true,
                 'class' => ThemeAffiliation::class,
-                'choices' =>$this->historicityManager->getCurrentEntities($person->getThemeAffiliations())->toArray(),
+                'choices' => $this->historicityManager->getCurrentEntities($person->getThemeAffiliations())->toArray(),
             ])
+            ->add('specialRole', ThemeRoleType::class)
         ;
     }
 

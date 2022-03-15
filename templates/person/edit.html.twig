@@ -120,12 +120,17 @@
 {% block ThemeAffiliation_row %}
     <div class="collection-row">
         {% if data is not null %}
-            <div class="collection-label">{{ data }}</div>
+            <div class="collection-label">
+                {{ data }}
+            </div>
         {% else %}
             <div class="row">
                 <div class="col-lg">{{ form_row(form.theme) }}</div>
                 <div class="col-lg">{{ form_row(form.memberCategory) }}</div>
+            </div>
+            <div class="row">
                 <div class="col-lg">{{ form_row(form.title) }}</div>
+                <div class="col-lg">{{ form_row(form.specialRole) }}</div>
             </div>
         {% endif %}
         <div class="row">

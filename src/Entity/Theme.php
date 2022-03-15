@@ -29,16 +29,12 @@ class Theme
     #[ORM\OneToMany(mappedBy: 'theme', targetEntity: ThemeAffiliation::class, orphanRemoval: true)]
     private $themeAffiliations;
 
-    #[ORM\OneToMany(mappedBy: 'theme', targetEntity: ThemeLeaderAffiliation::class, orphanRemoval: true)]
-    private $themeLeaderAffiliations;
-
     #[ORM\OneToMany(mappedBy: 'theme', targetEntity: Log::class)]
     private $logs;
 
     public function __construct()
     {
         $this->themeAffiliations = new ArrayCollection();
-        $this->themeLeaderAffiliations = new ArrayCollection();
         $this->logs = new ArrayCollection();
     }
 
@@ -112,36 +108,6 @@ class Theme
             // set the owning side to null (unless already changed)
             if ($themeAffiliation->getTheme() === $this) {
                 $themeAffiliation->setTheme(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, ThemeLeaderAffiliation>
-     */
-    public function getThemeLeaderAffiliations(): Collection
-    {
-        return $this->themeLeaderAffiliations;
-    }
-
-    public function addThemeLeaderAffiliation(ThemeLeaderAffiliation $themeLeaderAffiliation): self
-    {
-        if (!$this->themeLeaderAffiliations->contains($themeLeaderAffiliation)) {
-            $this->themeLeaderAffiliations[] = $themeLeaderAffiliation;
-            $themeLeaderAffiliation->setTheme($this);
-        }
-
-        return $this;
-    }
-
-    public function removeThemeLeaderAffiliation(ThemeLeaderAffiliation $themeLeaderAffiliation): self
-    {
-        if ($this->themeLeaderAffiliations->removeElement($themeLeaderAffiliation)) {
-            // set the owning side to null (unless already changed)
-            if ($themeLeaderAffiliation->getTheme() === $this) {
-                $themeLeaderAffiliation->setTheme(null);
             }
         }
 

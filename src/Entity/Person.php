@@ -27,7 +27,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     const USER_ROLES = [
         'CONNECT Admin' => 'ROLE_ADMIN',
-        'Theme Admin' => 'ROLE_THEME_ADMIN',
         'CNRG' => 'ROLE_CNRG',
         'Op/Fac' => 'ROLE_OP_FAC',
         'Key Manager' => 'ROLE_KEY_MANAGER',
@@ -100,27 +99,24 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[Loggable(displayName: 'key deposit')]
     private $hasGivenKeyDeposit = false;
 
-    #[ORM\OneToMany(mappedBy: 'person', targetEntity: RoomAffiliation::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'person', targetEntity: RoomAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
     private $roomAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: KeyAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['startedAt'=>'ASC'])]
     private $keyAffiliations;
 
-    #[ORM\OneToMany(mappedBy: 'person', targetEntity: ThemeAffiliation::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'person', targetEntity: ThemeAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['startedAt' => 'DESC'])]
     private $themeAffiliations;
 
-    #[ORM\OneToMany(mappedBy: 'person', targetEntity: ThemeLeaderAffiliation::class, orphanRemoval: true)]
-    private $themeLeaderAffiliations;
-
-    #[ORM\OneToMany(mappedBy: 'supervisee', targetEntity: SupervisorAffiliation::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'supervisee', targetEntity: SupervisorAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
     private $supervisorAffiliations;
 
-    #[ORM\OneToMany(mappedBy: 'supervisor', targetEntity: SupervisorAffiliation::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'supervisor', targetEntity: SupervisorAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
     private $superviseeAffiliations;
 
-    #[ORM\OneToMany(mappedBy: 'person', targetEntity: DepartmentAffiliation::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'person', targetEntity: DepartmentAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
     private $departmentAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: Note::class, orphanRemoval: true)]
@@ -178,7 +174,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         $this->roomAffiliations = new ArrayCollection();
         $this->keyAffiliations = new ArrayCollection();
         $this->themeAffiliations = new ArrayCollection();
-        $this->themeLeaderAffiliations = new ArrayCollection();
         $this->supervisorAffiliations = new ArrayCollection();
         $this->superviseeAffiliations = new ArrayCollection();
         $this->departmentAffiliations = new ArrayCollection();
@@ -488,36 +483,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     }
 
     /**
-     * @return Collection<int, ThemeLeaderAffiliation>|ThemeLeaderAffiliation[]
-     */
-    public function getThemeLeaderAffiliations(): Collection
-    {
-        return $this->themeLeaderAffiliations;
-    }
-
-    public function addThemeLeaderAffiliation(ThemeLeaderAffiliation $themeLeaderAffiliation): self
-    {
-        if (!$this->themeLeaderAffiliations->contains($themeLeaderAffiliation)) {
-            $this->themeLeaderAffiliations[] = $themeLeaderAffiliation;
-            $themeLeaderAffiliation->setPerson($this);
-        }
-
-        return $this;
-    }
-
-    public function removeThemeLeaderAffiliation(ThemeLeaderAffiliation $themeLeaderAffiliation): self
-    {
-        if ($this->themeLeaderAffiliations->removeElement($themeLeaderAffiliation)) {
-            // set the owning side to null (unless already changed)
-            if ($themeLeaderAffiliation->getPerson() === $this) {
-                $themeLeaderAffiliation->setPerson(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, SupervisorAffiliation>|SupervisorAffiliation[]
      */
     public function getSupervisorAffiliations(): Collection
@@ -529,7 +494,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     {
         if (!$this->supervisorAffiliations->contains($supervisorAffiliation)) {
             $this->supervisorAffiliations[] = $supervisorAffiliation;
-            $supervisorAffiliation->setSupervisor($this);
+            $supervisorAffiliation->setSupervisee($this);
         }
 
         return $this;
@@ -539,8 +504,8 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     {
         if ($this->supervisorAffiliations->removeElement($supervisorAffiliation)) {
             // set the owning side to null (unless already changed)
-            if ($supervisorAffiliation->getSupervisor() === $this) {
-                $supervisorAffiliation->setSupervisor(null);
+            if ($supervisorAffiliation->getSupervisee() === $this) {
+                $supervisorAffiliation->setSupervisee(null);
             }
         }
 
@@ -559,7 +524,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     {
         if (!$this->superviseeAffiliations->contains($superviseeAffiliation)) {
             $this->superviseeAffiliations[] = $superviseeAffiliation;
-            $superviseeAffiliation->setSupervisee($this);
+            $superviseeAffiliation->setSupervisor($this);
         }
 
         return $this;
@@ -569,8 +534,8 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     {
         if ($this->superviseeAffiliations->removeElement($superviseeAffiliation)) {
             // set the owning side to null (unless already changed)
-            if ($superviseeAffiliation->getSupervisee() === $this) {
-                $superviseeAffiliation->setSupervisee(null);
+            if ($superviseeAffiliation->getSupervisor() === $this) {
+                $superviseeAffiliation->setSupervisor(null);
             }
         }
 

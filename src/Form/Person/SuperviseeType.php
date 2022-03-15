@@ -2,9 +2,11 @@
 
 namespace App\Form\Person;
 
+use App\Entity\Person;
 use App\Entity\SupervisorAffiliation;
 use App\Form\Fields\EndDateType;
 use App\Form\Fields\StartDateType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -28,7 +30,12 @@ class SuperviseeType extends AbstractType
                 $form = $event->getForm();
 
                 if (!$superviseeAffiliation || $superviseeAffiliation->getId() === null) {
-                    $form->add('supervisee');
+                    $form->add('supervisee', EntityType::class, [
+                        'class' => Person::class,
+                        'attr' => [
+                            'class' => 'connect-select2',
+                        ],
+                    ]);
                 }
             })
         ;

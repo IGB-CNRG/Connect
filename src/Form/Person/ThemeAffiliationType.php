@@ -5,6 +5,7 @@ namespace App\Form\Person;
 use App\Entity\ThemeAffiliation;
 use App\Form\Fields\EndDateType;
 use App\Form\Fields\StartDateType;
+use App\Form\Fields\ThemeRoleType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -35,6 +36,7 @@ class ThemeAffiliationType extends AbstractType
                             'required' => false,
                             'help' => 'Optional',
                         ])
+                        ->add('specialRole', ThemeRoleType::class)
                     ;
                 }
             })

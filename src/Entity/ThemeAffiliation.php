@@ -30,12 +30,31 @@ class ThemeAffiliation
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $title;
 
+    #[ORM\Column(type: 'boolean')]
+    private $isThemeLeader = false;
+
+    #[ORM\Column(type: 'boolean')]
+    private $isThemeAdmin = false;
+
+    #[ORM\Column(type: 'boolean')]
+    private $isLabManager = false;
+
     public function __toString()
     {
+        $themeName = $this->getTheme()->getShortName();
+        if($this->getIsThemeLeader()){
+            $themeName .= " Theme Leader";
+        }
+        if($this->getIsThemeAdmin()){
+            $themeName .= " Theme Admin";
+        }
+        if($this->getIsLabManager()){
+            $themeName .= " Lab Manager";
+        }
         if($this->getTitle()){
-            return sprintf('%s - %s (%s)', $this->getTheme()->getShortName(), $this->getTitle(), $this->getMemberCategory()->getName());
+            return sprintf('%s - %s (%s)', $themeName, $this->getTitle(), $this->getMemberCategory()->getName());
         } else {
-            return sprintf('%s (%s)', $this->getTheme()->getShortName(), $this->getMemberCategory()->getName());
+            return sprintf('%s (%s)', $themeName, $this->getMemberCategory()->getName());
         }
     }
 
@@ -88,6 +107,42 @@ class ThemeAffiliation
     public function setTitle(?string $title): self
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getIsThemeLeader(): ?bool
+    {
+        return $this->isThemeLeader;
+    }
+
+    public function setIsThemeLeader(bool $isThemeLeader): self
+    {
+        $this->isThemeLeader = $isThemeLeader;
+
+        return $this;
+    }
+
+    public function getIsThemeAdmin(): ?bool
+    {
+        return $this->isThemeAdmin;
+    }
+
+    public function setIsThemeAdmin(bool $isThemeAdmin): self
+    {
+        $this->isThemeAdmin = $isThemeAdmin;
+
+        return $this;
+    }
+
+    public function getIsLabManager(): ?bool
+    {
+        return $this->isLabManager;
+    }
+
+    public function setIsLabManager(bool $isLabManager): self
+    {
+        $this->isLabManager = $isLabManager;
 
         return $this;
     }

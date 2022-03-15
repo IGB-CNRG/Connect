@@ -110,7 +110,8 @@ class PersonType extends AbstractType
                     'multiple' => true,
                     'attr' => [
                         'class' => 'connect-select2'
-                    ]
+                    ],
+                    'required' => false,
                 ])
             ;
         }

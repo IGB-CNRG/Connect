@@ -10,13 +10,29 @@ import 'symfony-collection-js';
 $('.connect-select2').select2();
 $('#person_keyAffiliations').formCollection({
     other_btn_add: '#keyAffiliation-add',
+    post_add: function(new_elem, context){
+        console.log(new_elem);
+        $(new_elem).find('.connect-select2').select2();
+    },
 });
 $('#person_themeAffiliations').formCollection({
     other_btn_add: '#themeAffiliation-add',
+    post_add: function(new_elem, context){
+        console.log(new_elem);
+        $(new_elem).find('.connect-select2').select2();
+    },
 });
 $('#person_supervisorAffiliations').formCollection({
     other_btn_add: '#supervisorAffiliation-add',
+    post_add: function(new_elem, context){
+        console.log(new_elem);
+        $(new_elem).find('.connect-select2').select2();
+    },
 });
 $('#person_superviseeAffiliations').formCollection({
     other_btn_add: '#superviseeAffiliation-add',
+    post_add: function(new_elem, context){
+        console.log(new_elem);
+        $(new_elem).find('.connect-select2').select2();
+    },
 });
