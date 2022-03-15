@@ -81,3 +81,11 @@ $callout-background-lighten: 50%;
   border-radius: 10px;
   object-fit: cover;
 }
+
+.collection-row {
+  border-bottom: 1px solid $gray-300;
+  margin-top: 0.5rem;
+  .collection-label {
+    font-weight: bold;
+  }
+}

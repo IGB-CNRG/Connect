@@ -11,7 +11,7 @@ use App\Form\DocumentMetadataType;
 use App\Form\DocumentType;
 use App\Form\EndThemeAffiliationType;
 use App\Form\NoteType;
-use App\Form\PersonType;
+use App\Form\Person\PersonType;
 use App\Form\SuperviseeType;
 use App\Form\SupervisorType;
 use App\Form\ThemeAffiliationType;

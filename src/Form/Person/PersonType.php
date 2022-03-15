@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Form;
+namespace App\Form\Person;
 
 use App\Entity\Building;
 use App\Entity\Person;
 use App\Enum\PreferredAddress;
+use App\Form\Fields\HistoricalCollectionType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -91,6 +92,15 @@ class PersonType extends AbstractType
                 'allow_delete' => true,
                 'label' => 'Portrait',
             ])
+            ->add('themeAffiliations', HistoricalCollectionType::class, [
+                'entry_type' => ThemeAffiliationType::class,
+            ])
+            ->add('supervisorAffiliations', HistoricalCollectionType::class, [
+                'entry_type' => SupervisorType::class,
+            ])
+            ->add('superviseeAffiliations', HistoricalCollectionType::class, [
+                'entry_type' => SuperviseeType::class,
+            ])
         ;
         // todo hide fields based on user roles
         if ($this->security->isGranted('ROLE_ADMIN')) {
@@ -103,6 +113,11 @@ class PersonType extends AbstractType
                     ]
                 ])
             ;
+        }
+        if ($this->security->isGranted('ROLE_ADMIN') || $this->security->isGranted('ROLE_KEY_MANAGER')) {
+            $builder->add('keyAffiliations', HistoricalCollectionType::class, [
+                'entry_type' => KeyAffiliationType::class,
+            ]);
         }
     }
 

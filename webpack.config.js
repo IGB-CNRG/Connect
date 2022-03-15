@@ -25,6 +25,7 @@ Encore
     .addEntry('app', './assets/app.js')
     .addEntry('personIndex', './assets/personIndex.js')
     .addEntry('form', './assets/form.js')
+    .addEntry('personForm', './assets/personForm.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')
@@ -44,7 +45,7 @@ Encore
      * https://symfony.com/doc/current/frontend.html#adding-more-features
      */
     .cleanupOutputBeforeBuild()
-    .enableBuildNotifications()
+    // .enableBuildNotifications()
     .enableSourceMaps(!Encore.isProduction())
     // enables hashed filenames (e.g. app.abc123.css)
     .enableVersioning(Encore.isProduction())
@@ -73,7 +74,7 @@ Encore
     //.enableIntegrityHashes(Encore.isProduction())
 
     // uncomment if you're having problems with a jQuery plugin
-    //.autoProvidejQuery()
+    .autoProvidejQuery()
 ;
 
 module.exports = Encore.getWebpackConfig();

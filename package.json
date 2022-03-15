@@ -26,6 +26,7 @@
         "datatables.net-responsive": "^2.2.9",
         "datatables.net-responsive-bs5": "^2.2.9",
         "jquery": "^3.6.0",
-        "select2": "^4.1.0-rc.0"
+        "select2": "^4.1.0-rc.0",
+        "symfony-collection-js": "^4.2.0"
     }
 }

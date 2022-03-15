@@ -1,5 +1,179 @@
 {% extends 'base.html.twig' %}
-{% use 'person/_editForm.html.twig' %}
+
+{% block content %}
+    <div class="callout callout-info">
+        All fields are optional. {# todo better help text here #}
+    </div>
+    {% form_theme form _self %}
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col-lg">
+            <div class="card mb-3">
+                <div class="card-header">Personal Info</div>
+                <div class="card-body">
+                    {{ form_row(form.firstName) }}
+                    {{ form_row(form.lastName) }}
+                    {{ form_row(form.middleInitial) }}
+                    {{ form_row(form.preferredFirstName) }}
+                    {{ form_row(form.username) }}
+                    {{ form_row(form.netid) }}
+                    {{ form_row(form.uin) }}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg">
+            <div class="card mb-3">
+                <div class="card-header">Contact Info</div>
+                <div class="card-body">
+                    {{ form_row(form.email) }}
+                    {{ form_row(form.officePhone) }}
+                    {{ form_row(form.homeAddress) }}
+                    {{ form_row(form.officeNumber) }}
+                    {{ form_row(form.officeBuilding) }}
+                    {{ form_row(form.preferredAddress) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg">
+            <div class="card mb-3">
+                <div class="card-header">Positions</div>
+                <div class="card-body">
+                    {{ form_row(form.themeAffiliations) }}
+                    <button type="button" class="btn btn-primary" id="themeAffiliation-add">Add Position</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg">
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="card mb-3">
+                    <div class="card-header">Administration</div>
+                    <div class="card-body">
+                        {{ form_row(form.roles) }}
+                    </div>
+                </div>
+            {% endif %}
+            <div class="card mb-3">
+                <div class="card-header">Misc. Info</div>
+                <div class="card-body">
+                    {{ form_row(form.imageFile) }}
+                    {{ form_row(form.isDrsTrainingComplete) }}
+                    {{ form_row(form.isIgbTrainingComplete) }}
+                    {{ form_row(form.offerLetterDate) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg">
+            <div class="card mb-3">
+                <div class="card-header">Supervisors</div>
+                <div class="card-body">
+                    {{ form_row(form.supervisorAffiliations) }}
+                    <button type="button" class="btn btn-primary" id="supervisorAffiliation-add">Add Supervisor</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg">
+            <div class="card mb-3">
+                <div class="card-header">Supervisees</div>
+                <div class="card-body">
+                    {{ form_row(form.superviseeAffiliations) }}
+                    <button type="button" class="btn btn-primary" id="superviseeAffiliation-add">Add Supervisee</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if form.keyAffiliations is defined %}
+        <div class="card mb-3">
+            <div class="card-header">Keys</div>
+            <div class="card-body">
+                {{ form_row(form.keyAffiliations) }}
+                <button type="button" class="btn btn-primary" id="keyAffiliation-add">Add Key</button>
+            </div>
+        </div>
+    {% endif %}
+
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block KeyAffiliation_row %}
+    <div class="collection-row">
+        {% if data is not null %}
+            <div class="collection-label">{{ data.cylinderKey.name }}</div>
+        {% else %}
+            {{ form_row(form.cylinderKey) }}
+        {% endif %}
+        <div class="row">
+            <div class="col">
+                {{ form_row(form.startedAt) }}
+            </div>
+            <div class="col">
+                {{ form_row(form.endedAt) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block ThemeAffiliation_row %}
+    <div class="collection-row">
+        {% if data is not null %}
+            <div class="collection-label">{{ data }}</div>
+        {% else %}
+            <div class="row">
+                <div class="col-lg">{{ form_row(form.theme) }}</div>
+                <div class="col-lg">{{ form_row(form.memberCategory) }}</div>
+                <div class="col-lg">{{ form_row(form.title) }}</div>
+            </div>
+        {% endif %}
+        <div class="row">
+            <div class="col">
+                {{ form_row(form.startedAt) }}
+            </div>
+            <div class="col">
+                {{ form_row(form.endedAt) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block SupervisorAffiliation_row %}
+    <div class="collection-row">
+        {% if data is not null %}
+            <div class="collection-label">{{ data.supervisor.name }}</div>
+        {% else %}
+            {{ form_row(form.supervisor) }}
+        {% endif %}
+        <div class="row">
+            <div class="col">
+                {{ form_row(form.startedAt) }}
+            </div>
+            <div class="col">
+                {{ form_row(form.endedAt) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block SuperviseeAffiliation_row %}
+    <div class="collection-row">
+        {% if data is not null %}
+            <div class="collection-label">{{ data.supervisee.name }}</div>
+        {% else %}
+            {{ form_row(form.supervisee) }}
+        {% endif %}
+        <div class="row">
+            <div class="col">
+                {{ form_row(form.startedAt) }}
+            </div>
+            <div class="col">
+                {{ form_row(form.endedAt) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
 
 {% block title %}
     {{ parent() }} | Edit {{ person.name }}
@@ -18,10 +192,10 @@
 {% endblock %}
 
 {% block stylesheets %}
-    {{ encore_entry_link_tags('form') }}
+    {{ encore_entry_link_tags('personForm') }}
 {% endblock %}
 
 {% block javascripts %}
-    {{ encore_entry_script_tags('form') }}
+    {{ encore_entry_script_tags('personForm') }}
 {% endblock %}
 
