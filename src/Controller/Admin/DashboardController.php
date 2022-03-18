@@ -7,7 +7,6 @@ use App\Entity\College;
 use App\Entity\Department;
 use App\Entity\Key;
 use App\Entity\MemberCategory;
-use App\Entity\Person;
 use App\Entity\Room;
 use App\Entity\Theme;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -27,7 +26,12 @@ class DashboardController extends AbstractDashboardController
         // Option 1. You can make your dashboard redirect to some common page of your backend
         //
         $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
-        return $this->redirect($adminUrlGenerator->setController(MemberCategoryCrudController::class)->generateUrl());
+        if(in_array('ROLE_KEY_MANAGER', $this->getUser()->getRoles())){
+            // The key manager probably wants to edit the keys
+            return $this->redirect($adminUrlGenerator->setController(KeyCrudController::class)->generateUrl());
+        } else {
+            return $this->redirect($adminUrlGenerator->setController(ThemeCrudController::class)->generateUrl());
+        }
 
         // Option 2. You can make your dashboard redirect to different pages depending on the user
         //
@@ -54,8 +58,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::linkToRoute('Back to CONNECT', 'fa fa-rotate-left', 'default');
         yield MenuItem::section('IGB');
-        yield MenuItem::linkToCrud('Members', 'fas fa-list', Person::class);
-//        yield MenuItem::linkToCrud('Key Affiliations', 'fas fa-list', KeyAffiliation::class);
         yield MenuItem::linkToCrud('Member Categories', 'fas fa-list', MemberCategory::class);
         yield MenuItem::linkToCrud('Keys', 'fas fa-list', Key::class);
         yield MenuItem::linkToCrud('Rooms', 'fas fa-list', Room::class);
