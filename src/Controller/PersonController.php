@@ -15,7 +15,9 @@ use App\Form\Person\PersonType;
 use App\Form\SuperviseeType;
 use App\Form\SupervisorType;
 use App\Form\ThemeAffiliationType;
+use App\Repository\MemberCategoryRepository;
 use App\Repository\PersonRepository;
+use App\Repository\ThemeRepository;
 use App\Service\ActivityLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -28,11 +30,15 @@ use Symfony\Component\Routing\Annotation\Route;
 class PersonController extends AbstractController
 {
     #[Route('/person', name: 'person')]
-    public function index(PersonRepository $personRepository): Response
+    public function index(PersonRepository $personRepository, ThemeRepository $themeRepository, MemberCategoryRepository $categoryRepository): Response
     {
         $people = $personRepository->findAllForIndex();
+        $themes = $themeRepository->findAll(); // Todo group by current/old?
+        $memberCategories = $categoryRepository->findAll(); // todo sort
         return $this->render('person/index.html.twig', [
             'people' => $people,
+            'themes' => $themes,
+            'memberCategories' => $memberCategories,
         ]);
     }
 
