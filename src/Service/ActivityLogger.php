@@ -21,50 +21,32 @@ class ActivityLogger implements ServiceSubscriberInterface
 
     public function logNewSupervisorAffiliation(SupervisorAffiliation $supervisorAffiliation)
     {
-        $endString = '';
-        if ($supervisorAffiliation->getEndedAt()) {
-            $endString = sprintf(' and ending %s', $supervisorAffiliation->getEndedAt()->format('n/j/Y'));
-        }
         $this->logPersonActivity(
             $supervisorAffiliation->getSupervisor(),
-            sprintf(
-                'Added supervisee %s, beginning %s',
-                $supervisorAffiliation->getSupervisee(),
-                $supervisorAffiliation->getStartedAt()->format('n/j/Y')
-            ) . $endString
+            sprintf('Added supervisee %s', $supervisorAffiliation->getSupervisee())
         );
         $this->logPersonActivity(
             $supervisorAffiliation->getSupervisee(),
-            sprintf(
-                'Added supervisor %s, beginning %s',
-                $supervisorAffiliation->getSupervisor()->getName(),
-                $supervisorAffiliation->getStartedAt()->format('n/j/Y')
-            )
+            sprintf('Added supervisor %s', $supervisorAffiliation->getSupervisor()->getName())
         );
     }
 
     public function logNewThemeAffiliation(ThemeAffiliation $themeAffiliation)
     {
-        $endString = '';
-        if ($themeAffiliation->getEndedAt()) {
-            $endString = sprintf(' and ending %s', $themeAffiliation->getEndedAt()->format('n/j/Y'));
-        }
         $this->logPersonActivity(
             $themeAffiliation->getPerson(),
             sprintf(
-                'Added affiliation with theme %s (%s), beginning %s',
+                'Added affiliation with theme %s (%s)',
                 $themeAffiliation->getTheme()->getShortName(),
-                $themeAffiliation->getMemberCategory()->getName(),
-                $themeAffiliation->getStartedAt()->format('n/j/Y')
-            ) . $endString
+                $themeAffiliation->getMemberCategory()->getName()
+            )
         );
         $this->logThemeActivity(
             $themeAffiliation->getTheme(),
             sprintf(
-                'Added member affiliation with %s (%s), beginning %s',
+                'Added member affiliation with %s (%s)',
                 $themeAffiliation->getPerson()->getName(),
-                $themeAffiliation->getMemberCategory()->getName(),
-                $themeAffiliation->getStartedAt()->format('n/j/Y')
+                $themeAffiliation->getMemberCategory()->getName()
             )
         );
     }
@@ -102,21 +84,21 @@ class ActivityLogger implements ServiceSubscriberInterface
                 ->setPerson($person)
                 ->setUser($owner)
                 ->setText($message);
-            $this->entityManager()->persist($log)
-            ;
+            $this->entityManager()->persist($log);
         }
     }
 
     /** @noinspection PhpParamsInspection */
-    public function logThemeActivity(Theme $theme, string $message)
+    public function logThemeActivity(Theme $theme, ?string $message)
     {
-        $owner = $this->security()->getUser();
-        $log = (new Log())
-            ->setTheme($theme)
-            ->setUser($owner)
-            ->setText($message);
-        $this->entityManager()->persist($log)
-        ;
+        if ($message) {
+            $owner = $this->security()->getUser();
+            $log = (new Log())
+                ->setTheme($theme)
+                ->setUser($owner)
+                ->setText($message);
+            $this->entityManager()->persist($log);
+        }
     }
 
     private function getEntityEditMessage($entity, $messagePrefix = ''): ?string
@@ -138,8 +120,8 @@ class ActivityLogger implements ServiceSubscriberInterface
                         // convert camelCase to lower case by default
                         $fieldName = strtolower(join(" ", preg_split('/(?=[A-Z])/', $field)));
                     }
-                    if($change[0] == null){
-                        if($change[1] != null) {
+                    if ($change[0] == null) {
+                        if ($change[1] != null) {
                             // New
                             if (!array_key_exists('details', $loggableArguments)
                                 || $loggableArguments['details'] === true) {
@@ -154,12 +136,13 @@ class ActivityLogger implements ServiceSubscriberInterface
                                 $changes[] = sprintf("added %s", $fieldName);
                             }
                         }
-                    } elseif($change[1] == null){
+                    } elseif ($change[1] == null) {
                         // Removed
                         $changes[] = sprintf("removed %s", $fieldName);
                     } else {
                         // Changed
-                        if (!array_key_exists('details', $loggableArguments) || $loggableArguments['details'] === true) {
+                        if (!array_key_exists('details', $loggableArguments)
+                            || $loggableArguments['details'] === true) {
                             if (array_key_exists('type', $loggableArguments) && $loggableArguments['type'] == 'date') {
                                 $old = $change[0]->format('n/j/Y');
                                 $new = $change[1]->format('n/j/Y');
@@ -188,6 +171,7 @@ class ActivityLogger implements ServiceSubscriberInterface
         $uow = $this->entityManager()->getUnitOfWork();
         $uow->computeChangeSets();
 
+        // Log changes to key affiliations
         if ($person->getKeyAffiliations()->isDirty()) {
             $inserted = $person->getKeyAffiliations()->getInsertDiff();
             foreach ($inserted as $keyAffiliation) {
@@ -208,10 +192,74 @@ class ActivityLogger implements ServiceSubscriberInterface
             );
         }
 
-        //todo log supervisors/ees
+        // Log supervisor
+        if ($person->getSupervisorAffiliations()->isDirty()) {
+            $inserted = $person->getSupervisorAffiliations()->getInsertDiff();
+            foreach ($inserted as $supervisorAffiliation) {
+                $this->logNewSupervisorAffiliation($supervisorAffiliation);
+            }
+        }
+        foreach ($person->getSupervisorAffiliations() as $supervisorAffiliation) {
+            $this->logPersonActivity(
+                $person,
+                $this->getEntityEditMessage(
+                    $supervisorAffiliation,
+                    sprintf('Updated supervisor assignment %s, ', $supervisorAffiliation->getSupervisor()->getName())
+                )
+            );
+            $this->logPersonActivity(
+                $supervisorAffiliation->getSupervisor(),
+                $this->getEntityEditMessage(
+                    $supervisorAffiliation,
+                    sprintf('Updated supervisee assignment %s, ', $person->getName())
+                )
+            );
+        }
 
-        // todo log themes
+        // Log supervisees
+        if ($person->getSuperviseeAffiliations()->isDirty()) {
+            $inserted = $person->getSuperviseeAffiliations()->getInsertDiff();
+            foreach ($inserted as $superviseeAffiliation) {
+                $this->logNewSupervisorAffiliation($superviseeAffiliation);
+            }
+        }
+        foreach ($person->getSuperviseeAffiliations() as $superviseeAffiliation) {
+            $this->logPersonActivity(
+                $person,
+                $this->getEntityEditMessage(
+                    $superviseeAffiliation,
+                    sprintf('Updated supervisee assignment %s, ', $superviseeAffiliation->getSupervisee()->getName())
+                )
+            );
+            $this->logPersonActivity(
+                $superviseeAffiliation->getSupervisee(),
+                $this->getEntityEditMessage(
+                    $superviseeAffiliation,
+                    sprintf('Updated supervisor assignment %s, ', $person->getName())
+                )
+            );
+        }
 
+        // Log theme changes
+        if ($person->getThemeAffiliations()->isDirty()) {
+            $inserted = $person->getThemeAffiliations()->getInsertDiff();
+            foreach ($inserted as $themeAffiliation) {
+                $this->logNewThemeAffiliation($themeAffiliation);
+            }
+        }
+        foreach ($person->getThemeAffiliations() as $themeAffiliation) {
+            $this->logPersonActivity(
+                $person,
+                $this->getEntityEditMessage(
+                    $themeAffiliation,
+                    sprintf('Updated theme affiliation with %s, ', $themeAffiliation->getTheme()->getShortName())
+                )
+            );
+            $this->logThemeActivity(
+                $themeAffiliation->getTheme(),
+                $this->getEntityEditMessage($themeAffiliation, sprintf('Updated member affiliation for %s, ', $person))
+            );
+        }
         // todo log rooms
     }
 
@@ -222,7 +270,6 @@ class ActivityLogger implements ServiceSubscriberInterface
             ->setCylinderKey($key)
             ->setUser($owner)
             ->setText($message);
-        $this->entityManager()->persist($log)
-        ;
+        $this->entityManager()->persist($log);
     }
 }
