@@ -11,8 +11,38 @@ $info: $teal;
 @import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/bootstrap";
 
-@import "cnrg"; // todo can we just move these styles in here?
+/* Footer */
+.copyright {
+  background-color: $blue;
+  color: color-contrast($blue);
+  margin-top: 1.5rem;
+  padding: 1rem 0;
+  font-size: 0.8rem;
 
+  a {
+    color: color-contrast($blue);
+  }
+}
+
+/* Navbar */
+.border-uiuc {
+  border-bottom: 2px solid $orange;
+}
+
+/* Tables */
+.card {
+  .table {
+    margin: 0;
+  }
+}
+
+.shrink {
+  width: 0.1%;
+  white-space: nowrap;
+}
+
+/* Placeholders */
+// TODO these can be removed from the final product
 .placeholder-image {
   background-color: $gray-300;
   color: $gray-600;
@@ -21,6 +51,7 @@ $info: $teal;
   padding: 3rem;
 }
 
+/* Breadcrumbs */
 .breadcrumb-bar {
   border-bottom: 2px solid $gray-300;
   background-color: $gray-200;
@@ -30,6 +61,7 @@ $info: $teal;
   box-shadow: 3px 3px 8px #eee;
 }
 
+/* Callout boxes */
 .callout {
   padding: 1rem;
   margin-bottom: 1.25rem;
@@ -57,6 +89,7 @@ $callout-background-lighten: 50%;
   }
 }
 
+/* Collapsable cards */
 .collapse-header {
   &[aria-expanded="false"] {
     &::after {
@@ -75,6 +108,7 @@ $callout-background-lighten: 50%;
   }
 }
 
+/* Portraits */
 .portrait-lg {
   width: 100px;
   height: 100px;
@@ -82,9 +116,11 @@ $callout-background-lighten: 50%;
   object-fit: cover;
 }
 
+/* Forms */
 .collection-row {
   border-bottom: 1px solid $gray-300;
   margin-top: 0.5rem;
+
   .collection-label {
     font-weight: bold;
   }
