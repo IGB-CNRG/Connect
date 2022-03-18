@@ -135,16 +135,21 @@
                         <th>Office Phone</th>
                         <td>{{ person.officePhone }}</td>
                     </tr>
-                    {# todo private information should be hidden based on some voter #}
-                    <tr>
-                        <th>Home Address</th>
-                        <td>{{ person.homeAddress|nl2br }}</td>
-                    </tr>
-                    <tr>
-                        <th>Campus Address</th>
-                        <td>{{ person.officeBuilding }}</td> {# todo this should be a combination of building/officenumber #}
-                    </tr>
-                    {# todo display preferred address #}
+                    {% if person.officeBuilding %}
+                        <tr>
+                            <th>Other Campus Address</th>
+                            <td>
+                                {{ person.officeBuilding.address }}
+                                {{ person.officeNumber }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Preferred Address</th>
+                            <td>
+                                {{ person.preferredAddress.value }}
+                            </td>
+                        </tr>
+                    {% endif %}
                 </table>
             </div>
         </div>

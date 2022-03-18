@@ -79,10 +79,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[Loggable]
     private $officePhone;
 
-    #[ORM\Column(type: 'text', nullable: true)]
-    #[Loggable]
-    private $homeAddress;
-
     #[ORM\Column(type: 'boolean')]
     #[Loggable(displayName: 'DRS training')]
     private $isDrsTrainingComplete = false;
@@ -328,18 +324,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     public function setOfficePhone(?string $officePhone): self
     {
         $this->officePhone = $officePhone;
-
-        return $this;
-    }
-
-    public function getHomeAddress(): ?string
-    {
-        return $this->homeAddress;
-    }
-
-    public function setHomeAddress(?string $homeAddress): self
-    {
-        $this->homeAddress = $homeAddress;
 
         return $this;
     }

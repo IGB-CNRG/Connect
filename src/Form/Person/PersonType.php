@@ -64,7 +64,6 @@ class PersonType extends AbstractType
             ->add('officePhone', TextType::class, [
                 'required' => false,
             ])
-            ->add('homeAddress') // todo only display if appropriate
             ->add('isDrsTrainingComplete', CheckboxType::class, [
                 'required' => false,
                 'label' => 'DRS Training Complete',
