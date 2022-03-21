@@ -28,8 +28,12 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                     <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a href="{{ path('person') }}" class="nav-link"><span class="fa fa-user"></span> Members</a>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" id="navbarMemberMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="fa fa-user"></span> IGB Members</a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarMemberMenuLink">
+                                <li><a class="dropdown-item" href="{{ path('person') }}"><span class="fa fa-list"></span> List/Search Members</a></li>
+                                <li><a class="dropdown-item" href="{{ path('person') }}"><span class="fa fa-plus"></span> Add Member</a></li>
+                            </ul>
                         </li>
                     </ul>
 
