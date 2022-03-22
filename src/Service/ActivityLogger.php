@@ -63,6 +63,26 @@ class ActivityLogger implements ServiceSubscriberInterface
         );
     }
 
+    public function logEndSupervisorAffiliation(SupervisorAffiliation $supervisorAffiliation)
+    {
+        $this->logPersonActivity(
+            $supervisorAffiliation->getSupervisor(),
+            sprintf(
+                "Ended supervisee affiliation with %s on %s",
+                $supervisorAffiliation->getSupervisee(),
+                $supervisorAffiliation->getEndedAt()->format('n/j/Y')
+            )
+        );
+        $this->logPersonActivity(
+            $supervisorAffiliation->getSupervisee(),
+            sprintf(
+                "Ended supervisor affiliation with %s on %s",
+                $supervisorAffiliation->getSupervisor(),
+                $supervisorAffiliation->getEndedAt()->format('n/j/Y')
+            )
+        );
+    }
+
     public function logNewKeyAffiliation(KeyAffiliation $keyAffiliation)
     {
         $this->logPersonActivity(
@@ -79,12 +99,15 @@ class ActivityLogger implements ServiceSubscriberInterface
     public function logPersonActivity(Person $person, ?string $message)
     {
         if ($message) {
-            $owner = $this->security()->getUser();
+            $owner = $this->security()->getUser()
+            ;
             $log = (new Log())
                 ->setPerson($person)
                 ->setUser($owner)
-                ->setText($message);
-            $this->entityManager()->persist($log);
+                ->setText($message)
+            ;
+            $this->entityManager()->persist($log)
+            ;
         }
     }
 
@@ -92,18 +115,22 @@ class ActivityLogger implements ServiceSubscriberInterface
     public function logThemeActivity(Theme $theme, ?string $message)
     {
         if ($message) {
-            $owner = $this->security()->getUser();
+            $owner = $this->security()->getUser()
+            ;
             $log = (new Log())
                 ->setTheme($theme)
                 ->setUser($owner)
-                ->setText($message);
-            $this->entityManager()->persist($log);
+                ->setText($message)
+            ;
+            $this->entityManager()->persist($log)
+            ;
         }
     }
 
     private function getEntityEditMessage($entity, $messagePrefix = ''): ?string
     {
-        $uow = $this->entityManager()->getUnitOfWork();
+        $uow = $this->entityManager()->getUnitOfWork()
+        ;
         $uow->computeChangeSets();
 
         $changeSet = $uow->getEntityChangeSet($entity);
@@ -168,12 +195,14 @@ class ActivityLogger implements ServiceSubscriberInterface
     public function logPersonEdit(Person $person)
     {
         $this->logPersonActivity($person, $this->getEntityEditMessage($person));
-        $uow = $this->entityManager()->getUnitOfWork();
+        $uow = $this->entityManager()->getUnitOfWork()
+        ;
         $uow->computeChangeSets();
 
         // Log changes to key affiliations
         if ($person->getKeyAffiliations()->isDirty()) {
-            $inserted = $person->getKeyAffiliations()->getInsertDiff();
+            $inserted = $person->getKeyAffiliations()->getInsertDiff()
+            ;
             foreach ($inserted as $keyAffiliation) {
                 $this->logNewKeyAffiliation($keyAffiliation);
             }
@@ -194,7 +223,8 @@ class ActivityLogger implements ServiceSubscriberInterface
 
         // Log supervisor
         if ($person->getSupervisorAffiliations()->isDirty()) {
-            $inserted = $person->getSupervisorAffiliations()->getInsertDiff();
+            $inserted = $person->getSupervisorAffiliations()->getInsertDiff()
+            ;
             foreach ($inserted as $supervisorAffiliation) {
                 $this->logNewSupervisorAffiliation($supervisorAffiliation);
             }
@@ -218,7 +248,8 @@ class ActivityLogger implements ServiceSubscriberInterface
 
         // Log supervisees
         if ($person->getSuperviseeAffiliations()->isDirty()) {
-            $inserted = $person->getSuperviseeAffiliations()->getInsertDiff();
+            $inserted = $person->getSuperviseeAffiliations()->getInsertDiff()
+            ;
             foreach ($inserted as $superviseeAffiliation) {
                 $this->logNewSupervisorAffiliation($superviseeAffiliation);
             }
@@ -242,7 +273,8 @@ class ActivityLogger implements ServiceSubscriberInterface
 
         // Log theme changes
         if ($person->getThemeAffiliations()->isDirty()) {
-            $inserted = $person->getThemeAffiliations()->getInsertDiff();
+            $inserted = $person->getThemeAffiliations()->getInsertDiff()
+            ;
             foreach ($inserted as $themeAffiliation) {
                 $this->logNewThemeAffiliation($themeAffiliation);
             }
@@ -265,11 +297,14 @@ class ActivityLogger implements ServiceSubscriberInterface
 
     public function logKeyActivity(Key $key, string $message)
     {
-        $owner = $this->security()->getUser();
+        $owner = $this->security()->getUser()
+        ;
         $log = (new Log())
             ->setCylinderKey($key)
             ->setUser($owner)
-            ->setText($message);
-        $this->entityManager()->persist($log);
+            ->setText($message)
+        ;
+        $this->entityManager()->persist($log)
+        ;
     }
 }
