@@ -10,7 +10,7 @@
                     {{ note.createdBy }}<br/>
                     {{ note.createdAt|date('n/j/Y') }}
                     {% if note.type != constant('App\\Enum\\NoteCategory::General') %}
-                        <br/>{{ note.type }}
+                        <br/>{{ note.type.label }}
                     {% endif %}
                 </td>
             </tr>

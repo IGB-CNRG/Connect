@@ -79,7 +79,6 @@ class SupervisorController extends AbstractController
 
     #[Route('/person/{slug}/supervisor/{id}/end', name: 'person_end_supervisor_affiliation')]
     #[ParamConverter('person', options: ['mapping' => ['slug' => 'slug']])]
-    #[ParamConverter('supervisorAffiliation', options: ['mapping' => ['id' => 'id']])]
     public function endSupervisorAffiliation(
         Person $person,
         SupervisorAffiliation $supervisorAffiliation,

@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block title %}
-    {{ parent() }} | {% if note is defined %}Edit Note{% else %}Add Note{% endif %}
+    {{ parent() }} | {% if app.request.get('_route') == 'person_edit_note' %}Edit Note{% else %}Add Note{% endif %}
 {% endblock %}
 
 {% block breadcrumb %}
@@ -16,7 +16,7 @@
         <a href="{{ path('person_view', {'slug': person.slug}) }}">{{ person.name }}</a>
     </li>
     <li class="breadcrumb-item active" aria-current="page">
-        {% if note is defined %}Edit Note{% else %}Add Note{% endif %}
+        {% if app.request.get('_route') == 'person_edit_note' %}Edit Note{% else %}Add Note{% endif %}
     </li>
 {% endblock %}
 

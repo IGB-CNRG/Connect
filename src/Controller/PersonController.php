@@ -19,6 +19,7 @@ use App\Repository\ThemeRepository;
 use App\Service\ActivityLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
@@ -78,6 +79,7 @@ class PersonController extends AbstractController
     }
 
     #[Route('/person/new', name: 'person_add', priority: 1)]
+    #[IsGranted('PERSON_ADD')]
     public function new(Request $request, EntityManagerInterface $em, ActivityLogger $logger): Response
     {
         $person = new Person();
@@ -134,14 +136,16 @@ class PersonController extends AbstractController
         ]);
     }
 
-    #[Route('/themeAffiliation/{id}/end', name: 'person_end_theme_affiliation')]
+    #[Route('/person/{slug}/themeAffiliation/{id}/end', name: 'person_end_theme_affiliation')]
+    #[ParamConverter('person', options: ['mapping' => ['slug' => 'slug']])]
+    #[IsGranted('PERSON_EDIT', 'person')]
     public function endThemeAffiliation(
+        Person $person,
         ThemeAffiliation $themeAffiliation,
         Request $request,
         EntityManagerInterface $em,
         ActivityLogger $logger
     ): Response {
-        $this->denyAccessUnlessGranted('PERSON_EDIT', $themeAffiliation->getPerson());
         $form = $this->createForm(EndThemeAffiliationType::class, $themeAffiliation);
         $form->add('save', SubmitType::class);
 
@@ -151,17 +155,16 @@ class PersonController extends AbstractController
             $logger->logEndThemeAffiliation($themeAffiliation);
             $em->flush();
 
-            return $this->redirectToRoute('person_view', ['slug' => $themeAffiliation->getPerson()->getSlug()]);
+            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
 
         return $this->render('person/themeAffiliation/end.html.twig', [
-            'person' => $themeAffiliation->getPerson(),
+            'person' => $person,
             'themeAffiliation' => $themeAffiliation,
             'form' => $form->createView(),
         ]);
     }
 
-    /** @noinspection PhpParamsInspection */
     #[Route('/person/{slug}/upload-document', name: 'person_upload_document')]
     #[IsGranted('PERSON_EDIT', subject: 'person')]
     public function uploadDocument(
@@ -170,6 +173,7 @@ class PersonController extends AbstractController
         EntityManagerInterface $em,
         ActivityLogger $logger
     ): Response {
+        /** @noinspection PhpParamsInspection */
         $document = (new Document())
             ->setPerson($person)
             ->setUploadedBy($this->getUser())
@@ -192,40 +196,44 @@ class PersonController extends AbstractController
         ]);
     }
 
-    #[Route('/document/{id}/edit', name: 'person_edit_document')]
+    #[Route('/person/{slug}/document/{id}/edit', name: 'person_edit_document')]
+    #[ParamConverter('person', options: ['mapping' => ['slug' => 'slug']])]
+    #[IsGranted('PERSON_EDIT', subject: 'person')]
     public function editDocument(
+        Person $person,
         Document $document,
         Request $request,
         EntityManagerInterface $em,
         ActivityLogger $logger
     ): Response {
-        $this->denyAccessUnlessGranted('PERSON_EDIT', $document->getPerson());
+        // todo break if the document does not belong to the person?
         $form = $this->createForm(DocumentMetadataType::class, $document);
         $form->add('save', SubmitType::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($document);
-            $logger->logPersonActivity($document->getPerson(), sprintf("Edited document '%s'", $document));
+            $logger->logPersonActivity($person, sprintf("Edited document '%s'", $document));
             $em->flush();
 
-            return $this->redirectToRoute('person_view', ['slug' => $document->getPerson()->getSlug()]);
+            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
 
         return $this->render('person/document/add.html.twig', [
-            'person' => $document->getPerson(),
+            'person' => $person,
             'form' => $form->createView(),
         ]);
     }
 
-    #[Route('/document/{id}/delete', name: 'person_delete_document')]
+    #[Route('/person/{slug}/document/{id}/delete', name: 'person_delete_document')]
+    #[ParamConverter('person', options: ['mapping' => ['slug' => 'slug']])]
     public function deleteDocument(
+        Person $person,
         Document $document,
         Request $request,
         EntityManagerInterface $em,
         ActivityLogger $logger
     ): Response {
-        $person = $document->getPerson();
         $this->denyAccessUnlessGranted('PERSON_EDIT', $person);
 
         if ($request->isMethod(Request::METHOD_POST)) {
@@ -242,42 +250,26 @@ class PersonController extends AbstractController
         ]);
     }
 
+    #[Route('/person/{slug}/note/{id}/edit', name: 'person_edit_note')]
     #[Route('/person/{slug}/add-note', name: 'person_add_note')]
-    #[IsGranted('NOTE_ADD', subject: 'person')]
-    public function addNote(
+    #[ParamConverter('person', options: ['mapping' => ['slug' => 'slug']])]
+    public function editNote(
         Person $person,
+        ?Note $note,
         Request $request,
         EntityManagerInterface $em,
         ActivityLogger $logger
     ): Response {
-        /** @noinspection PhpParamsInspection */
-        $note = (new Note())
-            ->setPerson($person)
-            ->setCreatedBy($this->getUser())
-        ;
-        $form = $this->createForm(NoteType::class, $note);
-        $form->add('save', SubmitType::class);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($note);
-            $logger->logPersonActivity($person, 'Added note'); // todo a little more detail?
-            $em->flush();
-
-            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
+        if ($note === null) {
+            $this->denyAccessUnlessGranted('NOTE_ADD');
+            /** @noinspection PhpParamsInspection */
+            $note = (new Note())
+                ->setPerson($person)
+                ->setCreatedBy($this->getUser())
+            ;
+        } else {
+            $this->denyAccessUnlessGranted('NOTE_EDIT', $note);
         }
-
-        return $this->render('person/note/edit.html.twig', [
-            'person' => $person,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    #[Route('/note/{id}/edit', name: 'person_edit_note')]
-    #[IsGranted('NOTE_EDIT', subject: 'note')]
-    public function editNote(Note $note, Request $request, EntityManagerInterface $em, ActivityLogger $logger): Response
-    {
-        $person = $note->getPerson();
         $form = $this->createForm(NoteType::class, $note);
         $form->add('save', SubmitType::class);
 
@@ -297,15 +289,16 @@ class PersonController extends AbstractController
         ]);
     }
 
-    #[Route('/note/{id}/delete', name: 'person_delete_note')]
+    #[Route('/person/{slug}/note/{id}/delete', name: 'person_delete_note')]
+    #[ParamConverter('person', options: ['mapping' => ['slug' => 'slug']])]
     #[IsGranted('NOTE_EDIT', subject: 'note')]
     public function deleteNote(
+        Person $person,
         Note $note,
         Request $request,
         EntityManagerInterface $em,
         ActivityLogger $logger
     ): Response {
-        $person = $note->getPerson();
         if ($request->isMethod(Request::METHOD_POST)) {
             $em->remove($note);
             $logger->logPersonActivity(

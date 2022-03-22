@@ -181,11 +181,11 @@
                             <td class="shrink">
                                 {% if is_granted("PERSON_EDIT", person) %}
                                     <a class="text-decoration-none"
-                                       href="{{ path('person_edit_document', {'id': document.id}) }}">
+                                       href="{{ path('person_edit_document', {'id': document.id, 'slug': person.slug}) }}">
                                         <span class="fa fa-pencil"></span>
                                     </a>
                                     <a class="text-decoration-none"
-                                       href="{{ path('person_delete_document', {'id': document.id}) }}">
+                                       href="{{ path('person_delete_document', {'id': document.id, 'slug': person.slug}) }}">
                                         <span class="fa fa-trash"></span>
                                     </a>
                                 {% endif %}
@@ -222,11 +222,11 @@
                                 <td class="shrink">
                                     {% if is_granted('NOTE_EDIT', note) %}
                                         <a class="text-decoration-none"
-                                           href="{{ path('person_edit_note', {'id': note.id}) }}">
+                                           href="{{ path('person_edit_note', {'id': note.id, 'slug': person.slug}) }}">
                                             <span class="fa fa-pencil"></span>
                                         </a>
                                         <a class="text-decoration-none"
-                                           href="{{ path('person_delete_note', {'id': note.id}) }}">
+                                           href="{{ path('person_delete_note', {'id': note.id, 'slug': person.slug}) }}">
                                             <span class="fa fa-trash"></span>
                                         </a>
                                     {% endif %}
@@ -298,7 +298,7 @@
                         <td>{% if themeAffiliation.endedAt is not null %}{{ themeAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
                         <td class="shrink">
                             {% if themeAffiliation.endedAt is null and is_granted("PERSON_EDIT", person) %}
-                                <a href="{{ path('person_end_theme_affiliation', {'id': themeAffiliation.id}) }}">
+                                <a href="{{ path('person_end_theme_affiliation', {'id': themeAffiliation.id, 'slug': person.slug}) }}">
                                     End
                                 </a>
                             {% endif %}
@@ -317,7 +317,8 @@
                 </div>
                 <div class="collapse" id="key_table">
                     <div class="card-body">
-                        <a href="{{ path('person_edit_keys', {'id': person.id}) }}" class="btn btn-primary"><span class="fa fa-pencil"></span> Edit Keys</a>
+                        <a href="{{ path('person_edit_keys', {'id': person.id}) }}" class="btn btn-primary"><span
+                                    class="fa fa-pencil"></span> Edit Keys</a>
                     </div>
                     <table class="table">
                         <tr>
