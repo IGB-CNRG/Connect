@@ -95,6 +95,9 @@ class PersonType extends AbstractType
             ->add('superviseeAffiliations', HistoricalCollectionType::class, [
                 'entry_type' => SuperviseeType::class,
             ])
+            ->add('roomAffiliations', HistoricalCollectionType::class, [
+                'entry_type' => RoomAffiliationType::class,
+            ])
         ;
         // todo hide fields based on user roles
         if ($this->security->isGranted('ROLE_ADMIN')) {

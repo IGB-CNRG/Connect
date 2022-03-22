@@ -268,6 +268,39 @@
 
     {# Historical Info #}
     <div class="card mb-3">
+        <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#room_table"
+             aria-expanded="false" role="button">
+            Rooms
+        </div>
+        <div class="collapse" id="room_table">
+            {% if is_granted("PERSON_EDIT", person) %}
+                <div class="card-body">
+                    <a href="{{ path('person_add_room', {'slug': person.slug}) }}" class="btn btn-primary">
+                        <span class="fa fa-plus"></span> Add Room
+                    </a>
+                </div>
+            {% endif %}
+            <table class="table"> {# todo maybe these tables should be grids so they line up with each other #}
+                <tr>
+                    <th>Room</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th class="shrink"></th>
+                </tr>
+                {% for roomAffiliation in person.roomAffiliations %}
+                    <tr>
+                        <td>{{ roomAffiliation.room }}</td>
+                        <td>{{ roomAffiliation.startedAt|date('n/j/Y') }}</td>
+                        <td>{% if roomAffiliation.endedAt is not null %}{{ roomAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
+                        <td class="shrink">{% if roomAffiliation.endedAt is null %}<a
+                                href="{{ path('person_end_room_affiliation', {'id': roomAffiliation.id, 'slug': person.slug}) }}">
+                                    End</a>{% endif %}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    <div class="card mb-3">
         <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#theme_table"
              aria-expanded="false" role="button">
             Themes

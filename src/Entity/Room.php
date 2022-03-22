@@ -39,6 +39,13 @@ class Room
         $this->logs = new ArrayCollection();
     }
 
+    public function __toString(){
+        if($this->getName()){
+            return sprintf('%s (%s)', $this->getNumber(), $this->getName());
+        }
+        return $this->getNumber();
+    }
+
     public function getId(): ?int
     {
         return $this->id;

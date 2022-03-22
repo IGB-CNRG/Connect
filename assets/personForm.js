@@ -20,6 +20,12 @@ $('#person_themeAffiliations').formCollection({
         $(new_elem).find('.connect-select2').select2();
     },
 });
+$('#person_roomAffiliations').formCollection({
+    other_btn_add: '#roomAffiliation-add',
+    post_add: function(new_elem, context){
+        $(new_elem).find('.connect-select2').select2();
+    },
+});
 $('#person_supervisorAffiliations').formCollection({
     other_btn_add: '#supervisorAffiliation-add',
     post_add: function(new_elem, context){

@@ -2,16 +2,16 @@
 
 namespace App\Controller;
 
-use App\Entity\Document;
 use App\Entity\Note;
 use App\Entity\Person;
+use App\Entity\RoomAffiliation;
 use App\Entity\ThemeAffiliation;
-use App\Form\DocumentMetadataType;
-use App\Form\DocumentType;
+use App\Form\EndRoomAffiliationType;
 use App\Form\EndThemeAffiliationType;
 use App\Form\KeysType;
 use App\Form\NoteType;
 use App\Form\Person\PersonType;
+use App\Form\Person\RoomAffiliationType;
 use App\Form\ThemeAffiliationType;
 use App\Repository\MemberCategoryRepository;
 use App\Repository\PersonRepository;
@@ -109,8 +109,7 @@ class PersonController extends AbstractController
         ActivityLogger $logger
     ): Response {
         $themeAffiliation = (new ThemeAffiliation())
-            ->setPerson($person)
-        ;
+            ->setPerson($person);
         $form = $this->createForm(ThemeAffiliationType::class, $themeAffiliation, ['person' => $person]);
         $form->add('Add', SubmitType::class);
 
@@ -165,91 +164,6 @@ class PersonController extends AbstractController
         ]);
     }
 
-    #[Route('/person/{slug}/upload-document', name: 'person_upload_document')]
-    #[IsGranted('PERSON_EDIT', subject: 'person')]
-    public function uploadDocument(
-        Person $person,
-        Request $request,
-        EntityManagerInterface $em,
-        ActivityLogger $logger
-    ): Response {
-        /** @noinspection PhpParamsInspection */
-        $document = (new Document())
-            ->setPerson($person)
-            ->setUploadedBy($this->getUser())
-        ;
-        $form = $this->createForm(DocumentType::class, $document);
-        $form->add('upload', SubmitType::class);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($document);
-            $logger->logPersonActivity($person, sprintf("Uploaded document '%s'", $document));
-            $em->flush();
-
-            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
-        }
-
-        return $this->render('person/document/add.html.twig', [
-            'person' => $person,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    #[Route('/person/{slug}/document/{id}/edit', name: 'person_edit_document')]
-    #[ParamConverter('person', options: ['mapping' => ['slug' => 'slug']])]
-    #[IsGranted('PERSON_EDIT', subject: 'person')]
-    public function editDocument(
-        Person $person,
-        Document $document,
-        Request $request,
-        EntityManagerInterface $em,
-        ActivityLogger $logger
-    ): Response {
-        // todo break if the document does not belong to the person?
-        $form = $this->createForm(DocumentMetadataType::class, $document);
-        $form->add('save', SubmitType::class);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($document);
-            $logger->logPersonActivity($person, sprintf("Edited document '%s'", $document));
-            $em->flush();
-
-            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
-        }
-
-        return $this->render('person/document/add.html.twig', [
-            'person' => $person,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    #[Route('/person/{slug}/document/{id}/delete', name: 'person_delete_document')]
-    #[ParamConverter('person', options: ['mapping' => ['slug' => 'slug']])]
-    public function deleteDocument(
-        Person $person,
-        Document $document,
-        Request $request,
-        EntityManagerInterface $em,
-        ActivityLogger $logger
-    ): Response {
-        $this->denyAccessUnlessGranted('PERSON_EDIT', $person);
-
-        if ($request->isMethod(Request::METHOD_POST)) {
-            $em->remove($document);
-            $logger->logPersonActivity($person, sprintf("Removed document '%s'", $document));
-            $em->flush();
-
-            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
-        }
-
-        return $this->render('person/document/delete.html.twig', [
-            'person' => $person,
-            'document' => $document,
-        ]);
-    }
-
     #[Route('/person/{slug}/note/{id}/edit', name: 'person_edit_note')]
     #[Route('/person/{slug}/add-note', name: 'person_add_note')]
     #[ParamConverter('person', options: ['mapping' => ['slug' => 'slug']])]
@@ -265,8 +179,7 @@ class PersonController extends AbstractController
             /** @noinspection PhpParamsInspection */
             $note = (new Note())
                 ->setPerson($person)
-                ->setCreatedBy($this->getUser())
-            ;
+                ->setCreatedBy($this->getUser());
         } else {
             $this->denyAccessUnlessGranted('NOTE_EDIT', $note);
         }
@@ -338,6 +251,63 @@ class PersonController extends AbstractController
 
         return $this->render('person/keys/edit.html.twig', [
             'person' => $person,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/person/{slug}/add-room', name: 'person_add_room')]
+    #[IsGranted("PERSON_EDIT", 'person')]
+    public function addRoom(
+        Person $person,
+        Request $request,
+        EntityManagerInterface $em,
+        ActivityLogger $logger
+    ): Response {
+        $roomAffiliation = (new RoomAffiliation())
+            ->setPerson($person);
+        $form = $this->createForm(RoomAffiliationType::class, $roomAffiliation);
+        $form->add('save', SubmitType::class);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($roomAffiliation);
+            $logger->logNewRoomAffiliation($roomAffiliation);
+            $em->flush();
+
+            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
+        }
+
+        return $this->render('person/room/add.html.twig', [
+            'person' => $person,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/person/{slug}/room/{id}/end', name: 'person_end_room_affiliation')]
+    #[ParamConverter('person', options: ['mapping' => ['slug' => 'slug']])]
+    public function endSupervisorAffiliation(
+        Person $person,
+        RoomAffiliation $roomAffiliation,
+        Request $request,
+        EntityManagerInterface $em,
+        ActivityLogger $logger
+    ): Response {
+        $this->denyAccessUnlessGranted('PERSON_EDIT', $person);
+        $form = $this->createForm(EndRoomAffiliationType::class, $roomAffiliation);
+        $form->add('save', SubmitType::class);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($roomAffiliation);
+            $logger->logEndRoomAffiliation($roomAffiliation);
+            $em->flush();
+
+            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
+        }
+
+        return $this->render('person/room/end.html.twig', [
+            'person' => $person,
+            'roomAffiliation' => $roomAffiliation,
             'form' => $form->createView(),
         ]);
     }

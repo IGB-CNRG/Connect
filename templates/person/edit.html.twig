@@ -32,6 +32,13 @@
                     {{ form_row(form.preferredAddress) }}
                 </div>
             </div>
+            <div class="card mb-3">
+                <div class="card-header">Rooms</div>
+                <div class="card-body">
+                    {{ form_row(form.roomAffiliations) }}
+                    <button type="button" class="btn btn-primary" id="roomAffiliation-add">Add Room</button>
+                </div>
+            </div>
         </div>
     </div>
     <div class="row">
@@ -113,6 +120,29 @@
                 <div class="col-lg">{{ form_row(form.title) }}</div>
                 <div class="col-lg">{{ form_row(form.specialRole) }}</div>
             </div>
+        {% endif %}
+        <div class="row">
+            <div class="col">
+                {% if form.startedAt is defined %}
+                    {{ form_row(form.startedAt) }}
+                {% elseif data is not null %}
+                    <p class="mb-2">Start date</p>
+                    {{ data.startedAt|date('n/j/Y') }}
+                {% endif %}
+            </div>
+            <div class="col">
+                {{ form_row(form.endedAt) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block RoomAffiliation_row %}
+    <div class="collection-row">
+        {% if data is not null %}
+            <div class="collection-label">{{ data.room }}</div>
+        {% else %}
+            {{ form_row(form.room) }}
         {% endif %}
         <div class="row">
             <div class="col">
