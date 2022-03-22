@@ -12,9 +12,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Security;
 
 class ThemeAffiliationType extends AbstractType
 {
+    public function __construct(private Security $security) {}
+
     public function getBlockPrefix(): string
     {
         return 'ThemeAffiliation';
@@ -23,7 +26,6 @@ class ThemeAffiliationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('startedAt', StartDateType::class)
             ->add('endedAt', EndDateType::class)
             ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
                 $themeAffiliation = $event->getData();
@@ -38,6 +40,11 @@ class ThemeAffiliationType extends AbstractType
                         ])
                         ->add('specialRole', ThemeRoleType::class)
                     ;
+                }
+                if ($this->security->isGranted('PERSON_EDIT_HISTORY')
+                    || !$themeAffiliation
+                    || $themeAffiliation->getId() === null) {
+                    $form->add('startedAt', StartDateType::class);
                 }
             })
         ;

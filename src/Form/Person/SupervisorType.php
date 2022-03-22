@@ -12,9 +12,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Security;
 
 class SupervisorType extends AbstractType
 {
+    public function __construct(private Security $security) {}
+
     public function getBlockPrefix(): string
     {
         return 'SupervisorAffiliation';
@@ -23,7 +26,6 @@ class SupervisorType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('startedAt', StartDateType::class)
             ->add('endedAt', EndDateType::class)
             ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
                 $supervisorAffiliation = $event->getData();
@@ -36,6 +38,11 @@ class SupervisorType extends AbstractType
                             'class' => 'connect-select2',
                         ],
                     ]);
+                }
+                if ($this->security->isGranted('PERSON_EDIT_HISTORY')
+                    || !$supervisorAffiliation
+                    || $supervisorAffiliation->getId() === null) {
+                    $form->add('startedAt', StartDateType::class);
                 }
             })
         ;
