@@ -4,7 +4,7 @@
     <div class="callout callout-info">
         All fields are optional. {# todo better help text here #}
     </div>
-    {% form_theme form _self %}
+    {% form_theme form _self 'form_themes/_keys.html.twig' %}
     {{ form_start(form) }}
     <div class="row">
         <div class="col-lg">
@@ -96,24 +96,6 @@
     {% endif %}
 
     {{ form_end(form) }}
-{% endblock %}
-
-{% block KeyAffiliation_row %}
-    <div class="collection-row">
-        {% if data is not null %}
-            <div class="collection-label">{{ data.cylinderKey.name }}</div>
-        {% else %}
-            {{ form_row(form.cylinderKey) }}
-        {% endif %}
-        <div class="row">
-            <div class="col">
-                {{ form_row(form.startedAt) }}
-            </div>
-            <div class="col">
-                {{ form_row(form.endedAt) }}
-            </div>
-        </div>
-    </div>
 {% endblock %}
 
 {% block ThemeAffiliation_row %}

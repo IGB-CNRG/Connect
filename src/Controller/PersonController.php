@@ -9,6 +9,7 @@ use App\Entity\ThemeAffiliation;
 use App\Form\DocumentMetadataType;
 use App\Form\DocumentType;
 use App\Form\EndThemeAffiliationType;
+use App\Form\KeysType;
 use App\Form\NoteType;
 use App\Form\Person\PersonType;
 use App\Form\ThemeAffiliationType;
@@ -27,8 +28,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class PersonController extends AbstractController
 {
     #[Route('/person', name: 'person')]
-    public function index(PersonRepository $personRepository, ThemeRepository $themeRepository, MemberCategoryRepository $categoryRepository): Response
-    {
+    public function index(
+        PersonRepository $personRepository,
+        ThemeRepository $themeRepository,
+        MemberCategoryRepository $categoryRepository
+    ): Response {
         $people = $personRepository->findAllForIndex();
         $themes = $themeRepository->findAll(); // Todo group by current/old?
         $memberCategories = $categoryRepository->findAll(); // todo sort
@@ -103,7 +107,8 @@ class PersonController extends AbstractController
         ActivityLogger $logger
     ): Response {
         $themeAffiliation = (new ThemeAffiliation())
-            ->setPerson($person);
+            ->setPerson($person)
+        ;
         $form = $this->createForm(ThemeAffiliationType::class, $themeAffiliation, ['person' => $person]);
         $form->add('Add', SubmitType::class);
 
@@ -167,7 +172,8 @@ class PersonController extends AbstractController
     ): Response {
         $document = (new Document())
             ->setPerson($person)
-            ->setUploadedBy($this->getUser());
+            ->setUploadedBy($this->getUser())
+        ;
         $form = $this->createForm(DocumentType::class, $document);
         $form->add('upload', SubmitType::class);
 
@@ -247,7 +253,8 @@ class PersonController extends AbstractController
         /** @noinspection PhpParamsInspection */
         $note = (new Note())
             ->setPerson($person)
-            ->setCreatedBy($this->getUser());
+            ->setCreatedBy($this->getUser())
+        ;
         $form = $this->createForm(NoteType::class, $note);
         $form->add('save', SubmitType::class);
 
@@ -313,6 +320,32 @@ class PersonController extends AbstractController
         return $this->render('person/note/delete.html.twig', [
             'person' => $person,
             'note' => $note,
+        ]);
+    }
+
+    #[Route('/person/{id}/edit-keys', name: 'person_edit_keys')]
+    #[IsGranted('ROLE_KEY_MANAGER')]
+    public function editKeys(
+        Person $person,
+        Request $request,
+        EntityManagerInterface $em,
+        ActivityLogger $logger
+    ): Response {
+        $form = $this->createForm(KeysType::class, $person);
+        $form->add('save', SubmitType::class);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($person);
+            $logger->logPersonEdit($person);
+            $em->flush();
+
+            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
+        }
+
+        return $this->render('person/keys/edit.html.twig', [
+            'person' => $person,
+            'form' => $form->createView(),
         ]);
     }
 }

@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    {% form_theme form 'form_themes/_keys.html.twig' %}
+    {{ form_start(form) }}
+    <div class="card mb-3">
+        <div class="card-header">Keys</div>
+        <div class="card-body">
+            {{ form_row(form.keyAffiliations) }}
+            <button type="button" class="btn btn-primary" id="keyAffiliation-add">Add Key</button>
+        </div>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block title %}
+    {{ parent() }} | Edit Keys
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item" aria-current="page">
+        <a href="{{ path('person') }}">IGB Members</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        <a href="{{ path('person_view', {'slug': person.slug}) }}">{{ person.name }}</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        Edit Keys
+    </li>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ encore_entry_link_tags('keyForm') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('keyForm') }}
+{% endblock %}

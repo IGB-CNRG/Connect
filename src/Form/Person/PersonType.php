@@ -114,7 +114,7 @@ class PersonType extends AbstractType
                 ])
             ;
         }
-        if ($this->security->isGranted('ROLE_ADMIN') || $this->security->isGranted('ROLE_KEY_MANAGER')) {
+        if ($this->security->isGranted('ROLE_KEY_MANAGER')) {
             $builder->add('keyAffiliations', HistoricalCollectionType::class, [
                 'entry_type' => KeyAffiliationType::class,
             ]);

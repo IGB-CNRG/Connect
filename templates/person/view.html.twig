@@ -74,7 +74,7 @@
                         </tr>
                     {% endfor %}
 
-                    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_KEY_MANAGER') %}
+                    {% if is_granted('ROLE_KEY_MANAGER') %}
                         <tr>
                             <th>Keys</th>
                             <td>
@@ -308,7 +308,7 @@
             </table>
         </div>
     </div>
-    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_KEY_MANAGER') %}
+    {% if is_granted('ROLE_KEY_MANAGER') %}
         {% if person.keyAffiliations is not empty %}
             <div class="card mb-3">
                 <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#key_table"
@@ -316,6 +316,9 @@
                     Keys
                 </div>
                 <div class="collapse" id="key_table">
+                    <div class="card-body">
+                        <a href="{{ path('person_edit_keys', {'id': person.id}) }}" class="btn btn-primary"><span class="fa fa-pencil"></span> Edit Keys</a>
+                    </div>
                     <table class="table">
                         <tr>
                             <th>Key</th>
@@ -326,7 +329,7 @@
                         {% for keyAffiliation in person.keyAffiliations %}
                             <tr>
                                 <td>{{ keyAffiliation.cylinderKey.name }}</td>
-                                <td>{# todo show something else if there are many rooms (>3) #}
+                                <td>
                                     {% if keyAffiliation.cylinderKey.roomKeyAffiliations|length > 3 or keyAffiliation.cylinderKey.roomKeyAffiliations|length < 1 %}
                                         {{ keyAffiliation.cylinderKey.description }}
                                     {% else %}
