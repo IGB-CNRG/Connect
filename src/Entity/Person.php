@@ -1,4 +1,7 @@
-<?php /** @noinspection PhpMissingFieldTypeInspection */
+<?php /*
+ * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * All rights reserved.
+ */ /** @noinspection PhpMissingFieldTypeInspection */
 
 namespace App\Entity;
 

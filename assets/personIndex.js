@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * All rights reserved.
+ */
+
 import './styles/app.scss';
 import 'datatables.net-bs5/css/dataTables.bootstrap5.css';
 import '@fortawesome/fontawesome-free/css/all.css';
