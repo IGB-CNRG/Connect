@@ -25,9 +25,20 @@ class College
     #[ORM\OneToMany(mappedBy: 'college', targetEntity: Department::class)]
     private $departments;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $abbreviation;
+
     public function __construct()
     {
         $this->departments = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        if ($this->getAbbreviation()) {
+            return sprintf('%s (%s)', $this->getName(), $this->getAbbreviation());
+        }
+        return $this->getName();
     }
 
     public function getId(): ?int
@@ -73,6 +84,18 @@ class College
                 $department->setCollege(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAbbreviation(): ?string
+    {
+        return $this->abbreviation;
+    }
+
+    public function setAbbreviation(?string $abbreviation): self
+    {
+        $this->abbreviation = $abbreviation;
 
         return $this;
     }

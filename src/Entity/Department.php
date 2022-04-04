@@ -23,7 +23,6 @@ class Department
     private $name;
 
     #[ORM\ManyToOne(targetEntity: College::class, inversedBy: 'departments')]
-    #[ORM\JoinColumn(nullable: false)]
     private $college;
 
     #[ORM\OneToMany(mappedBy: 'department', targetEntity: DepartmentAffiliation::class, orphanRemoval: true)]
@@ -32,6 +31,11 @@ class Department
     public function __construct()
     {
         $this->departmentAffiliations = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->getName();
     }
 
     public function getId(): ?int
