@@ -10,6 +10,7 @@ use App\Entity\Person;
 use App\Form\Fields\HistoricalCollectionType;
 use App\Form\Person\KeyAffiliationType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -21,7 +22,10 @@ class KeysType extends AbstractType
             ->add('keyAffiliations', HistoricalCollectionType::class, [
                 'entry_type' => KeyAffiliationType::class,
             ])
-        ;
+            ->add('hasGivenKeyDeposit', CheckboxType::class, [
+                'required' => false,
+                'label' => 'Key Deposit',
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

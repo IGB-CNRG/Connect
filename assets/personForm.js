@@ -31,6 +31,12 @@ $('#person_roomAffiliations').formCollection({
         $(new_elem).find('.connect-select2').select2();
     },
 });
+$('#person_departmentAffiliations').formCollection({
+    other_btn_add: '#departmentAffiliation-add',
+    post_add: function(new_elem, context){
+        $(new_elem).find('.connect-select2').select2();
+    },
+});
 $('#person_supervisorAffiliations').formCollection({
     other_btn_add: '#supervisorAffiliation-add',
     post_add: function(new_elem, context){

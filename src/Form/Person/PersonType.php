@@ -102,7 +102,9 @@ class PersonType extends AbstractType
             ->add('roomAffiliations', HistoricalCollectionType::class, [
                 'entry_type' => RoomAffiliationType::class,
             ])
-        ;
+            ->add('departmentAffiliations', HistoricalCollectionType::class, [
+                'entry_type' => DepartmentAffiliationType::class,
+            ]);
         // todo hide fields based on user roles
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $builder
@@ -113,13 +115,17 @@ class PersonType extends AbstractType
                         'class' => 'connect-select2'
                     ],
                     'required' => false,
-                ])
-            ;
+                ]);
         }
         if ($this->security->isGranted('ROLE_KEY_MANAGER')) {
-            $builder->add('keyAffiliations', HistoricalCollectionType::class, [
-                'entry_type' => KeyAffiliationType::class,
-            ]);
+            $builder
+                ->add('keyAffiliations', HistoricalCollectionType::class, [
+                    'entry_type' => KeyAffiliationType::class,
+                ])
+                ->add('hasGivenKeyDeposit', CheckboxType::class, [
+                    'required' => false,
+                    'label' => 'Key Deposit',
+                ]);
         }
     }
 
