@@ -15,6 +15,7 @@
             <excludedPath path="/public/build" />
             <excludedPath path="/package-lock.json" />
             <excludedPath path="/public/uploads" />
+            <excludedPath path="/.stversions" />
           </excludedPaths>
         </serverdata>
       </paths>
