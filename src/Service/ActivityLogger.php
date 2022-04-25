@@ -7,6 +7,8 @@
 namespace App\Service;
 
 use App\Attribute\Loggable;
+use App\Entity\Department;
+use App\Entity\DepartmentAffiliation;
 use App\Entity\Key;
 use App\Entity\KeyAffiliation;
 use App\Entity\Log;
@@ -25,6 +27,8 @@ class ActivityLogger implements ServiceSubscriberInterface
 {
     use ServiceSubscriberTrait, EntityManagerAware, SecurityAware;
 
+    private const DATE_FORMAT = 'n/j/Y';
+
     public function logEndRoomAffiliation(RoomAffiliation $roomAffiliation)
     {
         $this->logPersonActivity(
@@ -32,15 +36,62 @@ class ActivityLogger implements ServiceSubscriberInterface
             sprintf(
                 "Ended room affiliation with %s on %s",
                 $roomAffiliation->getRoom(),
-                $roomAffiliation->getEndedAt()->format('n/j/Y')
+                $roomAffiliation->getEndedAt()->format(self::DATE_FORMAT)
             )
         );
+        $this->logRoomActivity(
+            $roomAffiliation->getRoom(),
+            sprintf(
+                "Ended affiliation with %s on %s",
+                $roomAffiliation->getPerson(),
+                $roomAffiliation->getEndedAt()->format(self::DATE_FORMAT)
+            )
+        );
+    }
+
+    public function logEndDepartmentAffiliation(DepartmentAffiliation $departmentAffiliation)
+    {
+        $this->logPersonActivity(
+            $departmentAffiliation->getPerson(),
+            sprintf(
+                "Ended department affiliation with %s on %s",
+                $departmentAffiliation->getDepartment() ?? $departmentAffiliation->getOtherDepartment(),
+                $departmentAffiliation->getEndedAt()->format(self::DATE_FORMAT)
+            )
+        );
+        if ($departmentAffiliation->getDepartment()) {
+            $this->logDepartmentActivity(
+                $departmentAffiliation->getDepartment(),
+                sprintf(
+                    "Ended affiliation with %s on %s",
+                    $departmentAffiliation->getPerson(),
+                    $departmentAffiliation->getEndedAt()->format(self::DATE_FORMAT)
+                )
+            );
+        }
     }
 
     public function logNewRoomAffiliation(RoomAffiliation $roomAffiliation)
     {
         $this->logPersonActivity($roomAffiliation->getPerson(), sprintf('Added room %s', $roomAffiliation->getRoom()));
         $this->logRoomActivity($roomAffiliation->getRoom(), sprintf('Added person %s', $roomAffiliation->getPerson()));
+    }
+
+    public function logNewDepartmentAffiliation(DepartmentAffiliation $departmentAffiliation)
+    {
+        $this->logPersonActivity(
+            $departmentAffiliation->getPerson(),
+            sprintf(
+                'Added department %s',
+                $departmentAffiliation->getDepartment() ?? $departmentAffiliation->getOtherDepartment()
+            )
+        );
+        if ($departmentAffiliation->getDepartment()) {
+            $this->logDepartmentActivity(
+                $departmentAffiliation->getDepartment(),
+                sprintf('Added person %s', $departmentAffiliation->getPerson())
+            );
+        }
     }
 
     public function logNewSupervisorAffiliation(SupervisorAffiliation $supervisorAffiliation)
@@ -82,7 +133,7 @@ class ActivityLogger implements ServiceSubscriberInterface
             sprintf(
                 "Ended theme affiliation with %s on %s",
                 $themeAffiliation->getTheme()->getShortName(),
-                $themeAffiliation->getEndedAt()->format('n/j/Y')
+                $themeAffiliation->getEndedAt()->format(self::DATE_FORMAT)
             )
         );
     }
@@ -94,7 +145,7 @@ class ActivityLogger implements ServiceSubscriberInterface
             sprintf(
                 "Ended supervisee affiliation with %s on %s",
                 $supervisorAffiliation->getSupervisee(),
-                $supervisorAffiliation->getEndedAt()->format('n/j/Y')
+                $supervisorAffiliation->getEndedAt()->format(self::DATE_FORMAT)
             )
         );
         $this->logPersonActivity(
@@ -102,7 +153,7 @@ class ActivityLogger implements ServiceSubscriberInterface
             sprintf(
                 "Ended supervisor affiliation with %s on %s",
                 $supervisorAffiliation->getSupervisor(),
-                $supervisorAffiliation->getEndedAt()->format('n/j/Y')
+                $supervisorAffiliation->getEndedAt()->format(self::DATE_FORMAT)
             )
         );
     }
@@ -171,7 +222,7 @@ class ActivityLogger implements ServiceSubscriberInterface
                                 || $loggableArguments['details'] === true) {
                                 if (array_key_exists('type', $loggableArguments)
                                     && $loggableArguments['type'] == 'date') {
-                                    $new = $change[1]->format('n/j/Y');
+                                    $new = $change[1]->format(self::DATE_FORMAT);
                                 } else {
                                     $new = $change[1];
                                 }
@@ -188,8 +239,8 @@ class ActivityLogger implements ServiceSubscriberInterface
                         if (!array_key_exists('details', $loggableArguments)
                             || $loggableArguments['details'] === true) {
                             if (array_key_exists('type', $loggableArguments) && $loggableArguments['type'] == 'date') {
-                                $old = $change[0]->format('n/j/Y');
-                                $new = $change[1]->format('n/j/Y');
+                                $old = $change[0]->format(self::DATE_FORMAT);
+                                $new = $change[1]->format(self::DATE_FORMAT);
                             } else {
                                 $old = $change[0];
                                 $new = $change[1];
@@ -344,6 +395,18 @@ class ActivityLogger implements ServiceSubscriberInterface
             $owner = $this->security()->getUser();
             $log = (new Log())
                 ->setRoom($room)
+                ->setUser($owner)
+                ->setText($message);
+            $this->entityManager()->persist($log);
+        }
+    }
+
+    private function logDepartmentActivity(Department $department, ?string $message)
+    {
+        if ($message) {
+            $owner = $this->security()->getUser();
+            $log = (new Log())
+                ->setDepartment($department)
                 ->setUser($owner)
                 ->setText($message);
             $this->entityManager()->persist($log);

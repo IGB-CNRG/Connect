@@ -6,14 +6,17 @@
 
 namespace App\Controller;
 
+use App\Entity\DepartmentAffiliation;
 use App\Entity\Note;
 use App\Entity\Person;
 use App\Entity\RoomAffiliation;
 use App\Entity\ThemeAffiliation;
+use App\Form\EndDepartmentAffiliationType;
 use App\Form\EndRoomAffiliationType;
 use App\Form\EndThemeAffiliationType;
 use App\Form\KeysType;
 use App\Form\NoteType;
+use App\Form\Person\DepartmentAffiliationType;
 use App\Form\Person\PersonType;
 use App\Form\Person\RoomAffiliationType;
 use App\Form\ThemeAffiliationType;
@@ -287,9 +290,67 @@ class PersonController extends AbstractController
         ]);
     }
 
+    #[Route('/person/{slug}/add-department', name: 'person_add_department')]
+    #[IsGranted("PERSON_EDIT", 'person')]
+    public function addDepartment(
+        Person $person,
+        Request $request,
+        EntityManagerInterface $em,
+        ActivityLogger $logger
+    ): Response {
+        $departmentAffiliation = (new DepartmentAffiliation())
+            ->setPerson($person);
+        $form = $this->createForm(DepartmentAffiliationType::class, $departmentAffiliation);
+        $form->add('save', SubmitType::class);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($departmentAffiliation);
+            $logger->logNewDepartmentAffiliation($departmentAffiliation);
+            $em->flush();
+
+            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
+        }
+
+        return $this->render('person/department/add.html.twig', [
+            'person' => $person,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/person/{slug}/department/{id}/end', name: 'person_end_department_affiliation')]
+    #[ParamConverter('person', options: ['mapping' => ['slug' => 'slug']])]
+    public function endDepartmentAffiliation(
+        Person $person,
+        DepartmentAffiliation $departmentAffiliation,
+        Request $request,
+        EntityManagerInterface $em,
+        ActivityLogger $logger
+    ): Response
+    {
+        $this->denyAccessUnlessGranted('PERSON_EDIT', $person);
+        $form = $this->createForm(EndDepartmentAffiliationType::class, $departmentAffiliation);
+        $form->add('save', SubmitType::class);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($departmentAffiliation);
+            $logger->logEndDepartmentAffiliation($departmentAffiliation);
+            $em->flush();
+
+            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
+        }
+
+        return $this->render('person/department/end.html.twig', [
+            'person' => $person,
+            'departmentAffiliation' => $departmentAffiliation,
+            'form' => $form->createView(),
+        ]);
+    }
+
     #[Route('/person/{slug}/room/{id}/end', name: 'person_end_room_affiliation')]
     #[ParamConverter('person', options: ['mapping' => ['slug' => 'slug']])]
-    public function endSupervisorAffiliation(
+    public function endRoomAffiliation(
         Person $person,
         RoomAffiliation $roomAffiliation,
         Request $request,

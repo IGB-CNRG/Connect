@@ -25,8 +25,9 @@ Encore
     .addEntry('app', './assets/app.js')
     .addEntry('personIndex', './assets/personIndex.js')
     .addEntry('form', './assets/form.js')
-    .addEntry('personForm', './assets/personForm.js')
+    .addEntry('personForm', ['./assets/personForm.js', './assets/departmentForm.js'])
     .addEntry('keyForm', './assets/keyForm.js')
+    .addEntry('departmentForm', ['./assets/form.js','./assets/departmentForm.js'])
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     // .enableStimulusBridge('./assets/controllers.json')

@@ -28,9 +28,13 @@ class Department
     #[ORM\OneToMany(mappedBy: 'department', targetEntity: DepartmentAffiliation::class, orphanRemoval: true)]
     private $departmentAffiliations;
 
+    #[ORM\OneToMany(mappedBy: 'department', targetEntity: Log::class)]
+    private $logs;
+
     public function __construct()
     {
         $this->departmentAffiliations = new ArrayCollection();
+        $this->logs = new ArrayCollection();
     }
 
     public function __toString()
@@ -91,6 +95,36 @@ class Department
             // set the owning side to null (unless already changed)
             if ($departmentAffiliation->getDepartment() === $this) {
                 $departmentAffiliation->setDepartment(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Log>
+     */
+    public function getLogs(): Collection
+    {
+        return $this->logs;
+    }
+
+    public function addLog(Log $log): self
+    {
+        if (!$this->logs->contains($log)) {
+            $this->logs[] = $log;
+            $log->setDepartment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLog(Log $log): self
+    {
+        if ($this->logs->removeElement($log)) {
+            // set the owning side to null (unless already changed)
+            if ($log->getDepartment() === $this) {
+                $log->setDepartment(null);
             }
         }
 

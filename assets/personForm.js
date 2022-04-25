@@ -49,13 +49,3 @@ $('#person_superviseeAffiliations').formCollection({
         $(new_elem).find('.connect-select2').select2();
     },
 });
-
-$('body').on('change', '.departmentSelect', function(){
-    const $this = $(this);
-    const otherInput = $this.closest('.collection-row').find('.otherDepartmentInput');
-    if($this.val() == ""){
-        otherInput.prop("disabled", false);
-    } else {
-        otherInput.prop("disabled", true).val("");
-    }
-});

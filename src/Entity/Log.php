@@ -42,6 +42,9 @@ class Log
     #[ORM\ManyToOne(targetEntity: Workflow::class, inversedBy: 'logs')]
     private $workflow;
 
+    #[ORM\ManyToOne(targetEntity: Department::class, inversedBy: 'logs')]
+    private $department;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -127,6 +130,18 @@ class Log
     public function setWorkflow(?Workflow $workflow): self
     {
         $this->workflow = $workflow;
+
+        return $this;
+    }
+
+    public function getDepartment(): ?Department
+    {
+        return $this->department;
+    }
+
+    public function setDepartment(?Department $department): self
+    {
+        $this->department = $department;
 
         return $this;
     }
