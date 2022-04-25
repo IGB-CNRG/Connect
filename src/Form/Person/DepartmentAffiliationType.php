@@ -12,6 +12,7 @@ use App\Form\Fields\EndDateType;
 use App\Form\Fields\StartDateType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -37,9 +38,18 @@ class DepartmentAffiliationType extends AbstractType
                     $form->add('department', EntityType::class, [
                         'class' => Department::class,
                         'attr' => [
-                            'class' => 'connect-select2',
+                            'class' => 'connect-select2 departmentSelect',
                         ],
-                    ]);
+                        'required' => false,
+                        'placeholder' => 'Other (please specify)'
+                    ])
+                        ->add('otherDepartment', TextType::class, [
+                            'required' => false,
+                            'attr' => [
+                                'class' => 'otherDepartmentInput',
+                            ],
+                        ])
+                    ;
                 }
             })
         ;

@@ -24,8 +24,10 @@ class DepartmentAffiliation
     private $person;
 
     #[ORM\ManyToOne(targetEntity: Department::class, inversedBy: 'departmentAffiliations')]
-    #[ORM\JoinColumn(nullable: false)]
     private $department;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $otherDepartment;
 
     public function getId(): ?int
     {
@@ -52,6 +54,18 @@ class DepartmentAffiliation
     public function setDepartment(?Department $department): self
     {
         $this->department = $department;
+
+        return $this;
+    }
+
+    public function getOtherDepartment(): ?string
+    {
+        return $this->otherDepartment;
+    }
+
+    public function setOtherDepartment(?string $otherDepartment): self
+    {
+        $this->otherDepartment = $otherDepartment;
 
         return $this;
     }
