@@ -3,16 +3,9 @@
  * All rights reserved.
  */
 
-import './styles/app.scss';
-import '@fortawesome/fontawesome-free/css/all.css';
-import 'select2/dist/css/select2.css';
-
 import $ from 'jquery';
-import 'bootstrap';
-import 'select2/dist/js/select2';
 import 'symfony-collection-js';
 
-$('.connect-select2').select2();
 $('#person_keyAffiliations').formCollection({
     other_btn_add: '#keyAffiliation-add',
     post_add: function(new_elem, context){
