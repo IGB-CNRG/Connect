@@ -10,6 +10,7 @@ use App\Entity\Department;
 use App\Entity\DepartmentAffiliation;
 use App\Form\Fields\EndDateType;
 use App\Form\Fields\StartDateType;
+use App\Repository\DepartmentRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -41,18 +42,26 @@ class DepartmentAffiliationType extends AbstractType
                             'class' => 'connect-select2 departmentSelect',
                         ],
                         'required' => false,
-                        'placeholder' => 'Other (please specify)'
+                        'placeholder' => 'Other (please specify)',
+                        'group_by' => function (Department $choice, $key, $value) {
+                            if ($choice->getCollege()) {
+                                return $choice->getCollege();
+                            } else {
+                                return null;
+                            }
+                        },
+                        'query_builder' => function (DepartmentRepository $departmentRepository) {
+                            return $departmentRepository->createFormSortedQueryBuilder();
+                        }
                     ])
                         ->add('otherDepartment', TextType::class, [
                             'required' => false,
                             'attr' => [
                                 'class' => 'otherDepartmentInput',
                             ],
-                        ])
-                    ;
+                        ]);
                 }
-            })
-        ;
+            });
     }
 
     public function configureOptions(OptionsResolver $resolver): void

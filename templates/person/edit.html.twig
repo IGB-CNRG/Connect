@@ -159,7 +159,7 @@
 {% block DepartmentAffiliation_row %}
     <div class="collection-row">
         {% if data is not null %}
-            <div class="collection-label">{{ data.department }}</div>
+            <div class="collection-label">{{ data.department??data.otherDepartment }}</div>
         {% else %}
             {{ form_row(form.department) }}
             {{ form_row(form.otherDepartment) }}

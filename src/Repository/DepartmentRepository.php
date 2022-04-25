@@ -23,32 +23,11 @@ class DepartmentRepository extends ServiceEntityRepository
         parent::__construct($registry, Department::class);
     }
 
-    // /**
-    //  * @return Department[] Returns an array of Department objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function createFormSortedQueryBuilder()
     {
         return $this->createQueryBuilder('d')
-            ->andWhere('d.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('d.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+            ->leftJoin('d.college', 'c')
+            ->addOrderBy('c.name')
+            ->addOrderBy('d.name');
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Department
-    {
-        return $this->createQueryBuilder('d')
-            ->andWhere('d.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
