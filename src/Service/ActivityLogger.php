@@ -29,24 +29,21 @@ class ActivityLogger implements ServiceSubscriberInterface
 
     private const DATE_FORMAT = 'n/j/Y';
 
-    public function logEndRoomAffiliation(RoomAffiliation $roomAffiliation)
+    public function logNewDepartmentAffiliation(DepartmentAffiliation $departmentAffiliation)
     {
         $this->logPersonActivity(
-            $roomAffiliation->getPerson(),
+            $departmentAffiliation->getPerson(),
             sprintf(
-                "Ended room affiliation with %s on %s",
-                $roomAffiliation->getRoom(),
-                $roomAffiliation->getEndedAt()->format(self::DATE_FORMAT)
+                'Added department %s',
+                $departmentAffiliation->getDepartment() ?? $departmentAffiliation->getOtherDepartment()
             )
         );
-        $this->logRoomActivity(
-            $roomAffiliation->getRoom(),
-            sprintf(
-                "Ended affiliation with %s on %s",
-                $roomAffiliation->getPerson(),
-                $roomAffiliation->getEndedAt()->format(self::DATE_FORMAT)
-            )
-        );
+        if ($departmentAffiliation->getDepartment()) {
+            $this->logDepartmentActivity(
+                $departmentAffiliation->getDepartment(),
+                sprintf('Added person %s', $departmentAffiliation->getPerson())
+            );
+        }
     }
 
     public function logEndDepartmentAffiliation(DepartmentAffiliation $departmentAffiliation)
@@ -77,21 +74,24 @@ class ActivityLogger implements ServiceSubscriberInterface
         $this->logRoomActivity($roomAffiliation->getRoom(), sprintf('Added person %s', $roomAffiliation->getPerson()));
     }
 
-    public function logNewDepartmentAffiliation(DepartmentAffiliation $departmentAffiliation)
+    public function logEndRoomAffiliation(RoomAffiliation $roomAffiliation)
     {
         $this->logPersonActivity(
-            $departmentAffiliation->getPerson(),
+            $roomAffiliation->getPerson(),
             sprintf(
-                'Added department %s',
-                $departmentAffiliation->getDepartment() ?? $departmentAffiliation->getOtherDepartment()
+                "Ended room affiliation with %s on %s",
+                $roomAffiliation->getRoom(),
+                $roomAffiliation->getEndedAt()->format(self::DATE_FORMAT)
             )
         );
-        if ($departmentAffiliation->getDepartment()) {
-            $this->logDepartmentActivity(
-                $departmentAffiliation->getDepartment(),
-                sprintf('Added person %s', $departmentAffiliation->getPerson())
-            );
-        }
+        $this->logRoomActivity(
+            $roomAffiliation->getRoom(),
+            sprintf(
+                "Ended affiliation with %s on %s",
+                $roomAffiliation->getPerson(),
+                $roomAffiliation->getEndedAt()->format(self::DATE_FORMAT)
+            )
+        );
     }
 
     public function logNewSupervisorAffiliation(SupervisorAffiliation $supervisorAffiliation)
@@ -103,6 +103,26 @@ class ActivityLogger implements ServiceSubscriberInterface
         $this->logPersonActivity(
             $supervisorAffiliation->getSupervisee(),
             sprintf('Added supervisor %s', $supervisorAffiliation->getSupervisor()->getName())
+        );
+    }
+
+    public function logEndSupervisorAffiliation(SupervisorAffiliation $supervisorAffiliation)
+    {
+        $this->logPersonActivity(
+            $supervisorAffiliation->getSupervisor(),
+            sprintf(
+                "Ended supervisee affiliation with %s on %s",
+                $supervisorAffiliation->getSupervisee(),
+                $supervisorAffiliation->getEndedAt()->format(self::DATE_FORMAT)
+            )
+        );
+        $this->logPersonActivity(
+            $supervisorAffiliation->getSupervisee(),
+            sprintf(
+                "Ended supervisor affiliation with %s on %s",
+                $supervisorAffiliation->getSupervisor(),
+                $supervisorAffiliation->getEndedAt()->format(self::DATE_FORMAT)
+            )
         );
     }
 
@@ -138,26 +158,6 @@ class ActivityLogger implements ServiceSubscriberInterface
         );
     }
 
-    public function logEndSupervisorAffiliation(SupervisorAffiliation $supervisorAffiliation)
-    {
-        $this->logPersonActivity(
-            $supervisorAffiliation->getSupervisor(),
-            sprintf(
-                "Ended supervisee affiliation with %s on %s",
-                $supervisorAffiliation->getSupervisee(),
-                $supervisorAffiliation->getEndedAt()->format(self::DATE_FORMAT)
-            )
-        );
-        $this->logPersonActivity(
-            $supervisorAffiliation->getSupervisee(),
-            sprintf(
-                "Ended supervisor affiliation with %s on %s",
-                $supervisorAffiliation->getSupervisor(),
-                $supervisorAffiliation->getEndedAt()->format(self::DATE_FORMAT)
-            )
-        );
-    }
-
     public function logNewKeyAffiliation(KeyAffiliation $keyAffiliation)
     {
         $this->logPersonActivity(
@@ -168,96 +168,6 @@ class ActivityLogger implements ServiceSubscriberInterface
             $keyAffiliation->getCylinderKey(),
             sprintf("Key given to %s", $keyAffiliation->getPerson())
         );
-    }
-
-    /** @noinspection PhpParamsInspection */
-    public function logPersonActivity(Person $person, ?string $message)
-    {
-        if ($message) {
-            $owner = $this->security()->getUser();
-            $log = (new Log())
-                ->setPerson($person)
-                ->setUser($owner)
-                ->setText($message);
-            $this->entityManager()->persist($log);
-        }
-    }
-
-    /** @noinspection PhpParamsInspection */
-    public function logThemeActivity(Theme $theme, ?string $message)
-    {
-        if ($message) {
-            $owner = $this->security()->getUser();
-            $log = (new Log())
-                ->setTheme($theme)
-                ->setUser($owner)
-                ->setText($message);
-            $this->entityManager()->persist($log);
-        }
-    }
-
-    private function getEntityEditMessage($entity, $messagePrefix = ''): ?string
-    {
-        $uow = $this->entityManager()->getUnitOfWork();
-        $uow->computeChangeSets();
-
-        $changeSet = $uow->getEntityChangeSet($entity);
-        $changes = [];
-        foreach ($changeSet as $field => $change) {
-            try {
-                $reflection = new ReflectionProperty($entity::class, $field);
-                $loggableAttributes = $reflection->getAttributes(Loggable::class);
-                if (count($loggableAttributes) > 0) {
-                    $loggableArguments = $loggableAttributes[0]->getArguments();
-                    if (array_key_exists('displayName', $loggableArguments)) {
-                        $fieldName = $loggableArguments['displayName'];
-                    } else {
-                        // convert camelCase to lower case by default
-                        $fieldName = strtolower(join(" ", preg_split('/(?=[A-Z])/', $field)));
-                    }
-                    if ($change[0] == null) {
-                        if ($change[1] != null) {
-                            // New
-                            if (!array_key_exists('details', $loggableArguments)
-                                || $loggableArguments['details'] === true) {
-                                if (array_key_exists('type', $loggableArguments)
-                                    && $loggableArguments['type'] == 'date') {
-                                    $new = $change[1]->format(self::DATE_FORMAT);
-                                } else {
-                                    $new = $change[1];
-                                }
-                                $changes[] = sprintf("added %s '%s'", $fieldName, $new);
-                            } else {
-                                $changes[] = sprintf("added %s", $fieldName);
-                            }
-                        }
-                    } elseif ($change[1] == null) {
-                        // Removed
-                        $changes[] = sprintf("removed %s", $fieldName);
-                    } else {
-                        // Changed
-                        if (!array_key_exists('details', $loggableArguments)
-                            || $loggableArguments['details'] === true) {
-                            if (array_key_exists('type', $loggableArguments) && $loggableArguments['type'] == 'date') {
-                                $old = $change[0]->format(self::DATE_FORMAT);
-                                $new = $change[1]->format(self::DATE_FORMAT);
-                            } else {
-                                $old = $change[0];
-                                $new = $change[1];
-                            }
-                            $changes[] = sprintf("changed %s from '%s' to '%s'", $fieldName, $old, $new);
-                        } else {
-                            $changes[] = sprintf("changed %s", $fieldName);
-                        }
-                    }
-                }
-            } catch (ReflectionException) {
-            }
-        }
-        if (count($changes) === 0) {
-            return null;
-        }
-        return ucfirst(sprintf('%s%s', $messagePrefix, join(', ', $changes)));
     }
 
     public function logPersonEdit(Person $person)
@@ -377,6 +287,34 @@ class ActivityLogger implements ServiceSubscriberInterface
         }
     }
 
+    /* Entity Logging Function */
+
+    /** @noinspection PhpParamsInspection */
+    public function logPersonActivity(Person $person, ?string $message)
+    {
+        if ($message) {
+            $owner = $this->security()->getUser();
+            $log = (new Log())
+                ->setPerson($person)
+                ->setUser($owner)
+                ->setText($message);
+            $this->entityManager()->persist($log);
+        }
+    }
+
+    /** @noinspection PhpParamsInspection */
+    public function logThemeActivity(Theme $theme, ?string $message)
+    {
+        if ($message) {
+            $owner = $this->security()->getUser();
+            $log = (new Log())
+                ->setTheme($theme)
+                ->setUser($owner)
+                ->setText($message);
+            $this->entityManager()->persist($log);
+        }
+    }
+
     public function logKeyActivity(Key $key, ?string $message)
     {
         if ($message) {
@@ -389,7 +327,7 @@ class ActivityLogger implements ServiceSubscriberInterface
         }
     }
 
-    private function logRoomActivity(Room $room, ?string $message)
+    public function logRoomActivity(Room $room, ?string $message)
     {
         if ($message) {
             $owner = $this->security()->getUser();
@@ -401,7 +339,7 @@ class ActivityLogger implements ServiceSubscriberInterface
         }
     }
 
-    private function logDepartmentActivity(Department $department, ?string $message)
+    public function logDepartmentActivity(Department $department, ?string $message)
     {
         if ($message) {
             $owner = $this->security()->getUser();
@@ -411,5 +349,70 @@ class ActivityLogger implements ServiceSubscriberInterface
                 ->setText($message);
             $this->entityManager()->persist($log);
         }
+    }
+
+    /* Helpers */
+    private function getEntityEditMessage($entity, $messagePrefix = ''): ?string
+    {
+        $uow = $this->entityManager()->getUnitOfWork();
+        $uow->computeChangeSets();
+
+        $changeSet = $uow->getEntityChangeSet($entity);
+        $changes = [];
+        foreach ($changeSet as $field => $change) {
+            try {
+                $reflection = new ReflectionProperty($entity::class, $field);
+                $loggableAttributes = $reflection->getAttributes(Loggable::class);
+                if (count($loggableAttributes) > 0) {
+                    $loggableArguments = $loggableAttributes[0]->getArguments();
+                    if (array_key_exists('displayName', $loggableArguments)) {
+                        $fieldName = $loggableArguments['displayName'];
+                    } else {
+                        // convert camelCase to lower case by default
+                        $fieldName = strtolower(join(" ", preg_split('/(?=[A-Z])/', $field)));
+                    }
+                    if ($change[0] == null) {
+                        if ($change[1] != null) {
+                            // New
+                            if (!array_key_exists('details', $loggableArguments)
+                                || $loggableArguments['details'] === true) {
+                                if (array_key_exists('type', $loggableArguments)
+                                    && $loggableArguments['type'] == 'date') {
+                                    $new = $change[1]->format(self::DATE_FORMAT);
+                                } else {
+                                    $new = $change[1];
+                                }
+                                $changes[] = sprintf("added %s '%s'", $fieldName, $new);
+                            } else {
+                                $changes[] = sprintf("added %s", $fieldName);
+                            }
+                        }
+                    } elseif ($change[1] == null) {
+                        // Removed
+                        $changes[] = sprintf("removed %s", $fieldName);
+                    } else {
+                        // Changed
+                        if (!array_key_exists('details', $loggableArguments)
+                            || $loggableArguments['details'] === true) {
+                            if (array_key_exists('type', $loggableArguments) && $loggableArguments['type'] == 'date') {
+                                $old = $change[0]->format(self::DATE_FORMAT);
+                                $new = $change[1]->format(self::DATE_FORMAT);
+                            } else {
+                                $old = $change[0];
+                                $new = $change[1];
+                            }
+                            $changes[] = sprintf("changed %s from '%s' to '%s'", $fieldName, $old, $new);
+                        } else {
+                            $changes[] = sprintf("changed %s", $fieldName);
+                        }
+                    }
+                }
+            } catch (ReflectionException) {
+            }
+        }
+        if (count($changes) === 0) {
+            return null;
+        }
+        return ucfirst(sprintf('%s%s', $messagePrefix, join(', ', $changes)));
     }
 }
