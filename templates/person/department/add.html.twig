@@ -9,7 +9,7 @@
     </div>
     {{ form_start(form) }}
     <div class="row">
-        <div class="col-lg departmentInputs">
+        <div class="col-lg" data-controller="department">
             {{ form_row(form.department) }}
             {{ form_row(form.otherDepartment) }}
         </div>
@@ -37,14 +37,3 @@
         Add Department
     </li>
 {% endblock %}
-
-{% block stylesheets %}
-    {{encore_entry_link_tags('departmentForm')}}
-{% endblock %}
-
-{% block javascripts %}
-    {{encore_entry_script_tags('departmentForm')}}
-{% endblock %}
-
-
-

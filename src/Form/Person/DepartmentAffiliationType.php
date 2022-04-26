@@ -39,7 +39,9 @@ class DepartmentAffiliationType extends AbstractType
                     $form->add('department', EntityType::class, [
                         'class' => Department::class,
                         'attr' => [
-                            'class' => 'connect-select2 departmentSelect',
+                            'data-controller' => 'select2',
+                            'data-department-target' => 'select',
+                            'data-action' => 'change->department#toggle',
                         ],
                         'required' => false,
                         'placeholder' => 'Other (please specify)',
@@ -57,7 +59,7 @@ class DepartmentAffiliationType extends AbstractType
                         ->add('otherDepartment', TextType::class, [
                             'required' => false,
                             'attr' => [
-                                'class' => 'otherDepartmentInput',
+                                'data-department-target' => 'other',
                             ],
                         ]);
                 }

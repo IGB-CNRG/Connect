@@ -4,6 +4,8 @@
  */
 
 import './styles/app.scss';
+import 'select2/dist/css/select2.css';
+import './bootstrap';
 import '@fortawesome/fontawesome-free/css/all.css';
 
 const $ = require('jquery');

@@ -37,7 +37,7 @@ class KeyAffiliationType extends AbstractType
                     $form->add('cylinderKey', EntityType::class, [
                         'class' => Key::class,
                         'attr' => [
-                            'class' => 'connect-select2',
+                            'data-controller' => 'select2',
                         ],
                     ]);
                 }

@@ -39,7 +39,7 @@ class SupervisorType extends AbstractType
                     $form->add('supervisor', EntityType::class, [
                         'class' => Person::class,
                         'attr' => [
-                            'class' => 'connect-select2',
+                            'data-controller' => 'select2',
                         ],
                     ]);
                 }

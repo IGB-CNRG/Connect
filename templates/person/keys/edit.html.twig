@@ -5,10 +5,10 @@
     {{ form_start(form) }}
     <div class="card mb-3">
         <div class="card-header">Keys</div>
-        <div class="card-body">
+        <div class="card-body" data-controller="form-collection">
             {{ form_row(form.hasGivenKeyDeposit) }}
             {{ form_row(form.keyAffiliations) }}
-            <button type="button" class="btn btn-primary" id="keyAffiliation-add">Add Key</button>
+            <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd" id="keyAffiliation-add">Add Key</button>
         </div>
     </div>
     {{ form_end(form) }}
@@ -28,12 +28,4 @@
     <li class="breadcrumb-item active" aria-current="page">
         Edit Keys
     </li>
-{% endblock %}
-
-{% block stylesheets %}
-    {{ encore_entry_link_tags('keyForm') }}
-{% endblock %}
-
-{% block javascripts %}
-    {{ encore_entry_script_tags('keyForm') }}
 {% endblock %}

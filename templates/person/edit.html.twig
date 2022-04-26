@@ -31,9 +31,9 @@
             </div>
             <div class="card mb-3">
                 <div class="card-header">Positions</div>
-                <div class="card-body">
+                <div class="card-body" data-controller="form-collection">
                     {{ form_row(form.themeAffiliations) }}
-                    <button type="button" class="btn btn-primary" id="themeAffiliation-add">Add Position</button>
+                    <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd" id="themeAffiliation-add">Add Position</button>
                 </div>
             </div>
         </div>
@@ -50,30 +50,30 @@
             </div>
             <div class="card mb-3">
                 <div class="card-header">Rooms</div>
-                <div class="card-body">
+                <div class="card-body" data-controller="form-collection">
                     {{ form_row(form.roomAffiliations) }}
-                    <button type="button" class="btn btn-primary" id="roomAffiliation-add">Add Room</button>
+                    <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd" id="roomAffiliation-add">Add Room</button>
                 </div>
             </div>
             <div class="card mb-3">
                 <div class="card-header">Departments</div>
-                <div class="card-body">
+                <div class="card-body" data-controller="form-collection">
                     {{ form_row(form.departmentAffiliations) }}
-                    <button type="button" class="btn btn-primary" id="departmentAffiliation-add">Add Department</button>
+                    <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd" id="departmentAffiliation-add">Add Department</button>
                 </div>
             </div>
             <div class="card mb-3">
                 <div class="card-header">Supervisors</div>
-                <div class="card-body">
+                <div class="card-body" data-controller="form-collection">
                     {{ form_row(form.supervisorAffiliations) }}
-                    <button type="button" class="btn btn-primary" id="supervisorAffiliation-add">Add Supervisor</button>
+                    <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd" id="supervisorAffiliation-add">Add Supervisor</button>
                 </div>
             </div>
             <div class="card mb-3">
                 <div class="card-header">Supervisees</div>
-                <div class="card-body">
+                <div class="card-body" data-controller="form-collection">
                     {{ form_row(form.superviseeAffiliations) }}
-                    <button type="button" class="btn btn-primary" id="superviseeAffiliation-add">Add Supervisee</button>
+                    <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd" id="superviseeAffiliation-add">Add Supervisee</button>
                 </div>
             </div>
             {% if is_granted('ROLE_ADMIN') %}
@@ -90,10 +90,10 @@
     {% if form.keyAffiliations is defined %}
         <div class="card mb-3">
             <div class="card-header">Keys</div>
-            <div class="card-body">
+            <div class="card-body" data-controller="form-collection">
                 {{ form_row(form.hasGivenKeyDeposit) }}
                 {{ form_row(form.keyAffiliations) }}
-                <button type="button" class="btn btn-primary" id="keyAffiliation-add">Add Key</button>
+                <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd" id="keyAffiliation-add">Add Key</button>
             </div>
         </div>
     {% endif %}
@@ -157,7 +157,7 @@
 {% endblock %}
 
 {% block DepartmentAffiliation_row %}
-    <div class="collection-row departmentInputs">
+    <div class="collection-row"{% if data is null %} data-controller="department"{% endif %}>
         {% if data is not null %}
             <div class="collection-label">{{ data.department??data.otherDepartment }}</div>
         {% else %}
@@ -241,12 +241,3 @@
         Edit
     </li>
 {% endblock %}
-
-{% block stylesheets %}
-    {{ encore_entry_link_tags('personForm') }}
-{% endblock %}
-
-{% block javascripts %}
-    {{ encore_entry_script_tags('personForm') }}
-{% endblock %}
-

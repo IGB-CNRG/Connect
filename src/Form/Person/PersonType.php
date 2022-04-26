@@ -112,7 +112,7 @@ class PersonType extends AbstractType
                     'choices' => Person::USER_ROLES,
                     'multiple' => true,
                     'attr' => [
-                        'class' => 'connect-select2'
+                        'data-controller' => 'select2',
                     ],
                     'required' => false,
                 ]);

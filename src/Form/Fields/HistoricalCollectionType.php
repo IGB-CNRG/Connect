@@ -24,6 +24,9 @@ class HistoricalCollectionType extends CollectionType
             'by_reference' => false,
             'prototype' => true,
             'required' => false,
+            'attr' => [
+                'data-form-collection-target' => 'collection',
+            ],
         ]);
     }
 }

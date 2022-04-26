@@ -39,7 +39,7 @@ class RoomAffiliationType extends AbstractType
                     $form->add('room', EntityType::class, [
                         'class' => Room::class,
                         'attr' => [
-                            'class' => 'connect-select2',
+                            'data-controller' => 'select2',
                         ],
                     ]);
                 }

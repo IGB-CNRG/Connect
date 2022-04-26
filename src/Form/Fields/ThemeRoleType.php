@@ -25,7 +25,7 @@ class ThemeRoleType extends ChoiceType
             'multiple' => true,
             'expanded' => false,
             'attr' => [
-                'class' => 'connect-select2',
+                'data-controller' => 'select2',
             ],
             'choices' => [
                 'Theme Leader' => self::LEADER,

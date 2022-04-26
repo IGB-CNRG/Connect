@@ -76,7 +76,7 @@
                     {% for departmentAffiliation in person.departmentAffiliations|current %}
                         <tr>
                             <th>Department</th>
-                            <td>{{departmentAffiliation.department??departmentAffiliation.otherDepartment}}</td>
+                            <td>{{ departmentAffiliation.department??departmentAffiliation.otherDepartment }}</td>
                         </tr>
                     {% endfor %}
 
@@ -464,7 +464,7 @@
             <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#supervisee_table"
                  aria-expanded="false" role="button">
                 Supervisees
-            </div> {# todo this is not a great label #}
+            </div>
             <div class="collapse" id="supervisee_table">
                 {% if is_granted("PERSON_EDIT", person) %}
                     <div class="card-body">
@@ -485,17 +485,19 @@
                             <td>{{ superviseeAffiliation.supervisee }}</td>
                             <td>{{ superviseeAffiliation.startedAt|date('n/j/Y') }}</td>
                             <td>{% if superviseeAffiliation.endedAt is not null %}{{ superviseeAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
-                            <td class="shrink">{% if superviseeAffiliation.endedAt is null %}<a
-                                    href="{{ path('person_end_supervisor_affiliation', {'id': superviseeAffiliation.id, 'slug': person.slug}) }}">
-                                        End</a>{% endif %}</td>
+                            <td class="shrink">
+                                {% if superviseeAffiliation.endedAt is null %}
+                                    <a href="{{ path('person_end_supervisor_affiliation', {'id': superviseeAffiliation.id, 'slug': person.slug}) }}">
+                                        End
+                                    </a>
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
                 </table>
             </div>
         </div>
     {% endif %}
-    {# todo rooms #}
-
 {% endblock %}
 
 {% block title %}

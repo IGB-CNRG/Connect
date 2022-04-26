@@ -23,14 +23,10 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
     .addEntry('app', './assets/app.js')
-    .addEntry('personIndex', ['./assets/app.js', './assets/form.js', './assets/personIndex.js'])
-    .addEntry('form', ['./assets/app.js', './assets/form.js'])
-    .addEntry('personForm', ['./assets/app.js', './assets/form.js', './assets/personForm.js', './assets/departmentForm.js'])
-    .addEntry('keyForm', ['./assets/app.js', './assets/form.js', './assets/keyForm.js'])
-    .addEntry('departmentForm', ['./assets/app.js', './assets/form.js', './assets/departmentForm.js'])
+    .addEntry('personIndex', ['./assets/app.js', './assets/personIndex.js'])
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
-    // .enableStimulusBridge('./assets/controllers.json')
+    .enableStimulusBridge('./assets/controllers.json')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()
