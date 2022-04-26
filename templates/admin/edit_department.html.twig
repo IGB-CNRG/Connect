@@ -1,0 +1,9 @@
+{# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
+{% extends '@!EasyAdmin/crud/edit.html.twig' %}
+
+{% block edit_form %}
+    <h4>{{entity.instance.person}}</h4>
+    <div data-controller="department">
+        {{ form(edit_form) }}
+    </div>
+{% endblock %}

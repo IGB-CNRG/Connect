@@ -9,6 +9,7 @@ namespace App\Controller\Admin;
 use App\Entity\Building;
 use App\Entity\College;
 use App\Entity\Department;
+use App\Entity\DepartmentAffiliation;
 use App\Entity\Key;
 use App\Entity\MemberCategory;
 use App\Entity\Room;
@@ -62,6 +63,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::linkToRoute('Back to CONNECT', 'fa fa-rotate-left', 'default');
         yield MenuItem::section('IGB');
+        yield MenuItem::linkToCrud('New Departments', 'fas fa-list', DepartmentAffiliation::class);
         yield MenuItem::linkToCrud('Member Categories', 'fas fa-list', MemberCategory::class);
         yield MenuItem::linkToCrud('Keys', 'fas fa-list', Key::class);
         yield MenuItem::linkToCrud('Rooms', 'fas fa-list', Room::class);
