@@ -10,8 +10,13 @@ const $ = require("jquery");
 
 export default class extends Controller {
     connect(){
-        console.log('select2 initializing');
-        $(this.element).select2().on('select2:select', function(){
+        let options = {
+            width: 'style'
+        };
+        if(this.element.dataset.hasOwnProperty('placeholder')){
+            options.placeholder = this.element.dataset.placeholder;
+        }
+        $(this.element).select2(options).on('select2:select select2:unselect', function(){
             let event = new Event('change', {bubbles: true}); // fire a native change event
             this.dispatchEvent(event);
         });

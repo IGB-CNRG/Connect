@@ -7,115 +7,109 @@
 {% endblock %}
 
 {% block content %}
-    <table id="people" class="table">
-        <thead>
-        <tr>
-            <th>Name</th>
-            {#            {% if is_granted('ROLE_CNRG') %} #}
-            {#                <th>Username</th> #}
-            {#            {% endif %} #}
-            <th>Email</th>
-            <th>Theme</th>
-            <th>Title</th>
-            <th>Type</th>
-            <th>Room</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for person in people %}
+    <div data-controller="datatables">
+        <table id="people" class="table" data-datatables-target="table">
+            <thead>
             <tr>
-                <td>
-                    <a href="{{ path('person_view', {'slug': person.slug}) }}">{% if person.lastName is not empty %}{{ person.name }}{% else %}No name{% endif %}</a>
-                </td>
-                {#                {% if is_granted('ROLE_CNRG') %} #}
-                {#                <td>{{ person.username }}</td> #}
-                {#                {% endif %} #}
-                <td>{{ person.email }}</td>
-                <td>
-                    {% for themeAffiliation in person.themeAffiliations|current %}
-                        {{ themeAffiliation.theme.shortName }}{% if not loop.last %}<br/>{% endif %}
-                    {% endfor %}
-                </td>
-                <td>
-                    {% for themeAffiliation in person.themeAffiliations|current %}
-                        {% if themeAffiliation.title %}
-                        {{ themeAffiliation.title }}
-                        {% endif %}
-                        {% if themeAffiliation.title and (themeAffiliation.isThemeLeader or themeAffiliation.isThemeAdmin or themeAffiliation.isLabManager) %}
-                        (
-                        {%- endif -%}
-                        {% if themeAffiliation.isThemeLeader %}
-                            Theme Leader
-                        {% endif %}
-                        {% if themeAffiliation.isThemeAdmin %}
-                            Theme Admin
-                        {% endif %}
-                        {% if themeAffiliation.isLabManager %}
-                            Lab Manager
-                        {% endif %}
-                        {%- if themeAffiliation.title and (themeAffiliation.isThemeLeader or themeAffiliation.isThemeAdmin or themeAffiliation.isLabManager) -%}
-                            )
-                        {% endif %}
-                        {%- if not loop.last -%}
-                            <br/>
-                        {% endif %}
-                    {% endfor %}
-                </td>
-                <td>
-                    {% for themeAffiliation in person.themeAffiliations|current %}
-                        {{ themeAffiliation.memberCategory.name }}{% if not loop.last %}<br/>{% endif %}
-                    {% endfor %}
-                </td>
-                <td>
-                    {% for roomAffiliation in person.roomAffiliations|current %}
-                        {{ roomAffiliation.room.number }}{% if not loop.last %}, {% endif %}
-                    {% endfor %}
-                </td>
+                <th>Name</th>
+                {#            {% if is_granted('ROLE_CNRG') %} #}
+                {#                <th>Username</th> #}
+                {#            {% endif %} #}
+                <th>Email</th>
+                <th>Theme</th>
+                <th>Title</th>
+                <th>Type</th>
+                <th>Room</th>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for person in people %}
+                <tr>
+                    <td>
+                        <a href="{{ path('person_view', {'slug': person.slug}) }}">{% if person.lastName is not empty %}{{ person.name }}{% else %}No name{% endif %}</a>
+                    </td>
+                    {#                {% if is_granted('ROLE_CNRG') %} #}
+                    {#                <td>{{ person.username }}</td> #}
+                    {#                {% endif %} #}
+                    <td>{{ person.email }}</td>
+                    <td>
+                        {% for themeAffiliation in person.themeAffiliations|current %}
+                            {{ themeAffiliation.theme.shortName }}{% if not loop.last %}<br/>{% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for themeAffiliation in person.themeAffiliations|current %}
+                            {% if themeAffiliation.title %}
+                                {{ themeAffiliation.title }}
+                            {% endif %}
+                            {% if themeAffiliation.title and (themeAffiliation.isThemeLeader or themeAffiliation.isThemeAdmin or themeAffiliation.isLabManager) %}
+                                (
+                            {%- endif -%}
+                            {% if themeAffiliation.isThemeLeader %}
+                                Theme Leader
+                            {% endif %}
+                            {% if themeAffiliation.isThemeAdmin %}
+                                Theme Admin
+                            {% endif %}
+                            {% if themeAffiliation.isLabManager %}
+                                Lab Manager
+                            {% endif %}
+                            {%- if themeAffiliation.title and (themeAffiliation.isThemeLeader or themeAffiliation.isThemeAdmin or themeAffiliation.isLabManager) -%}
+                                )
+                            {% endif %}
+                            {%- if not loop.last -%}
+                                <br/>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for themeAffiliation in person.themeAffiliations|current %}
+                            {{ themeAffiliation.memberCategory.name }}{% if not loop.last %}<br/>{% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for roomAffiliation in person.roomAffiliations|current %}
+                            {{ roomAffiliation.room.number }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
 
-    <div class="card mt-3">
-        <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#advanced-search" aria-expanded="false" role="button">
-            Advanced Search
-        </div>
-        <div class="collapse" id="advanced-search">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-lg">
-                        <select class="form-select" id="theme-select" multiple="multiple" style="width:100%">
-                            {% for theme in themes %}
-                                <option>{{ theme.shortName }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-lg">
-                        <select class="form-select" id="member-category-select" multiple="multiple" style="width:100%">
-                            <option></option>
-                            {% for category in memberCategories %}
-                                <option>{{ category.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-lg">
-                        <select class="form-select" id="theme-role-select" multiple="multiple" style="width:100%">
-                            <option></option>
-                            <option>Theme Leader</option>
-                            <option>Theme Admin</option>
-                            <option>Lab Manager</option>
-                        </select>
+        <div class="card mt-3">
+            <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#advanced-search" aria-expanded="false" role="button">
+                Advanced Search
+            </div>
+            <div class="collapse" id="advanced-search">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg">
+                            <select class="form-select" id="theme-select" data-controller="select2" data-placeholder="Filter by theme" data-column="2" data-action="datatables#columnSearch" multiple="multiple" style="width:100%">
+                                {% for theme in themes %}
+                                    <option>{{ theme.shortName }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-lg">
+                            <select class="form-select" id="member-category-select" data-controller="select2" data-placeholder="Filter by employee type" data-column="4" data-action="datatables#columnSearch" multiple="multiple" style="width:100%">
+                                <option></option>
+                                {% for category in memberCategories %}
+                                    <option>{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-lg">
+                            <select class="form-select" id="theme-role-select" data-controller="select2" data-placeholder="Filter by role" data-column="3" data-action="datatables#columnSearch" multiple="multiple" style="width:100%">
+                                <option></option>
+                                <option>Theme Leader</option>
+                                <option>Theme Admin</option>
+                                <option>Lab Manager</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-{% endblock %}
-
-{% block stylesheets %}
-    {{ encore_entry_link_tags('personIndex') }}
-{% endblock %}
-
-{% block javascripts %}
-    {{ encore_entry_script_tags('personIndex') }}
 {% endblock %}
