@@ -11,7 +11,7 @@ const $ = require("jquery");
 export default class extends Controller {
     connect(){
         let options = {
-            width: 'style'
+            // width: 'style'
         };
         if(this.element.dataset.hasOwnProperty('placeholder')){
             options.placeholder = this.element.dataset.placeholder;

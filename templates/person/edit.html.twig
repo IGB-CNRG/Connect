@@ -157,7 +157,7 @@
 {% endblock %}
 
 {% block DepartmentAffiliation_row %}
-    <div class="collection-row"{% if data is null %} data-controller="department"{% endif %}>
+    <div class="collection-row"{% if data is null %} data-controller="other-entry"{% endif %}>
         {% if data is not null %}
             <div class="collection-label">{{ data.department??data.otherDepartment }}</div>
         {% else %}

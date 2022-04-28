@@ -40,8 +40,8 @@ class DepartmentAffiliationType extends AbstractType
                         'class' => Department::class,
                         'attr' => [
                             'data-controller' => 'select2',
-                            'data-department-target' => 'select',
-                            'data-action' => 'change->department#toggle',
+                            'data-other-entry-target' => 'select',
+                            'data-action' => 'change->other-entry#toggle',
                         ],
                         'required' => false,
                         'placeholder' => 'Other (please specify)',
@@ -59,7 +59,7 @@ class DepartmentAffiliationType extends AbstractType
                         ->add('otherDepartment', TextType::class, [
                             'required' => false,
                             'attr' => [
-                                'data-department-target' => 'other',
+                                'data-other-entry-target' => 'other',
                             ],
                         ]);
                 }

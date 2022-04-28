@@ -76,8 +76,8 @@ class OtherDepartmentAffiliationCrudController extends AbstractCrudController
                     ->createFormSortedQueryBuilder()
             )->setFormTypeOptions([
                 'attr' => [
-                    'data-department-target' => 'select',
-                    'data-action' => 'change->department#toggle',
+                    'data-other-entry-target' => 'select',
+                    'data-action' => 'change->other-entry#toggle',
                 ],
                 'placeholder' => 'Other (please specify)',
                 'group_by' => function (Department $choice, $key, $value) {
@@ -90,7 +90,7 @@ class OtherDepartmentAffiliationCrudController extends AbstractCrudController
             ]),
             TextField::new('otherDepartment')->setFormTypeOptions([
                 'attr' => [
-                    'data-department-target' => 'other',
+                    'data-other-entry-target' => 'other',
                 ],
             ]),
         ];
