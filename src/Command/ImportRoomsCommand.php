@@ -48,7 +48,7 @@ class ImportRoomsCommand extends Command
                 if (!in_array($number, $usedNumbers)
                     && $this->roomRepository->findOneBy(['number' => $number]) === null) {
                     $room = (new Room())
-                        ->setNumber($number);
+                        ->setNumber(ltrim($number,0));
                     $this->em->persist($room);
                     $numNew++;
                 } else {

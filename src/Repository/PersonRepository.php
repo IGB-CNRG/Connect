@@ -30,37 +30,10 @@ class PersonRepository extends ServiceEntityRepository
             ->leftJoin('p.themeAffiliations', 'ta')
             ->leftJoin('ta.theme', 't')
             ->select('p,ta,t')
+            ->andWhere('ta.endedAt is null or ta.endedAt >= CURRENT_TIMESTAMP()')
+            ->andWhere('ta is not null')
             ->getQuery()
             ->getResult()
         ;
     }
-
-    // /**
-    //  * @return Person[] Returns an array of Person objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Person
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

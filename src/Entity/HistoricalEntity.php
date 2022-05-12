@@ -47,7 +47,7 @@ trait HistoricalEntity
     public function isCurrent(): bool
     {
         $now = new \DateTimeImmutable();
-        return $this->getStartedAt() === null ||
-            ($this->getStartedAt() < $now && ($this->getEndedAt() === null || $this->getEndedAt() > $now));
+        return ($this->getStartedAt() === null || $this->getStartedAt() < $now)
+               && ($this->getEndedAt() === null || $this->getEndedAt() > $now);
     }
 }

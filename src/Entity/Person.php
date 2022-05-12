@@ -1,6 +1,9 @@
 <?php /*
  * Copyright (c) 2022 University of Illinois Board of Trustees.
  * All rights reserved.
+ */ /*
+ * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * All rights reserved.
  */ /** @noinspection PhpMissingFieldTypeInspection */
 
 namespace App\Entity;
@@ -167,6 +170,9 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Slug(fields: ['firstName', 'lastName'], unique_base: 'id')]
     private $slug;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private $otherAddress;
 
     public function __construct()
     {
@@ -909,5 +915,17 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     {
         $this->id = $data['id'];
         $this->username = $data['username'];
+    }
+
+    public function getOtherAddress(): ?string
+    {
+        return $this->otherAddress;
+    }
+
+    public function setOtherAddress(?string $otherAddress): self
+    {
+        $this->otherAddress = $otherAddress;
+
+        return $this;
     }
 }

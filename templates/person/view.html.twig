@@ -296,7 +296,7 @@
                 {% for roomAffiliation in person.roomAffiliations %}
                     <tr>
                         <td>{{ roomAffiliation.room }}</td>
-                        <td>{{ roomAffiliation.startedAt|date('n/j/Y') }}</td>
+                        <td>{% if roomAffiliation.startedAt is not null %}{{ roomAffiliation.startedAt|date('n/j/Y') }}{% endif %}</td>
                         <td>{% if roomAffiliation.endedAt is not null %}{{ roomAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
                         <td class="shrink">{% if roomAffiliation.endedAt is null %}<a
                                 href="{{ path('person_end_room_affiliation', {'id': roomAffiliation.id, 'slug': person.slug}) }}">
@@ -333,7 +333,7 @@
                         <td>{{ themeAffiliation.theme.shortName }}</td>
                         <td>{{ themeAffiliation.memberCategory.name }}</td>
                         <td>{{ themeAffiliation.title }}</td>
-                        <td>{{ themeAffiliation.startedAt|date('n/j/Y') }}</td>
+                        <td>{% if themeAffiliation.startedAt is not null %}{{ themeAffiliation.startedAt|date('n/j/Y') }}{% endif %}</td>
                         <td>{% if themeAffiliation.endedAt is not null %}{{ themeAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
                         <td class="shrink">
                             {% if themeAffiliation.endedAt is null and is_granted("PERSON_EDIT", person) %}
@@ -370,7 +370,7 @@
                 {% for departmentAffiliation in person.departmentAffiliations %}
                     <tr>
                         <td>{{ departmentAffiliation.department??departmentAffiliation.otherDepartment }}</td>
-                        <td>{{ departmentAffiliation.startedAt|date('n/j/Y') }}</td>
+                        <td>{% if departmentAffiliation.startedAt is not null %}{{ departmentAffiliation.startedAt|date('n/j/Y') }}{% endif %}</td>
                         <td>{% if departmentAffiliation.endedAt is not null %}{{ departmentAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
                         <td class="shrink">
                             {% if departmentAffiliation.endedAt is null and is_granted("PERSON_EDIT", person) %}
@@ -415,7 +415,7 @@
                                         {% endfor %}
                                     {% endif %}
                                 </td>
-                                <td>{{ keyAffiliation.startedAt|date('n/j/Y') }}</td>
+                                <td>{% if keyAffiliation.startedAt is not null %}{{ keyAffiliation.startedAt|date('n/j/Y') }}{% endif %}</td>
                                 <td>{% if keyAffiliation.endedAt is not null %}{{ keyAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
                             </tr>
                         {% endfor %}
@@ -448,7 +448,7 @@
                     {% for supervisorAffiliation in person.supervisorAffiliations %}
                         <tr>
                             <td>{{ supervisorAffiliation.supervisor }}</td>
-                            <td>{{ supervisorAffiliation.startedAt|date('n/j/Y') }}</td>
+                            <td>{% if supervisorAffiliation.startedAt is not null %}{{ supervisorAffiliation.startedAt|date('n/j/Y') }}{% endif %}</td>
                             <td>{% if supervisorAffiliation.endedAt is not null %}{{ supervisorAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
                             <td class="shrink">{% if supervisorAffiliation.endedAt is null %}<a
                                     href="{{ path('person_end_supervisor_affiliation', {'id': supervisorAffiliation.id, 'slug': person.slug}) }}">
@@ -483,7 +483,7 @@
                     {% for superviseeAffiliation in person.superviseeAffiliations %}
                         <tr>
                             <td>{{ superviseeAffiliation.supervisee }}</td>
-                            <td>{{ superviseeAffiliation.startedAt|date('n/j/Y') }}</td>
+                            <td>{% if superviseeAffiliation.startedAt is not null %}{{ superviseeAffiliation.startedAt|date('n/j/Y') }}{% endif %}</td>
                             <td>{% if superviseeAffiliation.endedAt is not null %}{{ superviseeAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
                             <td class="shrink">
                                 {% if superviseeAffiliation.endedAt is null %}

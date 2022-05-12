@@ -6,10 +6,13 @@
 
 namespace App\Form\Person;
 
+use App\Entity\Theme;
 use App\Entity\ThemeAffiliation;
 use App\Form\Fields\EndDateType;
 use App\Form\Fields\StartDateType;
 use App\Form\Fields\ThemeRoleType;
+use App\Repository\ThemeRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -20,7 +23,7 @@ use Symfony\Component\Security\Core\Security;
 
 class ThemeAffiliationType extends AbstractType
 {
-    public function __construct(private Security $security) {}
+    public function __construct(private Security $security) { }
 
     public function getBlockPrefix(): string
     {
@@ -36,7 +39,17 @@ class ThemeAffiliationType extends AbstractType
                 $form = $event->getForm();
 
                 if (!$themeAffiliation || $themeAffiliation->getId() === null) {
-                    $form->add('theme')
+                    $form
+                        ->add('theme', EntityType::class, [
+                            'class' => Theme::class,
+                            'attr' => [
+                                'data-controller' => 'select2',
+                            ],
+                            'query_builder' => function (ThemeRepository $themeRepository) {
+                                return $themeRepository->createFormSortedQueryBuilder();
+                            }
+
+                        ])
                         ->add('memberCategory')
                         ->add('title', TextType::class, [
                             'required' => false,
