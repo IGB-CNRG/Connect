@@ -25,7 +25,10 @@
             <tbody>
             {% for person in people %}
                 <tr>
-                    <td>
+                    <td {% if person.imageName is null%}class="td-no-portrait"{% endif %} data-order="{% if person.lastName is not empty %}{{ person.name }}{% else %}No name{% endif %}">
+                        {% if person.imageName is not null %}
+                            <img class="portrait-sm me-2" src="{{ asset(vich_uploader_asset(person, 'imageFile')) }}" alt="Portrait"/>
+                        {% endif %}
                         <a href="{{ path('person_view', {'slug': person.slug}) }}">{% if person.lastName is not empty %}{{ person.name }}{% else %}No name{% endif %}</a>
                     </td>
                     {#                {% if is_granted('ROLE_CNRG') %} #}

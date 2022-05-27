@@ -121,6 +121,17 @@ $callout-background-lighten: 50%;
   object-fit: cover;
 }
 
+.portrait-sm {
+  width: 35px;
+  height: 35px;
+  border-radius: 3px;
+  object-fit:cover;
+}
+
+.td-no-portrait {
+  padding-left: calc(1rem + 35px) !important;
+}
+
 /* Forms */
 .collection-row {
   border-bottom: 1px solid $gray-300;
