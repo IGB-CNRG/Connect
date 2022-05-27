@@ -1,10 +1,10 @@
-<?php /*
+<?php
+/*
  * Copyright (c) 2022 University of Illinois Board of Trustees.
  * All rights reserved.
- */ /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
- * All rights reserved.
- */ /** @noinspection PhpMissingFieldTypeInspection */
+ */
+
+/** @noinspection PhpMissingFieldTypeInspection */
 
 namespace App\Entity;
 
@@ -102,44 +102,44 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     private $hasGivenKeyDeposit = false;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: RoomAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
-    private $roomAffiliations;
+    private Collection $roomAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: KeyAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
-    #[ORM\OrderBy(['startedAt'=>'ASC'])]
-    private $keyAffiliations;
+    #[ORM\OrderBy(['startedAt' => 'ASC'])]
+    private Collection $keyAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: ThemeAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['startedAt' => 'DESC'])]
-    private $themeAffiliations;
+    private Collection $themeAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'supervisee', targetEntity: SupervisorAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
-    private $supervisorAffiliations;
+    private Collection $supervisorAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'supervisor', targetEntity: SupervisorAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
-    private $superviseeAffiliations;
+    private Collection $superviseeAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: DepartmentAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
-    private $departmentAffiliations;
+    private Collection $departmentAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: Note::class, orphanRemoval: true)]
-    private $notes;
+    private Collection $notes;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Log::class, orphanRemoval: true)]
-    private $ownedLogs;
+    private Collection $ownedLogs;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: Log::class)]
     #[ORM\OrderBy(['createdAt' => 'DESC'])]
-    private $logs;
+    private Collection $logs;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: WorkflowProgress::class, orphanRemoval: true)]
-    private $workflowProgress;
+    private Collection $workflowProgress;
 
     #[ORM\ManyToOne(targetEntity: Building::class, inversedBy: 'people')]
-    private $officeBuilding;
+    private ?Building $officeBuilding;
 
     #[ORM\Column(type: 'string', length: 255, enumType: PreferredAddress::class)]
     #[Loggable]
-    private $preferredAddress = PreferredAddress::IGB;
+    private PreferredAddress $preferredAddress = PreferredAddress::IGB;
 
     #[ORM\Column(type: 'json')]
     private $roles = [];
@@ -225,7 +225,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     public function getThemeAdminThemeAffiliations(): Collection
     {
         // todo unit test this
-        return $this->getThemeAffiliations()->filter(function(ThemeAffiliation $themeAffiliation){
+        return $this->getThemeAffiliations()->filter(function (ThemeAffiliation $themeAffiliation) {
             return $themeAffiliation->isCurrent() && $themeAffiliation->getIsThemeAdmin();
         });
     }
@@ -233,7 +233,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     public function getLabManagerThemeAffiliations(): Collection
     {
         // todo unit test this
-        return $this->getThemeAffiliations()->filter(function(ThemeAffiliation $themeAffiliation){
+        return $this->getThemeAffiliations()->filter(function (ThemeAffiliation $themeAffiliation) {
             return $themeAffiliation->isCurrent() && $themeAffiliation->getIsLabManager();
         });
     }
@@ -927,5 +927,39 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         $this->otherAddress = $otherAddress;
 
         return $this;
+    }
+
+    public function getStartedAt(): ?DateTimeInterface
+    {
+        if ($this->getThemeAffiliations()->count() > 0) {
+            return array_reduce(
+                $this->getThemeAffiliations()->toArray(),
+                function (?DateTimeInterface $carry, ThemeAffiliation $themeAffiliation) {
+                    if ($carry === null || $themeAffiliation->getStartedAt() > $carry) {
+                        return $carry;
+                    }
+                    return $themeAffiliation->getStartedAt();
+                },
+                $this->getThemeAffiliations()->toArray()[0]->getStartedAt()
+            );
+        }
+        return null;
+    }
+
+    public function getEndedAt(): ?DateTimeInterface
+    {
+        if ($this->getThemeAffiliations()->count() > 0) {
+            return array_reduce(
+                $this->getThemeAffiliations()->toArray(),
+                function (?DateTimeInterface $carry, ThemeAffiliation $themeAffiliation) {
+                    if ($carry === null || $themeAffiliation->getEndedAt() < $carry) {
+                        return $carry;
+                    }
+                    return $themeAffiliation->getEndedAt();
+                },
+                $this->getThemeAffiliations()->toArray()[0]->getEndedAt()
+            );
+        }
+        return null;
     }
 }

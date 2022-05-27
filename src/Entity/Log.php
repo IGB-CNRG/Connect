@@ -18,32 +18,31 @@ class Log
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id;
 
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'ownedLogs')]
-    #[ORM\JoinColumn(nullable: false)]
-    private $user;
+    private ?Person $user;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $text;
+    private ?string $text;
 
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'logs')]
-    private $person;
+    private ?Person $person;
 
     #[ORM\ManyToOne(targetEntity: Theme::class, inversedBy: 'logs')]
-    private $theme;
+    private ?Theme $theme;
 
     #[ORM\ManyToOne(targetEntity: Room::class, inversedBy: 'logs')]
-    private $room;
+    private ?Room $room;
 
     #[ORM\ManyToOne(targetEntity: Key::class, inversedBy: 'logs')]
-    private $cylinderKey;
+    private ?Key $cylinderKey;
 
     #[ORM\ManyToOne(targetEntity: Workflow::class, inversedBy: 'logs')]
-    private $workflow;
+    private ?Workflow $workflow;
 
     #[ORM\ManyToOne(targetEntity: Department::class, inversedBy: 'logs')]
-    private $department;
+    private ?Department $department;
 
     public function getId(): ?int
     {

@@ -331,7 +331,18 @@
                 {% for themeAffiliation in person.themeAffiliations %}
                     <tr>
                         <td>{{ themeAffiliation.theme.shortName }}</td>
-                        <td>{{ themeAffiliation.memberCategory.name }}</td>
+                        <td>
+                            {{ themeAffiliation.memberCategory.name }}
+                            {% if themeAffiliation.isLabManager %}
+                                (Lab Manager)
+                            {% endif %}
+                            {% if themeAffiliation.isThemeAdmin %}
+                                (Theme Admin)
+                            {% endif %}
+                            {% if themeAffiliation.isThemeLeader %}
+                                (Theme Leader)
+                            {% endif %}
+                        </td>
                         <td>{{ themeAffiliation.title }}</td>
                         <td>{% if themeAffiliation.startedAt is not null %}{{ themeAffiliation.startedAt|date('n/j/Y') }}{% endif %}</td>
                         <td>{% if themeAffiliation.endedAt is not null %}{{ themeAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>

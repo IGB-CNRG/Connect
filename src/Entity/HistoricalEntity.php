@@ -50,4 +50,10 @@ trait HistoricalEntity
         return ($this->getStartedAt() === null || $this->getStartedAt() < $now)
                && ($this->getEndedAt() === null || $this->getEndedAt() > $now);
     }
+
+    public function overlaps($that): bool
+    {
+        return ($this->getStartedAt() === null || $that->getEndedAt() === null || $that->getEndedAt() > $this->getStartedAt())
+               && ($this->getEndedAt() === null || $that->getStartedAt() === null || $this->getEndedAt() > $that->getStartedAt());
+    }
 }
