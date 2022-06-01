@@ -10,7 +10,7 @@
     </div>
     <h1>
         {% if person.imageName is not null %}
-            <img class="portrait-lg me-2" src="{{ asset(vich_uploader_asset(person, 'imageFile')) }}" alt="Portrait"/>
+            <img class="portrait-lg me-2" src="{{ vich_uploader_asset(person, 'imageFile') | imagine_filter('large_thumb') }}" alt="Portrait"/>
         {% endif %}
         {{ person.name }}
     </h1>

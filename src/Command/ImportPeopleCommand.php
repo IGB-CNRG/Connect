@@ -564,8 +564,9 @@ class ImportPeopleCommand extends Command
             $user = $usersById[$userId];
             if ($user['image_location']) {
                 try {
+                    // Grab the 'large' image
                     $image = new UploadedFile(
-                        'people_images/users/' . $user['image_location'],
+                        'people_images/users/' . str_replace(".", "_large.", $user['image_location']),
                         $user['image_location'],
                         null,
                         null,

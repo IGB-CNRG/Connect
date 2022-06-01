@@ -25,9 +25,9 @@
             <tbody>
             {% for person in people %}
                 <tr>
-                    <td {% if person.imageName is null%}class="td-no-portrait"{% endif %} data-order="{% if person.lastName is not empty %}{{ person.name }}{% else %}No name{% endif %}">
+                    <td {% if person.imageName is null%}class="td-no-portrait"{% endif %} data-order="{{ person.lastName }}">
                         {% if person.imageName is not null %}
-                            <img class="portrait-sm me-2" src="{{ asset(vich_uploader_asset(person, 'imageFile')) }}" alt="Portrait"/>
+                            <img class="portrait-sm me-2" src="{{ vich_uploader_asset(person, 'imageFile') | imagine_filter('small_thumb') }}" alt="Portrait"/>
                         {% endif %}
                         <a href="{{ path('person_view', {'slug': person.slug}) }}">{% if person.lastName is not empty %}{{ person.name }}{% else %}No name{% endif %}</a>
                     </td>

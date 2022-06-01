@@ -13,7 +13,8 @@ framework:
                     max_retries: 3
                     multiplier: 2
             failed: 'doctrine://default?queue_name=failed'
-            # sync: 'sync://'
+            liip_imagine: '%env(MESSENGER_TRANSPORT_DSN)%'
+            sync: 'sync://'
 
         routing:
             Symfony\Component\Mailer\Messenger\SendEmailMessage: async
@@ -22,3 +23,4 @@ framework:
 
             # Route your messages to the transports
             # 'App\Message\YourMessage': async
+            'Liip\ImagineBundle\Message\WarmupCache': liip_imagine

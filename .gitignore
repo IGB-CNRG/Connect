@@ -27,3 +27,6 @@ yarn-error.log
 ###< phpunit/phpunit ###
 
 /references
+###> liip/imagine-bundle ###
+/public/media/cache/
+###< liip/imagine-bundle ###
