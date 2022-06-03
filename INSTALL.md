@@ -1,25 +1,28 @@
 # Installation
 
-This document will cover the installation of CONNECT, as well as the initial import of data. It is assumed that you have
-installed the Symfony CLI and are using an Apache webserver.
+This document covers the installation of CONNECT, as well as the initial import of data. Before you begin, make sure you
+have installed the Symfony CLI and are using an Apache webserver.
 
 ## Prerequisites
 
-Begin by checking whether all Symfony installation requirements are met:
-
-```shell
-symfony check:requirements
-```
-
-If any requirements are not met, install them before proceeding.
-
-In addition, CONNECT requires PHP 8.1+, as well as the following extensions:
+CONNECT requires PHP 8.1+, as well as the following extensions:
 
 - ctype
 - gd
 - iconv
 - ldap
 - pdo
+
+CONNECT also requires npm.
+
+Once these prerequisites are installed, run the following command to check whether all Symfony installation requirements
+are met:
+
+```shell
+symfony check:requirements
+```
+
+If any requirements are not met, install them before proceeding.
 
 ## Symfony setup
 
@@ -32,20 +35,20 @@ cp .env .env.local
 Edit this file to set server-specific variables. Make sure to set the `DATABASE_URL` string appropriately for the server
 you are on. If this is a production server, set `APP_ENV=prod`
 
-Next, we'll install the composer packages.
+Next, install the composer packages:
 
 ```shell
 symfony composer install
 ```
 
-Now, we'll initialize the database
+Now, initialize the database:
 
 ```shell
 symfony console doctrine:database:create
 symfony console doctrine:migrations:migrate
 ```
 
-Finally, we'll install and build the frontend dependencies
+Finally, install and build the frontend dependencies:
 
 ```shell
 npm install
