@@ -182,6 +182,15 @@ class ImportPeopleCommand extends Command
                             $person->setOfficePhone($user['dept']);
                         }
 
+                        if($user['address1']){
+                            if($user['address2']){
+                                $address = "$user[address1]\n$user[address2]\n{$user['city']}, $user[state] $user[zip]";
+                            } else {
+                                $address = "$user[address1]\n{$user['city']}, $user[state] $user[zip]";
+                            }
+                            $person->setOtherAddress($address);
+                        }
+
                         $peopleById[$user['user_id']] = $person;
                         $peopleByNetid[$user['netid']] = $person;
                         $usersById[$user['user_id']] = $user;
@@ -210,7 +219,7 @@ class ImportPeopleCommand extends Command
     protected function getUsers(): array
     {
         // Query People data
-        $user_sql = "select users.*, phone.igb, phone.dept from users left join phone on users.user_id=phone.user_id group by users.user_id";
+        $user_sql = "select users.*, phone.igb, phone.dept, address.address1, address.address2, address.city, address.state, address.zip from users left join phone on users.user_id=phone.user_id left join address on address.user_id=users.user_id where address.type='DEPT' group by users.user_id";
         $users = $this->db->query($user_sql);
 
         $usersById = [];

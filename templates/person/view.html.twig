@@ -142,11 +142,11 @@
                         <th>Office Phone</th>
                         <td>{{ person.officePhone }}</td>
                     </tr>
-                    {% if person.officeBuilding %}
+                    {% if person.officeBuilding or person.otherAddress %}
                         <tr>
                             <th>Other Campus Address</th>
                             <td>
-                                {{ person.officeBuilding.address }}
+                                {{ (person.otherAddress ?? person.officeBuilding.address)|nl2br }}
                                 {{ person.officeNumber }}
                             </td>
                         </tr>
