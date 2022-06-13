@@ -20,16 +20,16 @@ class MemberCategory
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $name;
+    private ?string $name;
 
     #[ORM\OneToMany(mappedBy: 'memberCategory', targetEntity: ThemeAffiliation::class, orphanRemoval: true)]
-    private $themeAffiliations;
+    private Collection $themeAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'memberCategory', targetEntity: WorkflowStepCategory::class, orphanRemoval: true)]
-    private $workflowStepCategories;
+    private Collection $workflowStepCategories;
 
     public function __construct()
     {

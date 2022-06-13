@@ -93,7 +93,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     #[ORM\Column(type: 'date', nullable: true)]
     #[Loggable]
-    private DateTimeInterface $offerLetterDate;
+    private ?DateTimeInterface $offerLetterDate;
 
     #[ORM\Column(type: 'boolean')]
     #[Loggable(displayName: 'key deposit')]

@@ -18,31 +18,31 @@ class ThemeAffiliation
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id;
 
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'themeAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
-    private $person;
+    private Person $person;
 
     #[ORM\ManyToOne(targetEntity: Theme::class, inversedBy: 'themeAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
-    private $theme;
+    private Theme $theme;
 
     #[ORM\ManyToOne(targetEntity: MemberCategory::class, inversedBy: 'themeAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
-    private $memberCategory;
+    private MemberCategory $memberCategory;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $title;
+    private ?string $title;
 
     #[ORM\Column(type: 'boolean')]
-    private $isThemeLeader = false;
+    private bool $isThemeLeader = false;
 
     #[ORM\Column(type: 'boolean')]
-    private $isThemeAdmin = false;
+    private bool $isThemeAdmin = false;
 
     #[ORM\Column(type: 'boolean')]
-    private $isLabManager = false;
+    private bool $isLabManager = false;
 
     public function __toString()
     {
@@ -68,36 +68,36 @@ class ThemeAffiliation
         return $this->id;
     }
 
-    public function getPerson(): ?Person
+    public function getPerson(): Person
     {
         return $this->person;
     }
 
-    public function setPerson(?Person $person): self
+    public function setPerson(Person $person): self
     {
         $this->person = $person;
 
         return $this;
     }
 
-    public function getTheme(): ?Theme
+    public function getTheme(): Theme
     {
         return $this->theme;
     }
 
-    public function setTheme(?Theme $theme): self
+    public function setTheme(Theme $theme): self
     {
         $this->theme = $theme;
 
         return $this;
     }
 
-    public function getMemberCategory(): ?MemberCategory
+    public function getMemberCategory(): MemberCategory
     {
         return $this->memberCategory;
     }
 
-    public function setMemberCategory(?MemberCategory $memberCategory): self
+    public function setMemberCategory(MemberCategory $memberCategory): self
     {
         $this->memberCategory = $memberCategory;
 

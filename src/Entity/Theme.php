@@ -20,22 +20,22 @@ class Theme
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $shortName;
+    private ?string $shortName;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $fullName;
+    private ?string $fullName;
 
     #[ORM\Column(type: 'boolean')]
-    private $isNonResearch;
+    private bool $isNonResearch;
 
     #[ORM\OneToMany(mappedBy: 'theme', targetEntity: ThemeAffiliation::class, orphanRemoval: true)]
-    private $themeAffiliations;
+    private Collection $themeAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'theme', targetEntity: Log::class)]
-    private $logs;
+    private Collection $logs;
 
     public function __construct()
     {
@@ -77,7 +77,7 @@ class Theme
         return $this;
     }
 
-    public function getIsNonResearch(): ?bool
+    public function getIsNonResearch(): bool
     {
         return $this->isNonResearch;
     }

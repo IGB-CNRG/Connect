@@ -19,20 +19,19 @@ class WorkflowStep
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $name;
+    private ?string $name;
 
     #[ORM\OneToMany(mappedBy: 'workflowStep', targetEntity: WorkflowStepCategory::class, orphanRemoval: true)]
-    private $workflowStepCategories;
+    private Collection $workflowStepCategories;
 
     #[ORM\OneToMany(mappedBy: 'workflowStep', targetEntity: WorkflowProgress::class, orphanRemoval: true)]
-    private $workflowProgress;
+    private Collection $workflowProgress;
 
     public function __construct()
     {
-        $this->memberCategories = new ArrayCollection();
         $this->workflowStepCategories = new ArrayCollection();
         $this->workflowProgress = new ArrayCollection();
     }
@@ -50,30 +49,6 @@ class WorkflowStep
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, MemberCategory>
-     */
-    public function getMemberCategories(): Collection
-    {
-        return $this->memberCategories;
-    }
-
-    public function addMemberCategory(MemberCategory $memberCategory): self
-    {
-        if (!$this->memberCategories->contains($memberCategory)) {
-            $this->memberCategories[] = $memberCategory;
-        }
-
-        return $this;
-    }
-
-    public function removeMemberCategory(MemberCategory $memberCategory): self
-    {
-        $this->memberCategories->removeElement($memberCategory);
 
         return $this;
     }

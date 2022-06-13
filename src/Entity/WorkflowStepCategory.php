@@ -17,49 +17,49 @@ class WorkflowStepCategory
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id;
 
     #[ORM\ManyToOne(targetEntity: WorkflowStep::class, inversedBy: 'workflowStepCategories')]
     #[ORM\JoinColumn(nullable: false)]
-    private $workflowStep;
+    private WorkflowStep $workflowStep;
 
     #[ORM\ManyToOne(targetEntity: MemberCategory::class, inversedBy: 'workflowStepCategories')]
     #[ORM\JoinColumn(nullable: false)]
-    private $memberCategory;
+    private MemberCategory $memberCategory;
 
     #[ORM\Column(type: 'integer')]
-    private $position;
+    private int $position;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getWorkflowStep(): ?WorkflowStep
+    public function getWorkflowStep(): WorkflowStep
     {
         return $this->workflowStep;
     }
 
-    public function setWorkflowStep(?WorkflowStep $workflowStep): self
+    public function setWorkflowStep(WorkflowStep $workflowStep): self
     {
         $this->workflowStep = $workflowStep;
 
         return $this;
     }
 
-    public function getMemberCategory(): ?MemberCategory
+    public function getMemberCategory(): MemberCategory
     {
         return $this->memberCategory;
     }
 
-    public function setMemberCategory(?MemberCategory $memberCategory): self
+    public function setMemberCategory(MemberCategory $memberCategory): self
     {
         $this->memberCategory = $memberCategory;
 
         return $this;
     }
 
-    public function getPosition(): ?int
+    public function getPosition(): int
     {
         return $this->position;
     }

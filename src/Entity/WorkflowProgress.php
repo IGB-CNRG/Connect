@@ -18,39 +18,39 @@ class WorkflowProgress
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id;
 
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'workflowProgress')]
     #[ORM\JoinColumn(nullable: false)]
-    private $person;
+    private Person $person;
 
     #[ORM\ManyToOne(targetEntity: WorkflowStep::class, inversedBy: 'workflowProgress')]
     #[ORM\JoinColumn(nullable: false)]
-    private $workflowStep;
+    private WorkflowStep $workflowStep;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getPerson(): ?Person
+    public function getPerson(): Person
     {
         return $this->person;
     }
 
-    public function setPerson(?Person $person): self
+    public function setPerson(Person $person): self
     {
         $this->person = $person;
 
         return $this;
     }
 
-    public function getWorkflowStep(): ?WorkflowStep
+    public function getWorkflowStep(): WorkflowStep
     {
         return $this->workflowStep;
     }
 
-    public function setWorkflowStep(?WorkflowStep $workflowStep): self
+    public function setWorkflowStep(WorkflowStep $workflowStep): self
     {
         $this->workflowStep = $workflowStep;
 

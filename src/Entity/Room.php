@@ -22,22 +22,22 @@ class Room
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $number;
+    private ?string $number;
 
     #[ORM\Column(type: 'string', length: 255, unique: true, nullable: true)]
-    private $name;
+    private ?string $name;
 
     #[ORM\OneToMany(mappedBy: 'room', targetEntity: RoomAffiliation::class, orphanRemoval: true)]
-    private $roomAffiliations;
+    private Collection $roomAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'room', targetEntity: RoomKeyAffiliation::class, orphanRemoval: true)]
-    private $roomKeyAffiliations;
+    private Collection $roomKeyAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'room', targetEntity: Log::class)]
-    private $logs;
+    private Collection $logs;
 
     public function __construct()
     {
