@@ -30,6 +30,7 @@ class MemberCategoryCrudController extends AbstractCrudController
     {
         return [
             TextField::new('name'),
+            TextField::new('shortName'),
         ];
     }
 }

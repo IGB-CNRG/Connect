@@ -31,6 +31,9 @@ class MemberCategory
     #[ORM\OneToMany(mappedBy: 'memberCategory', targetEntity: WorkflowStepCategory::class, orphanRemoval: true)]
     private Collection $workflowStepCategories;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $shortName;
+
     public function __construct()
     {
         $this->themeAffiliations = new ArrayCollection();
@@ -115,6 +118,18 @@ class MemberCategory
                 $workflowStepCategory->setMemberCategory(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getShortName(): ?string
+    {
+        return $this->shortName;
+    }
+
+    public function setShortName(?string $shortName): self
+    {
+        $this->shortName = $shortName;
 
         return $this;
     }

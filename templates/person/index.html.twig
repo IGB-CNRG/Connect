@@ -94,7 +94,7 @@
                             {% for themeAffiliation in person.themeAffiliations|current %}
                                 {% block types %}
                                     {% if not themeAffiliation.isCurrent %}<span class="text-muted">{% endif %}
-                                    {{ themeAffiliation.memberCategory.name }}
+                                    {{ themeAffiliation.memberCategory.shortName??themeAffiliation.memberCategory.name }}
                                     {% if not themeAffiliation.isCurrent %}</span>{% endif %}
                                     {% if not loop.last %}<br/>{% endif %}
                                 {% endblock %}
