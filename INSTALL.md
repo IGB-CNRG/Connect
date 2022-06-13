@@ -75,3 +75,13 @@ symfony console app:import-people -p <MYSQL_PASSWORD>
 
 Note that this command will ignore any IGB members whose details cannot be determined from the People database, such as
 those members who have left the IGB and are marked as "alumnus."
+
+### Faculty/Affiliate master list import
+
+Use the following console command to create or update all faculty and affiliates from the master list spreadsheet.
+Replace SPREADSHEET_PATH with the path to the master list spreadsheet, and HIGHEST_ROW with the number of the last row
+in the spreadsheet.
+
+```shell
+symfony console app:import-faculty-spreadsheet <SPREADSHEET_PATH> <HIGHEST_ROW>
+```

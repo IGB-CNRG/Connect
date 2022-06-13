@@ -41,6 +41,22 @@ class PersonController extends AbstractController
         ThemeRepository $themeRepository,
         MemberCategoryRepository $categoryRepository
     ): Response {
+        $people = $personRepository->findCurrentForIndex();
+        $themes = $themeRepository->findAll(); // Todo group by current/old?
+        $memberCategories = $categoryRepository->findAll(); // todo sort
+        return $this->render('person/index.html.twig', [
+            'people' => $people,
+            'themes' => $themes,
+            'memberCategories' => $memberCategories,
+        ]);
+    }
+
+    #[Route('/person/everyone', name:'person_everyone', priority: 1)]
+    public function all(
+        PersonRepository $personRepository,
+        ThemeRepository $themeRepository,
+        MemberCategoryRepository $categoryRepository
+    ): Response {
         $people = $personRepository->findAllForIndex();
         $themes = $themeRepository->findAll(); // Todo group by current/old?
         $memberCategories = $categoryRepository->findAll(); // todo sort
@@ -326,8 +342,7 @@ class PersonController extends AbstractController
         Request $request,
         EntityManagerInterface $em,
         ActivityLogger $logger
-    ): Response
-    {
+    ): Response {
         $this->denyAccessUnlessGranted('PERSON_EDIT', $person);
         $form = $this->createForm(EndDepartmentAffiliationType::class, $departmentAffiliation);
         $form->add('save', SubmitType::class);

@@ -23,19 +23,29 @@ class PersonRepository extends ServiceEntityRepository
         parent::__construct($registry, Person::class);
     }
 
-    public function findAllForIndex()
+    public function createIndexQueryBuilder()
     {
-        // todo currently this shows everyone past and present
         return $this->createQueryBuilder('p')
             ->leftJoin('p.themeAffiliations', 'ta')
             ->leftJoin('ta.theme', 't')
             ->leftJoin('p.roomAffiliations', 'ra')
             ->leftJoin('ra.room', 'r')
-            ->select('p,ta,t,ra,r')
+            ->select('p,ta,t,ra,r');
+    }
+
+    public function findCurrentForIndex()
+    {
+        return $this->createIndexQueryBuilder()
             ->andWhere('ta.endedAt is null or ta.endedAt >= CURRENT_TIMESTAMP()')
             ->andWhere('ta is not null')
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
+    }
+
+    public function findAllForIndex()
+    {
+        return $this->createIndexQueryBuilder()
+            ->getQuery()
+            ->getResult();
     }
 }

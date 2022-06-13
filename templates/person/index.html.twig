@@ -25,9 +25,12 @@
             <tbody>
             {% for person in people %}
                 <tr>
-                    <td {% if person.imageName is null%}class="td-no-portrait"{% endif %} data-order="{{ person.lastName }}">
+                    <td {% if person.imageName is null %}class="td-no-portrait"{% endif %}
+                        data-order="{{ person.lastName }}">
                         {% if person.imageName is not null %}
-                            <img class="portrait-sm me-2" src="{{ vich_uploader_asset(person, 'imageFile') | imagine_filter('small_thumb') }}" alt="Portrait"/>
+                            <img class="portrait-sm me-2"
+                                 src="{{ vich_uploader_asset(person, 'imageFile') | imagine_filter('small_thumb') }}"
+                                 alt="Portrait"/>
                         {% endif %}
                         <a href="{{ path('person_view', {'slug': person.slug}) }}">{% if person.lastName is not empty %}{{ person.name }}{% else %}No name{% endif %}</a>
                     </td>
@@ -36,39 +39,71 @@
                     {#                {% endif %} #}
                     <td>{{ person.email }}</td>
                     <td>
-                        {% for themeAffiliation in person.themeAffiliations|current %}
-                            {{ themeAffiliation.theme.shortName }}{% if not loop.last %}<br/>{% endif %}
-                        {% endfor %}
+                        {% if app.request.get('_route') != 'person_everyone' %}
+                            {% for themeAffiliation in person.themeAffiliations|current %}
+                                {% block themes %}
+                                    {% if not themeAffiliation.isCurrent %}<span class="text-muted">{% endif %}
+                                    {{ themeAffiliation.theme.shortName }}
+                                    {% if not themeAffiliation.isCurrent %}</span>{% endif %}
+                                    {% if not loop.last %}<br/>{% endif %}
+                                {% endblock %}
+                            {% endfor %}
+                        {% else %}
+                            {% for themeAffiliation in person.themeAffiliations %}
+                                {{ block('themes') }}
+                            {% endfor %}
+                        {% endif %}
                     </td>
                     <td>
-                        {% for themeAffiliation in person.themeAffiliations|current %}
-                            {% if themeAffiliation.title %}
-                                {{ themeAffiliation.title }}
-                            {% endif %}
-                            {% if themeAffiliation.title and (themeAffiliation.isThemeLeader or themeAffiliation.isThemeAdmin or themeAffiliation.isLabManager) %}
-                                (
-                            {%- endif -%}
-                            {% if themeAffiliation.isThemeLeader %}
-                                Theme Leader
-                            {% endif %}
-                            {% if themeAffiliation.isThemeAdmin %}
-                                Theme Admin
-                            {% endif %}
-                            {% if themeAffiliation.isLabManager %}
-                                Lab Manager
-                            {% endif %}
-                            {%- if themeAffiliation.title and (themeAffiliation.isThemeLeader or themeAffiliation.isThemeAdmin or themeAffiliation.isLabManager) -%}
-                                )
-                            {% endif %}
-                            {%- if not loop.last -%}
-                                <br/>
-                            {% endif %}
-                        {% endfor %}
+                        {% if app.request.get('_route') != 'person_everyone' %}
+                            {% for themeAffiliation in person.themeAffiliations|current %}
+                                {% block titles %}
+                                    {% if not themeAffiliation.isCurrent %}<span class="text-muted">{% endif %}
+                                    {% if themeAffiliation.title %}
+                                        {{ themeAffiliation.title }}
+                                    {% endif %}
+                                    {% if themeAffiliation.title and (themeAffiliation.isThemeLeader or themeAffiliation.isThemeAdmin or themeAffiliation.isLabManager) %}
+                                        (
+                                    {%- endif -%}
+                                    {% if themeAffiliation.isThemeLeader %}
+                                        Theme Leader
+                                    {% endif %}
+                                    {% if themeAffiliation.isThemeAdmin %}
+                                        Theme Admin
+                                    {% endif %}
+                                    {% if themeAffiliation.isLabManager %}
+                                        Lab Manager
+                                    {% endif %}
+                                    {%- if themeAffiliation.title and (themeAffiliation.isThemeLeader or themeAffiliation.isThemeAdmin or themeAffiliation.isLabManager) -%}
+                                        )
+                                    {% endif %}
+                                    {% if not themeAffiliation.isCurrent %}</span>{% endif %}
+                                    {%- if not loop.last -%}
+                                        <br/>
+                                    {% endif %}
+                                {% endblock %}
+                            {% endfor %}
+                        {% else %}
+                            {% for themeAffiliation in person.themeAffiliations %}
+                                {{ block('titles') }}
+                            {% endfor %}
+                        {% endif %}
                     </td>
                     <td>
-                        {% for themeAffiliation in person.themeAffiliations|current %}
-                            {{ themeAffiliation.memberCategory.name }}{% if not loop.last %}<br/>{% endif %}
-                        {% endfor %}
+                        {% if app.request.get('_route' != 'person_everyone') %}
+                            {% for themeAffiliation in person.themeAffiliations|current %}
+                                {% block types %}
+                                    {% if not themeAffiliation.isCurrent %}<span class="text-muted">{% endif %}
+                                    {{ themeAffiliation.memberCategory.name }}
+                                    {% if not themeAffiliation.isCurrent %}</span>{% endif %}
+                                    {% if not loop.last %}<br/>{% endif %}
+                                {% endblock %}
+                            {% endfor %}
+                        {% else %}
+                            {% for themeAffiliation in person.themeAffiliations %}
+                                {{ block('types') }}
+                            {% endfor %}
+                        {% endif %}
                     </td>
                     <td>
                         {% for roomAffiliation in person.roomAffiliations|current %}
@@ -81,21 +116,26 @@
         </table>
 
         <div class="card mt-3">
-            <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#advanced-search" aria-expanded="false" role="button">
+            <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#advanced-search"
+                 aria-expanded="false" role="button">
                 Advanced Search
             </div>
             <div class="collapse" id="advanced-search">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-lg">
-                            <select class="form-select" id="theme-select" data-controller="select2" data-placeholder="Filter by theme" data-column="2" data-action="datatables#columnSearch" multiple="multiple" style="width:100%">
+                            <select class="form-select" id="theme-select" data-controller="select2"
+                                    data-placeholder="Filter by theme" data-column="2"
+                                    data-action="datatables#columnSearch" multiple="multiple" style="width:100%">
                                 {% for theme in themes %}
                                     <option>{{ theme.shortName }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                         <div class="col-lg">
-                            <select class="form-select" id="member-category-select" data-controller="select2" data-placeholder="Filter by employee type" data-column="4" data-action="datatables#columnSearch" multiple="multiple" style="width:100%">
+                            <select class="form-select" id="member-category-select" data-controller="select2"
+                                    data-placeholder="Filter by employee type" data-column="4"
+                                    data-action="datatables#columnSearch" multiple="multiple" style="width:100%">
                                 <option></option>
                                 {% for category in memberCategories %}
                                     <option>{{ category.name }}</option>
@@ -103,7 +143,9 @@
                             </select>
                         </div>
                         <div class="col-lg">
-                            <select class="form-select" id="theme-role-select" data-controller="select2" data-placeholder="Filter by role" data-column="3" data-action="datatables#columnSearch" multiple="multiple" style="width:100%">
+                            <select class="form-select" id="theme-role-select" data-controller="select2"
+                                    data-placeholder="Filter by role" data-column="3"
+                                    data-action="datatables#columnSearch" multiple="multiple" style="width:100%">
                                 <option></option>
                                 <option>Theme Leader</option>
                                 <option>Theme Admin</option>
@@ -111,6 +153,13 @@
                             </select>
                         </div>
                     </div>
+                    {% if app.request.get('_route') != 'person_everyone' %}
+                        <div class="row mt-3">
+                            <div class="col">
+                                <a href="{{ path('person_everyone') }}">See all members past and present</a>
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
