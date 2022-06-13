@@ -10,11 +10,12 @@ use App\Repository\ThemeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: ThemeRepository::class)]
 class Theme
 {
-    use HistoricalEntity;
+    use TimestampableEntity, HistoricalEntity;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

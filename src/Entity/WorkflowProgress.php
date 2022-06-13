@@ -8,11 +8,12 @@ namespace App\Entity;
 
 use App\Repository\WorkflowProgressRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: WorkflowProgressRepository::class)]
 class WorkflowProgress
 {
-    use HistoricalEntity;
+    use TimestampableEntity, HistoricalEntity;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

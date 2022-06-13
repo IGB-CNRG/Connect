@@ -8,11 +8,12 @@ namespace App\Entity;
 
 use App\Repository\ThemeAffiliationRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: ThemeAffiliationRepository::class)]
 class ThemeAffiliation
 {
-    use HistoricalEntity;
+    use TimestampableEntity, HistoricalEntity;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

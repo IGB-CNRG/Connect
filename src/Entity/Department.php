@@ -10,26 +10,29 @@ use App\Repository\DepartmentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: DepartmentRepository::class)]
 class Department
 {
+    use TimestampableEntity;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $name;
+    private ?string $name;
 
     #[ORM\ManyToOne(targetEntity: College::class, inversedBy: 'departments')]
-    private $college;
+    private ?College $college;
 
     #[ORM\OneToMany(mappedBy: 'department', targetEntity: DepartmentAffiliation::class, orphanRemoval: true)]
-    private $departmentAffiliations;
+    private Collection $departmentAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'department', targetEntity: Log::class)]
-    private $logs;
+    private Collection $logs;
 
     public function __construct()
     {

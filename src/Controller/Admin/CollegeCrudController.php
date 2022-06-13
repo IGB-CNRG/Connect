@@ -9,6 +9,8 @@ namespace App\Controller\Admin;
 use App\Entity\College;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class CollegeCrudController extends AbstractCrudController
 {
@@ -25,14 +27,13 @@ class CollegeCrudController extends AbstractCrudController
             ;
     }
 
-    /*
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id'),
-            TextField::new('title'),
-            TextEditorField::new('description'),
+            TextField::new('name'),
+            TextField::new('abbreviation'),
+            CollectionField::new('departments')->hideOnForm()
+            // hide on form until we come back and make this a real entitytype form
         ];
     }
-    */
 }

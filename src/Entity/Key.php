@@ -10,32 +10,33 @@ use App\Repository\KeyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: KeyRepository::class)]
 #[ORM\Table(name: '`key`')]
 class Key
 {
-    use HistoricalEntity;
+    use TimestampableEntity, HistoricalEntity;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $name;
+    private ?string $name;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $description;
+    private ?string $description;
 
     #[ORM\OneToMany(mappedBy: 'cylinderKey', targetEntity: RoomKeyAffiliation::class, orphanRemoval: true)]
-    private $roomKeyAffiliations;
+    private Collection $roomKeyAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'cylinderKey', targetEntity: KeyAffiliation::class, orphanRemoval: true)]
-    private $keyAffiliations;
+    private Collection $keyAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'cylinderKey', targetEntity: Log::class)]
-    private $logs;
+    private Collection $logs;
 
     public function __construct()
     {

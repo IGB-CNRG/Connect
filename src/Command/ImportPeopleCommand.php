@@ -9,6 +9,7 @@ namespace App\Command;
 use App\Entity\Department;
 use App\Entity\DepartmentAffiliation;
 use App\Entity\HistoricalEntity;
+use App\Entity\MemberCategory;
 use App\Entity\Person;
 use App\Entity\RoomAffiliation;
 use App\Entity\SupervisorAffiliation;
@@ -22,6 +23,8 @@ use App\Repository\ThemeRepository;
 use App\Service\ActivityLogger;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
+use LogicException;
 use PDO;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -82,13 +85,7 @@ class ImportPeopleCommand extends Command
                 'The MySQL username to log in with. Must have select permission',
                 'root'
             )
-            ->addOption('password', 'p', InputOption::VALUE_OPTIONAL)
-            ->addOption(
-                'force',
-                'f',
-                InputOption::VALUE_NONE,
-                'Set this flag to replace all users in the database with those from the people database. All member info will be lost.'
-            );
+            ->addOption('password', 'p', InputOption::VALUE_OPTIONAL);
     }
 
     /**
@@ -129,10 +126,7 @@ class ImportPeopleCommand extends Command
         $progress->setFormat('custom');
         foreach ($usersById as $user) {
             $progress->setMessage(sprintf('Importing %s', $user['netid']));
-            if ($user['netid'] && isset($peopleByNetid[$user['netid']])) {
-                // todo do something here to import the duplicate person
-                $dummy = true;
-            } else {
+            if (!($user['netid'] && isset($peopleByNetid[$user['netid']]))) {
                 if ($user['last_name']) { // only import the person if they actually have a name
                     $person = null;
                     if ($user['uin'] && is_int($user['uin'])) {
@@ -153,7 +147,7 @@ class ImportPeopleCommand extends Command
                             ->setLastName($user['last_name'])
                             ->setEmail($user['email'])
                             ->setIsIgbTrainingComplete($user['safety_training'] == 1)
-                            ->setIsDrsTrainingComplete($user['safety_training'] == 1); // todo import images somehow?
+                            ->setIsDrsTrainingComplete($user['safety_training'] == 1);
                         if ($user['netid']) {
                             $person
                                 ->setNetid($user['netid'])
@@ -182,8 +176,8 @@ class ImportPeopleCommand extends Command
                             $person->setOfficePhone($user['dept']);
                         }
 
-                        if($user['address1']){
-                            if($user['address2']){
+                        if ($user['address1']) {
+                            if ($user['address2']) {
                                 $address = "$user[address1]\n$user[address2]\n{$user['city']}, $user[state] $user[zip]";
                             } else {
                                 $address = "$user[address1]\n{$user['city']}, $user[state] $user[zip]";
@@ -246,16 +240,14 @@ class ImportPeopleCommand extends Command
             );
             if ($foundTheme) {
                 $themesById[$theme['theme_id']] = $foundTheme;
-            } else {
-//                $io->warning("Theme not correlated: $theme[short_name]");
             }
         }
         return $themesById;
     }
 
     /**
-     * @param array $themesById
-     * @param array $typesById
+     * @param Theme[] $themesById
+     * @param MemberCategory[] $typesById
      * @return ThemeAffiliation[][]
      */
     protected function getValidThemeAffiliations(
@@ -274,9 +266,10 @@ class ImportPeopleCommand extends Command
         $progress->setMessage('Processing affiliations');
         foreach ($user_themes as $user_theme) {
             if (isset($themesById[$user_theme['theme_id']])) {
+                $theme = $themesById[$user_theme['theme_id']];
                 if (isset($typesById[$user_theme['type_id']])) {
                     $themeAffiliation = (new ThemeAffiliation())
-                        ->setTheme($themesById[$user_theme['theme_id']])
+                        ->setTheme($theme)
                         ->setMemberCategory($typesById[$user_theme['type_id']]);
 
                     if ($this->isThemeLeader($user_theme['type_id'])) {
@@ -290,6 +283,13 @@ class ImportPeopleCommand extends Command
                         );
                     } else {
                         $this->setDatesFromResult($user_theme, $themeAffiliation);
+                    }
+                    if ($theme->getEndedAt(
+                    )) { // If the theme has ended, add the end date to the affiliation when applicable
+                        if ($themeAffiliation->getEndedAt() === null
+                            || $themeAffiliation->getEndedAt() > $theme->getEndedAt()) {
+                            $themeAffiliation->setEndedAt($theme->getEndedAt());
+                        }
                     }
                     // todo add some test to determine if this affiliation is "valid"
                     if (!isset($validThemeAffiliations[$user_theme['user_id']])) {
@@ -387,8 +387,6 @@ class ImportPeopleCommand extends Command
             );
             if ($foundType) {
                 $typesById[$type['type_id']] = $foundType;
-            } else {
-//                $io->warning("Type not correlated: $type[name]");
             }
         }
         return $typesById;
@@ -396,10 +394,9 @@ class ImportPeopleCommand extends Command
 
     /**
      * @param Person[] $peopleById
-     * @param array $usersById
      * @return void
      */
-    protected function setUpRoomAffiliations(array $peopleById, array $usersById): void
+    protected function setUpRoomAffiliations(array $peopleById): void
     {
         $user_room_sql = "select * from address where type='IGB'";
         $user_rooms = $this->db->query($user_room_sql);
@@ -482,7 +479,7 @@ class ImportPeopleCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if (!$output instanceof ConsoleOutputInterface) {
-            throw new \LogicException('This command accepts only an instance of "ConsoleOutputInterface".');
+            throw new LogicException('This command accepts only an instance of "ConsoleOutputInterface".');
         }
         // Gather options
         $section1 = $output->section();
@@ -494,7 +491,6 @@ class ImportPeopleCommand extends Command
         $database = $input->getOption('database');
         $username = $input->getOption('username');
         $password = $input->getOption('password');
-        $force = $input->getOption('force');
         $hasPassword = $input->hasParameterOption(['-p', '--password']);
 
         if ($hasPassword && !$password) {
@@ -510,7 +506,7 @@ class ImportPeopleCommand extends Command
         // Connect to People Database
         $progress->setMessage("Connecting to people database");
         $dsn = "mysql:host=$host;port=$port;dbname=$database";
-        $this->db = new \PDO($dsn, $username, $password);
+        $this->db = new PDO($dsn, $username, $password);
         $progress->advance();
 
         // Parse themes
@@ -559,7 +555,7 @@ class ImportPeopleCommand extends Command
         // Set up room affiliations
         $progress->setMessage('Building room assignments');
         $progress->display();
-        $this->setUpRoomAffiliations($peopleById, $usersById);
+        $this->setUpRoomAffiliations($peopleById);
         $progress->advance();
 
         // Finish up
@@ -583,7 +579,7 @@ class ImportPeopleCommand extends Command
                     );
                     $person->setImageFile($image);
                     $this->em->persist($person);
-                } catch (FileException $e) {
+                } catch (FileException) {
                 }
             }
         }
@@ -610,7 +606,7 @@ class ImportPeopleCommand extends Command
             if ($from['end_date'] && $from['end_date'] != '0000-00-00') {
                 $to->setEndedAt(new DateTimeImmutable($from['end_date']));
             }
-        } catch (\Exception) {
+        } catch (Exception) {
         }
     }
 }

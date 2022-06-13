@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="On explicit save action" serverName="joebuntu (dev)" deleteMissingItems="true" confirmBeforeUploading="false" autoUploadExternalChanges="true">
+  <component name="PublishConfigData" autoUpload="On explicit save action" serverName="joebuntu (dev)" deleteMissingItems="true" confirmBeforeUploading="false" autoUploadExternalChanges="true" compareModeInSync="TIMESTAMP">
     <option name="confirmBeforeUploading" value="false" />
     <serverData>
       <paths name="joebuntu (dev)">
@@ -13,9 +13,8 @@
             <excludedPath path="/vendor" />
             <excludedPath path="/.env.local" />
             <excludedPath path="/node_modules" />
-            <excludedPath path="/public/build" />
+            <excludedPath path="/public" />
             <excludedPath path="/package-lock.json" />
-            <excludedPath path="/public/uploads" />
             <excludedPath path="/.stversions" />
           </excludedPaths>
         </serverdata>

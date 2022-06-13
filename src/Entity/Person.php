@@ -4,8 +4,6 @@
  * All rights reserved.
  */
 
-/** @noinspection PhpMissingFieldTypeInspection */
-
 namespace App\Entity;
 
 use App\Attribute\Loggable;
@@ -47,59 +45,59 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
-    private $firstName;
+    private ?string $firstName;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
-    private $lastName;
+    private ?string $lastName;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
-    private $middleInitial;
+    private ?string $middleInitial;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable(displayName: 'netID')]
-    private $netid;
+    private ?string $netid;
 
     #[ORM\Column(type: 'string', length: 180, unique: true, nullable: true)]
     #[Loggable]
-    private $username;
+    private ?string $username;
 
     #[ORM\Column(type: 'integer', nullable: true)]
     #[Loggable(displayName: 'UIN')]
-    private $uin;
+    private ?int $uin;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
-    private $email;
+    private ?string $email;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
-    private $officeNumber;
+    private ?string $officeNumber;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
-    private $officePhone;
+    private ?string $officePhone;
 
     #[ORM\Column(type: 'boolean')]
     #[Loggable(displayName: 'DRS training')]
-    private $isDrsTrainingComplete = false;
+    private bool $isDrsTrainingComplete = false;
 
     #[ORM\Column(type: 'boolean')]
     #[Loggable(displayName: 'IGB training')]
-    private $isIgbTrainingComplete = false;
+    private bool $isIgbTrainingComplete = false;
 
     #[ORM\Column(type: 'date', nullable: true)]
     #[Loggable]
-    private $offerLetterDate;
+    private DateTimeInterface $offerLetterDate;
 
     #[ORM\Column(type: 'boolean')]
     #[Loggable(displayName: 'key deposit')]
-    private $hasGivenKeyDeposit = false;
+    private bool $hasGivenKeyDeposit = false;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: RoomAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $roomAffiliations;
@@ -142,37 +140,37 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     private PreferredAddress $preferredAddress = PreferredAddress::IGB;
 
     #[ORM\Column(type: 'json')]
-    private $roles = [];
+    private ?array $roles = [];
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $preferredFirstName;
+    private ?string $preferredFirstName;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: Document::class, orphanRemoval: true)]
-    private $documents;
+    private Collection $documents;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable(displayName: 'portrait', details: false)]
-    private $imageName;
+    private ?string $imageName;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $mimeType;
+    private ?string $mimeType;
 
     #[Vich\UploadableField(mapping: 'person_image', fileNameProperty: 'imageName', size: 'imageSize', mimeType: 'mimeType')]
     #[Ignore]
-    private $imageFile;
+    private ?File $imageFile;
 
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $imageSize;
 
     #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: Note::class)]
-    private $createdNotes;
+    private Collection $createdNotes;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Slug(fields: ['firstName', 'lastName'], unique_base: 'id')]
-    private $slug;
+    private ?string $slug;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private $otherAddress;
+    private ?string $otherAddress;
 
     public function __construct()
     {

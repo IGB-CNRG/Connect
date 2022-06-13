@@ -8,11 +8,12 @@ namespace App\Entity;
 
 use App\Repository\RoomKeyAffiliationRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: RoomKeyAffiliationRepository::class)]
 class RoomKeyAffiliation
 {
-    use HistoricalEntity;
+    use TimestampableEntity, HistoricalEntity;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

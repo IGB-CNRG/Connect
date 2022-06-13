@@ -23,37 +23,37 @@ class Document
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $fileName;
+    private ?string $fileName;
 
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'documents')]
     #[ORM\JoinColumn(nullable: false)]
-    private $person;
+    private Person $person;
 
     #[Vich\UploadableField(mapping: 'person_document', fileNameProperty: 'fileName', mimeType: 'mimeType', originalName: 'originalName')]
-    private $file;
+    private ?File $file;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $mimeType;
+    private ?string $mimeType;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $originalName;
+    private ?string $originalName;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $displayName;
+    private ?string $displayName;
 
     #[ORM\Column(type: 'string', length: 255, enumType: DocumentCategory::class)]
-    private $type = DocumentCategory::Other;
+    private DocumentCategory $type = DocumentCategory::Other;
 
     #[ORM\ManyToOne(targetEntity: Person::class)]
     #[ORM\JoinColumn(nullable: false)]
-    private $uploadedBy;
+    private Person $uploadedBy;
 
     #[Pure] public function __toString()
     {
-        if($this->getDisplayName()){
+        if ($this->getDisplayName()) {
             return $this->getDisplayName();
         } else {
             return $this->getOriginalName();
@@ -91,12 +91,12 @@ class Document
         return $this;
     }
 
-    public function getPerson(): ?Person
+    public function getPerson(): Person
     {
         return $this->person;
     }
 
-    public function setPerson(?Person $person): self
+    public function setPerson(Person $person): self
     {
         $this->person = $person;
 
@@ -151,12 +151,12 @@ class Document
         return $this;
     }
 
-    public function getUploadedBy(): ?Person
+    public function getUploadedBy(): Person
     {
         return $this->uploadedBy;
     }
 
-    public function setUploadedBy(?Person $uploadedBy): self
+    public function setUploadedBy(Person $uploadedBy): self
     {
         $this->uploadedBy = $uploadedBy;
 

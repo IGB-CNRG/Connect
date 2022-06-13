@@ -10,31 +10,32 @@ use App\Repository\BuildingRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: BuildingRepository::class)]
 class Building
 {
-    use HistoricalEntity;
+    use TimestampableEntity, HistoricalEntity;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $name;
+    private ?string $name;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $shortName;
+    private ?string $shortName;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private $address;
+    private ?string $address;
 
     #[ORM\Column(type: 'integer', nullable: true)]
-    private $buildingNumber;
+    private ?int $buildingNumber;
 
     #[ORM\OneToMany(mappedBy: 'officeBuilding', targetEntity: Person::class)]
-    private $people;
+    private Collection $people;
 
     public function __construct()
     {

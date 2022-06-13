@@ -141,3 +141,8 @@ $callout-background-lighten: 50%;
     font-weight: bold;
   }
 }
+
+/* Select2 Restyles */
+.select2-container .select2-search--inline .select2-search__field {
+  height: 26px;
+}

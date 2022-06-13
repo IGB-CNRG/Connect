@@ -9,6 +9,8 @@ namespace App\Controller\Admin;
 use App\Entity\Key;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class KeyCrudController extends AbstractCrudController
 {
@@ -25,14 +27,14 @@ class KeyCrudController extends AbstractCrudController
             ;
     }
 
-    /*
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id'),
-            TextField::new('title'),
-            TextEditorField::new('description'),
+            TextField::new('name'),
+            TextField::new('description'),
+            DateField::new('startedAt'),
+            DateField::new('endedAt'),
+            // todo add room
         ];
     }
-    */
 }

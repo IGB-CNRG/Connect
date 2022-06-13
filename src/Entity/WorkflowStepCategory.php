@@ -8,10 +8,12 @@ namespace App\Entity;
 
 use App\Repository\WorkflowStepCategoryRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: WorkflowStepCategoryRepository::class)]
 class WorkflowStepCategory
 {
+    use TimestampableEntity;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]

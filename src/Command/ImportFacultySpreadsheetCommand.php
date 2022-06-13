@@ -119,7 +119,7 @@ class ImportFacultySpreadsheetCommand extends Command
             if ($person === null) {
                 $person = $this->personRepository->findOneBy(['firstName' => $firstName, 'lastName' => $lastName]);
             }
-            if ($person === null) {
+            if ($person === null && $lastName !== null) { // Skip blank rows
                 $person = new Person();
                 $new++;
                 // Now we can naively create the person

@@ -18,33 +18,33 @@ class Note
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id;
 
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'notes')]
     #[ORM\JoinColumn(nullable: false)]
-    private $person;
+    private Person $person;
 
     #[ORM\Column(type: 'text')]
-    private $text;
+    private ?string $text;
 
     #[ORM\Column(type: 'string', length: 255, enumType: NoteCategory::class)]
-    private $type = NoteCategory::General;
+    private NoteCategory $type = NoteCategory::General;
 
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'createdNotes')]
     #[ORM\JoinColumn(nullable: false)]
-    private $createdBy; // TODO create an enum for note types
+    private Person $createdBy;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getPerson(): ?Person
+    public function getPerson(): Person
     {
         return $this->person;
     }
 
-    public function setPerson(?Person $person): self
+    public function setPerson(Person $person): self
     {
         $this->person = $person;
 
@@ -75,12 +75,12 @@ class Note
         return $this;
     }
 
-    public function getCreatedBy(): ?Person
+    public function getCreatedBy(): Person
     {
         return $this->createdBy;
     }
 
-    public function setCreatedBy(?Person $createdBy): self
+    public function setCreatedBy(Person $createdBy): self
     {
         $this->createdBy = $createdBy;
 

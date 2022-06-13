@@ -8,11 +8,12 @@ namespace App\Entity;
 
 use App\Repository\DepartmentAffiliationRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: DepartmentAffiliationRepository::class)]
 class DepartmentAffiliation
 {
-    use HistoricalEntity;
+    use TimestampableEntity, HistoricalEntity;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
