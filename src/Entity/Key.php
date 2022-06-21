@@ -11,9 +11,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: KeyRepository::class)]
 #[ORM\Table(name: '`key`')]
+#[UniqueEntity('name')]
 class Key
 {
     use TimestampableEntity, HistoricalEntity;
@@ -29,20 +31,20 @@ class Key
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $description;
 
-    #[ORM\OneToMany(mappedBy: 'cylinderKey', targetEntity: RoomKeyAffiliation::class, orphanRemoval: true)]
-    private Collection $roomKeyAffiliations;
-
     #[ORM\OneToMany(mappedBy: 'cylinderKey', targetEntity: KeyAffiliation::class, orphanRemoval: true)]
     private Collection $keyAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'cylinderKey', targetEntity: Log::class)]
     private Collection $logs;
 
+    #[ORM\ManyToMany(targetEntity: Room::class, inversedBy: 'cylinderKeys')]
+    private Collection $rooms;
+
     public function __construct()
     {
-        $this->roomKeyAffiliations = new ArrayCollection();
         $this->keyAffiliations = new ArrayCollection();
         $this->logs = new ArrayCollection();
+        $this->rooms = new ArrayCollection();
     }
 
     public function __toString()
@@ -75,36 +77,6 @@ class Key
     public function setDescription(?string $description): self
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, RoomKeyAffiliation>
-     */
-    public function getRoomKeyAffiliations(): Collection
-    {
-        return $this->roomKeyAffiliations;
-    }
-
-    public function addRoomKeyAffiliation(RoomKeyAffiliation $roomKeyAffiliation): self
-    {
-        if (!$this->roomKeyAffiliations->contains($roomKeyAffiliation)) {
-            $this->roomKeyAffiliations[] = $roomKeyAffiliation;
-            $roomKeyAffiliation->setCylinderKey($this);
-        }
-
-        return $this;
-    }
-
-    public function removeRoomKeyAffiliation(RoomKeyAffiliation $roomKeyAffiliation): self
-    {
-        if ($this->roomKeyAffiliations->removeElement($roomKeyAffiliation)) {
-            // set the owning side to null (unless already changed)
-            if ($roomKeyAffiliation->getCylinderKey() === $this) {
-                $roomKeyAffiliation->setCylinderKey(null);
-            }
-        }
 
         return $this;
     }
@@ -165,6 +137,30 @@ class Key
                 $log->setCylinderKey(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Room>
+     */
+    public function getRooms(): Collection
+    {
+        return $this->rooms;
+    }
+
+    public function addRoom(Room $room): self
+    {
+        if (!$this->rooms->contains($room)) {
+            $this->rooms[] = $room;
+        }
+
+        return $this;
+    }
+
+    public function removeRoom(Room $room): self
+    {
+        $this->rooms->removeElement($room);
 
         return $this;
     }

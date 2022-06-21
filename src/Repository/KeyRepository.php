@@ -8,6 +8,7 @@ namespace App\Repository;
 
 use App\Entity\Key;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -23,32 +24,10 @@ class KeyRepository extends ServiceEntityRepository
         parent::__construct($registry, Key::class);
     }
 
-    // /**
-    //  * @return Key[] Returns an array of Key objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function createFormQueryBuilder(): QueryBuilder
     {
         return $this->createQueryBuilder('k')
-            ->andWhere('k.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('k.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+            ->addOrderBy('k.name', 'ASC');
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Key
-    {
-        return $this->createQueryBuilder('k')
-            ->andWhere('k.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

@@ -14,7 +14,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: RoomRepository::class)]
-#[UniqueEntity(['name'])]
+#[UniqueEntity(['number'])]
 class Room
 {
     use TimestampableEntity, HistoricalEntity;
@@ -33,21 +33,22 @@ class Room
     #[ORM\OneToMany(mappedBy: 'room', targetEntity: RoomAffiliation::class, orphanRemoval: true)]
     private Collection $roomAffiliations;
 
-    #[ORM\OneToMany(mappedBy: 'room', targetEntity: RoomKeyAffiliation::class, orphanRemoval: true)]
-    private Collection $roomKeyAffiliations;
-
     #[ORM\OneToMany(mappedBy: 'room', targetEntity: Log::class)]
     private Collection $logs;
+
+    #[ORM\ManyToMany(targetEntity: Key::class, mappedBy: 'rooms', cascade: ['all'])]
+    private Collection $cylinderKeys;
 
     public function __construct()
     {
         $this->roomAffiliations = new ArrayCollection();
-        $this->roomKeyAffiliations = new ArrayCollection();
         $this->logs = new ArrayCollection();
+        $this->cylinderKeys = new ArrayCollection();
     }
 
-    public function __toString(){
-        if($this->getName()){
+    public function __toString()
+    {
+        if ($this->getName()) {
             return sprintf('%s (%s)', $this->getNumber(), $this->getName());
         }
         return $this->getNumber();
@@ -113,36 +114,6 @@ class Room
     }
 
     /**
-     * @return Collection<int, RoomKeyAffiliation>
-     */
-    public function getRoomKeyAffiliations(): Collection
-    {
-        return $this->roomKeyAffiliations;
-    }
-
-    public function addRoomKeyAffiliation(RoomKeyAffiliation $roomKeyAffiliation): self
-    {
-        if (!$this->roomKeyAffiliations->contains($roomKeyAffiliation)) {
-            $this->roomKeyAffiliations[] = $roomKeyAffiliation;
-            $roomKeyAffiliation->setRoom($this);
-        }
-
-        return $this;
-    }
-
-    public function removeRoomKeyAffiliation(RoomKeyAffiliation $roomKeyAffiliation): self
-    {
-        if ($this->roomKeyAffiliations->removeElement($roomKeyAffiliation)) {
-            // set the owning side to null (unless already changed)
-            if ($roomKeyAffiliation->getRoom() === $this) {
-                $roomKeyAffiliation->setRoom(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, Log>
      */
     public function getLogs(): Collection
@@ -167,6 +138,33 @@ class Room
             if ($log->getRoom() === $this) {
                 $log->setRoom(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Key>
+     */
+    public function getCylinderKeys(): Collection
+    {
+        return $this->cylinderKeys;
+    }
+
+    public function addCylinderKey(Key $cylinderKey): self
+    {
+        if (!$this->cylinderKeys->contains($cylinderKey)) {
+            $this->cylinderKeys[] = $cylinderKey;
+            $cylinderKey->addRoom($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCylinderKey(Key $cylinderKey): self
+    {
+        if ($this->cylinderKeys->removeElement($cylinderKey)) {
+            $cylinderKey->removeRoom($this);
         }
 
         return $this;

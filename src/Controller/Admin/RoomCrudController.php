@@ -7,8 +7,10 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Room;
+use App\Repository\KeyRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
@@ -24,7 +26,7 @@ class RoomCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular('Room')
             ->setEntityLabelInPlural('Rooms')//            ->setEntityPermission('ROLE_ADMIN')
-            ;
+            ->setDefaultSort(['number' => 'ASC']);
     }
 
     public function configureFields(string $pageName): iterable
@@ -32,8 +34,16 @@ class RoomCrudController extends AbstractCrudController
         return [
             TextField::new('number'),
             TextField::new('name'),
-            DateField::new('startedAt'),
-            DateField::new('endedAt'),
+            AssociationField::new('cylinderKeys')->setFormTypeOptions(
+                [
+                    'by_reference' => false,
+                    'query_builder' => function (KeyRepository $keyRepository) {
+                        return $keyRepository->createFormQueryBuilder();
+                    }
+                ]
+            ),
+            DateField::new('startedAt')->onlyOnForms(),
+            DateField::new('endedAt')->onlyOnForms(),
         ];
     }
 }

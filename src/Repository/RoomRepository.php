@@ -8,6 +8,7 @@ namespace App\Repository;
 
 use App\Entity\Room;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -23,32 +24,10 @@ class RoomRepository extends ServiceEntityRepository
         parent::__construct($registry, Room::class);
     }
 
-    // /**
-    //  * @return Room[] Returns an array of Room objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function createFormQueryBuilder(): QueryBuilder
     {
         return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('r.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+            ->addOrderBy('length(r.number)', 'ASC')
+            ->addOrderBy('r.number', 'ASC');
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Room
-    {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
