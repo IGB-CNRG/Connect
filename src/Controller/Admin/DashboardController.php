@@ -11,9 +11,12 @@ use App\Entity\College;
 use App\Entity\Department;
 use App\Entity\DepartmentAffiliation;
 use App\Entity\Key;
+use App\Entity\KeyAffiliation;
 use App\Entity\MemberCategory;
+use App\Entity\Person;
 use App\Entity\Room;
 use App\Entity\Theme;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -51,6 +54,12 @@ class DashboardController extends AbstractDashboardController
         // TODO put some cool charts on this dashboard, or something
     }
 
+    public function configureAssets(): Assets
+    {
+        // todo will this break on production?
+        return parent::configureAssets()->addCssFile('build/admin.css');
+    }
+
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
@@ -63,9 +72,11 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::linkToRoute('Back to CONNECT', 'fa fa-rotate-left', 'default');
         yield MenuItem::section('IGB');
+        yield MenuItem::linkToCrud('All People', 'fas fa-list', Person::class);
         yield MenuItem::linkToCrud('New Departments', 'fas fa-list', DepartmentAffiliation::class);
         yield MenuItem::linkToCrud('Member Categories', 'fas fa-list', MemberCategory::class);
         yield MenuItem::linkToCrud('Keys', 'fas fa-list', Key::class);
+        yield MenuItem::linkToCrud('Key Assignments', 'fas fa-list', KeyAffiliation::class);
         yield MenuItem::linkToCrud('Rooms', 'fas fa-list', Room::class);
         yield MenuItem::linkToCrud('Themes', 'fas fa-list', Theme::class);
         yield MenuItem::section('UIUC');

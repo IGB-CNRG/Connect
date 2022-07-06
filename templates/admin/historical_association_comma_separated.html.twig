@@ -1,0 +1,31 @@
+{% if ea.crud.currentAction == 'index' %}
+    {% set max = 5 %}
+    {% for associated_entity in field.value|slice(0,max) %}
+        {%- block link -%}
+            {% set crudFqcn = field.customOption('linkCrudFqcn')??field.customOption('crudControllerFqcn') %}
+            {% set entityId = field.customOption('linkField')?attribute(associated_entity,field.customOption('linkField')).id:associated_entity.id %}
+            <a href="{{ ea_url({'crudAction':'detail', 'crudControllerFqcn':crudFqcn, 'entityId':entityId}) }}">
+                {% if field.customOption('labelTemplate') %}
+                {{ include(template_from_string(field.customOption('labelTemplate'))) }}
+                {% else %}
+                {{ field.customOption('labelField')?attribute(associated_entity,field.customOption('labelField')):associated_entity }}
+                {% endif %}
+            </a>
+        {%- endblock -%}
+        {%- if not loop.last -%}, {% endif %}
+    {%- endfor -%}
+    {%- if field.value|length > max -%}...{% endif %}
+{% else %}
+    {# todo should we show more detail like start/end dates in detail view? #}
+        {% for associated_entity in field.value %}
+        <div class="row">
+            <div class="col-8">{{ block('link') }}</div>
+            <div class="col-2">{{ associated_entity.startedAt|date('n/j/Y') }}</div>
+            <div class="col-2">{{ associated_entity.endedAt|date('n/j/Y') }}</div>
+        </div>
+        {% endfor %}
+{#    {% for associated_entity in field.value %}#}
+{#        {{ block('link') }}#}
+{#        {%- if not loop.last -%}, {%- endif -%}#}
+{#    {% endfor %}#}
+{% endif %}

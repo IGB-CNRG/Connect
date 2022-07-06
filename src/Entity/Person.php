@@ -143,7 +143,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     private ?array $roles = [];
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $preferredFirstName;
+    private ?string $preferredFirstName = null;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: Document::class, orphanRemoval: true)]
     private Collection $documents;
@@ -157,7 +157,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     #[Vich\UploadableField(mapping: 'person_image', fileNameProperty: 'imageName', size: 'imageSize', mimeType: 'mimeType')]
     #[Ignore]
-    private ?File $imageFile;
+    private ?File $imageFile = null;
 
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $imageSize;
@@ -202,6 +202,13 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         } else {
             return $this->getFirstName() . ' ' . $this->getLastName(); // TODO this should be a little smarter
         }
+    }
+
+    public function getIsCurrent(): bool
+    {
+        return $this->getThemeAffiliations()->filter(function(ThemeAffiliation $themeAffiliation){
+            return $themeAffiliation->isCurrent();
+        })->count()>0;
     }
 
     public function setImageFile(?File $imageFile = null): void

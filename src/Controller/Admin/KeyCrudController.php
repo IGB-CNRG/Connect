@@ -27,7 +27,7 @@ class KeyCrudController extends AbstractCrudController
     {
         return $crud
             ->setEntityLabelInSingular('Key')
-            ->setEntityLabelInPlural('Keys')//            ->setEntityPermission('ROLE_ADMIN')
+            ->setEntityLabelInPlural('Keys')
             ->setDefaultSort(['name' => 'ASC']);
     }
 
@@ -46,9 +46,16 @@ class KeyCrudController extends AbstractCrudController
                 'query_builder' => function (RoomRepository $roomRepository) {
                     return $roomRepository->createFormQueryBuilder();
                 }
-            ]),
+            ])->setTemplatePath('admin/association_comma_separated.html.twig'),
             DateField::new('startedAt')->onlyOnForms(),
             DateField::new('endedAt')->onlyOnForms(),
+            AssociationField::new('keyAffiliations')->onlyOnDetail()->setLabel('Key Assignments')->setTemplatePath(
+                'admin/historical_association_comma_separated.html.twig'
+            )->setCustomOptions([
+                'linkField' => 'person',
+                'linkCrudFqcn' => PersonCrudController::class,
+                'labelField' => 'person',
+            ]), // todo only show current? sort?
         ];
     }
 }

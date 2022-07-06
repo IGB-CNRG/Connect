@@ -1,0 +1,15 @@
+{% if ea.crud.currentAction == 'index' %}
+    {% set max = 5 %}
+    {% for associated_entity in field.value|slice(0,max) %}
+        {%- block link -%}
+            <a href="{{ ea_url({'crudAction':'detail', 'crudControllerFqcn':field.customOption('crudControllerFqcn'), 'entityId':associated_entity.id}) }}">{{ associated_entity }}</a>
+        {%- endblock -%}
+        {%- if not loop.last -%}, {% endif %}
+    {%- endfor -%}
+    {%- if field.value|length > max -%}...{% endif %}
+{% else %}
+    {% for associated_entity in field.value %}
+        {{ block('link') }}
+        {%- if not loop.last -%}, {%- endif -%}
+    {% endfor %}
+{% endif %}

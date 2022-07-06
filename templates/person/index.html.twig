@@ -26,13 +26,13 @@
             {% for person in people %}
                 <tr>
                     <td {% if person.imageName is null %}class="td-no-portrait"{% endif %}
-                        data-order="{{ person.lastName }}">
+                        data-order="{{ person.lastName }}" data-search="{% block person_name %}{% if person.lastName is not empty %}{{ person.name }}{% else %}No name{% endif %}{% endblock %}">
                         {% if person.imageName is not null %}
                             <img class="portrait-sm me-2"
                                  src="{{ vich_uploader_asset(person, 'imageFile') | imagine_filter('small_thumb') }}"
                                  alt="Portrait"/>
                         {% endif %}
-                        <a href="{{ path('person_view', {'slug': person.slug}) }}">{% if person.lastName is not empty %}{{ person.name }}{% else %}No name{% endif %}</a>
+                        <a href="{{ path('person_view', {'slug': person.slug}) }}">{{ block('person_name') }}</a>
                     </td>
                     {#                {% if is_granted('ROLE_CNRG') %} #}
                     {#                <td>{{ person.username }}</td> #}

@@ -418,11 +418,11 @@
                             <tr>
                                 <td>{{ keyAffiliation.cylinderKey.name }}</td>
                                 <td>
-                                    {% if keyAffiliation.cylinderKey.roomKeyAffiliations|length > 3 or keyAffiliation.cylinderKey.roomKeyAffiliations|length < 1 %}
+                                    {% if keyAffiliation.cylinderKey.rooms|length > 3 or keyAffiliation.cylinderKey.rooms|length < 1 %}
                                         {{ keyAffiliation.cylinderKey.description }}
                                     {% else %}
-                                        {% for roomAffiliation in keyAffiliation.cylinderKey.roomKeyAffiliations %}
-                                            {{ roomAffiliation.room.number }}{% if not loop.last %}, {% endif %}
+                                        {% for room in keyAffiliation.cylinderKey.rooms %}
+                                            {{ room.number }}{% if not loop.last %}, {% endif %}
                                         {% endfor %}
                                     {% endif %}
                                 </td>

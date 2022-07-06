@@ -8,6 +8,8 @@ namespace App\Controller\Admin;
 
 use App\Entity\Room;
 use App\Repository\KeyRepository;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -29,6 +31,12 @@ class RoomCrudController extends AbstractCrudController
             ->setDefaultSort(['number' => 'ASC']);
     }
 
+    public function configureActions(Actions $actions): Actions
+    {
+        return parent::configureActions($actions)
+            ->add(Crud::PAGE_INDEX, Action::DETAIL);
+    }
+
     public function configureFields(string $pageName): iterable
     {
         return [
@@ -41,7 +49,7 @@ class RoomCrudController extends AbstractCrudController
                         return $keyRepository->createFormQueryBuilder();
                     }
                 ]
-            ),
+            )->setTemplatePath('admin/association_comma_separated.html.twig'),
             DateField::new('startedAt')->onlyOnForms(),
             DateField::new('endedAt')->onlyOnForms(),
         ];
