@@ -19,6 +19,23 @@
           </excludedPaths>
         </serverdata>
       </paths>
+      <paths name="www-app-php81">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+          <excludedPaths>
+            <excludedPath path="/.env.local" />
+            <excludedPath path="/node_modules" />
+            <excludedPath path="/public/bundles" />
+            <excludedPath path="/var" />
+            <excludedPath path="/vendor" />
+            <excludedPath path="/public/build" />
+            <excludedPath path="/public/uploads" />
+            <excludedPath path="/public/media" />
+          </excludedPaths>
+        </serverdata>
+      </paths>
     </serverData>
     <option name="myAutoUpload" value="ON_EXPLICIT_SAVE" />
   </component>

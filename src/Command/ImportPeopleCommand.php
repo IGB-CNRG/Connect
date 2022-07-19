@@ -213,7 +213,7 @@ class ImportPeopleCommand extends Command
     protected function getUsers(): array
     {
         // Query People data
-        $user_sql = "select users.*, phone.igb, phone.dept, address.address1, address.address2, address.city, address.state, address.zip from users left join phone on users.user_id=phone.user_id left join address on address.user_id=users.user_id where address.type='DEPT' group by users.user_id";
+        $user_sql = "select users.*, phone.igb, phone.dept, address.address1, address.address2, address.city, address.state, address.zip from users left join phone on users.user_id=phone.user_id left join address on address.user_id=users.user_id and address.type='DEPT' group by users.user_id";
         $users = $this->db->query($user_sql);
 
         $usersById = [];

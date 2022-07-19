@@ -10,12 +10,45 @@ CONNECT requires PHP 8.1+, as well as the following extensions:
 - ctype
 - gd
 - iconv
+- intl
 - ldap
 - pdo
+- posix
+- zip
 
-CONNECT also requires npm.
+CONNECT also requires `npm`.
 
-Once these prerequisites are installed, run the following command to check whether all Symfony installation requirements
+## Symfony setup
+
+In MySQL, create a new database and a user with full permissions on that database.
+
+Create the `.env.local` config file:
+
+```shell
+cp .env .env.local
+```
+
+Edit this file to set server-specific variables. Make sure to set the `DATABASE_URL` string appropriately for the
+database you just created. Set `LDAP_HOST`, `LDAP_PORT`, and `LDAP_DN` for your LDAP authentication server. If CONNECT
+will be deployed under a subdirectory on the web server, set `WEBPACK_PREFIX` to the subdirectory path. Finally, if this
+is a production server, set `APP_ENV=prod`
+
+Next, make sure permissions are set up properly for file uploads and the image cache:
+
+```shell
+mkdir -p public/media
+chmod 777 public/media
+mkdir -p public/uploads
+chmod 777 public/uploads
+```
+
+Now, install the required composer packages:
+
+```shell
+symfony composer install
+```
+
+Run the following command to check whether all Symfony installation requirements
 are met:
 
 ```shell
@@ -24,27 +57,9 @@ symfony check:requirements
 
 If any requirements are not met, install them before proceeding.
 
-## Symfony setup
-
-Create the `.env.local` config file:
-
-```shell
-cp .env .env.local
-```
-
-Edit this file to set server-specific variables. Make sure to set the `DATABASE_URL` string appropriately for the server
-you are on. If this is a production server, set `APP_ENV=prod`
-
-Next, install the composer packages:
-
-```shell
-symfony composer install
-```
-
 Now, initialize the database:
 
 ```shell
-symfony console doctrine:database:create
 symfony console doctrine:migrations:migrate
 ```
 
@@ -55,11 +70,25 @@ npm install
 npm run build
 ```
 
+You may also choose to build these dependencies on a staging server and copy the `/public/build` folder to the
+production server.
+
 ## Data import
+
+### Admin account creation
+
+Use the following console command to create an initial admin user.
+
+```shell
+symfony console app:first-run <USERNAME>
+```
+
+You will use this IGB username and password to log in to CONNECT.
 
 ### Intial settings
 
-TBD How to import departments, rooms, themes, etc.
+Colleges, Departments, Keys, Member Categories, Rooms, and Themes are set manually. You can either import these from an
+existing installation of CONNECT or enter them manually in EasyAdmin.
 
 ### People database import
 
@@ -84,4 +113,12 @@ in the spreadsheet.
 
 ```shell
 symfony console app:import-faculty-spreadsheet <SPREADSHEET_PATH> <HIGHEST_ROW>
+```
+
+### Key assignment import
+
+Use the following console command to import the list of key assignments:
+
+```shell
+symfony console app:import-assigned-keys 
 ```

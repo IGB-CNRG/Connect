@@ -3,6 +3,7 @@
   <component name="SshConfigs">
     <configs>
       <sshConfig host="joebuntu.igb.illinois.edu" id="cc39bf36-ead8-4719-bc03-aeaf376c124c" keyPath="$USER_HOME$/.ssh/id_rsa" port="22" nameFormat="DESCRIPTIVE" username="joe" useOpenSSHConfig="true" />
+      <sshConfig authType="PASSWORD" host="www-app-php81.igb.illinois.edu" id="96a77ce2-a302-463e-a327-9f4d2eaf3d7a" port="22" nameFormat="DESCRIPTIVE" username="root" useOpenSSHConfig="true" />
     </configs>
   </component>
 </project>

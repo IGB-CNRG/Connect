@@ -1,4 +1,10 @@
 const Encore = require('@symfony/webpack-encore');
+// Parse environment variables at build time
+const dotenv = require('dotenv');
+const env = dotenv.config({path: '.env.local'});
+if(env.error){
+    throw env.error;
+}
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
@@ -6,7 +12,12 @@ if (!Encore.isRuntimeEnvironmentConfigured()) {
     Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
 }
 
-const prefix = process.env.npm_lifecycle_event === "build" ? 'connect/' : 'connect_dev/';
+let prefix = env.parsed.WEBPACK_PREFIX;
+if(typeof prefix === 'undefined') {
+    prefix = '';
+} else if(prefix.slice(-1) !== '/') {
+    prefix = prefix + '/';
+}
 
 Encore
     // directory where compiled assets will be stored

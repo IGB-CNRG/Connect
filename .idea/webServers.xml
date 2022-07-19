@@ -9,6 +9,13 @@
           </advancedOptions>
         </fileTransfer>
       </webServer>
+      <webServer id="fbd37447-247f-4cc6-bcf1-6244ffd35793" name="www-app-php81" url="http://www-app-php81.igb.illinois.edu/connect">
+        <fileTransfer rootFolder="/var/www/connect" accessType="SFTP" host="www-app-php81.igb.illinois.edu" port="22" sshConfigId="96a77ce2-a302-463e-a327-9f4d2eaf3d7a" sshConfig="root@www-app-php81.igb.illinois.edu:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" isUseRsync="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
     </option>
   </component>
 </project>
