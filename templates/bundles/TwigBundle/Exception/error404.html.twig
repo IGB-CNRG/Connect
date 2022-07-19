@@ -1,0 +1,10 @@
+{% extends 'bundles/TwigBundle/Exception/base.html.twig' %}
+
+
+{% block content %}
+    {{ parent() }}
+    <p>
+        The requested page couldn't be located. Check for any URL
+        misspelling or <a href="{{ path('default') }}">return to the homepage</a>.
+    </p>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'bundles/TwigBundle/Exception/base.html.twig' %}
+
+
+{% block content %}
+    {{ parent() }}
+    <p>
+        An error occurred while trying to load this page. Please report this along with the following information:
+    </p>
+    <p class="error-trace">
+        {{ "now"|date("Y-m-d g:i:sa") }} {{ exception.file }} line {{ exception.line }}; "{{ exception.message }}"<br/>
+        {{ exception.traceAsString|nl2br }}
+    </p>
+{% endblock %}
