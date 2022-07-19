@@ -103,8 +103,10 @@ class ImportAssignedKeysCommand extends Command
                     ->setNetid($netid)
                     ->setFirstName($firstName)
                     ->setLastName($lastName);
-                $this->em->persist($person);
             }
+
+            $person->setHasGivenKeyDeposit(true);
+            $this->em->persist($person);
 
             $key = null;
             for ($i = $firstColumnId; $i < $firstColumnId + self::KEY_COLUMNS; $i++) {
