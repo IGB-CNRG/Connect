@@ -5,11 +5,7 @@
             {% set crudFqcn = field.customOption('linkCrudFqcn')??field.customOption('crudControllerFqcn') %}
             {% set entityId = field.customOption('linkField')?attribute(associated_entity,field.customOption('linkField')).id:associated_entity.id %}
             <a href="{{ ea_url({'crudAction':'detail', 'crudControllerFqcn':crudFqcn, 'entityId':entityId}) }}">
-                {% if field.customOption('labelTemplate') %}
-                {{ include(template_from_string(field.customOption('labelTemplate'))) }}
-                {% else %}
                 {{ field.customOption('labelField')?attribute(associated_entity,field.customOption('labelField')):associated_entity }}
-                {% endif %}
             </a>
         {%- endblock -%}
         {%- if not loop.last -%}, {% endif %}
