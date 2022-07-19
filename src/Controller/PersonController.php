@@ -35,6 +35,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class PersonController extends AbstractController
 {
+    #[Route('/', name: 'default')]
     #[Route('/person', name: 'person')]
     public function index(
         PersonRepository $personRepository,
