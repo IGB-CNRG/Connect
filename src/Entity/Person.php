@@ -140,9 +140,11 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     private PreferredAddress $preferredAddress = PreferredAddress::IGB;
 
     #[ORM\Column(type: 'json')]
+    #[Loggable(type: 'array')]
     private ?array $roles = [];
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Loggable]
     private ?string $preferredFirstName = null;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: Document::class, orphanRemoval: true)]
@@ -150,7 +152,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable(displayName: 'portrait', details: false)]
-    private ?string $imageName;
+    private ?string $imageName = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $mimeType;
