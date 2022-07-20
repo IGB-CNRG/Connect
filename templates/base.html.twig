@@ -47,11 +47,11 @@
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="fa fa-id-badge"></span> {{ app.user.preferredFirstName }}
+                                <span class="fa fa-id-badge"></span> {{ app.user.name }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
                                 {% if is_granted('ROLE_ADMIN') %}
-                                <li><a class="dropdown-item" href="{{ ea_url().setDashboard('App\\Controller\\Admin\\DashboardController') }}"><span class="fa fa-gears"></span> Admin</a></li>
+                                <li><a class="dropdown-item" href="{{ path('admin') }}"><span class="fa fa-gears"></span> Admin</a></li>
                                 {% endif %}
                                 <li><a class="dropdown-item" href="{{ path('logout') }}"><span class="fa fa-right-from-bracket"></span> Logout</a></li>
                             </ul>
@@ -88,7 +88,7 @@
         <div class="container d-flex">
             <a href="#" class="me-2">About</a>
             <a href="{{ path('copyright') }}" class="me-auto">Copyright</a>
-            <span>IGB CONNECT v0.1&alpha;</span>
+            <span>IGB CONNECT v0.1&beta;</span>
         </div>
     </footer>
 {% endblock %}

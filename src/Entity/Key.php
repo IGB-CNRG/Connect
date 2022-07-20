@@ -82,6 +82,21 @@ class Key
     }
 
     /**
+     * Returns the display name of this key. If this key opens a single room, returns that room. Otherwise, returns
+     *  the key's description/name.
+     * @return string
+     */
+    public function getDisplayName(): string {
+        if($this->getRooms()->count() === 1){
+            return $this->getRooms()[0]->__toString();
+        } elseif($this->getDescription()) {
+            return $this->getDescription();
+        } else {
+            return $this->getName();
+        }
+    }
+
+    /**
      * @return Collection<int, KeyAffiliation>
      */
     public function getKeyAffiliations(): Collection

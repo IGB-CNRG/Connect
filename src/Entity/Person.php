@@ -761,6 +761,11 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         return $this;
     }
 
+    public function getDisplayRoles(): array
+    {
+        return $this->roles;
+    }
+
     /**
      * @see UserInterface
      */
