@@ -64,6 +64,7 @@ class DashboardController extends AbstractDashboardController
     {
         return Dashboard::new()
             ->setTitle('CONNECT')
+            ->generateRelativeUrls()
         ;
     }
 
