@@ -12,16 +12,11 @@
     {%- endfor -%}
     {%- if field.value|length > max -%}...{% endif %}
 {% else %}
-    {# todo should we show more detail like start/end dates in detail view? #}
-        {% for associated_entity in field.value %}
+    {% for associated_entity in field.value %}
         <div class="row">
             <div class="col-8">{{ block('link') }}</div>
-            <div class="col-2">{{ associated_entity.startedAt|date('n/j/Y') }}</div>
-            <div class="col-2">{{ associated_entity.endedAt|date('n/j/Y') }}</div>
+            <div class="col-2">{% if associated_entity.startedAt is not null %}{{ associated_entity.startedAt|date('n/j/Y') }}{% endif %}</div>
+            <div class="col-2">{% if associated_entity.endedAt is not null %}{{ associated_entity.endedAt|date('n/j/Y') }}{% endif %}</div>
         </div>
-        {% endfor %}
-{#    {% for associated_entity in field.value %}#}
-{#        {{ block('link') }}#}
-{#        {%- if not loop.last -%}, {%- endif -%}#}
-{#    {% endfor %}#}
+    {% endfor %}
 {% endif %}
