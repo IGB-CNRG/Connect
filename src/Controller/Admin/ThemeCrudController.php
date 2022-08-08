@@ -34,6 +34,7 @@ class ThemeCrudController extends AbstractCrudController
             TextField::new('shortName'),
             TextField::new('fullName'),
             BooleanField::new('isNonResearch'),
+            BooleanField::new('isOutsideGroup'),
             DateField::new('startedAt'),
             DateField::new('endedAt'),
         ];

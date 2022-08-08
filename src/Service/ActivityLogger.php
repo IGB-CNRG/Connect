@@ -379,8 +379,9 @@ class ActivityLogger implements ServiceSubscriberInterface
                                 if (array_key_exists('type', $loggableArguments)
                                     && $loggableArguments['type'] == 'date') {
                                     $new = $change[1]->format(self::DATE_FORMAT);
-                                } elseif(array_key_exists('type', $loggableArguments) && $loggableArguments['type'] == 'array'){
-                                    $new = '['.join(', ', $change[1]).']';
+                                } elseif (array_key_exists('type', $loggableArguments)
+                                          && $loggableArguments['type'] == 'array') {
+                                    $new = '[' . join(', ', $change[1]) . ']';
                                 } else {
                                     $new = $change[1];
                                 }
@@ -399,9 +400,10 @@ class ActivityLogger implements ServiceSubscriberInterface
                             if (array_key_exists('type', $loggableArguments) && $loggableArguments['type'] == 'date') {
                                 $old = $change[0]->format(self::DATE_FORMAT);
                                 $new = $change[1]->format(self::DATE_FORMAT);
-                            } elseif(array_key_exists('type', $loggableArguments) && $loggableArguments['type'] == 'array'){
-                                $old = '['.join(', ', $change[0]).']';
-                                $new = '['.join(', ', $change[1]).']';
+                            } elseif (array_key_exists('type', $loggableArguments)
+                                      && $loggableArguments['type'] == 'array') {
+                                $old = '[' . join(', ', $change[0]) . ']';
+                                $new = '[' . join(', ', $change[1]) . ']';
                             } else {
                                 $old = $change[0];
                                 $new = $change[1];

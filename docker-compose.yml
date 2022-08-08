@@ -3,19 +3,24 @@ version: '3'
 services:
 ###> doctrine/doctrine-bundle ###
   database:
-    image: postgres:${POSTGRES_VERSION:-13}-alpine
+    image: mariadb:10.3.35
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-app}
-      # You should definitely change the password in production
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ChangeMe}
-      POSTGRES_USER: ${POSTGRES_USER:-symfony}
+      MARIADB_DATABASE: connect
+      MARIADB_USER: symfony
+      MARIADB_PASSWORD: ChangeMe!
+      MARIADB_ROOT_PASSWORD: ChangeMe!
     volumes:
-      - db-data:/var/lib/postgresql/data:rw
-      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
-      # - ./docker/db/data:/var/lib/postgresql/data:rw
+      - connect-data:/var/lib/mysql:rw
 ###< doctrine/doctrine-bundle ###
+  ldap:
+    image: bitnami/openldap:latest
+    environment:
+      LDAP_ADMIN_USERNAME: admin
+      LDAP_ADMIN_PASSWORD: ChangeMe!
+      LDAP_USERS: username
+      LDAP_PASSWORDS: ChangeMe!
 
 volumes:
 ###> doctrine/doctrine-bundle ###
-  db-data:
+  connect-data:
 ###< doctrine/doctrine-bundle ###

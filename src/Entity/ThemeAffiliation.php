@@ -33,8 +33,9 @@ class ThemeAffiliation
     private MemberCategory $memberCategory;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $title;
+    private ?string $title = null;
 
+    // todo should these three booleans be an array of optional role enums?
     #[ORM\Column(type: 'boolean')]
     private bool $isThemeLeader = false;
 
@@ -47,16 +48,16 @@ class ThemeAffiliation
     public function __toString()
     {
         $themeName = $this->getTheme()->getShortName();
-        if($this->getIsThemeLeader()){
+        if ($this->getIsThemeLeader()) {
             $themeName .= " Theme Leader";
         }
-        if($this->getIsThemeAdmin()){
+        if ($this->getIsThemeAdmin()) {
             $themeName .= " Theme Admin";
         }
-        if($this->getIsLabManager()){
+        if ($this->getIsLabManager()) {
             $themeName .= " Lab Manager";
         }
-        if($this->getTitle()){
+        if ($this->getTitle()) {
             return sprintf('%s - %s (%s)', $themeName, $this->getTitle(), $this->getMemberCategory()->getName());
         } else {
             return sprintf('%s (%s)', $themeName, $this->getMemberCategory()->getName());

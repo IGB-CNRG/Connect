@@ -12,9 +12,6 @@
             <thead>
             <tr>
                 <th>Name</th>
-                {#            {% if is_granted('ROLE_CNRG') %} #}
-                {#                <th>Username</th> #}
-                {#            {% endif %} #}
                 <th>Email</th>
                 <th>Theme</th>
                 <th>Title</th>
@@ -26,7 +23,8 @@
             {% for person in people %}
                 <tr>
                     <td {% if person.imageName is null %}class="td-no-portrait"{% endif %}
-                        data-order="{{ person.lastName }}" data-search="{% block person_name %}{% if person.lastName is not empty %}{{ person.name }}{% else %}No name{% endif %}{% endblock %}">
+                        data-order="{{ person.lastName }}"
+                        data-search="{% block person_name %}{% if person.lastName is not empty %}{{ person.name }}{% else %}No name{% endif %}{% endblock %}">
                         {% if person.imageName is not null %}
                             <img class="portrait-sm me-2"
                                  src="{{ vich_uploader_asset(person, 'imageFile') | imagine_filter('small_thumb') }}"
@@ -34,9 +32,6 @@
                         {% endif %}
                         <a href="{{ path('person_view', {'slug': person.slug}) }}">{{ block('person_name') }}</a>
                     </td>
-                    {#                {% if is_granted('ROLE_CNRG') %} #}
-                    {#                <td>{{ person.username }}</td> #}
-                    {#                {% endif %} #}
                     <td>{{ person.email }}</td>
                     <td>
                         {% if app.request.get('_route') != 'person_everyone' %}
@@ -122,37 +117,14 @@
             </div>
             <div class="collapse" id="advanced-search">
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-lg">
-                            <select class="form-select" id="theme-select" data-controller="select2"
-                                    data-placeholder="Filter by theme" data-column="2"
-                                    data-action="datatables#columnSearch" multiple="multiple" style="width:100%">
-                                {% for theme in themes %}
-                                    <option>{{ theme.shortName }}</option>
-                                {% endfor %}
-                            </select>
+                    {{ form_start(advancedSearchForm) }}
+                        <div class="row">
+                            <div class="col-lg">{{ form_row(advancedSearchForm.theme) }}</div>
+                            <div class="col-lg">{{ form_row(advancedSearchForm.employeeType) }}</div>
+                            <div class="col-lg">{{ form_row(advancedSearchForm.role) }}</div>
                         </div>
-                        <div class="col-lg">
-                            <select class="form-select" id="member-category-select" data-controller="select2"
-                                    data-placeholder="Filter by employee type" data-column="4"
-                                    data-action="datatables#columnSearch" multiple="multiple" style="width:100%">
-                                <option></option>
-                                {% for category in memberCategories %}
-                                    <option>{{ category.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-lg">
-                            <select class="form-select" id="theme-role-select" data-controller="select2"
-                                    data-placeholder="Filter by role" data-column="3"
-                                    data-action="datatables#columnSearch" multiple="multiple" style="width:100%">
-                                <option></option>
-                                <option>Theme Leader</option>
-                                <option>Theme Admin</option>
-                                <option>Lab Manager</option>
-                            </select>
-                        </div>
-                    </div>
+                    {{ form_end(advancedSearchForm) }}
+
                     {% if app.request.get('_route') != 'person_everyone' %}
                         <div class="row mt-3">
                             <div class="col">

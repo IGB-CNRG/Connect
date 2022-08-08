@@ -284,8 +284,7 @@ class ImportPeopleCommand extends Command
                     } else {
                         $this->setDatesFromResult($user_theme, $themeAffiliation);
                     }
-                    if ($theme->getEndedAt(
-                    )) { // If the theme has ended, add the end date to the affiliation when applicable
+                    if ($theme->getEndedAt()) { // If the theme has ended, add the end date to the affiliation when applicable
                         if ($themeAffiliation->getEndedAt() === null
                             || $themeAffiliation->getEndedAt() > $theme->getEndedAt()) {
                             $themeAffiliation->setEndedAt($theme->getEndedAt());
@@ -323,6 +322,7 @@ class ImportPeopleCommand extends Command
                                 && $affiliation1->getStartedAt() !== null) {
                                 $affiliation1->setStartedAt($affiliation2->getStartedAt());
                             }
+
                             if (($affiliation2->getEndedAt() === null
                                  || $affiliation2->getEndedAt() >= $affiliation1->getEndedAt())
                                 && $affiliation1->getEndedAt() !== null) {
@@ -430,6 +430,8 @@ class ImportPeopleCommand extends Command
             'ADMIN' => 'ADM',
             'GBB' => 'GNDP',
             'ReBTE' => 'RBTE',
+            'RIPE' => 'GEGC',
+            'BIOTECH', 'HPCBio' => 'CBC',
             default => $shortName
         };
     }
@@ -445,7 +447,6 @@ class ImportPeopleCommand extends Command
             'Undergrad' => 'Undergraduate Student',
             'AP - Research', 'Acad Professional', 'AP - Administration', 'Academic Professiona' => 'Academic Professional',
             'UIUC Visitor' => 'Visiting Scholar',
-            'Core Advisor', 'Equipment User' => 'Non-IGB Member',
             default => $category
         };
     }

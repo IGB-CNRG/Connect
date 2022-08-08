@@ -15,7 +15,7 @@ if (!Encore.isRuntimeEnvironmentConfigured()) {
 let prefix = env.parsed.WEBPACK_PREFIX;
 if(typeof prefix === 'undefined') {
     prefix = '';
-} else if(prefix.slice(-1) !== '/') {
+} else if(prefix.length > 0 && prefix.slice(-1) !== '/') {
     prefix = prefix + '/';
 }
 

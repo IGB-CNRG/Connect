@@ -6,11 +6,14 @@
 
 namespace App\Form;
 
+use App\Entity\MemberCategory;
 use App\Entity\Person;
 use App\Entity\ThemeAffiliation;
 use App\Form\Fields\EndDateType;
 use App\Form\Fields\StartDateType;
 use App\Form\Fields\ThemeRoleType;
+use App\Form\Fields\ThemeType;
+use App\Repository\MemberCategoryRepository;
 use App\Service\HistoricityManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -31,8 +34,13 @@ class ThemeAffiliationType extends AbstractType
         $builder
             ->add('startedAt', StartDateType::class)
             ->add('endedAt', EndDateType::class)
-            ->add('theme')
-            ->add('memberCategory')
+            ->add('theme', ThemeType::class)
+            ->add('memberCategory', EntityType::class, [
+                'class' => MemberCategory::class,
+                'query_builder' => function(MemberCategoryRepository $repository){
+                    return $repository->createFormSortedQueryBuilder();
+                },
+            ])
             ->add('title', TextType::class, [
                 'required' => false,
                 'help' => 'Optional',

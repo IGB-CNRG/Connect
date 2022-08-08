@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20220718200328 extends AbstractMigration
+final class Version20220614164715 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -29,7 +29,7 @@ final class Version20220718200328 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE room_key_affiliation (id INT AUTO_INCREMENT NOT NULL, room_id INT NOT NULL, cylinder_key_id INT NOT NULL, started_at DATE DEFAULT NULL, ended_at DATE DEFAULT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, INDEX IDX_7259982554177093 (room_id), INDEX IDX_72599825AA7F73B8 (cylinder_key_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
+        $this->addSql('CREATE TABLE room_key_affiliation (id INT AUTO_INCREMENT NOT NULL, room_id INT NOT NULL, cylinder_key_id INT NOT NULL, started_at DATE DEFAULT NULL, ended_at DATE DEFAULT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, INDEX IDX_72599825AA7F73B8 (cylinder_key_id), INDEX IDX_7259982554177093 (room_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
         $this->addSql('ALTER TABLE room_key_affiliation ADD CONSTRAINT FK_7259982554177093 FOREIGN KEY (room_id) REFERENCES room (id)');
         $this->addSql('ALTER TABLE room_key_affiliation ADD CONSTRAINT FK_72599825AA7F73B8 FOREIGN KEY (cylinder_key_id) REFERENCES `key` (id)');
         $this->addSql('DROP TABLE key_room');

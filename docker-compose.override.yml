@@ -4,8 +4,13 @@ services:
 ###> doctrine/doctrine-bundle ###
   database:
     ports:
-      - "5432"
+      - "3306"
 ###< doctrine/doctrine-bundle ###
+  ldap:
+    ports:
+      - "1389"
+    labels:
+      com.symfony.server.service_prefix: 'LDAP'
 
 ###> symfony/mailer ###
   mailer:

@@ -23,19 +23,22 @@ class Theme
     private ?int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private ?string $shortName;
+    private ?string $shortName = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private ?string $fullName;
+    private ?string $fullName = null;
 
     #[ORM\Column(type: 'boolean')]
-    private bool $isNonResearch;
+    private bool $isNonResearch = false;
 
     #[ORM\OneToMany(mappedBy: 'theme', targetEntity: ThemeAffiliation::class, orphanRemoval: true)]
     private Collection $themeAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'theme', targetEntity: Log::class)]
     private Collection $logs;
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $isOutsideGroup = false;
 
     public function __construct()
     {
@@ -145,6 +148,18 @@ class Theme
                 $log->setTheme(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getIsOutsideGroup(): ?bool
+    {
+        return $this->isOutsideGroup;
+    }
+
+    public function setIsOutsideGroup(bool $isOutsideGroup): self
+    {
+        $this->isOutsideGroup = $isOutsideGroup;
 
         return $this;
     }

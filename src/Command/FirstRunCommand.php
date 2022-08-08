@@ -59,7 +59,7 @@ class FirstRunCommand extends Command
         $this->em->flush();
 
         $io->success(
-            'Setup complete! Please log in to SeqLIMS with your new username to add sequencers, other users, etc.'
+            'Setup complete! Please log in to CONNECT with your username and your IGB password.'
         );
 
         return Command::SUCCESS;

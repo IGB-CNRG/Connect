@@ -11,6 +11,7 @@ use App\Entity\Note;
 use App\Entity\Person;
 use App\Entity\RoomAffiliation;
 use App\Entity\ThemeAffiliation;
+use App\Form\AdvancedSearchType;
 use App\Form\EndDepartmentAffiliationType;
 use App\Form\EndRoomAffiliationType;
 use App\Form\EndThemeAffiliationType;
@@ -20,9 +21,7 @@ use App\Form\Person\DepartmentAffiliationType;
 use App\Form\Person\PersonType;
 use App\Form\Person\RoomAffiliationType;
 use App\Form\ThemeAffiliationType;
-use App\Repository\MemberCategoryRepository;
 use App\Repository\PersonRepository;
-use App\Repository\ThemeRepository;
 use App\Service\ActivityLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -37,34 +36,22 @@ class PersonController extends AbstractController
 {
     #[Route('/', name: 'default')]
     #[Route('/person', name: 'person')]
-    public function index(
-        PersonRepository $personRepository,
-        ThemeRepository $themeRepository,
-        MemberCategoryRepository $categoryRepository
-    ): Response {
+    public function index(PersonRepository $personRepository): Response {
         $people = $personRepository->findCurrentForIndex();
-        $themes = $themeRepository->findAll(); // Todo group by current/old?
-        $memberCategories = $categoryRepository->findAll(); // todo sort
+        $advancedSearchForm = $this->createForm(AdvancedSearchType::class);
         return $this->render('person/index.html.twig', [
             'people' => $people,
-            'themes' => $themes,
-            'memberCategories' => $memberCategories,
+            'advancedSearchForm' => $advancedSearchForm->createView(),
         ]);
     }
 
     #[Route('/person/everyone', name:'person_everyone', priority: 1)]
-    public function all(
-        PersonRepository $personRepository,
-        ThemeRepository $themeRepository,
-        MemberCategoryRepository $categoryRepository
-    ): Response {
+    public function all(PersonRepository $personRepository): Response {
         $people = $personRepository->findAllForIndex();
-        $themes = $themeRepository->findAll(); // Todo group by current/old?
-        $memberCategories = $categoryRepository->findAll(); // todo sort
+        $advancedSearchForm = $this->createForm(AdvancedSearchType::class);
         return $this->render('person/index.html.twig', [
             'people' => $people,
-            'themes' => $themes,
-            'memberCategories' => $memberCategories,
+            'advancedSearchForm' => $advancedSearchForm->createView(),
         ]);
     }
 
