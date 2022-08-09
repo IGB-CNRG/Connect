@@ -7,7 +7,8 @@
 {% endblock %}
 
 {% block content %}
-    <div data-controller="datatables">
+    <div data-controller="datatables" data-datatables-combo-column-value="6"
+         data-datatables-combo-pattern-value='["advanced_search_theme","advanced_search_employeeType","advanced_search_role"]'>
         <table id="people" class="table" data-datatables-target="table">
             <thead>
             <tr>
@@ -17,6 +18,7 @@
                 <th>Title</th>
                 <th>Type</th>
                 <th>Room</th>
+                <th class="d-none">Combo Search</th>
             </tr>
             </thead>
             <tbody>
@@ -26,6 +28,7 @@
                         data-order="{{ person.lastName }}"
                         data-search="{% block person_name %}{% if person.lastName is not empty %}{{ person.name }}{% else %}No name{% endif %}{% endblock %}">
                         {% if person.imageName is not null %}
+                            {# We might want to look into lazy-loading these images, but for now they're so small (~2k each) that it's not worth it #}
                             <img class="portrait-sm me-2"
                                  src="{{ vich_uploader_asset(person, 'imageFile') | imagine_filter('small_thumb') }}"
                                  alt="Portrait"/>
@@ -105,34 +108,66 @@
                             {{ roomAffiliation.room.number }}{% if not loop.last %}, {% endif %}
                         {% endfor %}
                     </td>
+                    <td class="d-none">
+                        {%- for themeAffiliation in person.themeAffiliations|current -%}
+                            {%- block comboSearch -%}
+                                {{- themeAffiliation.theme.shortName -}},
+                                {{- themeAffiliation.memberCategory.shortName??themeAffiliation.memberCategory.name -}},
+                                {%- if themeAffiliation.isThemeLeader -%}
+                                    Theme Leader
+                                {%- endif -%}
+                                {%- if themeAffiliation.isThemeAdmin -%}
+                                    Theme Admin
+                                {%- endif -%}
+                                {%- if themeAffiliation.isLabManager -%}
+                                    Lab Manager
+                                {%- endif -%}
+                                ;
+                            {%- endblock -%}
+                        {%- endfor -%}
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
 
         <div class="card mt-3">
-            <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#advanced-search"
-                 aria-expanded="false" role="button">
+            <div class="card-header collapse-header">
                 Advanced Search
             </div>
-            <div class="collapse" id="advanced-search">
-                <div class="card-body">
-                    {{ form_start(advancedSearchForm) }}
-                        <div class="row">
-                            <div class="col-lg">{{ form_row(advancedSearchForm.theme) }}</div>
-                            <div class="col-lg">{{ form_row(advancedSearchForm.employeeType) }}</div>
-                            <div class="col-lg">{{ form_row(advancedSearchForm.role) }}</div>
-                        </div>
-                    {{ form_end(advancedSearchForm) }}
-
-                    {% if app.request.get('_route') != 'person_everyone' %}
-                        <div class="row mt-3">
-                            <div class="col">
-                                <a href="{{ path('person_everyone') }}">See all members past and present</a>
-                            </div>
-                        </div>
-                    {% endif %}
+            <div class="card-body">
+                {{ form_start(advancedSearchForm) }}
+                <div class="row">
+                    <div class="col-lg">{{ form_row(advancedSearchForm.theme) }}</div>
+                    <div class="col-lg">{{ form_row(advancedSearchForm.employeeType) }}</div>
+                    <div class="col-lg">{{ form_row(advancedSearchForm.role) }}</div>
                 </div>
+                {{ form_end(advancedSearchForm) }}
+
+                <div class="callout callout-info">
+                    {# todo this copy needs a second look #}
+                    Selecting an option from each dropdown will search for members who match <strong>all</strong> options. Selecting multiple options from a single dropdown will search for members who match <strong>any</strong> of those options. For example, if you select MME, MMG, and Faculty, both MME Faculty and MMG Faculty will be displayed.
+                </div>
+
+                {% if app.request.get('_route') != 'person_everyone' %}
+                    <div class="row mt-3">
+                        <div class="col">
+                            <a class="btn btn-secondary" href="{{ path('person_everyone') }}">
+                                <span class="fas fa-eye"></span>
+                                See all members past and present
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="row mt-3">
+                        <div class="col">
+                            <a class="btn btn-secondary" href="{{ path('person') }}">
+                                <span class="fas fa-eye-slash"></span>
+                                See only current members
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
