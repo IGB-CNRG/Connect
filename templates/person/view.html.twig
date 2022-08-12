@@ -56,16 +56,10 @@
                             <th>Theme</th>
                             <td>
                                 <strong>
-                                    {{ themeAffiliation.theme.shortName }}
-                                    {% if themeAffiliation.isThemeLeader %}
-                                        Theme Leader
-                                    {% endif %}
-                                    {% if themeAffiliation.isThemeAdmin %}
-                                        Theme Admin
-                                    {% endif %}
-                                    {% if themeAffiliation.isLabManager %}
-                                        Lab Manager
-                                    {% endif %}
+                                    <a href="{{ path('theme_view', {'shortName': themeAffiliation.theme.shortName}) }}">{{ themeAffiliation.theme.shortName }}</a>
+                                    {% for role in themeAffiliation.themeRoles %}
+                                        {{ role.displayName }}
+                                    {% endfor %}
                                 </strong>
                                 {% if themeAffiliation.title %}
                                     <br/>{{ themeAffiliation.title }} ({{ themeAffiliation.memberCategory.name }})
@@ -373,15 +367,9 @@
                         <td>{{ themeAffiliation.theme.shortName }}</td>
                         <td>
                             {{ themeAffiliation.memberCategory.name }}
-                            {% if themeAffiliation.isLabManager %}
-                                (Lab Manager)
-                            {% endif %}
-                            {% if themeAffiliation.isThemeAdmin %}
-                                (Theme Admin)
-                            {% endif %}
-                            {% if themeAffiliation.isThemeLeader %}
-                                (Theme Leader)
-                            {% endif %}
+                            {% for role in themeAffiliation.themeRoles %}
+                                ({{ role.displayName }})
+                            {% endfor %}
                         </td>
                         <td>{{ themeAffiliation.title }}</td>
                         <td>{% if themeAffiliation.startedAt is not null %}{{ themeAffiliation.startedAt|date('n/j/Y') }}{% endif %}</td>

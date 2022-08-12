@@ -26,34 +26,34 @@ export default class extends Controller {
         const column = this.dt.column(event.currentTarget.dataset.column);
         column.search(searchRegex, true, false).draw();
 
-        if (this.comboPatternValue.includes(event.currentTarget.id)) {
+        if (this.comboPatternValue.length > 0 && this.comboPatternValue.includes(event.currentTarget.id)) {
             this.comboSearch();
         }
     }
 
     comboSearch() {
-        // Get the values for the combosearch
+        // Get the values for the combo search
         let comboValues = [];
         this.comboPatternValue.forEach(inputId => comboValues.push($(`#${inputId}`).val()))
         // Combine them in every possible way
-        let regexs = [];
+        let regexes = [];
         comboValues.forEach(function (values, index) {
             const separator = index === comboValues.length - 1 ? ';' : ',';
-            let newRegexs = [];
-            if (regexs.length === 0) {
-                regexs = [''];
+            let newRegexes = [];
+            if (regexes.length === 0) {
+                regexes = [''];
             }
-            if(values.length === 0){
-                regexs.forEach(regex =>newRegexs.push(`${regex}[^,]*${separator}`));
-                regexs = newRegexs;
+            if (values.length === 0) {
+                regexes.forEach(regex => newRegexes.push(`${regex}[^,]*${separator}`));
+                regexes = newRegexes;
             } else {
-                regexs.forEach(regex => values.forEach(value => newRegexs.push(regex + $.fn.dataTable.util.escapeRegex(value) + separator)));
-                regexs = newRegexs;
+                regexes.forEach(regex => values.forEach(value => newRegexes.push(regex + $.fn.dataTable.util.escapeRegex(value) + separator)));
+                regexes = newRegexes;
             }
         });
 
         // Perform column search with joined regex
-        const regex = regexs.join('|');
+        const regex = regexes.join('|');
         this.dt.column(this.comboColumnValue).search(regex, true, false).draw();
     }
 }

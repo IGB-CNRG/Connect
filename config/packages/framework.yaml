@@ -19,6 +19,10 @@ framework:
     php_errors:
         log: true
 
+when@dev:
+    framework:
+        ide: phpstorm
+
 when@test:
     framework:
         test: true

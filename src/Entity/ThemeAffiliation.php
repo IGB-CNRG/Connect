@@ -6,6 +6,7 @@
 
 namespace App\Entity;
 
+use App\Enum\ThemeRole;
 use App\Repository\ThemeAffiliationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -35,27 +36,17 @@ class ThemeAffiliation
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $title = null;
 
-    // todo should these three booleans be an array of optional role enums?
-    #[ORM\Column(type: 'boolean')]
-    private bool $isThemeLeader = false;
-
-    #[ORM\Column(type: 'boolean')]
-    private bool $isThemeAdmin = false;
-
-    #[ORM\Column(type: 'boolean')]
-    private bool $isLabManager = false;
+    #[ORM\Column(type: 'json', enumType: ThemeRole::class)]
+    private array $themeRoles = [];
 
     public function __toString()
     {
         $themeName = $this->getTheme()->getShortName();
-        if ($this->getIsThemeLeader()) {
-            $themeName .= " Theme Leader";
-        }
-        if ($this->getIsThemeAdmin()) {
-            $themeName .= " Theme Admin";
-        }
-        if ($this->getIsLabManager()) {
-            $themeName .= " Lab Manager";
+        foreach ($this->getThemeRoles() as $index => $role) {
+            $themeName .= " " . $role->getDisplayName();
+            if ($index < count($this->getThemeRoles()) - 1) {
+                $themeName .= ',';
+            }
         }
         if ($this->getTitle()) {
             return sprintf('%s - %s (%s)', $themeName, $this->getTitle(), $this->getMemberCategory()->getName());
@@ -117,38 +108,21 @@ class ThemeAffiliation
         return $this;
     }
 
-    public function getIsThemeLeader(): ?bool
+    /**
+     * @return ThemeRole[]
+     */
+    public function getThemeRoles(): array
     {
-        return $this->isThemeLeader;
+        return $this->themeRoles;
     }
 
-    public function setIsThemeLeader(bool $isThemeLeader): self
+    /**
+     * @param ThemeRole[] $themeRoles
+     * @return $this
+     */
+    public function setThemeRoles(array $themeRoles): self
     {
-        $this->isThemeLeader = $isThemeLeader;
-
-        return $this;
-    }
-
-    public function getIsThemeAdmin(): ?bool
-    {
-        return $this->isThemeAdmin;
-    }
-
-    public function setIsThemeAdmin(bool $isThemeAdmin): self
-    {
-        $this->isThemeAdmin = $isThemeAdmin;
-
-        return $this;
-    }
-
-    public function getIsLabManager(): ?bool
-    {
-        return $this->isLabManager;
-    }
-
-    public function setIsLabManager(bool $isLabManager): self
-    {
-        $this->isLabManager = $isLabManager;
+        $this->themeRoles = $themeRoles;
 
         return $this;
     }

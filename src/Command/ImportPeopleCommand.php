@@ -15,6 +15,7 @@ use App\Entity\RoomAffiliation;
 use App\Entity\SupervisorAffiliation;
 use App\Entity\Theme;
 use App\Entity\ThemeAffiliation;
+use App\Enum\ThemeRole;
 use App\Repository\DepartmentRepository;
 use App\Repository\MemberCategoryRepository;
 use App\Repository\PersonRepository;
@@ -273,7 +274,7 @@ class ImportPeopleCommand extends Command
                         ->setMemberCategory($typesById[$user_theme['type_id']]);
 
                     if ($this->isThemeLeader($user_theme['type_id'])) {
-                        $themeAffiliation->setIsThemeLeader(true);
+                        $themeAffiliation->setThemeRoles([ThemeRole::ThemeAdmin]);
                     }
 
                     if ($user_theme['start_date'] == $user_theme['end_date']) {
@@ -284,7 +285,8 @@ class ImportPeopleCommand extends Command
                     } else {
                         $this->setDatesFromResult($user_theme, $themeAffiliation);
                     }
-                    if ($theme->getEndedAt()) { // If the theme has ended, add the end date to the affiliation when applicable
+                    if ($theme->getEndedAt()) {
+                        // If the theme has ended, add the end date to the affiliation when applicable
                         if ($themeAffiliation->getEndedAt() === null
                             || $themeAffiliation->getEndedAt() > $theme->getEndedAt()) {
                             $themeAffiliation->setEndedAt($theme->getEndedAt());
@@ -329,7 +331,7 @@ class ImportPeopleCommand extends Command
                                 $affiliation1->setEndedAt($affiliation2->getEndedAt());
                             }
                             if ($affiliation2->getIsThemeLeader()) {
-                                $affiliation1->setIsThemeLeader(true);
+                                $affiliation1->setThemeRoles([ThemeRole::ThemeLeader]);
                             }
                             // mark the extraneous affiliation for removal
                             $toDelete[] = $i2;

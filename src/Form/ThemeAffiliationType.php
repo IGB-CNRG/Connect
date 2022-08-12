@@ -9,23 +9,22 @@ namespace App\Form;
 use App\Entity\MemberCategory;
 use App\Entity\Person;
 use App\Entity\ThemeAffiliation;
+use App\Enum\ThemeRole;
 use App\Form\Fields\EndDateType;
 use App\Form\Fields\StartDateType;
-use App\Form\Fields\ThemeRoleType;
 use App\Form\Fields\ThemeType;
 use App\Repository\MemberCategoryRepository;
 use App\Service\HistoricityManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ThemeAffiliationType extends AbstractType
 {
-    public function __construct(public HistoricityManager $historicityManager)
-    {
-    }
+    public function __construct(public HistoricityManager $historicityManager) {}
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -37,7 +36,7 @@ class ThemeAffiliationType extends AbstractType
             ->add('theme', ThemeType::class)
             ->add('memberCategory', EntityType::class, [
                 'class' => MemberCategory::class,
-                'query_builder' => function(MemberCategoryRepository $repository){
+                'query_builder' => function (MemberCategoryRepository $repository) {
                     return $repository->createFormSortedQueryBuilder();
                 },
             ])
@@ -53,8 +52,14 @@ class ThemeAffiliationType extends AbstractType
                 'class' => ThemeAffiliation::class,
                 'choices' => $this->historicityManager->getCurrentEntities($person->getThemeAffiliations())->toArray(),
             ])
-            ->add('specialRole', ThemeRoleType::class)
-        ;
+            ->add('themeRoles', EnumType::class, [
+                'class' => ThemeRole::class,
+                'multiple' => true,
+                'required' => false,
+                'attr' => [
+                    'data-controller' => 'select2',
+                ],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
