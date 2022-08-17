@@ -47,13 +47,16 @@ $info: $teal;
 }
 
 /* Placeholders */
-// TODO these can be removed from the final product
+// TODO these can be removed from the final product, once we have art
 .placeholder-image {
-  background-color: $gray-300;
+  background-color: $gray-200;
   color: $gray-600;
   font-size: x-large;
   font-weight: bold;
   padding: 3rem;
+  .text-muted {
+    color: $gray-500 !important;
+  }
 }
 
 /* Breadcrumbs */
