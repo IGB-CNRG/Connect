@@ -32,24 +32,20 @@ class SupervisorType extends AbstractType
         $builder
             ->add('endedAt', EndDateType::class)
             ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+                /** @var SupervisorAffiliation $supervisorAffiliation */
                 $supervisorAffiliation = $event->getData();
                 $form = $event->getForm();
 
-                if (!$supervisorAffiliation || $supervisorAffiliation->getId() === null) {
+                if (!$supervisorAffiliation || $supervisorAffiliation->getId() === null
+                    || $this->security->isGranted('PERSON_EDIT_HISTORY', $supervisorAffiliation->getSupervisee())) {
                     $form->add('supervisor', EntityType::class, [
                         'class' => Person::class,
                         'attr' => [
                             'data-controller' => 'select2',
                         ],
-                    ]);
+                    ])->add('startedAt', StartDateType::class);
                 }
-                if ($this->security->isGranted('PERSON_EDIT_HISTORY')
-                    || !$supervisorAffiliation
-                    || $supervisorAffiliation->getId() === null) {
-                    $form->add('startedAt', StartDateType::class);
-                }
-            })
-        ;
+            });
     }
 
     public function configureOptions(OptionsResolver $resolver): void

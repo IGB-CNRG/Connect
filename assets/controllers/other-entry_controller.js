@@ -11,7 +11,7 @@ export default class extends Controller {
     static targets = ['select', 'other'];
 
     connect() {
-
+        this.toggle();
     }
 
     toggle() {

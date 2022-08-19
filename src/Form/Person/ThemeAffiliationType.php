@@ -23,9 +23,12 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Security;
 
+/**
+ * This is the form only for the Person Edit form
+ */
 class ThemeAffiliationType extends AbstractType
 {
-    public function __construct(private Security $security) {}
+    public function __construct(private readonly Security $security) {}
 
     public function getBlockPrefix(): string
     {
@@ -37,15 +40,17 @@ class ThemeAffiliationType extends AbstractType
         $builder
             ->add('endedAt', EndDateType::class)
             ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+                /** @var ThemeAffiliation $themeAffiliation */
                 $themeAffiliation = $event->getData();
                 $form = $event->getForm();
 
-                if (!$themeAffiliation || $themeAffiliation->getId() === null) {
+                if (!$themeAffiliation || $themeAffiliation->getId() === null
+                    || $this->security->isGranted('PERSON_EDIT_HISTORY', $themeAffiliation->getPerson())) {
                     $form
                         ->add('theme', ThemeType::class)
                         ->add('memberCategory', EntityType::class, [
                             'class' => MemberCategory::class,
-                            'query_builder' => function(MemberCategoryRepository $repository){
+                            'query_builder' => function (MemberCategoryRepository $repository) {
                                 return $repository->createFormSortedQueryBuilder();
                             },
                         ])
@@ -60,12 +65,8 @@ class ThemeAffiliationType extends AbstractType
                             'attr' => [
                                 'data-controller' => 'select2',
                             ],
-                        ]);
-                }
-                if ($this->security->isGranted('PERSON_EDIT_HISTORY')
-                    || !$themeAffiliation
-                    || $themeAffiliation->getId() === null) {
-                    $form->add('startedAt', StartDateType::class);
+                        ])
+                        ->add('startedAt', StartDateType::class);
                 }
             });
     }

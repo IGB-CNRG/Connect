@@ -19,7 +19,7 @@ class ThemeAffiliation
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private ?int $id;
+    private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'themeAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
@@ -59,6 +59,17 @@ class ThemeAffiliation
     {
         return $this->id;
     }
+
+    public function getIsThemeAdmin(): bool
+    {
+        return in_array(ThemeRole::ThemeAdmin, $this->getThemeRoles());
+    }
+
+    public function getIsLabManager(): bool
+    {
+        return in_array(ThemeRole::LabManager, $this->getThemeRoles());
+    }
+
 
     public function getPerson(): Person
     {

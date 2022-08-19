@@ -4,8 +4,9 @@
     <div class="callout callout-info">
         <ul>
             <li>Please indicate the theme with which {{ person.name }} is affiliated, their role
-                within that theme, and the date that role begins.</li>
-            <li>If no end date is known, leave blank. </li>
+                within that theme, and the date that role begins.
+            </li>
+            <li>If no end date is known, leave blank.</li>
             <li>If any previous theme affiliations should end when this one begins, select them below.</li>
         </ul>
     </div>
@@ -13,13 +14,18 @@
     <div class="row">
         <div class="col-lg">{{ form_row(form.theme) }}</div>
         <div class="col-lg">{{ form_row(form.memberCategory) }}</div>
-        <div class="col-lg">{{ form_row(form.title) }}</div>
     </div>
     <div class="row">
-        <div class="col-lg">{{ form_row(form.startedAt) }}</div>
-        <div class="col-lg">{{ form_row(form.endedAt) }}</div>
+        <div class="col-lg">{{ form_row(form.title) }}</div>
+        <div class="col-lg">{{ form_row(form.themeRoles) }}</div>
     </div>
-    <div class="row"><div class="col-lg">{{ form_row(form.themeRoles) }}</div></div>
+    <div class="row">
+        <div class="col">{{ form_row(form.startedAt) }}</div>
+        <div class="col">{{ form_row(form.endedAt) }}</div>
+    </div>
+    <div class="row">
+        <div class="col">{{ form_row(form.endPreviousAffiliations) }}</div>
+    </div>
     {{ form_end(form) }}
 {% endblock %}
 

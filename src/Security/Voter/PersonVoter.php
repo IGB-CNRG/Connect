@@ -49,7 +49,8 @@ class PersonVoter extends Voter
 
         // ... (check conditions and return true to grant permission) ...
         return match ($attribute) {
-            self::EDIT => $this->security->isGranted('ROLE_HUMAN_RESOURCES')
+            // anyone who can edit can also edit history, for now
+            self::EDIT, self::EDIT_HISTORY => $this->security->isGranted('ROLE_HUMAN_RESOURCES')
                           || $this->isEditorForPersonsTheme($user, $subject), // todo who else can edit?
             self::VIEW => true,
             self::ADD => $this->security->isGranted('ROLE_HUMAN_RESOURCES'), // todo who else can add?

@@ -18,9 +18,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Security;
 
 class DepartmentAffiliationType extends AbstractType
 {
+    public function __construct(private Security $security) {}
     public function getBlockPrefix(): string
     {
         return 'DepartmentAffiliation';
@@ -32,10 +34,12 @@ class DepartmentAffiliationType extends AbstractType
             ->add('startedAt', StartDateType::class)
             ->add('endedAt', EndDateType::class)
             ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+                /** @var DepartmentAffiliation $departmentAffiliation */
                 $departmentAffiliation = $event->getData();
                 $form = $event->getForm();
 
-                if (!$departmentAffiliation || $departmentAffiliation->getId() === null) {
+                if (!$departmentAffiliation || $departmentAffiliation->getId() === null
+                    || $this->security->isGranted('PERSON_EDIT_HISTORY', $departmentAffiliation->getPerson())) {
                     $form->add('department', EntityType::class, [
                         'class' => Department::class,
                         'attr' => [

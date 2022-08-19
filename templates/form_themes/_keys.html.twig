@@ -1,17 +1,29 @@
 {% block KeyAffiliation_row %}
     <div class="collection-row">
         {% if data is not null %}
-            <div class="collection-label">{{ data.cylinderKey.name }}</div>
-        {% else %}
-            {{ form_row(form.cylinderKey) }}
-        {% endif %}
-        <div class="row">
-            <div class="col">
-                {{ form_row(form.startedAt) }}
-            </div>
-            <div class="col">
-                {{ form_row(form.endedAt) }}
-            </div>
+        <div class="collection-label">
+            {{ data.cylinderKey.name }}
+            <span class="float-end">
+                <a href="#key-affiliation-collapse-{{ data.id }}" data-bs-toggle="collapse" data-controller="edit-warning" data-action="edit-warning#warn:once">
+                    <span class="fas fa-pencil"></span>
+                </a>
+            </span>
         </div>
+        <div id="key-affiliation-collapse-{{ data.id }}" class="collapse">
+            {% endif %}
+            {% if form.cylinderKey is defined %}
+                {{ form_row(form.cylinderKey) }}
+            {% endif %}
+            <div class="row">
+                <div class="col">
+                    {{ form_row(form.startedAt) }}
+                </div>
+                <div class="col">
+                    {{ form_row(form.endedAt) }}
+                </div>
+            </div>
+            {% if data is not null %}
+        </div>
+        {% endif %}
     </div>
 {% endblock %}

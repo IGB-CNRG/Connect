@@ -32,24 +32,21 @@ class RoomAffiliationType extends AbstractType
         $builder
             ->add('endedAt', EndDateType::class)
             ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+                /** @var RoomAffiliation $roomAffiliation */
                 $roomAffiliation = $event->getData();
                 $form = $event->getForm();
 
-                if (!$roomAffiliation || $roomAffiliation->getId() === null) {
+                if (!$roomAffiliation || $roomAffiliation->getId() === null
+                    || $this->security->isGranted('PERSON_EDIT_HISTORY', $roomAffiliation->getPerson())) {
                     $form->add('room', EntityType::class, [
                         'class' => Room::class,
                         'attr' => [
                             'data-controller' => 'select2',
                         ],
-                    ]);
+                    ])
+                        ->add('startedAt', StartDateType::class);
                 }
-                if ($this->security->isGranted('PERSON_EDIT_HISTORY')
-                    || !$roomAffiliation
-                    || $roomAffiliation->getId() === null) {
-                    $form->add('startedAt', StartDateType::class);
-                }
-            })
-        ;
+            });
     }
 
     public function configureOptions(OptionsResolver $resolver): void

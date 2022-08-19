@@ -12,7 +12,7 @@ const $ = require("jquery");
 export default class extends Controller {
     connect(){
         let options = {
-            // width: 'style'
+            width: '100%',
             theme: "bootstrap-5",
         };
         if(this.element.dataset.hasOwnProperty('placeholder')){

@@ -13,8 +13,6 @@ use App\Form\Fields\StartDateType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class KeyAffiliationType extends AbstractType
@@ -29,19 +27,12 @@ class KeyAffiliationType extends AbstractType
         $builder
             ->add('startedAt', StartDateType::class)
             ->add('endedAt', EndDateType::class)
-            ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-                $keyAffiliation = $event->getData();
-                $form = $event->getForm();
-
-                if (!$keyAffiliation || $keyAffiliation->getId() === null) {
-                    $form->add('cylinderKey', EntityType::class, [
-                        'class' => Key::class,
-                        'attr' => [
-                            'data-controller' => 'select2',
-                        ],
-                    ]);
-                }
-            })
+            ->add('cylinderKey', EntityType::class, [
+                'class' => Key::class,
+                'attr' => [
+                    'data-controller' => 'select2',
+                ],
+            ])
         ;
     }
 

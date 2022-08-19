@@ -33,7 +33,9 @@
                 <div class="card-header">Positions</div>
                 <div class="card-body" data-controller="form-collection">
                     {{ form_row(form.themeAffiliations) }}
-                    <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd" id="themeAffiliation-add">Add Position</button>
+                    <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd"
+                            id="themeAffiliation-add">Add Position
+                    </button>
                 </div>
             </div>
         </div>
@@ -52,28 +54,36 @@
                 <div class="card-header">Rooms</div>
                 <div class="card-body" data-controller="form-collection">
                     {{ form_row(form.roomAffiliations) }}
-                    <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd" id="roomAffiliation-add">Add Room</button>
+                    <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd"
+                            id="roomAffiliation-add">Add Room
+                    </button>
                 </div>
             </div>
             <div class="card mb-3">
                 <div class="card-header">Departments</div>
                 <div class="card-body" data-controller="form-collection">
                     {{ form_row(form.departmentAffiliations) }}
-                    <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd" id="departmentAffiliation-add">Add Department</button>
+                    <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd"
+                            id="departmentAffiliation-add">Add Department
+                    </button>
                 </div>
             </div>
             <div class="card mb-3">
                 <div class="card-header">Supervisors</div>
                 <div class="card-body" data-controller="form-collection">
                     {{ form_row(form.supervisorAffiliations) }}
-                    <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd" id="supervisorAffiliation-add">Add Supervisor</button>
+                    <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd"
+                            id="supervisorAffiliation-add">Add Supervisor
+                    </button>
                 </div>
             </div>
             <div class="card mb-3">
                 <div class="card-header">Supervisees</div>
                 <div class="card-body" data-controller="form-collection">
                     {{ form_row(form.superviseeAffiliations) }}
-                    <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd" id="superviseeAffiliation-add">Add Supervisee</button>
+                    <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd"
+                            id="superviseeAffiliation-add">Add Supervisee
+                    </button>
                 </div>
             </div>
             {% if is_granted('ROLE_ADMIN') %}
@@ -93,7 +103,9 @@
             <div class="card-body" data-controller="form-collection">
                 {{ form_row(form.hasGivenKeyDeposit) }}
                 {{ form_row(form.keyAffiliations) }}
-                <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd" id="keyAffiliation-add">Add Key</button>
+                <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd"
+                        id="keyAffiliation-add">Add Key
+                </button>
             </div>
         </div>
     {% endif %}
@@ -104,125 +116,183 @@
 {% block ThemeAffiliation_row %}
     <div class="collection-row">
         {% if data is not null %}
-            <div class="collection-label">
-                {{ data }}
-            </div>
-        {% else %}
-            <div class="row">
-                <div class="col-lg">{{ form_row(form.theme) }}</div>
-                <div class="col-lg">{{ form_row(form.memberCategory) }}</div>
-            </div>
-            <div class="row">
-                <div class="col-lg">{{ form_row(form.title) }}</div>
-                <div class="col-lg">{{ form_row(form.themeRoles) }}</div>
-            </div>
-        {% endif %}
-        <div class="row">
-            <div class="col">
-                {% if form.startedAt is defined %}
-                    {{ form_row(form.startedAt) }}
-                {% elseif data is not null %}
-                    <p class="mb-2">Start date</p>
-                    {{ data.startedAt|date('n/j/Y') }}
-                {% endif %}
-            </div>
-            <div class="col">
-                {{ form_row(form.endedAt) }}
-            </div>
+        <div class="collection-label">
+            {{ data }}
+            <span class="float-end">
+                <a href="#theme-affiliation-collapse-{{ data.id }}" data-bs-toggle="collapse" data-controller="edit-warning" data-action="edit-warning#warn:once">
+                    <span class="fas fa-pencil"></span>
+                </a>
+            </span>
         </div>
+        <div id="theme-affiliation-collapse-{{ data.id }}" class="collapse">
+            {% endif %}
+            {% if form.theme is defined %} {# todo collapsible? #}
+                <div class="row">
+                    <div class="col-lg">{{ form_row(form.theme) }}</div>
+                    <div class="col-lg">{{ form_row(form.memberCategory) }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-lg">{{ form_row(form.title) }}</div>
+                    <div class="col-lg">{{ form_row(form.themeRoles) }}</div>
+                </div>
+            {% endif %}
+            <div class="row">
+                <div class="col">
+                    {% if form.startedAt is defined %}
+                        {{ form_row(form.startedAt) }}
+                    {% elseif data is not null %}
+                        <p class="mb-2">Start date</p>
+                        {{ data.startedAt|date('n/j/Y') }}
+                    {% endif %}
+                </div>
+                <div class="col">
+                    {{ form_row(form.endedAt) }}
+                </div>
+            </div>
+            {% if data is not null %}
+        </div>
+        {% endif %}
     </div>
 {% endblock %}
 
 {% block RoomAffiliation_row %}
     <div class="collection-row">
         {% if data is not null %}
-            <div class="collection-label">{{ data.room }}</div>
-        {% else %}
-            {{ form_row(form.room) }}
-        {% endif %}
-        <div class="row">
-            <div class="col">
-                {% if form.startedAt is defined %}
-                    {{ form_row(form.startedAt) }}
-                {% elseif data is not null %}
-                    <p class="mb-2">Start date</p>
-                    {{ data.startedAt|date('n/j/Y') }}
-                {% endif %}
-            </div>
-            <div class="col">
-                {{ form_row(form.endedAt) }}
-            </div>
+        <div class="collection-label">
+            {{ data.room }}
+            <span class="float-end">
+                <a href="#room-affiliation-collapse-{{ data.id }}" data-bs-toggle="collapse" data-controller="edit-warning" data-action="edit-warning#warn:once">
+                    <span class="fas fa-pencil"></span>
+                </a>
+            </span>
         </div>
+        <div id="room-affiliation-collapse-{{ data.id }}" class="collapse">
+            {% endif %}
+            {% if form.room is defined %}
+                {{ form_row(form.room) }}
+            {% endif %}
+            <div class="row">
+                <div class="col">
+                    {% if form.startedAt is defined %}
+                        {{ form_row(form.startedAt) }}
+                    {% elseif data is not null %}
+                        <p class="mb-2">Start date</p>
+                        {{ data.startedAt|date('n/j/Y') }}
+                    {% endif %}
+                </div>
+                <div class="col">
+                    {{ form_row(form.endedAt) }}
+                </div>
+            </div>
+            {% if data is not null %}
+        </div>
+        {% endif %}
     </div>
 {% endblock %}
 
 {% block DepartmentAffiliation_row %}
-    <div class="collection-row"{% if data is null %} data-controller="other-entry"{% endif %}>
+    <div class="collection-row"{% if form.department is defined %} data-controller="other-entry"{% endif %}>
         {% if data is not null %}
-            <div class="collection-label">{{ data.department??data.otherDepartment }}</div>
-        {% else %}
-            {{ form_row(form.department) }}
-            {{ form_row(form.otherDepartment) }}
-        {% endif %}
-        <div class="row">
-            <div class="col">
-                {% if form.startedAt is defined %}
-                    {{ form_row(form.startedAt) }}
-                {% elseif data is not null %}
-                    <p class="mb-2">Start date</p>
-                    {{ data.startedAt|date('n/j/Y') }}
-                {% endif %}
-            </div>
-            <div class="col">
-                {{ form_row(form.endedAt) }}
-            </div>
+        <div class="collection-label">
+            {{ data.department??data.otherDepartment }}
+            <span class="float-end">
+                <a href="#department-affiliation-collapse-{{ data.id }}" data-bs-toggle="collapse" data-controller="edit-warning" data-action="edit-warning#warn:once">
+                    <span class="fas fa-pencil"></span>
+                </a>
+            </span>
         </div>
+        <div id="department-affiliation-collapse-{{ data.id }}" class="collapse">
+            {% endif %}
+            {% if form.department is defined %}
+                {{ form_row(form.department) }}
+                {{ form_row(form.otherDepartment) }}
+            {% endif %}
+            <div class="row">
+                <div class="col">
+                    {% if form.startedAt is defined %}
+                        {{ form_row(form.startedAt) }}
+                    {% elseif data is not null %}
+                        <p class="mb-2">Start date</p>
+                        {{ data.startedAt|date('n/j/Y') }}
+                    {% endif %}
+                </div>
+                <div class="col">
+                    {{ form_row(form.endedAt) }}
+                </div>
+            </div>
+            {% if data is not null %}
+        </div>
+        {% endif %}
     </div>
 {% endblock %}
 
 {% block SupervisorAffiliation_row %}
     <div class="collection-row">
         {% if data is not null %}
-            <div class="collection-label">{{ data.supervisor.name }}</div>
-        {% else %}
-            {{ form_row(form.supervisor) }}
-        {% endif %}
-        <div class="row">
-            <div class="col">
-                {% if form.startedAt is defined %}
-                    {{ form_row(form.startedAt) }}
-                {% elseif data is not null %}
-                    <p class="mb-2">Start date</p>
-                    {{ data.startedAt|date('n/j/Y') }}
-                {% endif %}
-            </div>
-            <div class="col">
-                {{ form_row(form.endedAt) }}
-            </div>
+        <div class="collection-label">
+            {{ data.supervisor.name }}
+            <span class="float-end">
+                <a href="#supervisor-affiliation-collapse-{{ data.id }}" data-bs-toggle="collapse" data-controller="edit-warning" data-action="edit-warning#warn:once">
+                    <span class="fas fa-pencil"></span>
+                </a>
+            </span>
         </div>
+        <div id="supervisor-affiliation-collapse-{{ data.id }}" class="collapse">
+            {% endif %}
+            {% if form.supervisor is defined %}
+                {{ form_row(form.supervisor) }}
+            {% endif %}
+            <div class="row">
+                <div class="col">
+                    {% if form.startedAt is defined %}
+                        {{ form_row(form.startedAt) }}
+                    {% elseif data is not null %}
+                        <p class="mb-2">Start date</p>
+                        {{ data.startedAt|date('n/j/Y') }}
+                    {% endif %}
+                </div>
+                <div class="col">
+                    {{ form_row(form.endedAt) }}
+                </div>
+            </div>
+            {% if data is not null %}
+        </div>
+        {% endif %}
     </div>
 {% endblock %}
 
 {% block SuperviseeAffiliation_row %}
     <div class="collection-row">
         {% if data is not null %}
-            <div class="collection-label">{{ data.supervisee.name }}</div>
-        {% else %}
-            {{ form_row(form.supervisee) }}
-        {% endif %}
-        <div class="row">
-            <div class="col">
-                {% if form.startedAt is defined %}
-                    {{ form_row(form.startedAt) }}
-                {% elseif data is not null %}
-                    <p class="mb-2">Start date</p>
-                    {{ data.startedAt|date('n/j/Y') }}
-                {% endif %}
-            </div>
-            <div class="col">
-                {{ form_row(form.endedAt) }}
-            </div>
+        <div class="collection-label">
+            {{ data.supervisee.name }}
+            <span class="float-end">
+                <a href="#supervisee-affiliation-collapse-{{ data.id }}" data-bs-toggle="collapse" data-controller="edit-warning" data-action="edit-warning#warn:once">
+                    <span class="fas fa-pencil"></span>
+                </a>
+            </span>
         </div>
+        <div id="supervisee-affiliation-collapse-{{ data.id }}" class="collapse">
+            {% endif %}
+            {% if form.supervisee is defined %}
+                {{ form_row(form.supervisee) }}
+            {% endif %}
+            <div class="row">
+                <div class="col">
+                    {% if form.startedAt is defined %}
+                        {{ form_row(form.startedAt) }}
+                    {% elseif data is not null %}
+                        <p class="mb-2">Start date</p>
+                        {{ data.startedAt|date('n/j/Y') }}
+                    {% endif %}
+                </div>
+                <div class="col">
+                    {{ form_row(form.endedAt) }}
+                </div>
+            </div>
+            {% if data is not null %}
+        </div>
+        {% endif %}
     </div>
 {% endblock %}
 

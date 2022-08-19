@@ -20,12 +20,14 @@ use App\Form\NoteType;
 use App\Form\Person\DepartmentAffiliationType;
 use App\Form\Person\PersonType;
 use App\Form\Person\RoomAffiliationType;
-use App\Form\ThemeAffiliationType;
+use App\Form\Person\ThemeAffiliationType;
 use App\Repository\PersonRepository;
 use App\Service\ActivityLogger;
+use App\Service\HistoricityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,7 +38,8 @@ class PersonController extends AbstractController
 {
     #[Route('/', name: 'default')]
     #[Route('/person', name: 'person')]
-    public function index(PersonRepository $personRepository): Response {
+    public function index(PersonRepository $personRepository): Response
+    {
         $people = $personRepository->findCurrentForIndex();
         $advancedSearchForm = $this->createForm(AdvancedSearchType::class);
         return $this->render('person/index.html.twig', [
@@ -45,8 +48,9 @@ class PersonController extends AbstractController
         ]);
     }
 
-    #[Route('/person/everyone', name:'person_everyone', priority: 1)]
-    public function all(PersonRepository $personRepository): Response {
+    #[Route('/person/everyone', name: 'person_everyone', priority: 1)]
+    public function all(PersonRepository $personRepository): Response
+    {
         $people = $personRepository->findAllForIndex();
         $advancedSearchForm = $this->createForm(AdvancedSearchType::class);
         return $this->render('person/index.html.twig', [
@@ -116,13 +120,22 @@ class PersonController extends AbstractController
     public function newThemeAffiliation(
         Person $person,
         Request $request,
+        HistoricityManager $historicityManager,
         EntityManagerInterface $em,
         ActivityLogger $logger
     ): Response {
         $themeAffiliation = (new ThemeAffiliation())
             ->setPerson($person);
-        $form = $this->createForm(ThemeAffiliationType::class, $themeAffiliation, ['person' => $person]);
-        $form->add('Add', SubmitType::class);
+        $form = $this->createForm(ThemeAffiliationType::class, $themeAffiliation)
+            ->add('endPreviousAffiliations', EntityType::class, [
+                'required' => false,
+                'mapped' => false,
+                'multiple' => true,
+                'expanded' => true,
+                'class' => ThemeAffiliation::class,
+                'choices' => $historicityManager->getCurrentEntities($person->getThemeAffiliations())->toArray(),
+            ])
+            ->add('Add', SubmitType::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
