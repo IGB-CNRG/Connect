@@ -7,6 +7,8 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Theme;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
@@ -18,6 +20,17 @@ class ThemeCrudController extends AbstractCrudController
     public static function getEntityFqcn(): string
     {
         return Theme::class;
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        $viewConnect = Action::new('viewConnect', 'View in CONNECT', 'fa fa-eye')
+            ->linkToRoute('theme_view', function(Theme $theme){
+                return ['shortName'=>$theme->getShortName()];
+            });
+        return parent::configureActions($actions)
+            ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->add(Crud::PAGE_DETAIL, $viewConnect);
     }
 
     public function configureCrud(Crud $crud): Crud
