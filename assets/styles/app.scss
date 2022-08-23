@@ -154,3 +154,9 @@ $callout-background-lighten: 50%;
 .select2-container .select2-search--inline .select2-search__field {
   height: 26px;
 }
+
+/* DataTables Restyles */
+.dataTables_filter {
+  display: inline-block;
+  margin-right: 0.5rem;
+}

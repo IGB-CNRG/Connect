@@ -7,8 +7,10 @@ import 'datatables.net-bs5/css/dataTables.bootstrap5.css';
 import {Controller} from "@hotwired/stimulus";
 import $ from 'jquery';
 
-require('datatables.net');
+window.JSZip = require('jszip');
 require('datatables.net-bs5');
+require('datatables.net-buttons-bs5');
+require('datatables.net-buttons/js/buttons.html5')();
 
 export default class extends Controller {
     static targets = ['table'];
@@ -18,7 +20,14 @@ export default class extends Controller {
     }
 
     connect() {
-        this.dt = $(this.tableTarget).DataTable();
+        this.dt = $(this.tableTarget).DataTable({
+            dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6 text-end'fB>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            buttons: [
+                'excel'
+            ],
+        });
     }
 
     columnSearch() {
