@@ -60,6 +60,11 @@ class ThemeAffiliation
         return $this->id;
     }
 
+    public function getIsThemeLeader(): bool
+    {
+        return in_array(ThemeRole::ThemeLeader, $this->getThemeRoles());
+    }
+
     public function getIsThemeAdmin(): bool
     {
         return in_array(ThemeRole::ThemeAdmin, $this->getThemeRoles());

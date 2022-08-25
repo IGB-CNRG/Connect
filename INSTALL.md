@@ -16,7 +16,7 @@ CONNECT requires PHP 8.1+, as well as the following extensions:
 - posix
 - zip
 
-CONNECT also requires `npm`.
+CONNECT also requires `npm` and `yarn`.
 
 ## Symfony setup
 
@@ -66,8 +66,8 @@ symfony console doctrine:migrations:migrate
 Finally, install and build the frontend dependencies:
 
 ```shell
-npm install
-npm run build
+yarn install
+yarn run build
 ```
 
 You may also choose to build these dependencies on a staging server and copy the `/public/build` folder to the
@@ -120,5 +120,5 @@ symfony console app:import-faculty-spreadsheet <SPREADSHEET_PATH> <HIGHEST_ROW>
 Use the following console command to import the list of key assignments:
 
 ```shell
-symfony console app:import-assigned-keys 
+symfony console app:import-assigned-keys <SPREADSHEET_PATH> <HIGHEST_ROW>
 ```

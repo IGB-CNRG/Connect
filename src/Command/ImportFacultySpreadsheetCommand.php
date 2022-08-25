@@ -199,9 +199,7 @@ class ImportFacultySpreadsheetCommand extends Command
         }
 
         $this->em->flush();
-        $io->note("Found $found existing people. Created $new new ones.");
-
-        $io->success('You have a new command! Now make it your own! Pass --help to see your options.');
+        $io->success("Found $found existing people. Created $new new ones.");
 
         return Command::SUCCESS;
     }

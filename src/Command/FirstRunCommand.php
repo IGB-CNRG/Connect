@@ -42,7 +42,7 @@ class FirstRunCommand extends Command
         $helper = $this->getHelper('question');
         $question = new ConfirmationQuestion(
             sprintf(
-                'This operation will create a user with username %s so you can log in and complete setup. Only run this command if the database has not yet been initialized. Continue?',
+                'This operation will create a user with username %s so you can log in and complete setup. Only run this command if the database has not yet been initialized. Continue? (y/N) ',
                 $username
             ), false
         );

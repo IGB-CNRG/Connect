@@ -33,6 +33,7 @@
             <excludedPath path="/public/build" />
             <excludedPath path="/public/uploads" />
             <excludedPath path="/public/media" />
+            <excludedPath local="true" path="$PROJECT_DIR$/docker-compose.local.yml" />
           </excludedPaths>
         </serverdata>
       </paths>
