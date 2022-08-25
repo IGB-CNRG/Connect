@@ -7,7 +7,8 @@ import 'datatables.net-bs5/css/dataTables.bootstrap5.css';
 import {Controller} from "@hotwired/stimulus";
 import $ from 'jquery';
 
-require('datatables.net');
+require('jquery-lazy');
+window.JSZip = require('jszip');
 require('datatables.net-bs5');
 
 export default class extends Controller {
@@ -18,7 +19,18 @@ export default class extends Controller {
     }
 
     connect() {
-        this.dt = $(this.tableTarget).DataTable();
+        const table = $(this.tableTarget);
+        this.dt = table.DataTable({
+            dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6 text-end'fB>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            buttons: [
+                'excel'
+            ],
+            drawCallback: function( settings ) {
+                table.find("img:visible").lazy();
+            }
+        });
     }
 
     columnSearch() {

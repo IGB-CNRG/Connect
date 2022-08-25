@@ -6,8 +6,13 @@
             {% if person.imageName is not null %}
                 {# We might want to look into lazy-loading these images, but for now they're so small (~2k each) that it's not worth it #}
                 <img class="portrait-sm me-2"
-                     src="{{ vich_uploader_asset(person, 'imageFile') | imagine_filter('small_thumb') }}"
+                     data-src="{{ vich_uploader_asset(person, 'imageFile') | imagine_filter('small_thumb') }}"
                      alt="Portrait"/>
+                <noscript>
+                    <img class="portrait-sm me-2"
+                         src="{{ vich_uploader_asset(person, 'imageFile') | imagine_filter('small_thumb') }}"
+                         alt="Portrait"/>
+                </noscript>
             {% endif %}
             <a href="{{ path('person_view', {'slug': person.slug}) }}">{{ block('person_name') }}</a>
         </td>
