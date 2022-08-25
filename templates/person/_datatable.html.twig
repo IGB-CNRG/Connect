@@ -58,7 +58,7 @@
             {% endif %}
         </td>
         <td>
-            {% if app.request.get('_route' == 'person_everyone') %}
+            {% if app.request.get('_route') == 'person_everyone' %}
                 {% for themeAffiliation in person.themeAffiliations %}
                     {% block types %}
                         {% if not themeAffiliation.isCurrent %}<span class="text-muted">{% endif %}
