@@ -160,3 +160,16 @@ $callout-background-lighten: 50%;
   display: inline-block;
   margin-right: 0.5rem;
 }
+
+/* Person table styles */
+.theme-row {
+  border-bottom: 1px solid $gray-200;
+  padding: 0.25rem 0;
+  &:last-child {
+    border: none;
+    padding-bottom: 0;
+  }
+  &:first-child {
+    padding-top: 0;
+  }
+}

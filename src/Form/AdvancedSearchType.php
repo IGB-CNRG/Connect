@@ -25,7 +25,6 @@ class AdvancedSearchType extends AbstractType
                 'attr' => [
                     'data-controller' => 'select2',
                     'data-placeholder' => 'Filter by theme',
-                    'data-column' => '2',
                     'data-action' => 'datatables#columnSearch',
                     'style' => 'width:100%',
                 ],
@@ -37,7 +36,6 @@ class AdvancedSearchType extends AbstractType
                 'attr' => [
                     'data-controller' => 'select2',
                     'data-placeholder' => 'Filter by employee type',
-                    'data-column' => '4',
                     'data-action' => 'datatables#columnSearch',
                     'style' => 'width:100%',
                 ],
@@ -53,7 +51,6 @@ class AdvancedSearchType extends AbstractType
                 'attr' => [
                     'data-controller' => 'select2',
                     'data-placeholder' => 'Filter by employee type',
-                    'data-column' => '3',
                     'data-action' => 'datatables#columnSearch',
                     'style' => 'width:100%',
                 ],
