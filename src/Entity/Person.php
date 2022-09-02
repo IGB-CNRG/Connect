@@ -45,43 +45,43 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private ?int $id;
+    private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
-    private ?string $firstName;
+    private ?string $firstName = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
-    private ?string $lastName;
+    private ?string $lastName = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
-    private ?string $middleInitial;
+    private ?string $middleInitial = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable(displayName: 'netID')]
-    private ?string $netid;
+    private ?string $netid = null;
 
     #[ORM\Column(type: 'string', length: 180, unique: true, nullable: true)]
     #[Loggable]
-    private ?string $username;
+    private ?string $username = null;
 
     #[ORM\Column(type: 'integer', nullable: true)]
     #[Loggable(displayName: 'UIN')]
-    private ?int $uin;
+    private ?int $uin = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
-    private ?string $email;
+    private ?string $email = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
-    private ?string $officeNumber;
+    private ?string $officeNumber = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
-    private ?string $officePhone;
+    private ?string $officePhone = null;
 
     #[ORM\Column(type: 'boolean')]
     #[Loggable(displayName: 'DRS training')]
