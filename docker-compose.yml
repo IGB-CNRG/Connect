@@ -12,13 +12,6 @@ services:
     volumes:
       - connect-data:/var/lib/mysql:rw
 ###< doctrine/doctrine-bundle ###
-  ldap:
-    image: bitnami/openldap:latest
-    environment:
-      LDAP_ADMIN_USERNAME: admin
-      LDAP_ADMIN_PASSWORD: ChangeMe!
-      LDAP_USERS: username
-      LDAP_PASSWORDS: ChangeMe!
 
 volumes:
 ###> doctrine/doctrine-bundle ###

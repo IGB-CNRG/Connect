@@ -7,6 +7,12 @@ services:
       - "127.0.0.1:18306:3306"
 ###< doctrine/doctrine-bundle ###
   ldap:
+    image: bitnami/openldap:latest
+    environment:
+      LDAP_ADMIN_USERNAME: admin
+      LDAP_ADMIN_PASSWORD: ChangeMe!
+      LDAP_USERS: username
+      LDAP_PASSWORDS: ChangeMe!
     ports:
       - "127.0.0.1::1389"
     labels:
