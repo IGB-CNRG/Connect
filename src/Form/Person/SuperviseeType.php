@@ -10,6 +10,7 @@ use App\Entity\Person;
 use App\Entity\SupervisorAffiliation;
 use App\Form\Fields\EndDateType;
 use App\Form\Fields\StartDateType;
+use App\Repository\PersonRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -43,6 +44,9 @@ class SuperviseeType extends AbstractType
                         'attr' => [
                             'data-controller' => 'select2',
                         ],
+                        'query_builder' => function(PersonRepository $repository){
+                            return $repository->createDropdownQueryBuilder();
+                        },
                     ])->add('startedAt', StartDateType::class);
                 }
             });

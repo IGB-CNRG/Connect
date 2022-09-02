@@ -18,7 +18,7 @@ class SupervisorAffiliation
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private ?int $id;
+    private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'superviseeAffiliations')]
     #[ORM\JoinColumn(nullable: false)]

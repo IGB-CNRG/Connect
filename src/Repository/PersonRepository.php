@@ -71,4 +71,13 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
             ->getResult();
     }
 
+    public function createDropdownQueryBuilder()
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->leftJoin('p.themeAffiliations', 'ta')
+            ->andWhere('ta is not null')
+            ->addOrderBy('p.lastName');
+        $this->historicityManager()->addCurrentConstraint($qb, 'ta');
+        return $qb;
+    }
 }

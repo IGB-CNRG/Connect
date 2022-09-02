@@ -9,12 +9,14 @@ namespace App\Controller;
 use App\Entity\Person;
 use App\Entity\SupervisorAffiliation;
 use App\Form\EndSupervisorAffiliationType;
-use App\Form\SuperviseeType;
-use App\Form\SupervisorType;
+use App\Form\Person\SuperviseeType;
+use App\Form\Person\SupervisorType;
 use App\Service\ActivityLogger;
+use App\Service\HistoricityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,8 +36,8 @@ class SupervisorController extends AbstractController
         $supervisorAffiliation = (new SupervisorAffiliation())
             ->setSupervisor($person)
         ;
-        $form = $this->createForm(SuperviseeType::class, $supervisorAffiliation, ['person' => $person]);
-        $form->add('save', SubmitType::class);
+        $form = $this->createForm(SuperviseeType::class, $supervisorAffiliation)
+            ->add('save', SubmitType::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -58,13 +60,23 @@ class SupervisorController extends AbstractController
         Person $person,
         Request $request,
         EntityManagerInterface $em,
+        HistoricityManager $historicityManager,
         ActivityLogger $logger
     ): Response {
         $supervisorAffiliation = (new SupervisorAffiliation())
             ->setSupervisee($person)
         ;
-        $form = $this->createForm(SupervisorType::class, $supervisorAffiliation, ['person' => $person]);
-        $form->add('save', SubmitType::class);
+        $form = $this->createForm(SupervisorType::class, $supervisorAffiliation)
+            ->add('endPreviousAffiliations', EntityType::class, [
+                'required' => false,
+                'mapped' => false,
+                'multiple' => true,
+                'expanded' => true,
+                'class' => SupervisorAffiliation::class,
+                'choices' =>$historicityManager->getCurrentEntities($person->getSupervisorAffiliations())->toArray(),
+                'choice_label' => 'supervisor',
+            ])
+            ->add('save', SubmitType::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
