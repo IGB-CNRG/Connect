@@ -39,7 +39,9 @@
                             <a href="#" class="nav-link dropdown-toggle" id="navbarMemberMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="fa fa-user"></span> IGB Members</a>
                             <ul class="dropdown-menu" aria-labelledby="navbarMemberMenuLink">
                                 <li><a class="dropdown-item" href="{{ path('person') }}"><span class="fa fa-list"></span> List/Search Members</a></li>
+                                {% if is_granted('PERSON_ADD') %}
                                 <li><a class="dropdown-item" href="{{ path('person_add') }}"><span class="fa fa-plus"></span> Add Member</a></li>
+                                {% endif %}
                             </ul>
                         </li>
                     </ul>
