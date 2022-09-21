@@ -20,4 +20,8 @@ export default class extends Controller {
         }
         $(this.collectionTarget).formCollection(options);
     }
+
+    deleteRow(event) {
+        $(event.target).closest('.collection-row').remove();
+    }
 }

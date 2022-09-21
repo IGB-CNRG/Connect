@@ -11,6 +11,9 @@
         </div>
         <div id="key-affiliation-collapse-{{ data.id }}" class="collapse">
             {% endif %}
+            {% if data is null %}
+                <div class="float-end"><button type="button" class="btn-close" aria-label="Close" data-action="form-collection#deleteRow"></button></div>
+            {% endif %}
             {% if form.cylinderKey is defined %}
                 {{ form_row(form.cylinderKey) }}
             {% endif %}

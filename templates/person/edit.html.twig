@@ -135,7 +135,12 @@
             {% if form.theme is defined %} {# todo collapsible? #}
                 <div class="row">
                     <div class="col-lg">{{ form_row(form.theme) }}</div>
-                    <div class="col-lg">{{ form_row(form.memberCategory) }}</div>
+                    <div class="col-lg">
+                        {% if data is null %}
+                            <div class="float-end"><button type="button" class="btn-close" aria-label="Close" data-action="form-collection#deleteRow"></button></div>
+                        {% endif %}
+                        {{ form_row(form.memberCategory) }}
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-lg">{{ form_row(form.title) }}</div>
@@ -174,6 +179,9 @@
         </div>
         <div id="room-affiliation-collapse-{{ data.id }}" class="collapse">
             {% endif %}
+            {% if data is null %}
+                <div class="float-end"><button type="button" class="btn-close" aria-label="Close" data-action="form-collection#deleteRow"></button></div>
+            {% endif %}
             {% if form.room is defined %}
                 {{ form_row(form.room) }}
             {% endif %}
@@ -208,6 +216,9 @@
             </span>
         </div>
         <div id="department-affiliation-collapse-{{ data.id }}" class="collapse">
+            {% endif %}
+            {% if data is null %}
+                <div class="float-end"><button type="button" class="btn-close" aria-label="Close" data-action="form-collection#deleteRow"></button></div>
             {% endif %}
             {% if form.department is defined %}
                 {{ form_row(form.department) }}
@@ -245,6 +256,9 @@
         </div>
         <div id="supervisor-affiliation-collapse-{{ data.id }}" class="collapse">
             {% endif %}
+            {% if data is null %}
+                <div class="float-end"><button type="button" class="btn-close" aria-label="Close" data-action="form-collection#deleteRow"></button></div>
+            {% endif %}
             {% if form.supervisor is defined %}
                 {{ form_row(form.supervisor) }}
             {% endif %}
@@ -279,6 +293,9 @@
             </span>
         </div>
         <div id="supervisee-affiliation-collapse-{{ data.id }}" class="collapse">
+            {% endif %}
+            {% if data is null %}
+                <div class="float-end"><button type="button" class="btn-close" aria-label="Close" data-action="form-collection#deleteRow"></button></div>
             {% endif %}
             {% if form.supervisee is defined %}
                 {{ form_row(form.supervisee) }}
