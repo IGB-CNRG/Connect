@@ -39,6 +39,9 @@ class ThemeAffiliation
     #[ORM\Column(type: 'json', enumType: ThemeRole::class)]
     private array $themeRoles = [];
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $exitReason = null;
+
     public function __toString()
     {
         $themeName = $this->getTheme()->getShortName();
@@ -139,6 +142,18 @@ class ThemeAffiliation
     public function setThemeRoles(array $themeRoles): self
     {
         $this->themeRoles = $themeRoles;
+
+        return $this;
+    }
+
+    public function getExitReason(): ?string
+    {
+        return $this->exitReason;
+    }
+
+    public function setExitReason(?string $exitReason): self
+    {
+        $this->exitReason = $exitReason;
 
         return $this;
     }

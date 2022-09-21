@@ -360,6 +360,7 @@
                     <th>Title</th>
                     <th>Start Date</th>
                     <th>End Date</th>
+                    <th>Exit Reason</th>
                     <th class="shrink"></th>
                 </tr>
                 {% for themeAffiliation in person.themeAffiliations %}
@@ -374,6 +375,7 @@
                         <td>{{ themeAffiliation.title }}</td>
                         <td>{% if themeAffiliation.startedAt is not null %}{{ themeAffiliation.startedAt|date('n/j/Y') }}{% endif %}</td>
                         <td>{% if themeAffiliation.endedAt is not null %}{{ themeAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
+                        <td>{{ themeAffiliation.exitReason }}</td>
                         <td class="shrink">
                             {% if themeAffiliation.endedAt is null and is_granted("PERSON_EDIT", person) %}
                                 <a href="{{ path('person_end_theme_affiliation', {'id': themeAffiliation.id, 'slug': person.slug}) }}">

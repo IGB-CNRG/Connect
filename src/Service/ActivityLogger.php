@@ -151,9 +151,10 @@ class ActivityLogger implements ServiceSubscriberInterface
         $this->logPersonActivity(
             $themeAffiliation->getPerson(),
             sprintf(
-                "Ended theme affiliation with %s on %s",
+                "Ended theme affiliation with %s on %s. Exit reason: \"%s\"",
                 $themeAffiliation->getTheme()->getShortName(),
-                $themeAffiliation->getEndedAt()->format(self::DATE_FORMAT)
+                $themeAffiliation->getEndedAt()->format(self::DATE_FORMAT),
+                $themeAffiliation->getExitReason()
             )
         );
     }
