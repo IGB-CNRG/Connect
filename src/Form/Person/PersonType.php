@@ -48,6 +48,7 @@ class PersonType extends AbstractType
             ])
             ->add('username', TextType::class, [
                 'required' => false,
+                'label' => 'IGB Username',
             ])
             ->add('uin', TextType::class, [
                 'required' => false,
@@ -86,8 +87,10 @@ class PersonType extends AbstractType
             ])
             ->add('imageFile', VichFileType::class, [
                 'required' => false,
-                'download_uri' => false,
+                'download_uri' => true,
+                'asset_helper' => true,
                 'allow_delete' => true,
+                'delete_label' => 'Remove current portrait',
                 'label' => 'Portrait',
             ])
             ->add('themeAffiliations', HistoricalCollectionType::class, [

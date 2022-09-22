@@ -6,7 +6,7 @@
     </div>
     {% form_theme form _self 'form_themes/_keys.html.twig' %}
     {{ form_start(form) }}
-    <div class="row">
+    <div class="row" data-controller="netid-autofill">
         <div class="col-lg">
             <div class="card mb-3">
                 <div class="card-header">Personal Info</div>
@@ -15,8 +15,8 @@
                     {{ form_row(form.lastName) }}
                     {{ form_row(form.middleInitial) }}
                     {{ form_row(form.preferredFirstName) }}
-                    {{ form_row(form.username) }}
-                    {{ form_row(form.netid) }}
+                    {{ form_row(form.netid, {'attr':{'data-action':'netid-autofill#updateFields'}}) }}
+                    {{ form_row(form.username, {'attr':{'data-netid-autofill-target':'username'}}) }}
                     {{ form_row(form.uin) }}
                 </div>
             </div>
@@ -25,7 +25,7 @@
             <div class="card mb-3">
                 <div class="card-header">Contact Info</div>
                 <div class="card-body">
-                    {{ form_row(form.email) }}
+                    {{ form_row(form.email, {'attr':{'data-netid-autofill-target':'email'}}) }}
                     {{ form_row(form.officePhone) }}
                     {{ form_row(form.officeNumber) }}
                     {{ form_row(form.officeBuilding) }}
