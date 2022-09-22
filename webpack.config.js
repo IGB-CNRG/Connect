@@ -1,4 +1,5 @@
 const Encore = require('@symfony/webpack-encore');
+const path = require('path');
 // Parse environment variables at build time
 const dotenv = require('dotenv');
 const env = dotenv.config({path: '.env.local'});
@@ -89,6 +90,20 @@ Encore
 
     // uncomment if you're having problems with a jQuery plugin
     .autoProvidejQuery()
+
+    .configureDevServerOptions(options => {
+        // options.server = {
+        //     type: 'https',
+        //     options: {
+        //         pfx: path.join(process.env.HOME, '.symfony/certs/default.p12'),
+        //         ca: path.join(process.env.HOME, '.symfony/certs/rootCA.pem'),
+        //         key: path.join(process.env.HOME, '.symfony/certs/rootCA-key.pem'),
+        //     }
+        // }
+        options.https = {
+            pfx: path.join(process.env.HOME, '.symfony/certs/default.p12'),
+        }
+    })
 ;
 
 module.exports = Encore.getWebpackConfig();
