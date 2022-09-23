@@ -119,9 +119,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: DepartmentAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $departmentAffiliations;
 
-    #[ORM\OneToMany(mappedBy: 'person', targetEntity: Note::class, orphanRemoval: true)]
-    private Collection $notes;
-
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Log::class, orphanRemoval: true)]
     private Collection $ownedLogs;
 
@@ -164,9 +161,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $imageSize;
 
-    #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: Note::class)]
-    private Collection $createdNotes;
-
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Slug(fields: ['firstName', 'lastName'], unique_base: 'id')]
     private ?string $slug;
@@ -182,12 +176,10 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         $this->supervisorAffiliations = new ArrayCollection();
         $this->superviseeAffiliations = new ArrayCollection();
         $this->departmentAffiliations = new ArrayCollection();
-        $this->notes = new ArrayCollection();
         $this->ownedLogs = new ArrayCollection();
         $this->logs = new ArrayCollection();
         $this->workflowProgress = new ArrayCollection();
         $this->documents = new ArrayCollection();
-        $this->createdNotes = new ArrayCollection();
     }
 
     public function __toString()
@@ -589,36 +581,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     }
 
     /**
-     * @return Collection<int, Note>|Note[]
-     */
-    public function getNotes(): Collection
-    {
-        return $this->notes;
-    }
-
-    public function addNote(Note $note): self
-    {
-        if (!$this->notes->contains($note)) {
-            $this->notes[] = $note;
-            $note->setPerson($this);
-        }
-
-        return $this;
-    }
-
-    public function removeNote(Note $note): self
-    {
-        if ($this->notes->removeElement($note)) {
-            // set the owning side to null (unless already changed)
-            if ($note->getPerson() === $this) {
-                $note->setPerson(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, Log>|Log[]
      */
     public function getOwnedLogs(): Collection
@@ -871,36 +833,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         $data = unserialize($serialized);
         $this->id = $data['id'];
         $this->username = $data['username'];
-    }
-
-    /**
-     * @return Collection<int, Note>
-     */
-    public function getCreatedNotes(): Collection
-    {
-        return $this->createdNotes;
-    }
-
-    public function addCreatedNote(Note $createdNote): self
-    {
-        if (!$this->createdNotes->contains($createdNote)) {
-            $this->createdNotes[] = $createdNote;
-            $createdNote->setCreatedBy($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCreatedNote(Note $createdNote): self
-    {
-        if ($this->createdNotes->removeElement($createdNote)) {
-            // set the owning side to null (unless already changed)
-            if ($createdNote->getCreatedBy() === $this) {
-                $createdNote->setCreatedBy(null);
-            }
-        }
-
-        return $this;
     }
 
     public function getSlug(): ?string

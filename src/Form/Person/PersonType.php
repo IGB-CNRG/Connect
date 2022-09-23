@@ -87,8 +87,7 @@ class PersonType extends AbstractType
             ])
             ->add('imageFile', VichFileType::class, [
                 'required' => false,
-                'download_uri' => true,
-                'asset_helper' => true,
+                'download_uri' => false,
                 'allow_delete' => true,
                 'delete_label' => 'Remove current portrait',
                 'label' => 'Portrait',

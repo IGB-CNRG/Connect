@@ -102,6 +102,42 @@
                     {% endif %}
                 </table>
             </div>
+            <div class="card mb-3">
+                <div class="card-header"><span class="fas fa-file float-end text-muted mt-1"></span> Documents</div>
+                {% if is_granted('PERSON_EDIT', person) %}
+                    <div class="card-body">
+                        <a href="{{ path('person_upload_document', {'slug': person.slug}) }}" class="btn btn-primary">
+                            <span class="fa fa-upload"></span> Upload
+                        </a>
+                    </div>
+                {% endif %}
+                <table class="table">
+                    {% for document in person.documents %}
+                        <tr>
+                            <td><a href="{{ asset(vich_uploader_asset(document, 'file')) }}">{{ document }}</a></td>
+                            <td class="shrink text-end text-muted">
+                                Uploaded by {{ document.uploadedBy }}<br/>
+                                {{ document.createdAt|date('n/j/Y') }}
+                                {% if document.type != constant('App\\Enum\\DocumentCategory::Other') %}
+                                    <br/>{{ document.type.choiceLabel }}
+                                {% endif %}
+                            </td>
+                            <td class="shrink">
+                                {% if is_granted("PERSON_EDIT", person) %}
+                                    <a class="text-decoration-none"
+                                       href="{{ path('person_edit_document', {'id': document.id, 'slug': person.slug}) }}">
+                                        <span class="fa fa-pencil"></span>
+                                    </a>
+                                    <a class="text-decoration-none"
+                                       href="{{ path('person_delete_document', {'id': document.id, 'slug': person.slug}) }}">
+                                        <span class="fa fa-trash"></span>
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
         </div>
         <div class="col-lg">
             <div class="card mb-3">
@@ -193,89 +229,6 @@
                     </table>
                 </div>
             {% endif %}
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-lg">
-            <div class="card mb-3">
-                <div class="card-header"><span class="fas fa-file float-end text-muted mt-1"></span> Documents</div>
-                {% if is_granted('PERSON_EDIT', person) %}
-                    <div class="card-body">
-                        <a href="{{ path('person_upload_document', {'slug': person.slug}) }}" class="btn btn-primary">
-                            <span class="fa fa-upload"></span> Upload
-                        </a>
-                    </div>
-                {% endif %}
-                <table class="table">
-                    {% for document in person.documents %}
-                        <tr>
-                            <td><a href="{{ asset(vich_uploader_asset(document, 'file')) }}">{{ document }}</a></td>
-                            <td class="shrink text-end text-muted">
-                                Uploaded by {{ document.uploadedBy }}<br/>
-                                {{ document.createdAt|date('n/j/Y') }}
-                                {% if document.type != constant('App\\Enum\\DocumentCategory::Other') %}
-                                    <br/>{{ document.type.choiceLabel }}
-                                {% endif %}
-                            </td>
-                            <td class="shrink">
-                                {% if is_granted("PERSON_EDIT", person) %}
-                                    <a class="text-decoration-none"
-                                       href="{{ path('person_edit_document', {'id': document.id, 'slug': person.slug}) }}">
-                                        <span class="fa fa-pencil"></span>
-                                    </a>
-                                    <a class="text-decoration-none"
-                                       href="{{ path('person_delete_document', {'id': document.id, 'slug': person.slug}) }}">
-                                        <span class="fa fa-trash"></span>
-                                    </a>
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </table>
-            </div>
-        </div>
-        <div class="col-lg">
-            <div class="card mb-3">
-                <div class="card-header"><span class="fas fa-comment float-end text-muted mt-1"></span> Notes</div>
-                {% if is_granted('NOTE_ADD', person) %}
-                    <div class="card-body">
-                        <a href="{{ path('person_add_note', {'slug': person.slug}) }}" class="btn btn-primary">
-                            <span class="fa fa-plus"></span> Add Note
-                        </a>
-                    </div>
-                {% endif %}
-                <table class="table border-top border-1">
-                    {% for note in person.notes %}
-                        {% if is_granted('NOTE_VIEW', note) %}
-                            <tr>
-                                <td>
-                                    {{ note.text|nl2br }}
-                                </td>
-                                <td class="shrink text-end text-muted">
-                                    {{ note.createdBy }}<br/>
-                                    {{ note.createdAt|date('n/j/Y') }}
-                                    {% if note.type != constant('App\\Enum\\NoteCategory::General') %}
-                                        <br/>{{ note.type.label }} Note
-                                    {% endif %}
-                                </td>
-                                <td class="shrink">
-                                    {% if is_granted('NOTE_EDIT', note) %}
-                                        <a class="text-decoration-none"
-                                           href="{{ path('person_edit_note', {'id': note.id, 'slug': person.slug}) }}">
-                                            <span class="fa fa-pencil"></span>
-                                        </a>
-                                        <a class="text-decoration-none"
-                                           href="{{ path('person_delete_note', {'id': note.id, 'slug': person.slug}) }}">
-                                            <span class="fa fa-trash"></span>
-                                        </a>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endif %}
-                    {% endfor %}
-                </table>
-            </div>
         </div>
     </div>
 

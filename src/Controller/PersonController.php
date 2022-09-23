@@ -7,7 +7,6 @@
 namespace App\Controller;
 
 use App\Entity\DepartmentAffiliation;
-use App\Entity\Note;
 use App\Entity\Person;
 use App\Entity\RoomAffiliation;
 use App\Entity\ThemeAffiliation;
@@ -16,7 +15,6 @@ use App\Form\EndDepartmentAffiliationType;
 use App\Form\EndRoomAffiliationType;
 use App\Form\EndThemeAffiliationType;
 use App\Form\KeysType;
-use App\Form\NoteType;
 use App\Form\Person\DepartmentAffiliationType;
 use App\Form\Person\PersonType;
 use App\Form\Person\RoomAffiliationType;
@@ -185,71 +183,6 @@ class PersonController extends AbstractController
             'person' => $person,
             'themeAffiliation' => $themeAffiliation,
             'form' => $form->createView(),
-        ]);
-    }
-
-    #[Route('/person/{slug}/note/{id}/edit', name: 'person_edit_note')]
-    #[Route('/person/{slug}/add-note', name: 'person_add_note')]
-    #[ParamConverter('person', options: ['mapping' => ['slug' => 'slug']])]
-    public function editNote(
-        Person $person,
-        ?Note $note,
-        Request $request,
-        EntityManagerInterface $em,
-        ActivityLogger $logger
-    ): Response {
-        if ($note === null) {
-            $this->denyAccessUnlessGranted('NOTE_ADD');
-            /** @noinspection PhpParamsInspection */
-            $note = (new Note())
-                ->setPerson($person)
-                ->setCreatedBy($this->getUser());
-        } else {
-            $this->denyAccessUnlessGranted('NOTE_EDIT', $note);
-        }
-        $form = $this->createForm(NoteType::class, $note);
-        $form->add('save', SubmitType::class);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($note);
-            $logger->logPersonActivity($person, 'Added note'); // todo a little more detail?
-            $em->flush();
-
-            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
-        }
-
-        return $this->render('person/note/edit.html.twig', [
-            'person' => $person,
-            'note' => $note,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    #[Route('/person/{slug}/note/{id}/delete', name: 'person_delete_note')]
-    #[ParamConverter('person', options: ['mapping' => ['slug' => 'slug']])]
-    #[IsGranted('NOTE_EDIT', subject: 'note')]
-    public function deleteNote(
-        Person $person,
-        Note $note,
-        Request $request,
-        EntityManagerInterface $em,
-        ActivityLogger $logger
-    ): Response {
-        if ($request->isMethod(Request::METHOD_POST)) {
-            $em->remove($note);
-            $logger->logPersonActivity(
-                $person,
-                sprintf('Removed note from %s', $note->getCreatedAt()->format('n/j/Y'))
-            );
-            $em->flush();
-
-            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
-        }
-
-        return $this->render('person/note/delete.html.twig', [
-            'person' => $person,
-            'note' => $note,
         ]);
     }
 
