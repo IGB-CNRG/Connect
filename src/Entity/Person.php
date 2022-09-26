@@ -7,6 +7,7 @@
 namespace App\Entity;
 
 use App\Attribute\Loggable;
+use App\Enum\PersonEntryStage;
 use App\Enum\PreferredAddress;
 use App\Repository\PersonRepository;
 use DateTimeInterface;
@@ -129,9 +130,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\OrderBy(['createdAt' => 'DESC'])]
     private Collection $logs;
 
-    #[ORM\OneToMany(mappedBy: 'person', targetEntity: WorkflowProgress::class, orphanRemoval: true)]
-    private Collection $workflowProgress;
-
     #[ORM\ManyToOne(targetEntity: Building::class, inversedBy: 'people')]
     private ?Building $officeBuilding;
 
@@ -174,6 +172,9 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $otherAddress;
 
+    #[ORM\Column(nullable: true, enumType: PersonEntryStage::class)]
+    private ?PersonEntryStage $entryStage;
+
     public function __construct()
     {
         $this->roomAffiliations = new ArrayCollection();
@@ -185,7 +186,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         $this->notes = new ArrayCollection();
         $this->ownedLogs = new ArrayCollection();
         $this->logs = new ArrayCollection();
-        $this->workflowProgress = new ArrayCollection();
         $this->documents = new ArrayCollection();
         $this->createdNotes = new ArrayCollection();
     }
@@ -672,36 +672,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
             // set the owning side to null (unless already changed)
             if ($log->getPerson() === $this) {
                 $log->setPerson(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, WorkflowProgress>
-     */
-    public function getWorkflowProgress(): Collection
-    {
-        return $this->workflowProgress;
-    }
-
-    public function addWorkflowProgress(WorkflowProgress $workflowProgress): self
-    {
-        if (!$this->workflowProgress->contains($workflowProgress)) {
-            $this->workflowProgress[] = $workflowProgress;
-            $workflowProgress->setPerson($this);
-        }
-
-        return $this;
-    }
-
-    public function removeWorkflowProgress(WorkflowProgress $workflowProgress): self
-    {
-        if ($this->workflowProgress->removeElement($workflowProgress)) {
-            // set the owning side to null (unless already changed)
-            if ($workflowProgress->getPerson() === $this) {
-                $workflowProgress->setPerson(null);
             }
         }
 
