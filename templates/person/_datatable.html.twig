@@ -1,4 +1,5 @@
 {% block person_datatable_tr %}
+    {# @var person \App\Entity\Person #}
     <tr>
         {# Name/Portrait Column #}
         <td {% if person.imageName is null %}class="td-no-portrait"{% endif %}
@@ -70,24 +71,13 @@
                 {{ roomAffiliation.room.number }}{% if not loop.last %}, {% endif %}
             {% endfor %}
         </td>
-        <td class="d-none">
-            {% if app.request.get('_route' == 'person_everyone') %}
-                {%- for themeAffiliation in person.themeAffiliations -%}
-                    {%- block comboSearch -%}
-                        {{- themeAffiliation.theme.shortName -}},
-                        {{- themeAffiliation.memberCategory.shortName??themeAffiliation.memberCategory.name -}},
-                        {% for role in themeAffiliation.themeRoles %}
-                            {{ role.displayName }}
-                        {% endfor %}
-                        ;
-                    {%- endblock -%}
-                {%- endfor -%}
-            {% else %}
-                {% for themeAffiliation in person.themeAffiliations|current %}
-                    {{ block('comboSearch') }}
-                {% endfor %}
-            {% endif %}
-        </td>
+
+
+        {# Export columns #}
+        <td>{{ person.lastName }}</td>
+        <td>{{ person.firstName }}</td>
+        <td>{{ person.middleInitial }}</td>
+        <td>{{ person.email }}</td>
     </tr>
 {% endblock %}
 
@@ -97,6 +87,11 @@
         <th>Email</th>
         <th data-orderable="false">Theme</th>
         <th>Room</th>
-        <th class="d-none">Combo Search</th>
+
+        {# Export columns #}
+        <th data-visible="false" class="export-column">Last Name</th>
+        <th data-visible="false" class="export-column">First Name</th>
+        <th data-visible="false" class="export-column">Middle Initial</th>
+        <th data-visible="false" class="export-column">Email</th>
     </tr>
 {% endblock %}

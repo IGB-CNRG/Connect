@@ -27,7 +27,12 @@ export default class extends Controller {
                 "<'row'<'col-sm-12'tr>>" +
                 "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
             buttons: [
-                'excel'
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: '.export-column'
+                    }
+                },
             ],
             drawCallback: function( settings ) {
                 table.find("img:visible").lazy();

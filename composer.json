@@ -101,7 +101,8 @@
         ]
     },
     "conflict": {
-        "symfony/symfony": "*"
+        "symfony/symfony": "*",
+        "doctrine/orm": "2.13.2"
     },
     "extra": {
         "symfony": {
