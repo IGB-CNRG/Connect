@@ -1,5 +1,6 @@
 {% block person_datatable_tr %}
     <tr>
+        {# Name/Portrait Column #}
         <td {% if person.imageName is null %}class="td-no-portrait"{% endif %}
             data-order="{{ person.lastName }}"
             data-search="{% block person_name %}{% if person.lastName is not empty %}{{ person.name }}{% else %}No name{% endif %}{% endblock %}">
@@ -16,15 +17,44 @@
             {% endif %}
             <a href="{{ path('person_view', {'slug': person.slug}) }}">{{ block('person_name') }}</a>
         </td>
+
+        {# Email Column #}
         <td>{{ person.email }}</td>
-        <td>
+
+        {# Theme Affiliations Column #}
+        <td data-search="{%- if app.request.get('_route' == 'person_everyone') -%}
+                {%- for themeAffiliation in person.themeAffiliations -%}
+                    {%- block comboSearch -%}
+                        {{- themeAffiliation.theme.shortName -}},
+                        {{- themeAffiliation.memberCategory.shortName??themeAffiliation.memberCategory.name -}},
+                        {%- for role in themeAffiliation.themeRoles -%}
+                            {{ role.displayName }}
+                        {%- endfor -%}
+                        ;
+                    {%- endblock -%}
+                {%- endfor -%}
+            {%- else -%}
+                {%- for themeAffiliation in person.themeAffiliations|current -%}
+                    {{ block('comboSearch') }}
+                {%- endfor -%}
+            {%- endif -%}">
             {% if app.request.get('_route') == 'person_everyone' %}
                 {% for themeAffiliation in person.themeAffiliations %}
                     {% block themes %}
-                        {% if not themeAffiliation.isCurrent %}<span class="text-muted">{% endif %}
-                        <a href="{{ path('theme_view', {'shortName': themeAffiliation.theme.shortName}) }}">{{ themeAffiliation.theme.shortName }}</a>
-                        {% if not themeAffiliation.isCurrent %}</span>{% endif %}
-                        {% if not loop.last %}<br/>{% endif %}
+                        <div class="{{ html_classes('theme-row', {'text-muted': not themeAffiliation.isCurrent}) }}">
+
+                            <a href="{{ path('theme_view', {'shortName': themeAffiliation.theme.shortName}) }}">{{ themeAffiliation.theme.shortName }}</a>
+
+                            {{ themeAffiliation.memberCategory.shortName??themeAffiliation.memberCategory.name }}
+
+                            {% if themeAffiliation.title %}
+                                ({{ themeAffiliation.title }})
+                            {% endif %}
+                            {% for role in themeAffiliation.themeRoles %}
+                                ({{ role.displayName }})
+                            {% endfor %}
+
+                        </div>
                     {% endblock %}
                 {% endfor %}
             {% else %}
@@ -33,51 +63,8 @@
                 {% endfor %}
             {% endif %}
         </td>
-        <td>
-            {% if app.request.get('_route') == 'person_everyone' %}
-                {% for themeAffiliation in person.themeAffiliations %}
-                    {% block titles %}
-                        {% if not themeAffiliation.isCurrent %}<span class="text-muted">{% endif %}
-                        {% if themeAffiliation.title %}
-                            {{ themeAffiliation.title }}
-                        {% endif %}
-                        {% if themeAffiliation.title and themeAffiliation.themeRoles|length>0 %}
-                            (
-                        {%- endif -%}
-                        {% for role in themeAffiliation.themeRoles %}
-                            {{ role.displayName }}
-                        {% endfor %}
-                        {%- if themeAffiliation.title and themeAffiliation.themeRoles|length>0 -%}
-                            )
-                        {% endif %}
-                        {% if not themeAffiliation.isCurrent %}</span>{% endif %}
-                        {%- if not loop.last -%}
-                            <br/>
-                        {% endif %}
-                    {% endblock %}
-                {% endfor %}
-            {% else %}
-                {% for themeAffiliation in person.themeAffiliations|current %}
-                    {{ block('titles') }}
-                {% endfor %}
-            {% endif %}
-        </td>
-        <td>
-            {% if app.request.get('_route') == 'person_everyone' %}
-                {% for themeAffiliation in person.themeAffiliations %}
-                    {% block types %}
-                        {% if not themeAffiliation.isCurrent %}<span class="text-muted">{% endif %}
-                        {{ themeAffiliation.memberCategory.shortName??themeAffiliation.memberCategory.name }}
-                        {% if not themeAffiliation.isCurrent %}</span>{% endif %}
-                        {% if not loop.last %}<br/>{% endif %}
-                    {% endblock %}
-                {% endfor %}
-            {% else %}
-                {% for themeAffiliation in person.themeAffiliations|current %}
-                    {{ block('types') }}
-                {% endfor %}
-            {% endif %}
-        </td>
+
+        {# Rooms Column #}
         <td>
             {% for roomAffiliation in person.roomAffiliations|current %}
                 {{ roomAffiliation.room.number }}{% if not loop.last %}, {% endif %}
@@ -108,9 +95,7 @@
     <tr>
         <th>Name</th>
         <th>Email</th>
-        <th>Theme</th>
-        <th>Title</th>
-        <th>Type</th>
+        <th data-orderable="false">Theme</th>
         <th>Room</th>
         <th class="d-none">Combo Search</th>
     </tr>

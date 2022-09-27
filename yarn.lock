@@ -2055,6 +2055,23 @@ datatables.net-bs5@>=1.11.3, datatables.net-bs5@^1.11.4:
     datatables.net ">=1.11.3"
     jquery ">=1.7"
 
+datatables.net-buttons-bs5@^2.2.3:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/datatables.net-buttons-bs5/-/datatables.net-buttons-bs5-2.2.3.tgz#816ad321142a6cc343d0a805fcbff2891387c6f1"
+  integrity sha512-pQVBLBkG+G85eldTxEyU7SqqIn009pirbylmRAA+Ll9KYwsbyflQOZrTqKVKH6N4ycLjyR6gwtHeLgGnK23tBQ==
+  dependencies:
+    datatables.net-bs5 ">=1.11.3"
+    datatables.net-buttons ">=2.0.1"
+    jquery ">=1.7"
+
+datatables.net-buttons@>=2.0.1, datatables.net-buttons@^2.2.3:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/datatables.net-buttons/-/datatables.net-buttons-2.2.3.tgz#d0a2c5a4dcb48fa46f2c4435aaddf1ec45ed6e47"
+  integrity sha512-9Xz52grBQxAgs6Meo+j/8koxrhnINt0fTc9tLYYb4UHxgtM2BzTGV4NA8KxXGxVjslem41e0quC5eXpXt9d4tw==
+  dependencies:
+    datatables.net ">=1.11.3"
+    jquery ">=1.7"
+
 datatables.net-responsive-bs5@^2.2.9:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/datatables.net-responsive-bs5/-/datatables.net-responsive-bs5-2.3.0.tgz#f92b79b7d5995c8c6cdc31ab0a725c240bcec448"

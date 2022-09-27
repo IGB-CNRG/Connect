@@ -10,6 +10,8 @@ import $ from 'jquery';
 require('jquery-lazy');
 window.JSZip = require('jszip');
 require('datatables.net-bs5');
+require('datatables.net-buttons-bs5');
+require('datatables.net-buttons/js/buttons.html5')();
 
 export default class extends Controller {
     static targets = ['table'];
@@ -34,9 +36,11 @@ export default class extends Controller {
     }
 
     columnSearch() {
-        const searchRegex = $(event.currentTarget).val().map(x => $.fn.dataTable.util.escapeRegex(x)).join('|');
-        const column = this.dt.column(event.currentTarget.dataset.column);
-        column.search(searchRegex, true, false).draw();
+        if(event.currentTarget.dataset.column) {
+            const searchRegex = $(event.currentTarget).val().map(x => $.fn.dataTable.util.escapeRegex(x)).join('|');
+            const column = this.dt.column(event.currentTarget.dataset.column);
+            column.search(searchRegex, true, false).draw();
+        }
 
         if (this.comboPatternValue.length > 0 && this.comboPatternValue.includes(event.currentTarget.id)) {
             this.comboSearch();
