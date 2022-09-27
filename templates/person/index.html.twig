@@ -10,7 +10,7 @@
 {% block content %}
     <div data-controller="datatables" data-datatables-combo-column-value="6"
          data-datatables-combo-pattern-value='["advanced_search_theme","advanced_search_employeeType","advanced_search_role"]'>
-        <table id="people" class="table" data-datatables-target="table">
+        <table id="people" class="table" data-datatables-target="table" style="width: 100%">
             <thead>
             {{ block('person_datatable_thead') }}
             </thead>
