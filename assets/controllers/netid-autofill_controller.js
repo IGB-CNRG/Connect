@@ -10,10 +10,6 @@ const $ = require("jquery");
 export default class extends Controller {
     static targets = ['username', 'email'];
 
-    connect() {
-        console.log(this.usernameTarget, this.emailTarget);
-    }
-
     updateFields(event){
         this.usernameTarget.value = event.target.value;
         this.emailTarget.value = event.target.value + '@illinois.edu';

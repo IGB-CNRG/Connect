@@ -10,13 +10,13 @@
         <div class="col-lg">
             <div class="card mb-3">
                 <div class="card-header">Personal Info</div>
-                <div class="card-body">
+                <div class="card-body" {{ stimulus_controller('username-check', {'url': path('api_person_username')}) }}>
                     {{ form_row(form.firstName) }}
                     {{ form_row(form.lastName) }}
                     {{ form_row(form.middleInitial) }}
                     {{ form_row(form.preferredFirstName) }}
-                    {{ form_row(form.netid, {'attr':{'data-action':'netid-autofill#updateFields'}}) }}
-                    {{ form_row(form.username, {'attr':{'data-netid-autofill-target':'username'}}) }}
+                    {{ form_row(form.netid, {'attr':{'data-action':'netid-autofill#updateFields change->username-check#checkIfUsernameUnique'}}) }}
+                    {{ form_row(form.username, {'attr':{'data-netid-autofill-target':'username', 'data-username-check-target':'username', 'data-action':'change->username-check#checkIfUsernameUnique'}}) }}
                     {{ form_row(form.uin) }}
                 </div>
             </div>

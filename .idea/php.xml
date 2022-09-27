@@ -155,6 +155,8 @@
       <path value="$PROJECT_DIR$/vendor/psr/simple-cache" />
       <path value="$PROJECT_DIR$/vendor/myclabs/php-enum" />
       <path value="$PROJECT_DIR$/vendor/masterminds/html5" />
+      <path value="$PROJECT_DIR$/vendor/friendsofsymfony/jsrouting-bundle" />
+      <path value="$PROJECT_DIR$/vendor/willdurand/jsonp-callback-validator" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

@@ -160,6 +160,8 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/psr/simple-cache" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/myclabs/php-enum" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/masterminds/html5" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/friendsofsymfony/jsrouting-bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/willdurand/jsonp-callback-validator" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

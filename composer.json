@@ -15,6 +15,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.11",
         "easycorp/easyadmin-bundle": "^4.2",
+        "friendsofsymfony/jsrouting-bundle": "^3.2",
         "liip/imagine-bundle": "^2.8",
         "phpdocumentor/reflection-docblock": "^5.3",
         "phpoffice/phpspreadsheet": "^1.23",

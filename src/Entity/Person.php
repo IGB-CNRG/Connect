@@ -16,6 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Slug;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Serializable;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -24,6 +25,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: PersonRepository::class)]
 #[Vich\Uploadable]
+#[UniqueEntity('username', 'A person with this username already exists')]
 class Person implements UserInterface, PasswordAuthenticatedUserInterface, Serializable
 // TODO Is it a bug that we have to implement PasswordAuthenticatedUserInterface even though this entity doesn't handle authentication?
 {

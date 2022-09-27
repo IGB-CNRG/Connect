@@ -1,5 +1,6 @@
 const Encore = require('@symfony/webpack-encore');
 const path = require('path');
+const FosRouting = require('fos-router/webpack/FosRouting');
 // Parse environment variables at build time
 const dotenv = require('dotenv');
 const env = dotenv.config({path: '.env.local'});
@@ -90,6 +91,8 @@ Encore
 
     // uncomment if you're having problems with a jQuery plugin
     .autoProvidejQuery()
+
+    .addPlugin(new FosRouting())
 
     .configureDevServerOptions(options => {
         // options.server = {

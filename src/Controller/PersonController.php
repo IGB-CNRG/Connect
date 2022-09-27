@@ -28,6 +28,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -57,7 +58,7 @@ class PersonController extends AbstractController
         ]);
     }
 
-    #[Route('/person/{slug}', name: 'person_view')]
+    #[Route('/person/{slug}', name: 'person_view', options: ['expose' => true])]
     #[IsGranted('PERSON_VIEW', subject: 'person')]
     public function view(Person $person): Response
     {
@@ -324,5 +325,27 @@ class PersonController extends AbstractController
             'roomAffiliation' => $roomAffiliation,
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route('/api/person', name: 'api_person_username', methods: ['GET'])]
+    public function personJson(Request $request, PersonRepository $personRepository): JsonResponse
+    {
+        $username = $request->query->get('username');
+        if ($username) {
+            $person = $personRepository->findOneBy(['username' => $username]);
+            if (!$person) {
+                // todo we might want this to have a different default return value, later
+                return $this->json([
+                    'id' => 0,
+                    'name' => '',
+                    'slug' => '',
+                ]);
+            }
+            return $this->json([
+                'id' => $person->getId(),
+                'name' => $person->getName(),
+                'slug' => $person->getSlug(),
+            ]);
+        }
     }
 }
