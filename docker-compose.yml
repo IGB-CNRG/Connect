@@ -10,7 +10,7 @@ services:
       MARIADB_PASSWORD: ChangeMe!
       MARIADB_ROOT_PASSWORD: ChangeMe!
     volumes:
-      - connect-data:/var/lib/mysql:rw
+      - connect-workflow-data:/var/lib/mysql:rw
 ###< doctrine/doctrine-bundle ###
   ldap:
     image: bitnami/openldap:latest
@@ -22,5 +22,5 @@ services:
 
 volumes:
 ###> doctrine/doctrine-bundle ###
-  connect-data:
+  connect-workflow-data:
 ###< doctrine/doctrine-bundle ###

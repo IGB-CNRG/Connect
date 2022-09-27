@@ -17,7 +17,7 @@ trait WorkflowStageAdjunct
     private Collection $memberCategories;
 
     #[ORM\Column(enumType: PersonEntryStage::class)]
-    private array $personEntryStage = [];
+    private ?PersonEntryStage $personEntryStage = null;
 
     private function adjunctConstruct(): void
     {
@@ -48,15 +48,12 @@ trait WorkflowStageAdjunct
         return $this;
     }
 
-    /**
-     * @return PersonEntryStage[]
-     */
-    public function getPersonEntryStage(): array
+    public function getPersonEntryStage(): ?PersonEntryStage
     {
         return $this->personEntryStage;
     }
 
-    public function setPersonEntryStage(array $personEntryStage): self
+    public function setPersonEntryStage(?PersonEntryStage $personEntryStage): self
     {
         $this->personEntryStage = $personEntryStage;
 
