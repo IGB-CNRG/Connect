@@ -274,7 +274,7 @@ class ImportPeopleCommand extends Command
                         ->setMemberCategory($typesById[$user_theme['type_id']]);
 
                     if ($this->isThemeLeader($user_theme['type_id'])) {
-                        $themeAffiliation->setThemeRoles([ThemeRole::ThemeAdmin]);
+                        $themeAffiliation->setThemeRoles([ThemeRole::ThemeLeader]);
                     }
 
                     if ($user_theme['start_date'] == $user_theme['end_date']) {
