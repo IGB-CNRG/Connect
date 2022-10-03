@@ -911,6 +911,18 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         return $this;
     }
 
+    public function getEntryStage(): ?PersonEntryStage
+    {
+        return $this->entryStage;
+    }
+
+    public function setEntryStage(?PersonEntryStage $entryStage): self
+    {
+        $this->entryStage = $entryStage;
+
+        return $this;
+    }
+
     public function getStartedAt(): ?DateTimeInterface
     {
         if ($this->getThemeAffiliations()->count() > 0) {

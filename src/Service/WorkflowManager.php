@@ -6,10 +6,15 @@
 
 namespace App\Service;
 
+use App\Entity\Person;
+
 class WorkflowManager
 {
-    public function completeStage()
+    public function completeEntryStage(Person $person): void
     {
-        // todo stub
+        $entryStage = $person->getEntryStage();
+        // todo this needs to also fire off any associated events
+        $person->setEntryStage($entryStage->next());
+        // todo should logging be part of this function, or up to the controller?
     }
 }

@@ -22,18 +22,18 @@ class RoomAffiliation
 
     #[ORM\ManyToOne(targetEntity: Room::class, inversedBy: 'roomAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
-    private Room $room;
+    private ?Room $room = null;
 
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'roomAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
-    private Person $person;
+    private ?Person $person = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getRoom(): Room
+    public function getRoom(): ?Room
     {
         return $this->room;
     }
@@ -50,7 +50,7 @@ class RoomAffiliation
         return $this->person;
     }
 
-    public function setPerson(Person $person): self
+    public function setPerson(?Person $person): self
     {
         $this->person = $person;
 

@@ -6,12 +6,10 @@
 
 namespace App\Form\Person;
 
-use App\Entity\Department;
 use App\Entity\DepartmentAffiliation;
+use App\Form\Fields\DepartmentType;
 use App\Form\Fields\EndDateType;
 use App\Form\Fields\StartDateType;
-use App\Repository\DepartmentRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,6 +21,7 @@ use Symfony\Component\Security\Core\Security;
 class DepartmentAffiliationType extends AbstractType
 {
     public function __construct(private Security $security) {}
+
     public function getBlockPrefix(): string
     {
         return 'DepartmentAffiliation';
@@ -40,26 +39,7 @@ class DepartmentAffiliationType extends AbstractType
 
                 if (!$departmentAffiliation || $departmentAffiliation->getId() === null
                     || $this->security->isGranted('PERSON_EDIT_HISTORY', $departmentAffiliation->getPerson())) {
-                    $form->add('department', EntityType::class, [
-                        'class' => Department::class,
-                        'attr' => [
-                            'data-controller' => 'select2',
-                            'data-other-entry-target' => 'select',
-                            'data-action' => 'change->other-entry#toggle',
-                        ],
-                        'required' => false,
-                        'placeholder' => 'Other (please specify)',
-                        'group_by' => function (Department $choice, $key, $value) {
-                            if ($choice->getCollege()) {
-                                return $choice->getCollege();
-                            } else {
-                                return null;
-                            }
-                        },
-                        'query_builder' => function (DepartmentRepository $departmentRepository) {
-                            return $departmentRepository->createFormSortedQueryBuilder();
-                        }
-                    ])
+                    $form->add('department', DepartmentType::class)
                         ->add('otherDepartment', TextType::class, [
                             'required' => false,
                             'attr' => [
