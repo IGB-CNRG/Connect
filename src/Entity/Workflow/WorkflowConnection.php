@@ -4,7 +4,7 @@
  * All rights reserved.
  */
 
-namespace App\Entity;
+namespace App\Entity\Workflow;
 
 use App\Repository\WorkflowConnectionRepository;
 use Doctrine\Common\Collections\ArrayCollection;

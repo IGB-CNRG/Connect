@@ -4,7 +4,7 @@
  * All rights reserved.
  */
 
-namespace App\Enum;
+namespace App\Enum\Workflow;
 
 interface WorkflowStage
 {
@@ -12,4 +12,5 @@ interface WorkflowStage
     public function first(): self;
     public function next(): self;
     public function previous(): self;
+    public function approvers(): WorkflowApproval;
 }

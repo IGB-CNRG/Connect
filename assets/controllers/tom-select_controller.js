@@ -9,7 +9,13 @@ import 'tom-select/dist/css/tom-select.bootstrap5.css';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
+    static values = {
+        openOnFocus: {type: Boolean, default: true},
+    };
+
     connect(){
-        new TomSelect(this.element, {});
+        new TomSelect(this.element, {
+            openOnFocus: this.openOnFocusValue,
+        });
     }
 }

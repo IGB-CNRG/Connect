@@ -8,7 +8,7 @@
             <form action="{{ path('login') }}" method="post">
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
-                    <input type="text" id="username" name="_username" value="{{ last_username }}" class="form-control"
+                    <input type="text" id="username" name="_username" value="{{ last_username }}" class="form-control" autofocus="autofocus"
                            aria-describedby="usernameHelp"/>
                     <div id="usernameHelp" class="form-text">Please use your IGB username and password</div>
                 </div>

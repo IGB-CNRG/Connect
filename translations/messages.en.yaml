@@ -1,0 +1,15 @@
+entry_form:
+  department: UIUC home department
+  room: "IGB Office/Lab/Cubicle #"
+  phone: "Office phone #"
+  supervisor: Faculty sponsor/supervisor
+  member_category: Position type
+person:
+  theme: Theme
+  started_at: Start date
+  ended_at: End date
+  netid: NetID
+  firstName: First name
+  lastName: Last name
+  uin: UIN
+  email: Email

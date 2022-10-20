@@ -57,7 +57,26 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
             ->getResult();
     }
 
-    public function findByRoleInTheme(Theme $theme, ThemeRole $role)
+    /**
+     * @param string $role
+     * @return Person[]
+     */
+    public function findByRole(string $role): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere("p.roles like :role")
+            ->addOrderBy('p.lastName')
+            ->setParameter('role', "%$role%")
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param Theme $theme
+     * @param ThemeRole $role
+     * @return Person[]
+     */
+    public function findByRoleInTheme(Theme $theme, ThemeRole $role): array
     {
         $qb = $this->createQueryBuilder('p')
             ->leftJoin('p.themeAffiliations', 'ta')

@@ -14,7 +14,7 @@
                         <td>{{ departmentAffiliation.department??departmentAffiliation.otherDepartment }}</td>
                     </tr>
                     <tr>
-                        <th>Start Date</th>
+                        <th>{{ 'person.started_at'|trans }}</th>
                         <td>{{ departmentAffiliation.startedAt|date('n/j/Y') }}</td>
                     </tr>
                 </table>

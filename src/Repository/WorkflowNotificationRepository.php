@@ -6,7 +6,7 @@
 
 namespace App\Repository;
 
-use App\Entity\WorkflowNotification;
+use App\Entity\Workflow\WorkflowNotification;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

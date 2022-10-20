@@ -7,9 +7,10 @@
 namespace App\Entity;
 
 use App\Attribute\Loggable;
-use App\Enum\PersonEntryStage;
+use App\Entity\Workflow\PersonEntryWorkflowProgress;
 use App\Enum\PreferredAddress;
 use App\Repository\PersonRepository;
+use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -172,8 +173,12 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $otherAddress;
 
-    #[ORM\Column(nullable: true, enumType: PersonEntryStage::class)]
-    private ?PersonEntryStage $entryStage;
+    #[ORM\ManyToMany(targetEntity: PersonEntryWorkflowProgress::class, mappedBy: 'approvers')]
+    private Collection $personEntryWorkflowApprovals;
+
+    #[ORM\OneToOne(mappedBy: 'person', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?PersonEntryWorkflowProgress $personEntryWorkflowProgress = null;
 
     public function __construct()
     {
@@ -188,6 +193,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         $this->logs = new ArrayCollection();
         $this->documents = new ArrayCollection();
         $this->createdNotes = new ArrayCollection();
+        $this->personEntryWorkflowApprovals = new ArrayCollection();
     }
 
     public function __toString()
@@ -201,16 +207,15 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     {
         if ($this->getPreferredFirstName()) {
             return $this->getPreferredFirstName() . ' ' . $this->getLastName();
-        } else {
-            return $this->getFirstName() . ' ' . $this->getLastName(); // TODO this should be a little smarter
         }
+        return $this->getFirstName() . ' ' . $this->getLastName(); // TODO this should be a little smarter
     }
 
     public function getIsCurrent(): bool
     {
-        return $this->getThemeAffiliations()->filter(function(ThemeAffiliation $themeAffiliation){
-            return $themeAffiliation->isCurrent();
-        })->count()>0;
+        return $this->getThemeAffiliations()->filter(function (ThemeAffiliation $themeAffiliation) {
+                return $themeAffiliation->isCurrent();
+            })->count() > 0;
     }
 
     public function setImageFile(?File $imageFile = null): void
@@ -220,7 +225,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         if (null !== $imageFile) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = new \DateTimeImmutable();
+            $this->updatedAt = new DateTimeImmutable();
         }
     }
 
@@ -469,7 +474,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     }
 
     /**
-     * @return Collection<int, ThemeAffiliation>|ThemeAffiliation[]
+     * @return Collection<int, ThemeAffiliation>
      */
     public function getThemeAffiliations(): Collection
     {
@@ -911,18 +916,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         return $this;
     }
 
-    public function getEntryStage(): ?PersonEntryStage
-    {
-        return $this->entryStage;
-    }
-
-    public function setEntryStage(?PersonEntryStage $entryStage): self
-    {
-        $this->entryStage = $entryStage;
-
-        return $this;
-    }
-
     public function getStartedAt(): ?DateTimeInterface
     {
         if ($this->getThemeAffiliations()->count() > 0) {
@@ -955,5 +948,49 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
             );
         }
         return null;
+    }
+
+    /**
+     * @return Collection<int, PersonEntryWorkflowProgress>
+     */
+    public function getPersonEntryWorkflowApprovals(): Collection
+    {
+        return $this->personEntryWorkflowApprovals;
+    }
+
+    public function addPersonEntryWorkflowApproval(PersonEntryWorkflowProgress $personEntryWorkflowApproval): self
+    {
+        if (!$this->personEntryWorkflowApprovals->contains($personEntryWorkflowApproval)) {
+            $this->personEntryWorkflowApprovals->add($personEntryWorkflowApproval);
+            $personEntryWorkflowApproval->addApprover($this);
+        }
+
+        return $this;
+    }
+
+    public function removePersonEntryWorkflowApproval(PersonEntryWorkflowProgress $personEntryWorkflowApproval): self
+    {
+        if ($this->personEntryWorkflowApprovals->removeElement($personEntryWorkflowApproval)) {
+            $personEntryWorkflowApproval->removeApprover($this);
+        }
+
+        return $this;
+    }
+
+    public function getPersonEntryWorkflowProgress(): ?PersonEntryWorkflowProgress
+    {
+        return $this->personEntryWorkflowProgress;
+    }
+
+    public function setPersonEntryWorkflowProgress(PersonEntryWorkflowProgress $personEntryWorkflowProgress): self
+    {
+        // set the owning side of the relation if necessary
+        if ($personEntryWorkflowProgress->getPerson() !== $this) {
+            $personEntryWorkflowProgress->setPerson($this);
+        }
+
+        $this->personEntryWorkflowProgress = $personEntryWorkflowProgress;
+
+        return $this;
     }
 }

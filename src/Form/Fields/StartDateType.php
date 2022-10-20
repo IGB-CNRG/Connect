@@ -15,7 +15,7 @@ class StartDateType extends DateType
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([
-            'label' => 'Start date',
+            'label' => 'person.started_at',
             'widget' => 'single_text',
         ]);
     }

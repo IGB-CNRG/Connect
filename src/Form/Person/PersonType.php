@@ -44,7 +44,7 @@ class PersonType extends AbstractType
             ])
             ->add('netid', TextType::class, [
                 'required' => false,
-                'label' => 'NetID',
+                'label' => 'person.netid',
             ])
             ->add('username', TextType::class, [
                 'required' => false,

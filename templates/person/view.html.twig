@@ -24,11 +24,11 @@
                 </div>
                 <table class="table">
                     <tr>
-                        <th>First Name</th>
+                        <th>{{ 'person.firstName'|trans }}</th>
                         <td>{{ person.firstName }}</td>
                     </tr>
                     <tr>
-                        <th>Last Name</th>
+                        <th>{{ 'person.lastName'|trans }}</th>
                         <td>{{ person.lastName }}</td>
                     </tr>
                     <tr>
@@ -44,11 +44,11 @@
                         <td>{{ person.username }}</td>
                     </tr>
                     <tr>
-                        <th>NetID</th>
+                        <th>{{ 'person.netid'|trans }}</th>
                         <td>{{ person.netid }}</td>
                     </tr>
                     <tr>
-                        <th>UIN</th>
+                        <th>{{ 'person.uin'|trans }}</th>
                         <td>{{ person.uin }}</td>
                     </tr>
                     {% for themeAffiliation in person.themeAffiliations|current %}

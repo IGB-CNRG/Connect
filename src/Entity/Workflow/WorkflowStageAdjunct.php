@@ -4,9 +4,10 @@
  * All rights reserved.
  */
 
-namespace App\Entity;
+namespace App\Entity\Workflow;
 
-use App\Enum\PersonEntryStage;
+use App\Entity\MemberCategory;
+use App\Enum\Workflow\PersonEntryStage;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;

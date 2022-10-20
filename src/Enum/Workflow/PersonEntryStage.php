@@ -4,16 +4,14 @@
  * All rights reserved.
  */
 
-namespace App\Enum;
+namespace App\Enum\Workflow;
 
 use App\Entity\Person;
 
 enum PersonEntryStage: string implements WorkflowStage
 {
     case SubmitEntryForm = 'submit_form';
-    case ApproveEntryForm = 'approve_form';
     case UploadTrainingCertificates = 'upload_certs';
-    case ApproveTrainingCertificates = 'approve_certs';
 
     /**
      * @param Person $entity
@@ -33,10 +31,8 @@ enum PersonEntryStage: string implements WorkflowStage
     public function next(): self
     {
         return match ($this) {
-            self::SubmitEntryForm => self::ApproveEntryForm,
-            self::ApproveEntryForm => self::UploadTrainingCertificates,
-            self::UploadTrainingCertificates => self::ApproveTrainingCertificates,
-            self::ApproveTrainingCertificates => null,
+            self::SubmitEntryForm => self::UploadTrainingCertificates,
+            self::UploadTrainingCertificates => null,
         };
     }
 
@@ -44,9 +40,15 @@ enum PersonEntryStage: string implements WorkflowStage
     {
         return match($this){
             self::SubmitEntryForm => null,
-            self::ApproveEntryForm => self::SubmitEntryForm,
-            self::UploadTrainingCertificates => self::ApproveEntryForm,
-            self::ApproveTrainingCertificates => self::UploadTrainingCertificates,
+            self::UploadTrainingCertificates => self::SubmitEntryForm,
+        };
+    }
+
+    public function approvers(): WorkflowApproval
+    {
+        return match($this){
+            self::SubmitEntryForm => WorkflowApproval::ThemeApproval,
+            self::UploadTrainingCertificates => WorkflowApproval::ReceptionApproval,
         };
     }
 }

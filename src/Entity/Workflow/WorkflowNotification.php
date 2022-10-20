@@ -4,7 +4,7 @@
  * All rights reserved.
  */
 
-namespace App\Entity;
+namespace App\Entity\Workflow;
 
 use App\Repository\WorkflowNotificationRepository;
 use Doctrine\DBAL\Types\Types;

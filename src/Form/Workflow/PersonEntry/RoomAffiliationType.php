@@ -24,7 +24,7 @@ class RoomAffiliationType extends AbstractType
                     'data-controller' => 'tom-select',
                 ],
                 'required' => false,
-                'label' => 'IGB Office/Lab/Cubicle #',
+                'label' => 'entry_form.room',
             ]);
     }
 

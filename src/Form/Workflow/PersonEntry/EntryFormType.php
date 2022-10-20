@@ -28,7 +28,7 @@ class EntryFormType extends AbstractType
             ])
             ->add('netid', TextType::class, [
                 'required' => false,
-                'label' => 'NetID',
+                'label' => 'person.netid',
             ])
             ->add('uin', TextType::class, [
                 'required' => false,
@@ -48,7 +48,7 @@ class EntryFormType extends AbstractType
             ])
             ->add('officePhone', TextType::class, [
                 'required' => false,
-                'label' => 'Office phone #',
+                'label' => 'entry_form.phone',
             ])
             ->add('departmentAffiliations', CollectionType::class, [
                 'entry_type' => DepartmentAffiliationType::class,

@@ -22,7 +22,7 @@ class ThemeAffiliationType extends AbstractType
         $builder
             ->add('theme', ThemeType::class)
             ->add('memberCategory', MemberCategoryType::class, [
-                'label' => 'Position type',
+                'label' => 'entry_form.member_category',
             ])
             ->add('startedAt', StartDateType::class)
             ->add('endedAt', EndDateType::class);

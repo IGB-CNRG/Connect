@@ -6,7 +6,7 @@
 
 namespace App\Repository;
 
-use App\Entity\WorkflowConnection;
+use App\Entity\Workflow\WorkflowConnection;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

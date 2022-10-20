@@ -19,7 +19,7 @@ class DepartmentAffiliationType extends AbstractType
     {
         $builder
             ->add('department', DepartmentType::class, [
-                'label' => 'UIUC home department',
+                'label' => 'entry_form.department',
             ])
             ->add('otherDepartment', TextType::class, [
                 'required' => false,

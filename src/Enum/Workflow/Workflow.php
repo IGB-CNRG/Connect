@@ -4,7 +4,7 @@
  * All rights reserved.
  */
 
-namespace App\Enum;
+namespace App\Enum\Workflow;
 
 enum Workflow: string
 {

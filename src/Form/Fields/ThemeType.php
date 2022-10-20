@@ -18,6 +18,7 @@ class ThemeType extends EntityType
         parent::configureOptions($resolver);
         $resolver->setDefaults([
             'class' => Theme::class,
+            'label' => 'person.theme',
             'attr' => [
                 'data-controller' => 'tom-select',
             ],
