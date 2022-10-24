@@ -60,6 +60,7 @@ class PersonEntryController extends AbstractController
             if (!$departmentAffiliation->getDepartment() && !$departmentAffiliation->getOtherDepartment()) {
                 $person->removeDepartmentAffiliation($departmentAffiliation);
             }
+            $person->setUsername($person->getNetid());
             $em->persist($person);
 
             $logger->logEntryFormSubmitted($person);

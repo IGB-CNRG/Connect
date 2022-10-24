@@ -39,6 +39,20 @@ class PersonEntryWorkflowProgress implements PersonWorkflowProgress
         $this->approvers = new ArrayCollection();
     }
 
+    public function getProgress(){
+        $total = count($this->getStage()::cases())*2;
+        $current = $this->getStage()->position()*2;
+        if($this->isWaitingForApproval()){
+            $current+=1;
+        }
+        return round($current/$total*100.0);
+    }
+
+    public function isWaitingForApproval(): bool
+    {
+        return $this->getApprovers()->count()>0;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

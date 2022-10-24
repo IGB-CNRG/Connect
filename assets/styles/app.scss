@@ -16,6 +16,8 @@ $info: $teal;
 @import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/bootstrap";
 
+@import "progress-circular";
+
 /* Footer */
 .copyright {
   background-color: $blue;
@@ -54,6 +56,7 @@ $info: $teal;
   font-size: x-large;
   font-weight: bold;
   padding: 3rem;
+
   .text-muted {
     color: $gray-500 !important;
   }
@@ -99,6 +102,9 @@ $callout-background-lighten: 50%;
     background-color: lighten($value, $callout-background-lighten);
     color: color-contrast(lighten($value, $callout-background-lighten));
   }
+  .callout-border-#{$color} {
+    border-left-color: $value;
+  }
 }
 
 /* Collapsable cards */
@@ -132,7 +138,7 @@ $callout-background-lighten: 50%;
   width: 35px;
   height: 35px;
   border-radius: 3px;
-  object-fit:cover;
+  object-fit: cover;
 }
 
 .td-no-portrait {
