@@ -25,46 +25,16 @@ class PersonEntryWorkflowProgressRepository extends ServiceEntityRepository
         parent::__construct($registry, PersonEntryWorkflowProgress::class);
     }
 
-    public function save(PersonEntryWorkflowProgress $entity, bool $flush = false): void
+    /**
+     * @return PersonEntryWorkflowProgress[] Returns an array of PersonEntryWorkflowProgress objects
+     */
+    public function findByApprover($person): array
     {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
+        return $this->createQueryBuilder('p')
+            ->andWhere(':person MEMBER OF p.approvers')
+            ->setParameter('person', $person)
+            ->orderBy('p.id', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
-
-    public function remove(PersonEntryWorkflowProgress $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-//    /**
-//     * @return PersonEntryWorkflowProgress[] Returns an array of PersonEntryWorkflowProgress objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('p.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?PersonEntryWorkflowProgress
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }

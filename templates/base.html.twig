@@ -59,6 +59,9 @@
                                     <li><a class="dropdown-item" href="{{ path('admin') }}"><span
                                                     class="fa fa-gears"></span> Admin</a></li>
                                 {% endif %}
+                                {% if is_granted('ROLE_APPROVER') %}
+                                    <li><a class="dropdown-item" href="{{ path('workflow_approvals') }}"><span class="fa fa-thumbs-up"></span> Approvals</a></li>
+                                {% endif %}
                                 <li><a class="dropdown-item" href="{{ path('logout') }}"><span
                                                 class="fa fa-right-from-bracket"></span> Logout</a></li>
                             </ul>

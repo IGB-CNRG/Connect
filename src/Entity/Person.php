@@ -33,6 +33,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     const USER_ROLES = [
         'CONNECT Admin' => 'ROLE_ADMIN',
+        'CONNECT Approver' => 'ROLE_APPROVER',
         'CNRG' => 'ROLE_CNRG',
         'Op/Fac' => 'ROLE_OP_FAC',
         'Key Manager' => 'ROLE_KEY_MANAGER',

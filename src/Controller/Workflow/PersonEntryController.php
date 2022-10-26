@@ -15,9 +15,11 @@ use App\Entity\Workflow\PersonEntryWorkflowProgress;
 use App\Enum\Workflow\PersonEntryStage;
 use App\Form\Workflow\PersonEntry\ApproveEntryFormType;
 use App\Form\Workflow\PersonEntry\EntryFormType;
+use App\Repository\PersonEntryWorkflowProgressRepository;
 use App\Service\ActivityLogger;
 use App\Service\WorkflowManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
@@ -107,5 +109,46 @@ class PersonEntryController extends AbstractController
             'person' => $person,
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route('/workflow/approvals', name: 'workflow_approvals')]
+    #[IsGranted('ROLE_APPROVER')]
+    public function approvalIndex(PersonEntryWorkflowProgressRepository $entryWorkflowProgressRepository): Response
+    {
+        $myApprovals = $entryWorkflowProgressRepository->findByApprover($this->getUser());
+        $myApprovalsByStage = $this->sortApprovalsForTemplate($myApprovals);
+
+        $allApprovalsByStage = null;
+        if($this->isGranted('ROLE_ADMIN')){
+            $allApprovals = $entryWorkflowProgressRepository->findAll();
+            $allApprovalsByStage = $this->sortApprovalsForTemplate($allApprovals);
+        }
+
+        return $this->render('workflow/approvals.html.twig', [
+            'myApprovals' => $myApprovalsByStage,
+            'allApprovals' => $allApprovalsByStage,
+        ]);
+    }
+
+    /**
+     * @param PersonEntryWorkflowProgress[] $approvals
+     * @return PersonEntryWorkflowProgress[][]
+     */
+    private function sortApprovalsForTemplate($approvals): array
+    {
+        usort($approvals, function (PersonEntryWorkflowProgress $a, PersonEntryWorkflowProgress $b){
+            if($a->getStage()->position() === $b->getStage()->position()){
+                return $a->getPerson()->getLastName() <=> $b->getPerson()->getLastName();
+            }
+            return $a->getStage()->position() <=> $b->getStage()->position();
+        });
+        $myApprovalsByStage = [];
+        foreach ($approvals as $approval){
+            if(!key_exists($approval->getStage()->value, $myApprovalsByStage)){
+                $myApprovalsByStage[$approval->getStage()->value] = [];
+            }
+            $myApprovalsByStage[$approval->getStage()->value][] = $approval;
+        }
+        return $myApprovalsByStage;
     }
 }

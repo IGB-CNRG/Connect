@@ -37,6 +37,7 @@ security:
     ROLE_ADMIN:
       - ROLE_ALLOWED_TO_SWITCH
       - ROLE_KEY_MANAGER
+      - ROLE_APPROVER
 
 when@test:
   security:

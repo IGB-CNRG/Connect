@@ -7,9 +7,11 @@
 namespace App\Service;
 
 use App\Entity\Person;
+use App\Entity\Workflow\PersonEntryWorkflowProgress;
 use App\Entity\Workflow\PersonWorkflowProgress;
 use App\Enum\ThemeRole;
 use App\Enum\Workflow\WorkflowApproval;
+use App\Repository\PersonEntryWorkflowProgressRepository;
 use App\Repository\PersonRepository;
 use Symfony\Contracts\Service\Attribute\SubscribedService;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
@@ -19,15 +21,33 @@ use Symfony\Contracts\Service\ServiceSubscriberTrait;
 class WorkflowManager implements ServiceSubscriberInterface
 {
     use ServiceSubscriberTrait, EntityManagerAware;
-    public function submitForApproval(PersonWorkflowProgress $progress) {
+
+    /**
+     * @param Person $user
+     * @return PersonEntryWorkflowProgress[]
+     */
+    public function findMyApprovals(Person $user): array
+    {
+        $entryProgresses = $this->personEntryWorkflowProgressRepository()->findByApprover($user);
+        $approvals = [];
+        foreach ($entryProgresses as $progress) {
+            if (key_exists($progress->getStage(), $approvals)) {
+            }
+        }
+        return $approvals;
+    }
+
+    public function submitForApproval(PersonWorkflowProgress $progress)
+    {
         $stage = $progress->getStage();
         $progress->clearApprovers();
-        $approvers = match($stage->approvers()){
+        $approvers = match ($stage->approvers()) {
             WorkflowApproval::ThemeApproval => $this->themeApprovers($progress),
             WorkflowApproval::ReceptionApproval => $this->receptionApprovers(),
         };
-        foreach ($approvers as $approver){
+        foreach ($approvers as $approver) {
             $progress->addApprover($approver);
+            $approver->setRoles(array_merge($approver->getRoles(), ['ROLE_APPROVER'])); // Give them the approver role
         }
         // todo there should probably be a flag that this is ready for approval
         // todo this needs to also fire off any associated events
@@ -49,7 +69,8 @@ class WorkflowManager implements ServiceSubscriberInterface
      */
     private function themeApprovers(PersonWorkflowProgress $progress): array
     {
-        $theme = $progress->getPerson()->getThemeAffiliations()[0]->getTheme(); // todo this is a little naive, but works for entries
+        $theme = $progress->getPerson()->getThemeAffiliations()[0]->getTheme(
+        ); // todo this is a little naive, but works for entries
         $admins = $this->personRepository()->findByRoleInTheme($theme, ThemeRole::ThemeAdmin);
         $managers = $this->personRepository()->findByRoleInTheme($theme, ThemeRole::LabManager);
         return array_merge($admins, $managers); // todo fall back to somebody if there are no theme approvers
@@ -65,6 +86,12 @@ class WorkflowManager implements ServiceSubscriberInterface
 
     #[SubscribedService]
     private function personRepository(): PersonRepository
+    {
+        return $this->container->get(__CLASS__ . '::' . __FUNCTION__);
+    }
+
+    #[SubscribedService]
+    private function personEntryWorkflowProgressRepository(): PersonEntryWorkflowProgressRepository
     {
         return $this->container->get(__CLASS__ . '::' . __FUNCTION__);
     }

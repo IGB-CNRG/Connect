@@ -52,14 +52,27 @@ enum PersonEntryStage: string implements WorkflowStage
         };
     }
 
-    public function message()
+    public function approvalTitle(): string
     {
-        return "person_entry.message.".$this->value;
+        return "person_entry.{$this->value}.approval_title";
     }
 
-    public function approvalMessage()
+    public function message(): string
     {
-        return "person_entry.approval_message.".$this->value;
+        return "person_entry.{$this->value}.message";
+    }
+
+    public function approvalMessage(): string
+    {
+        return "person_entry.{$this->value}.approval_message";
+    }
+
+    public function approvalRoute()
+    {
+        return match($this){
+            self::SubmitEntryForm => 'workflow_entry_approve_entry',
+            self::UploadTrainingCertificates => 'workflow_entry_approve_certs',
+        };
     }
 
     public function approvers(): WorkflowApproval

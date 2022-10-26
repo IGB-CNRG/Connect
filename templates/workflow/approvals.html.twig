@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    {% if is_granted('ROLE_ADMIN') %}
+        <h1>My approvals</h1>
+    {% endif %}
+    {% with {approvals: myApprovals} %}
+        {% block approvals %}
+            {% for stage in approvals %}
+                <h2>{{ stage[0].stage.approvalTitle|trans }}</h2>
+                {% for approval in stage %}
+                    {# @var approval \App\Entity\Workflow\PersonEntryWorkflowProgress #}
+                    <p>
+                        <a href="{{ path(approval.stage.approvalRoute, {'slug': approval.person.slug}) }}">{{ approval.person }}</a>
+                    </p>
+                {% endfor %}
+            {% else %}
+                <h2>No approvals</h2>
+                <p>You have no approvals at this time.</p>
+            {% endfor %}
+        {% endblock %}
+    {% endwith %}
+
+    {% if is_granted('ROLE_ADMIN') and allApprovals is not null %}
+        <h1>All approvals</h1>
+        {% with {approvals: allApprovals} %}
+            {{ block('approvals') }}
+        {% endwith %}
+    {% endif %}
+{% endblock %}
+
+{% block title %}{{ parent() }} | Approvals{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active" aria-current="page">
+        Approvals
+    </li>
+{% endblock %}
+
