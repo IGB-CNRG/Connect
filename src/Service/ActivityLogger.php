@@ -29,10 +29,6 @@ class ActivityLogger implements ServiceSubscriberInterface
 
     private const DATE_FORMAT = 'n/j/Y';
 
-    public function logEntryFormSubmitted(Person $person) {
-        $this->logPersonActivity($person, 'Submitted entry form');
-    }
-
     public function logNewDepartmentAffiliation(DepartmentAffiliation $departmentAffiliation)
     {
         $this->logPersonActivity(
