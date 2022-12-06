@@ -88,14 +88,15 @@
     <main class="flex-shrink-0 mb-4">
         {# Main content box #}
         <div class="container">
+            {# todo move this to a new block elsewhere #}
             {% if app.user is not null and app.user.personEntryWorkflowProgress is not null %}
                 <div class="callout callout-border-info clearfix">
-                    {{ _self.circular_progress(app.user.personEntryWorkflowProgress.progress) }}
+                    {{ _self.circular_progress(workflow_completion(app.user.personEntryWorkflowProgress)) }}
 
                     {% if app.user.personEntryWorkflowProgress.waitingForApproval %}
-                        {{ app.user.personEntryWorkflowProgress.stage.approvalMessage|trans }}
+                        {{ ('person_entry.'~app.user.personEntryWorkflowProgress.stageName~'.approval_message')|trans }}
                     {% else %}
-                        {{ app.user.personEntryWorkflowProgress.stage.message|trans }}
+                        {{ ('person_entry.'~app.user.personEntryWorkflowProgress.stageName~'.message')|trans }}
                     {% endif %}
                 </div>
             {% endif %}

@@ -12,15 +12,15 @@ use App\Entity\Person;
 use App\Entity\RoomAffiliation;
 use App\Entity\SupervisorAffiliation;
 use App\Entity\ThemeAffiliation;
-use App\Entity\Workflow\PersonEntryWorkflowProgress;
+use App\Entity\Workflow\WorkflowProgress;
 use App\Enum\DocumentCategory;
-use App\Enum\Workflow\PersonEntryStage;
 use App\Form\Workflow\PersonEntry\ApproveEntryFormType;
 use App\Form\Workflow\PersonEntry\CertificateUploadType;
 use App\Form\Workflow\PersonEntry\EntryFormType;
-use App\Repository\PersonEntryWorkflowProgressRepository;
+use App\Repository\WorkflowProgressRepository;
 use App\Service\ActivityLogger;
-use App\Service\WorkflowManager;
+use App\Workflow\Entity\Factory\WorkflowFactory;
+use App\Workflow\Service\WorkflowManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,15 +37,18 @@ class PersonEntryController extends AbstractController
         Request $request,
         EntityManagerInterface $em,
         ActivityLogger $logger,
-        WorkflowManager $workflowManager
+        WorkflowManager $workflowManager,
+        WorkflowFactory $workflowFactory
     ): Response {
         // todo so far this form does not support saving and continuing. do we want to?
         // todo this form only represents the new member filling out a form for themselves while logged in as someone else
+        $entryWorkflow = $workflowFactory->createWorkflowByName('entry');
+
         $roomAffiliation = new RoomAffiliation();
         $departmentAffiliation = new DepartmentAffiliation();
         $themeAffiliation = new ThemeAffiliation();
         $supervisorAffiliation = new SupervisorAffiliation();
-        $workflowProgress = (new PersonEntryWorkflowProgress())->setStage(PersonEntryStage::SubmitEntryForm);
+        $workflowProgress = (new WorkflowProgress())->setWorkflow($entryWorkflow);
         $person = (new Person())
             ->setPersonEntryWorkflowProgress($workflowProgress)
             ->addRoomAffiliation($roomAffiliation)
@@ -67,6 +70,7 @@ class PersonEntryController extends AbstractController
                 $person->removeDepartmentAffiliation($departmentAffiliation);
             }
             $person->setUsername($person->getNetid());
+            $workflowProgress->setMemberCategory($themeAffiliation->getMemberCategory());
             $em->persist($person);
 
             $logger->logPersonActivity($person, 'Submitted entry form');
@@ -120,7 +124,7 @@ class PersonEntryController extends AbstractController
 
     #[Route('/workflow/approvals', name: 'workflow_approvals')]
     #[IsGranted('ROLE_APPROVER')]
-    public function approvalIndex(PersonEntryWorkflowProgressRepository $entryWorkflowProgressRepository): Response
+    public function approvalIndex(WorkflowProgressRepository $entryWorkflowProgressRepository): Response
     {
         $myApprovals = $entryWorkflowProgressRepository->findByApprover($this->getUser());
         $myApprovalsByStage = $this->sortApprovalsForTemplate($myApprovals);
@@ -138,12 +142,12 @@ class PersonEntryController extends AbstractController
     }
 
     /**
-     * @param PersonEntryWorkflowProgress[] $approvals
-     * @return PersonEntryWorkflowProgress[][]
+     * @param WorkflowProgress[] $approvals
+     * @return WorkflowProgress[][]
      */
     private function sortApprovalsForTemplate($approvals): array
     {
-        usort($approvals, function (PersonEntryWorkflowProgress $a, PersonEntryWorkflowProgress $b) {
+        usort($approvals, function (WorkflowProgress $a, WorkflowProgress $b) {
             if ($a->getStage()->position() === $b->getStage()->position()) {
                 return $a->getPerson()->getLastName() <=> $b->getPerson()->getLastName();
             }

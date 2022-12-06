@@ -10,6 +10,7 @@ use App\Entity\Person;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
@@ -37,8 +38,8 @@ class PersonCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         $viewConnect = Action::new('viewConnect', 'View in CONNECT', 'fa fa-eye')
-            ->linkToRoute('person_view', function(Person $person){
-                return ['slug'=>$person->getSlug()];
+            ->linkToRoute('person_view', function (Person $person) {
+                return ['slug' => $person->getSlug()];
             });
         return parent::configureActions($actions)
             ->disable(Action::EDIT, Action::NEW, Action::DELETE)
@@ -63,7 +64,7 @@ class PersonCrudController extends AbstractCrudController
             'linkField' => 'theme',
             'linkCrudFqcn' => ThemeCrudController::class,
         ]);
-        if($this->isGranted('ROLE_KEY_MANAGER')) {
+        if ($this->isGranted('ROLE_KEY_MANAGER')) {
             yield AssociationField::new('keyAffiliations')
                 ->onlyOnDetail()
                 ->setLabel('Key Assignments')
@@ -75,5 +76,13 @@ class PersonCrudController extends AbstractCrudController
                     'linkCrudFqcn' => KeyCrudController::class,
                 ]);
         }
+    }
+
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add('firstName')
+            ->add('lastName')
+            ->add('email');
     }
 }

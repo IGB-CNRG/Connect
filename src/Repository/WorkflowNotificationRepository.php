@@ -6,7 +6,10 @@
 
 namespace App\Repository;
 
+use App\Entity\MemberCategory;
 use App\Entity\Workflow\WorkflowNotification;
+use App\Workflow\Entity\Stage;
+use App\Workflow\Enum\WorkflowEvent;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -25,24 +28,6 @@ class WorkflowNotificationRepository extends ServiceEntityRepository
         parent::__construct($registry, WorkflowNotification::class);
     }
 
-    public function add(WorkflowNotification $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function remove(WorkflowNotification $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
 //    /**
 //     * @return WorkflowNotification[] Returns an array of WorkflowNotification objects
 //     */
@@ -57,6 +42,22 @@ class WorkflowNotificationRepository extends ServiceEntityRepository
 //            ->getResult()
 //        ;
 //    }
+
+    public function findByStage(Stage $stage, MemberCategory $category, WorkflowEvent $event)
+    {
+        return $this->createQueryBuilder('w')
+            ->join('w.memberCategories', 'm')
+            ->andWhere('m.id = :categoryId')
+            ->andWhere('w.stageName = :stage')
+            ->andWhere('w.workflowName = :workflow')
+            ->andWhere('w.event = :event')
+            ->setParameter('categoryId', $category->getId())
+            ->setParameter('stage', $stage->getName())
+            ->setParameter('workflow', $stage->getWorkflow()->getName())
+            ->setParameter('event', $event)
+            ->getQuery()
+            ->getResult();
+    }
 
 //    public function findOneBySomeField($value): ?WorkflowNotification
 //    {

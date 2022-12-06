@@ -7,7 +7,7 @@
 namespace App\Entity;
 
 use App\Attribute\Loggable;
-use App\Entity\Workflow\PersonEntryWorkflowProgress;
+use App\Entity\Workflow\WorkflowProgress;
 use App\Enum\PreferredAddress;
 use App\Repository\PersonRepository;
 use DateTimeImmutable;
@@ -174,12 +174,12 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $otherAddress;
 
-    #[ORM\ManyToMany(targetEntity: PersonEntryWorkflowProgress::class, mappedBy: 'approvers')]
+    #[ORM\ManyToMany(targetEntity: WorkflowProgress::class, mappedBy: 'approvers')]
     private Collection $personEntryWorkflowApprovals;
 
     #[ORM\OneToOne(mappedBy: 'person', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: true)]
-    private ?PersonEntryWorkflowProgress $personEntryWorkflowProgress = null;
+    private ?WorkflowProgress $personEntryWorkflowProgress = null;
 
     public function __construct()
     {
@@ -952,14 +952,14 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     }
 
     /**
-     * @return Collection<int, PersonEntryWorkflowProgress>
+     * @return Collection<int, WorkflowProgress>
      */
     public function getPersonEntryWorkflowApprovals(): Collection
     {
         return $this->personEntryWorkflowApprovals;
     }
 
-    public function addPersonEntryWorkflowApproval(PersonEntryWorkflowProgress $personEntryWorkflowApproval): self
+    public function addPersonEntryWorkflowApproval(WorkflowProgress $personEntryWorkflowApproval): self
     {
         if (!$this->personEntryWorkflowApprovals->contains($personEntryWorkflowApproval)) {
             $this->personEntryWorkflowApprovals->add($personEntryWorkflowApproval);
@@ -969,7 +969,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         return $this;
     }
 
-    public function removePersonEntryWorkflowApproval(PersonEntryWorkflowProgress $personEntryWorkflowApproval): self
+    public function removePersonEntryWorkflowApproval(WorkflowProgress $personEntryWorkflowApproval): self
     {
         if ($this->personEntryWorkflowApprovals->removeElement($personEntryWorkflowApproval)) {
             $personEntryWorkflowApproval->removeApprover($this);
@@ -978,12 +978,12 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         return $this;
     }
 
-    public function getPersonEntryWorkflowProgress(): ?PersonEntryWorkflowProgress
+    public function getPersonEntryWorkflowProgress(): ?WorkflowProgress
     {
         return $this->personEntryWorkflowProgress;
     }
 
-    public function setPersonEntryWorkflowProgress(PersonEntryWorkflowProgress $personEntryWorkflowProgress): self
+    public function setPersonEntryWorkflowProgress(WorkflowProgress $personEntryWorkflowProgress): self
     {
         // set the owning side of the relation if necessary
         if ($personEntryWorkflowProgress->getPerson() !== $this) {
