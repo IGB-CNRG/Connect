@@ -1,0 +1,69 @@
+framework:
+    workflows:
+        membership:
+            type: 'state_machine'
+            audit_trail:
+                enabled: true
+            marking_store:
+                type: 'method'
+                property: 'membershipStatus'
+            supports:
+                - App\Entity\Person
+            initial_marking: need_entry_form
+            places:
+                need_entry_form:
+                    metadata:
+                        completion: 0
+                entry_form_submitted:
+                    metadata:
+                        completion: 25
+                need_certificates:
+                    metadata:
+                        completion: 50
+                certificates_submitted:
+                    metadata:
+                        completion: 75
+                active:
+                exit_form_submitted:
+                inactive:
+            transitions:
+                submit_entry_form:
+                    from: need_entry_form
+                    to: entry_form_submitted
+                approve_entry_form:
+                    from: entry_form_submitted
+                    to: need_certificates
+                    metadata:
+                        approvalStrategy: App\Workflow\Approval\ThemeApproval
+                return_entry_form:
+                    from: entry_form_submitted
+                    to: need_entry_form
+                    metadata:
+                        approvalStrategy: App\Workflow\Approval\ThemeApproval
+                upload_certificates:
+                    from: need_certificates
+                    to: certificates_submitted
+                approve_certificates:
+                    from: certificates_submitted
+                    to: active
+                    metadata:
+                        approvalStrategy: App\Workflow\Approval\ReceptionApproval
+                return_certificates:
+                    from: certificates_submitted
+                    to: need_certificates
+                    metadata:
+                        approvalStrategy: App\Workflow\Approval\ReceptionApproval
+                # the rest of this may be naive for now, until we better define the exit workflow
+                submit_exit_form:
+                    from: active
+                    to: exit_form_submitted
+                deactivate:
+                    from: exit_form_submitted
+                    to: inactive
+                reenter:
+                    from: inactive
+                    to: need_entry_form
+                reactivate: # does a member need to go through the entry process again? will they need new certificates?
+                    from: inactive
+                    to: active
+

@@ -6,7 +6,7 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Workflow\WorkflowNotification;
+use App\Entity\WorkflowNotification;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 class EntryWorkflowCrudController extends AbstractCrudController

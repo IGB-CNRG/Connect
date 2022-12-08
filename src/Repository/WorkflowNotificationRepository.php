@@ -6,10 +6,7 @@
 
 namespace App\Repository;
 
-use App\Entity\MemberCategory;
-use App\Entity\Workflow\WorkflowNotification;
-use App\Workflow\Entity\Stage;
-use App\Workflow\Enum\WorkflowEvent;
+use App\Entity\WorkflowNotification;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -28,44 +25,18 @@ class WorkflowNotificationRepository extends ServiceEntityRepository
         parent::__construct($registry, WorkflowNotification::class);
     }
 
-//    /**
-//     * @return WorkflowNotification[] Returns an array of WorkflowNotification objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('w')
-//            ->andWhere('w.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('w.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-    public function findByStage(Stage $stage, MemberCategory $category, WorkflowEvent $event)
+    public function findForTransition(string $workflow, string $transition, array $categories)
     {
         return $this->createQueryBuilder('w')
             ->join('w.memberCategories', 'm')
-            ->andWhere('m.id = :categoryId')
+            ->andWhere('m in (:categories)')
             ->andWhere('w.stageName = :stage')
             ->andWhere('w.workflowName = :workflow')
             ->andWhere('w.event = :event')
-            ->setParameter('categoryId', $category->getId())
-            ->setParameter('stage', $stage->getName())
-            ->setParameter('workflow', $stage->getWorkflow()->getName())
-            ->setParameter('event', $event)
+            ->setParameter('categories', $categories)
+            ->setParameter('stage', $transition)
+            ->setParameter('workflow', $workflow)
             ->getQuery()
             ->getResult();
     }
-
-//    public function findOneBySomeField($value): ?WorkflowNotification
-//    {
-//        return $this->createQueryBuilder('w')
-//            ->andWhere('w.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }

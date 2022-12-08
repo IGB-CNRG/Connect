@@ -6,24 +6,22 @@
 
 namespace App\Workflow\Approval;
 
-use App\Entity\Workflow\WorkflowProgress;
+use App\Entity\Person;
 use App\Enum\ThemeRole;
 use App\Repository\PersonRepository;
 
 class ThemeApproval implements ApprovalStrategy
 {
-    public function __construct(private readonly PersonRepository $personRepository){}
+    public function __construct(private readonly PersonRepository $personRepository) {}
+
     /**
      * @inheritDoc
      */
-    public function getApprovers(WorkflowProgress $progress): array
+    public function getApprovers(Person $person): array
     {
-        $theme = $progress->getPerson()->getThemeAffiliations()[0]->getTheme(
-        ); // todo this is a little naive, but works for entries
+        $theme = $person->getThemeAffiliations()[0]->getTheme(); // todo this is a little naive, but works for entries
         $admins = $this->personRepository->findByRoleInTheme($theme, ThemeRole::ThemeAdmin);
         $managers = $this->personRepository->findByRoleInTheme($theme, ThemeRole::LabManager);
         return array_merge($admins, $managers); // todo fall back to somebody if there are no theme approvers
     }
-
-
 }

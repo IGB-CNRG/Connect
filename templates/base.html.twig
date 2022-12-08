@@ -89,15 +89,10 @@
         {# Main content box #}
         <div class="container">
             {# todo move this to a new block elsewhere #}
-            {% if app.user is not null and app.user.personEntryWorkflowProgress is not null %}
+            {% if app.user is not null and workflow_metadata(app.user, 'completion', workflow_marked_places(app.user)[0]) is not null %}
                 <div class="callout callout-border-info clearfix">
-                    {{ _self.circular_progress(workflow_completion(app.user.personEntryWorkflowProgress)) }}
-
-                    {% if app.user.personEntryWorkflowProgress.waitingForApproval %}
-                        {{ ('person_entry.'~app.user.personEntryWorkflowProgress.stageName~'.approval_message')|trans }}
-                    {% else %}
-                        {{ ('person_entry.'~app.user.personEntryWorkflowProgress.stageName~'.message')|trans }}
-                    {% endif %}
+                    {{ _self.circular_progress(workflow_metadata(app.user, 'completion', workflow_marked_places(app.user)[0])) }}
+                    {{ ('membership.'~workflow_marked_places(app.user)[0]~'.message')|trans }}
                 </div>
             {% endif %}
 
@@ -125,7 +120,7 @@
                   {% if value>0 and value>50 %}style="transform: rotate({{ (value-50)/100*360 }}deg);"{% endif %}></span>
         </span>
         <span class="progress-right">
-            <span class="progress-bar border-primary" {% if value>0 and value>50 %}style="transform: rotate(180deg);"
+            <span class="progress-bar border-primary" {% if value>=0 and value>50 %}style="transform: rotate(180deg);"
                   {% elseif value>0 and value<=50 %}style="transform: rotate({{ value/100*360 }}deg);"{% endif %}></span>
         </span>
         <div class="progress-value rounded-circle d-flex align-items-center justify-content-center">

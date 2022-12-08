@@ -4,11 +4,9 @@
  * All rights reserved.
  */
 
-namespace App\Entity\Workflow;
+namespace App\Entity;
 
-use App\Entity\MemberCategory;
 use App\Repository\WorkflowNotificationRepository;
-use App\Workflow\Enum\WorkflowEvent;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -17,8 +15,6 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: WorkflowNotificationRepository::class)]
 class WorkflowNotification
 {
-    use StageRelationTrait;
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -36,14 +32,19 @@ class WorkflowNotification
     #[ORM\ManyToMany(targetEntity: MemberCategory::class)]
     private Collection $memberCategories;
 
-    #[ORM\Column(enumType: WorkflowEvent::class)]
-    private ?WorkflowEvent $event = null;
+    #[ORM\Column(length: 255)]
+    private ?string $workflowName = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $transitionName = null;
 
 
     public function __construct()
     {
         $this->memberCategories = new ArrayCollection();
     }
+
+    //MARK: - Getters/Setters
 
     public function getId(): ?int
     {
@@ -110,14 +111,26 @@ class WorkflowNotification
         return $this;
     }
 
-    public function getEvent(): ?WorkflowEvent
+    public function getWorkflowName(): ?string
     {
-        return $this->event;
+        return $this->workflowName;
     }
 
-    public function setEvent(WorkflowEvent $event): self
+    public function setWorkflowName(string $workflowName): self
     {
-        $this->event = $event;
+        $this->workflowName = $workflowName;
+
+        return $this;
+    }
+
+    public function getTransitionName(): ?string
+    {
+        return $this->transitionName;
+    }
+
+    public function setTransitionName(string $transitionName): self
+    {
+        $this->transitionName = $transitionName;
 
         return $this;
     }

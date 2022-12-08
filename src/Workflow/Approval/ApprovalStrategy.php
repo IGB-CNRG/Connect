@@ -7,13 +7,12 @@
 namespace App\Workflow\Approval;
 
 use App\Entity\Person;
-use App\Entity\Workflow\WorkflowProgress;
 
 interface ApprovalStrategy
 {
     /**
-     * @param WorkflowProgress $progress
+     * @param Person $person
      * @return Person[]
      */
-    public function getApprovers(WorkflowProgress $progress): array;
+    public function getApprovers(Person $person): array;
 }

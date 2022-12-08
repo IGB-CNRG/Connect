@@ -6,7 +6,7 @@
 
 namespace App\Workflow\Approval;
 
-use App\Entity\Workflow\WorkflowProgress;
+use App\Entity\Person;
 use App\Repository\PersonRepository;
 
 class ReceptionApproval implements ApprovalStrategy
@@ -15,7 +15,7 @@ class ReceptionApproval implements ApprovalStrategy
     /**
      * @inheritDoc
      */
-    public function getApprovers(WorkflowProgress $progress): array
+    public function getApprovers(Person $person): array
     {
         return $this->personRepository->findByRole('ROLE_KEY_MANAGER');
     }

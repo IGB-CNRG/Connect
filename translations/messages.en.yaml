@@ -14,12 +14,14 @@ person:
   uin: UIN
   email: Email
 # todo these workflow messages will need work
-person_entry:
-  submit_form:
-    approval_title: "Entry forms"
+membership:
+  need_entry_form:
     message: "Welcome to the IGB! Please complete and submit your IGB Entry Form."
-    approval_message: "Your Entry Form has been received. Once it has been approved by a member of your theme, you will receive additional instructions."
-  upload_certs:
-    approval_title: "Training certificates"
+  entry_form_submitted:
+    approval_title: "Entry forms"
+    message: "Your Entry Form has been received. Once it has been approved by a member of your theme, you will receive additional instructions."
+  need_certificates:
     message: "Your Entry Form has been approved. Please upload all requested training certificates."
-    approval_message: "Your certificates have been received. You will receive a notification when they have been approved."
+  certificates_uploaded:
+    approval_title: "Training certificates"
+    message: "Your certificates have been received. You will receive a notification when they have been approved."

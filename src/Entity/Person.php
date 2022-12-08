@@ -7,7 +7,6 @@
 namespace App\Entity;
 
 use App\Attribute\Loggable;
-use App\Entity\Workflow\WorkflowProgress;
 use App\Enum\PreferredAddress;
 use App\Repository\PersonRepository;
 use DateTimeImmutable;
@@ -174,12 +173,8 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $otherAddress;
 
-    #[ORM\ManyToMany(targetEntity: WorkflowProgress::class, mappedBy: 'approvers')]
-    private Collection $personEntryWorkflowApprovals;
-
-    #[ORM\OneToOne(mappedBy: 'person', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?WorkflowProgress $personEntryWorkflowProgress = null;
+    #[ORM\Column(length: 255)]
+    private ?string $membershipStatus = "need_entry_form";
 
     public function __construct()
     {
@@ -194,7 +189,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         $this->logs = new ArrayCollection();
         $this->documents = new ArrayCollection();
         $this->createdNotes = new ArrayCollection();
-        $this->personEntryWorkflowApprovals = new ArrayCollection();
     }
 
     public function __toString()
@@ -951,46 +945,24 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         return null;
     }
 
-    /**
-     * @return Collection<int, WorkflowProgress>
-     */
-    public function getPersonEntryWorkflowApprovals(): Collection
+    public function getMemberCategories(): array
     {
-        return $this->personEntryWorkflowApprovals;
+        return array_map(
+            function (ThemeAffiliation $themeAffiliation) {
+                return $themeAffiliation->getMemberCategory();
+            },
+            $this->getThemeAffiliations()->toArray()
+        );
     }
 
-    public function addPersonEntryWorkflowApproval(WorkflowProgress $personEntryWorkflowApproval): self
+    public function getMembershipStatus(): ?string
     {
-        if (!$this->personEntryWorkflowApprovals->contains($personEntryWorkflowApproval)) {
-            $this->personEntryWorkflowApprovals->add($personEntryWorkflowApproval);
-            $personEntryWorkflowApproval->addApprover($this);
-        }
-
-        return $this;
+        return $this->membershipStatus;
     }
 
-    public function removePersonEntryWorkflowApproval(WorkflowProgress $personEntryWorkflowApproval): self
+    public function setMembershipStatus(string $membershipStatus): self
     {
-        if ($this->personEntryWorkflowApprovals->removeElement($personEntryWorkflowApproval)) {
-            $personEntryWorkflowApproval->removeApprover($this);
-        }
-
-        return $this;
-    }
-
-    public function getPersonEntryWorkflowProgress(): ?WorkflowProgress
-    {
-        return $this->personEntryWorkflowProgress;
-    }
-
-    public function setPersonEntryWorkflowProgress(WorkflowProgress $personEntryWorkflowProgress): self
-    {
-        // set the owning side of the relation if necessary
-        if ($personEntryWorkflowProgress->getPerson() !== $this) {
-            $personEntryWorkflowProgress->setPerson($this);
-        }
-
-        $this->personEntryWorkflowProgress = $personEntryWorkflowProgress;
+        $this->membershipStatus = $membershipStatus;
 
         return $this;
     }

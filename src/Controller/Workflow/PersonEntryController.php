@@ -12,15 +12,11 @@ use App\Entity\Person;
 use App\Entity\RoomAffiliation;
 use App\Entity\SupervisorAffiliation;
 use App\Entity\ThemeAffiliation;
-use App\Entity\Workflow\WorkflowProgress;
 use App\Enum\DocumentCategory;
 use App\Form\Workflow\PersonEntry\ApproveEntryFormType;
 use App\Form\Workflow\PersonEntry\CertificateUploadType;
 use App\Form\Workflow\PersonEntry\EntryFormType;
-use App\Repository\WorkflowProgressRepository;
 use App\Service\ActivityLogger;
-use App\Workflow\Entity\Factory\WorkflowFactory;
-use App\Workflow\Service\WorkflowManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,6 +25,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 class PersonEntryController extends AbstractController
 {
@@ -37,20 +34,16 @@ class PersonEntryController extends AbstractController
         Request $request,
         EntityManagerInterface $em,
         ActivityLogger $logger,
-        WorkflowManager $workflowManager,
-        WorkflowFactory $workflowFactory
+        WorkflowInterface $membershipWorkflow
     ): Response {
         // todo so far this form does not support saving and continuing. do we want to?
         // todo this form only represents the new member filling out a form for themselves while logged in as someone else
-        $entryWorkflow = $workflowFactory->createWorkflowByName('entry');
 
         $roomAffiliation = new RoomAffiliation();
         $departmentAffiliation = new DepartmentAffiliation();
         $themeAffiliation = new ThemeAffiliation();
         $supervisorAffiliation = new SupervisorAffiliation();
-        $workflowProgress = (new WorkflowProgress())->setWorkflow($entryWorkflow);
         $person = (new Person())
-            ->setPersonEntryWorkflowProgress($workflowProgress)
             ->addRoomAffiliation($roomAffiliation)
             ->addDepartmentAffiliation($departmentAffiliation)
             ->addThemeAffiliation($themeAffiliation)
@@ -70,12 +63,10 @@ class PersonEntryController extends AbstractController
                 $person->removeDepartmentAffiliation($departmentAffiliation);
             }
             $person->setUsername($person->getNetid());
-            $workflowProgress->setMemberCategory($themeAffiliation->getMemberCategory());
             $em->persist($person);
 
             $logger->logPersonActivity($person, 'Submitted entry form');
-            // todo should there be a check that this person is at the correct stage?
-            $workflowManager->submitForApproval($workflowProgress);
+            $membershipWorkflow->apply($person, 'submit_entry_form');
 
             $em->flush();
 
@@ -94,7 +85,7 @@ class PersonEntryController extends AbstractController
         Person $person,
         Request $request,
         EntityManagerInterface $em,
-        WorkflowManager $workflowManager,
+        WorkflowInterface $membershipWorkflow,
         ActivityLogger $logger
     ): Response {
         // todo restrict this route to only assigned approvers
@@ -106,10 +97,10 @@ class PersonEntryController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // todo we need different validation groups based on whether the approver hit approve or reject
             if ($form->get('approve')->isClicked()) {
-                $workflowManager->approve($person->getPersonEntryWorkflowProgress());
+                $membershipWorkflow->apply($person, 'approve_entry_form');
                 $logger->logPersonActivity($person, "Approved entry form");
             } else {
-                $workflowManager->disapprove($person->getPersonEntryWorkflowProgress());
+                $membershipWorkflow->apply($person, 'return_entry_form');
                 $logger->logPersonActivity($person, "Returned entry form");
             }
             $em->flush();
@@ -168,7 +159,7 @@ class PersonEntryController extends AbstractController
         Person $person,
         Request $request,
         EntityManagerInterface $em,
-        WorkflowManager $workflowManager,
+        WorkflowInterface $membershipWorkflow,
         ActivityLogger $logger
     ): RedirectResponse|Response {
         $drsCert = (new Document())
@@ -190,8 +181,7 @@ class PersonEntryController extends AbstractController
             $em->persist($igbCert);
 
             $logger->logPersonActivity($person, 'Uploaded training certificates');
-            // todo should there be a check that this person is at the correct stage?
-            $workflowManager->submitForApproval($person->getPersonEntryWorkflowProgress());
+            $membershipWorkflow->apply($person, 'upload_certificates');
 
             $em->flush();
 
