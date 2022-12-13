@@ -21,8 +21,8 @@ use App\Form\Person\DepartmentAffiliationType;
 use App\Form\Person\PersonType;
 use App\Form\Person\RoomAffiliationType;
 use App\Form\Person\ThemeAffiliationType;
+use App\Log\ActivityLogger;
 use App\Repository\PersonRepository;
-use App\Service\ActivityLogger;
 use App\Service\HistoricityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -104,7 +104,7 @@ class PersonController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($person);
-            $logger->logPersonActivity($person, 'Created record');
+            $logger->log($person, 'Created record');
             $em->flush();
 
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
@@ -213,7 +213,7 @@ class PersonController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($note);
-            $logger->logPersonActivity($person, 'Added note'); // todo a little more detail?
+            $logger->log($person, 'Added note'); // todo a little more detail?
             $em->flush();
 
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
@@ -238,7 +238,7 @@ class PersonController extends AbstractController
     ): Response {
         if ($request->isMethod(Request::METHOD_POST)) {
             $em->remove($note);
-            $logger->logPersonActivity(
+            $logger->log(
                 $person,
                 sprintf('Removed note from %s', $note->getCreatedAt()->format('n/j/Y'))
             );

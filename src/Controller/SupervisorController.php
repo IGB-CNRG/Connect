@@ -11,7 +11,7 @@ use App\Entity\SupervisorAffiliation;
 use App\Form\EndSupervisorAffiliationType;
 use App\Form\SuperviseeType;
 use App\Form\SupervisorType;
-use App\Service\ActivityLogger;
+use App\Log\ActivityLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;

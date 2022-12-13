@@ -92,7 +92,7 @@
             {% if app.user is not null and workflow_metadata(app.user, 'completion', workflow_marked_places(app.user)[0]) is not null %}
                 <div class="callout callout-border-info clearfix">
                     {{ _self.circular_progress(workflow_metadata(app.user, 'completion', workflow_marked_places(app.user)[0])) }}
-                    {{ ('membership.'~workflow_marked_places(app.user)[0]~'.message')|trans }}
+                    {{ workflow_place_completion_message(app.user)|trans }}
                 </div>
             {% endif %}
 

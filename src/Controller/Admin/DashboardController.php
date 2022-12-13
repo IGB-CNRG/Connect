@@ -16,6 +16,7 @@ use App\Entity\MemberCategory;
 use App\Entity\Person;
 use App\Entity\Room;
 use App\Entity\Theme;
+use App\Entity\WorkflowNotification;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -85,5 +86,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Colleges', 'fas fa-list', College::class);
         yield MenuItem::linkToCrud('Departments', 'fas fa-list', Department::class);
         yield MenuItem::section('Workflows');
+        yield MenuItem::linkToCrud('Notifications', 'fas fa-envelope', WorkflowNotification::class);
     }
 }

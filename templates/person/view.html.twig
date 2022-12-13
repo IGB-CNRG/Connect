@@ -191,14 +191,13 @@
                                 {% endfor %}</td>
                         </tr>
                         <tr>
+                            <th>CONNECT ID</th>
+                            <td>{{ person.id }}</td>
+                        </tr>
+                        <tr>
                             <th>Membership status</th>
                             <td>
-                                {% if workflow_has_marked_place(person, 'need_entry_form') %}
-                                    Waiting for entry form
-                                {% elseif workflow_has_marked_place(person, 'entry_form_submitted') %}
-                                    Entry form submitted (waiting for approval)
-                                    {# todo continue with the rest of the places, or make this cleverer #}
-                                {% endif %}
+                                {{ workflow_place_label(person)|trans }}
                             </td>
                         </tr>
                     </table>

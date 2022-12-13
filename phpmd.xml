@@ -19,9 +19,4 @@
     <rule ref="rulesets/design.xml">
         <exclude name="CouplingBetweenObjects"/>
     </rule>
-    <rule ref="rulesets/design.xml/CouplingBetweenObjects">
-        <properties>
-            <property name="maximum" value="20"/>
-        </properties>
-    </rule>
 </ruleset>

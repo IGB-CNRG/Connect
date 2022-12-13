@@ -16,7 +16,7 @@ use App\Enum\DocumentCategory;
 use App\Form\Workflow\PersonEntry\ApproveEntryFormType;
 use App\Form\Workflow\PersonEntry\CertificateUploadType;
 use App\Form\Workflow\PersonEntry\EntryFormType;
-use App\Service\ActivityLogger;
+use App\Log\ActivityLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-class PersonEntryController extends AbstractController
+class MembershipWorkflowController extends AbstractController
 {
     #[Route('/workflow/entry/entry_form', name: 'workflow_entry_entry_form')]
     public function entryForm(
@@ -65,7 +65,7 @@ class PersonEntryController extends AbstractController
             $person->setUsername($person->getNetid());
             $em->persist($person);
 
-            $logger->logPersonActivity($person, 'Submitted entry form');
+            $logger->log($person, 'Submitted entry form');
             $membershipWorkflow->apply($person, 'submit_entry_form');
 
             $em->flush();
@@ -98,10 +98,10 @@ class PersonEntryController extends AbstractController
             // todo we need different validation groups based on whether the approver hit approve or reject
             if ($form->get('approve')->isClicked()) {
                 $membershipWorkflow->apply($person, 'approve_entry_form');
-                $logger->logPersonActivity($person, "Approved entry form");
+                $logger->log($person, "Approved entry form");
             } else {
                 $membershipWorkflow->apply($person, 'return_entry_form');
-                $logger->logPersonActivity($person, "Returned entry form");
+                $logger->log($person, "Returned entry form");
             }
             $em->flush();
             return $this->redirectToRoute('default'); // todo redirect to approval index, when implemented
@@ -180,7 +180,7 @@ class PersonEntryController extends AbstractController
             $em->persist($drsCert);
             $em->persist($igbCert);
 
-            $logger->logPersonActivity($person, 'Uploaded training certificates');
+            $logger->log($person, 'Uploaded training certificates');
             $membershipWorkflow->apply($person, 'upload_certificates');
 
             $em->flush();

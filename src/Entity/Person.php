@@ -8,6 +8,7 @@ namespace App\Entity;
 
 use App\Attribute\Loggable;
 use App\Enum\PreferredAddress;
+use App\Log\LogSubjectInterface;
 use App\Repository\PersonRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -25,7 +26,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: PersonRepository::class)]
 #[Vich\Uploadable]
-class Person implements UserInterface, PasswordAuthenticatedUserInterface, Serializable
+class Person implements UserInterface, PasswordAuthenticatedUserInterface, Serializable, LogSubjectInterface
 // TODO Is it a bug that we have to implement PasswordAuthenticatedUserInterface even though this entity doesn't handle authentication?
 {
     use TimestampableEntity;
@@ -51,39 +52,39 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
-    private ?string $firstName;
+    private ?string $firstName = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
-    private ?string $lastName;
+    private ?string $lastName = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
-    private ?string $middleInitial;
+    private ?string $middleInitial = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable(displayName: 'netID')]
-    private ?string $netid;
+    private ?string $netid = null;
 
     #[ORM\Column(type: 'string', length: 180, unique: true, nullable: true)]
     #[Loggable]
-    private ?string $username;
+    private ?string $username = null;
 
     #[ORM\Column(type: 'integer', nullable: true)]
     #[Loggable(displayName: 'UIN')]
-    private ?int $uin;
+    private ?int $uin = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
-    private ?string $email;
+    private ?string $email = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
-    private ?string $officeNumber;
+    private ?string $officeNumber = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
-    private ?string $officePhone;
+    private ?string $officePhone = null;
 
     #[ORM\Column(type: 'boolean')]
     #[Loggable(displayName: 'DRS training')]
@@ -168,10 +169,10 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Slug(fields: ['firstName', 'lastName'], unique_base: 'id')]
-    private ?string $slug;
+    private ?string $slug = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $otherAddress;
+    private ?string $otherAddress = null;
 
     #[ORM\Column(length: 255)]
     private ?string $membershipStatus = "need_entry_form";
@@ -189,6 +190,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         $this->logs = new ArrayCollection();
         $this->documents = new ArrayCollection();
         $this->createdNotes = new ArrayCollection();
+        $this->auditLogs = new ArrayCollection();
     }
 
     public function __toString()
