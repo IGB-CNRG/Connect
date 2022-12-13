@@ -18,8 +18,9 @@ class ThemeType extends EntityType
         parent::configureOptions($resolver);
         $resolver->setDefaults([
             'class' => Theme::class,
+            'label' => 'person.theme',
             'attr' => [
-                'data-controller' => 'select2',
+                'data-controller' => 'tom-select',
             ],
             'query_builder' => function (ThemeRepository $themeRepository) {
                 return $themeRepository->createFormSortedQueryBuilder();

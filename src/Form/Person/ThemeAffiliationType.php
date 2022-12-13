@@ -6,14 +6,12 @@
 
 namespace App\Form\Person;
 
-use App\Entity\MemberCategory;
 use App\Entity\ThemeAffiliation;
 use App\Enum\ThemeRole;
 use App\Form\Fields\EndDateType;
+use App\Form\Fields\MemberCategoryType;
 use App\Form\Fields\StartDateType;
 use App\Form\Fields\ThemeType;
-use App\Repository\MemberCategoryRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -48,12 +46,7 @@ class ThemeAffiliationType extends AbstractType
                     || $this->security->isGranted('PERSON_EDIT_HISTORY', $themeAffiliation->getPerson())) {
                     $form
                         ->add('theme', ThemeType::class)
-                        ->add('memberCategory', EntityType::class, [
-                            'class' => MemberCategory::class,
-                            'query_builder' => function (MemberCategoryRepository $repository) {
-                                return $repository->createFormSortedQueryBuilder();
-                            },
-                        ])
+                        ->add('memberCategory', MemberCategoryType::class)
                         ->add('title', TextType::class, [
                             'required' => false,
                             'help' => 'Optional',

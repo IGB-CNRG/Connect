@@ -10,7 +10,7 @@ use App\Entity\Document;
 use App\Entity\Person;
 use App\Form\DocumentMetadataType;
 use App\Form\DocumentType;
-use App\Service\ActivityLogger;
+use App\Log\ActivityLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -41,7 +41,7 @@ class DocumentController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($document);
-            $logger->logPersonActivity($person, sprintf("Uploaded document '%s'", $document));
+            $logger->log($person, sprintf("Uploaded document '%s'", $document));
             $em->flush();
 
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
@@ -70,7 +70,7 @@ class DocumentController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($document);
-            $logger->logPersonActivity($person, sprintf("Edited document '%s'", $document));
+            $logger->log($person, sprintf("Edited document '%s'", $document));
             $em->flush();
 
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
@@ -95,7 +95,7 @@ class DocumentController extends AbstractController
 
         if ($request->isMethod(Request::METHOD_POST)) {
             $em->remove($document);
-            $logger->logPersonActivity($person, sprintf("Removed document '%s'", $document));
+            $logger->log($person, sprintf("Removed document '%s'", $document));
             $em->flush();
 
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);

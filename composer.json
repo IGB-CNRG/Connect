@@ -52,6 +52,7 @@
         "symfony/web-link": "6.1.*",
         "symfony/webapp-meta": "^1.0",
         "symfony/webpack-encore-bundle": "^1.12",
+        "symfony/workflow": "6.1.*",
         "symfony/yaml": "6.1.*",
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/html-extra": "^3.4",
@@ -98,7 +99,8 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
-        ]
+        ],
+        "phpmd": "phpmd phpmd.xml"
     },
     "conflict": {
         "symfony/symfony": "*",
@@ -111,6 +113,7 @@
         }
     },
     "require-dev": {
+        "phpmd/phpmd": "^2.13",
         "phpunit/phpunit": "^9.5",
         "symfony/browser-kit": "6.1.*",
         "symfony/css-selector": "6.1.*",

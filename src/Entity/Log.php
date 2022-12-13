@@ -38,9 +38,6 @@ class Log
     #[ORM\ManyToOne(targetEntity: Key::class, inversedBy: 'logs')]
     private ?Key $cylinderKey;
 
-    #[ORM\ManyToOne(targetEntity: Workflow::class, inversedBy: 'logs')]
-    private ?Workflow $workflow;
-
     #[ORM\ManyToOne(targetEntity: Department::class, inversedBy: 'logs')]
     private ?Department $department;
 
@@ -117,18 +114,6 @@ class Log
     public function setCylinderKey(?Key $cylinderKey): self
     {
         $this->cylinderKey = $cylinderKey;
-
-        return $this;
-    }
-
-    public function getWorkflow(): ?Workflow
-    {
-        return $this->workflow;
-    }
-
-    public function setWorkflow(?Workflow $workflow): self
-    {
-        $this->workflow = $workflow;
 
         return $this;
     }

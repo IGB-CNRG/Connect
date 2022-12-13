@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | Entry Form{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active" aria-current="page">
+        IGB Entry Request Form
+    </li>
+{% endblock %}
+
+{% block content %}
+    {% form_theme form _self %}
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col-lg">{{ form_row(form.firstName) }}</div>
+        <div class="col-lg">{{ form_row(form.lastName) }}</div>
+    </div>
+    <div class="row">
+        {# todo add netid-check after merge #}
+        <div class="col-lg">{{ form_row(form.netid) }}</div>
+        <div class="col-lg">{{ form_row(form.uin) }}</div>
+        <div class="col-lg">{{ form_row(form.email) }}</div>
+    </div>
+    <div class="row">
+        <div class="col-lg">{{ form_row(form.roomAffiliations) }}</div>
+        <div class="col-lg">{{ form_row(form.officePhone) }}</div>
+    </div>
+    {{ form_rest(form) }}
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block collection_row %}
+    {{ block("form_widget") }}
+{% endblock %}
+
+{% block collection_entry_row %}
+    {{ block("form_widget") }}
+{% endblock %}
+
+{% block department_affiliation_row %}
+    <div data-controller="other-entry">
+        {{ form_row(form.department) }}
+        {{ form_row(form.otherDepartment) }}
+    </div>
+{% endblock %}
+
+{% block theme_affiliation_row %}
+    <div class="row">
+        <div class="col-lg">{{ form_row(form.theme) }}</div>
+        <div class="col-lg">{{ form_row(form.memberCategory) }}</div>
+    </div>
+    <div class="row">
+        <div class="col-lg">{{ form_row(form.startedAt) }}</div>
+        <div class="col-lg">{{ form_row(form.endedAt) }}</div>
+    </div>
+{% endblock %}

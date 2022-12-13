@@ -8,7 +8,9 @@ namespace App\Entity;
 
 use App\Attribute\Loggable;
 use App\Enum\PreferredAddress;
+use App\Log\LogSubjectInterface;
 use App\Repository\PersonRepository;
+use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -26,13 +28,14 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\Entity(repositoryClass: PersonRepository::class)]
 #[Vich\Uploadable]
 #[UniqueEntity('username', 'A person with this username already exists')]
-class Person implements UserInterface, PasswordAuthenticatedUserInterface, Serializable
+class Person implements UserInterface, PasswordAuthenticatedUserInterface, Serializable, LogSubjectInterface
 // TODO Is it a bug that we have to implement PasswordAuthenticatedUserInterface even though this entity doesn't handle authentication?
 {
     use TimestampableEntity;
 
     const USER_ROLES = [
         'CONNECT Admin' => 'ROLE_ADMIN',
+        'CONNECT Approver' => 'ROLE_APPROVER',
         'CNRG' => 'ROLE_CNRG',
         'Op/Fac' => 'ROLE_OP_FAC',
         'Key Manager' => 'ROLE_KEY_MANAGER',
@@ -165,10 +168,13 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Slug(fields: ['firstName', 'lastName'], unique_base: 'id')]
-    private ?string $slug;
+    private ?string $slug = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $otherAddress;
+    private ?string $otherAddress = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $membershipStatus = "need_entry_form";
 
     public function __construct()
     {
@@ -180,7 +186,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         $this->departmentAffiliations = new ArrayCollection();
         $this->ownedLogs = new ArrayCollection();
         $this->logs = new ArrayCollection();
-        $this->workflowProgress = new ArrayCollection();
         $this->documents = new ArrayCollection();
     }
 
@@ -195,16 +200,15 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     {
         if ($this->getPreferredFirstName()) {
             return $this->getPreferredFirstName() . ' ' . $this->getLastName();
-        } else {
-            return $this->getFirstName() . ' ' . $this->getLastName(); // TODO this should be a little smarter
         }
+        return $this->getFirstName() . ' ' . $this->getLastName(); // TODO this should be a little smarter
     }
 
     public function getIsCurrent(): bool
     {
-        return $this->getThemeAffiliations()->filter(function(ThemeAffiliation $themeAffiliation){
-            return $themeAffiliation->isCurrent();
-        })->count()>0;
+        return $this->getThemeAffiliations()->filter(function (ThemeAffiliation $themeAffiliation) {
+                return $themeAffiliation->isCurrent();
+            })->count() > 0;
     }
 
     public function setImageFile(?File $imageFile = null): void
@@ -214,7 +218,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         if (null !== $imageFile) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = new \DateTimeImmutable();
+            $this->updatedAt = new DateTimeImmutable();
         }
     }
 
@@ -463,7 +467,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     }
 
     /**
-     * @return Collection<int, ThemeAffiliation>|ThemeAffiliation[]
+     * @return Collection<int, ThemeAffiliation>
      */
     public function getThemeAffiliations(): Collection
     {
@@ -636,36 +640,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
             // set the owning side to null (unless already changed)
             if ($log->getPerson() === $this) {
                 $log->setPerson(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, WorkflowProgress>
-     */
-    public function getWorkflowProgress(): Collection
-    {
-        return $this->workflowProgress;
-    }
-
-    public function addWorkflowProgress(WorkflowProgress $workflowProgress): self
-    {
-        if (!$this->workflowProgress->contains($workflowProgress)) {
-            $this->workflowProgress[] = $workflowProgress;
-            $workflowProgress->setPerson($this);
-        }
-
-        return $this;
-    }
-
-    public function removeWorkflowProgress(WorkflowProgress $workflowProgress): self
-    {
-        if ($this->workflowProgress->removeElement($workflowProgress)) {
-            // set the owning side to null (unless already changed)
-            if ($workflowProgress->getPerson() === $this) {
-                $workflowProgress->setPerson(null);
             }
         }
 
@@ -907,5 +881,27 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
             );
         }
         return null;
+    }
+
+    public function getMemberCategories(): array
+    {
+        return array_map(
+            function (ThemeAffiliation $themeAffiliation) {
+                return $themeAffiliation->getMemberCategory();
+            },
+            $this->getThemeAffiliations()->toArray()
+        );
+    }
+
+    public function getMembershipStatus(): ?string
+    {
+        return $this->membershipStatus;
+    }
+
+    public function setMembershipStatus(string $membershipStatus): self
+    {
+        $this->membershipStatus = $membershipStatus;
+
+        return $this;
     }
 }

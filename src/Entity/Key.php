@@ -6,6 +6,7 @@
 
 namespace App\Entity;
 
+use App\Log\LogSubjectInterface;
 use App\Repository\KeyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -16,7 +17,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[ORM\Entity(repositoryClass: KeyRepository::class)]
 #[ORM\Table(name: '`key`')]
 #[UniqueEntity('name')]
-class Key
+class Key implements LogSubjectInterface
 {
     use TimestampableEntity, HistoricalEntity;
 

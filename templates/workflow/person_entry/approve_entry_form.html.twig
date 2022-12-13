@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | Entry Form{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active" aria-current="page">
+        IGB Entry Request Form
+    </li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg">
+            <p class="approval-label">{{ 'person.firstName'|trans }}</p>
+            <p class="approval-field">{{ person.firstName }}</p>
+        </div>
+        <div class="col-lg">
+            <p class="approval-label">{{ 'person.lastName'|trans }}</p>
+            <p class="approval-field">{{ person.lastName }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg">
+            <p class="approval-label">{{ 'person.netid'|trans }}</p>
+            <p class="approval-field">{{ person.netid }}</p>
+        </div>
+        <div class="col-lg">
+            <p class="approval-label">{{ 'person.uin'|trans }}</p>
+            <p class="approval-field">{{ person.uin }}</p>
+        </div>
+        <div class="col-lg">
+            <p class="approval-label">{{ 'person.email'|trans }}</p>
+            <p class="approval-field">{{ person.email }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg">
+            <p class="approval-label">{{ 'entry_form.room'|trans }}</p>
+            <p class="approval-field">{{ person.roomAffiliations|length>0 ? person.roomAffiliations[0].room : '' }}</p>
+        </div>
+        <div class="col-lg">
+            <p class="approval-label">{{ 'entry_form.phone'|trans }}</p>
+            <p class="approval-field">{{ person.officePhone }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg">
+            <p class="approval-label">{{ 'entry_form.department'|trans }}</p>
+            <p class="approval-field">{{ person.departmentAffiliations|length>0 ? (person.departmentAffiliations[0].department??person.departmentAffiliations[0].otherDepartment) : '' }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg">
+            <p class="approval-label">{{ 'entry_form.supervisor'|trans }}</p>
+            <p class="approval-field">{{ person.supervisorAffiliations|length>0 ? person.supervisorAffiliations[0].supervisor : '' }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg">
+            <p class="approval-label">{{ 'person.theme'|trans }}</p>
+            <p class="approval-field">{{ person.themeAffiliations|length > 0 ? person.themeAffiliations[0].theme.shortName }}</p>
+        </div>
+        <div class="col-lg">
+            <p class="approval-label">{{ 'entry_form.member_category'|trans }}</p>
+            <p class="approval-field">{{ person.themeAffiliations|length > 0 ? person.themeAffiliations[0].memberCategory }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg">
+            <p class="approval-label">{{ 'person.started_at'|trans }}</p>
+            <p class="approval-field">{% if person.themeAffiliations|length>0 and person.themeAffiliations[0].startedAt is not null %}{{ person.themeAffiliations[0].startedAt|date('n/j/Y') }}{% endif %}</p>
+        </div>
+        <div class="col-lg">
+            <p class="approval-label">{{ 'person.ended_at'|trans }}</p>
+            <p class="approval-field">{% if person.themeAffiliations|length>0 and person.themeAffiliations[0].endedAt is not null %}{{ person.themeAffiliations[0].endedAt|date('n/j/Y') }}{% endif %}</p>
+        </div>
+    </div>
+    {# todo need better wording from Darci #}
+    <p>By checking the box below, I approve this entry form</p>
+    {{ form(form) }}
+{% endblock %}

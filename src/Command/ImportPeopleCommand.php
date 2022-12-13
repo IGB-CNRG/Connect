@@ -16,12 +16,12 @@ use App\Entity\SupervisorAffiliation;
 use App\Entity\Theme;
 use App\Entity\ThemeAffiliation;
 use App\Enum\ThemeRole;
+use App\Log\ActivityLogger;
 use App\Repository\DepartmentRepository;
 use App\Repository\MemberCategoryRepository;
 use App\Repository\PersonRepository;
 use App\Repository\RoomRepository;
 use App\Repository\ThemeRepository;
-use App\Service\ActivityLogger;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -198,7 +198,7 @@ class ImportPeopleCommand extends Command
                         }
 
                         // create an initial log entry
-                        $this->logger->logPersonActivity($person, 'Imported from IGB People Database');
+                        $this->logger->log($person, 'Imported from IGB People Database');
                     }
                 }
             }

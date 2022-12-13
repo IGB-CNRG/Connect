@@ -21,6 +21,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use LogicException;
 
 class OtherDepartmentAffiliationCrudController extends AbstractCrudController
 {
@@ -101,7 +102,7 @@ class OtherDepartmentAffiliationCrudController extends AbstractCrudController
     {
         $departmentAffiliation = $adminContext->getEntity()->getInstance();
         if (!$departmentAffiliation instanceof DepartmentAffiliation) {
-            throw new \LogicException('Entity is missing or not a DepartmentAffiliation');
+            throw new LogicException('Entity is missing or not a DepartmentAffiliation');
         }
     }
 }
