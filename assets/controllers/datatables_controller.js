@@ -11,7 +11,7 @@ require('jquery-lazy');
 window.JSZip = require('jszip');
 require('datatables.net-bs5');
 require('datatables.net-buttons-bs5');
-require('datatables.net-buttons/js/buttons.html5')();
+require('datatables.net-buttons/js/buttons.html5');
 
 export default class extends Controller {
     static targets = ['table'];

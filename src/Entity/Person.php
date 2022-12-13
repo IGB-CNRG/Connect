@@ -131,9 +131,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\OrderBy(['createdAt' => 'DESC'])]
     private Collection $logs;
 
-    #[ORM\OneToMany(mappedBy: 'person', targetEntity: WorkflowProgress::class, orphanRemoval: true)]
-    private Collection $workflowProgress;
-
     #[ORM\ManyToOne(targetEntity: Building::class, inversedBy: 'people')]
     private ?Building $officeBuilding;
 

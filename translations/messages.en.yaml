@@ -31,8 +31,11 @@ membership:
     approval_title: "Training certificates"
     completion_message: "Your certificates have been received. You will receive a notification when they have been approved."
   active:
+    label: Active
   exit_form_submitted:
+    label: Exit form submitted, waiting for approval
   inactive:
+    label: Inactive
   # Transitions
   submit_entry_form:
     label: Entry form submission
