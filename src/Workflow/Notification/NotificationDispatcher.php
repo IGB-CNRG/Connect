@@ -8,11 +8,65 @@ namespace App\Workflow\Notification;
 
 use App\Entity\Person;
 use App\Entity\WorkflowNotification;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+use Symfony\Contracts\Service\Attribute\SubscribedService;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
+use Symfony\Contracts\Service\ServiceSubscriberTrait;
+use Twig\Environment;
 
-class NotificationDispatcher
+class NotificationDispatcher implements ServiceSubscriberInterface
 {
-    public function sendNotification(WorkflowNotification $notification, Person $person):void
+    use ServiceSubscriberTrait;
+
+    /**
+     * Sends the given notification about the given subject
+     *
+     * @param WorkflowNotification $notification
+     * @param Person $subject the subject of the notification, *not* the recipient or sender
+     * @return void
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     */
+    public function sendNotification(WorkflowNotification $notification, Person $subject): void
     {
         // todo stub
+        // Render the notification
+        $template = $this->twig()->createTemplate($notification->getTemplate());
+        $body = $this->twig()->render($template, [
+            // todo what arguments do we want to provide?
+            'member' => $subject,
+        ]);
+
+        // Render the recipients
+        $recipientTemplate = $this->twig()->createTemplate($notification->getRecipients());
+        $recipients = $this->twig()->render($recipientTemplate, [
+            'approvers' => '???', // todo what recipients do we want to provide?
+            'member' => $subject->getEmail(),
+        ]);
+
+        $email = (new Email())
+            ->from('do-not-reply@igb.illinois.edu') // todo parameterize this and figure out what it should be
+            ->to($recipients)
+            ->subject($notification->getSubject())
+            ->html($body)
+            ;
+
+        // Send the notification to each recipient
+        $this->mailer()->send($email);
+    }
+
+    //MARK: - Service Subscribers
+    #[SubscribedService]
+    private function twig(): Environment
+    {
+        return $this->container->get(__CLASS__ . '::' . __FUNCTION__);
+    }
+
+    #[SubscribedService]
+    private function mailer(): MailerInterface
+    {
+        return $this->container->get(__CLASS__ . '::' . __FUNCTION__);
     }
 }

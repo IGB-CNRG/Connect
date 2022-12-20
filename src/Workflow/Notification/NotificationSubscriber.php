@@ -27,16 +27,16 @@ class NotificationSubscriber implements EventSubscriberInterface, ServiceSubscri
     public function sendTransitionNotifications(Event $event): void
     {
         // Fetch all the notifications for this transition from the database
-        /** @var Person $person */
-        $person = $event->getSubject();
+        /** @var Person $subject */
+        $subject = $event->getSubject();
         $notifications = $this->workflowNotificationRepository()->findForTransition(
             $event->getWorkflowName(),
             $event->getTransition()->getName(),
-            $person->getMemberCategories()
+            $subject->getMemberCategories()
         );
         // Send them
         foreach ($notifications as $notification) {
-            $this->notificationDispatcher()->sendNotification($notification, $person);
+            $this->notificationDispatcher()->sendNotification($notification, $subject);
         }
     }
 

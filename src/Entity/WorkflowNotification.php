@@ -38,6 +38,9 @@ class WorkflowNotification
     #[ORM\Column(length: 255)]
     private ?string $transitionName = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $subject = null;
+
 
     public function __construct()
     {
@@ -131,6 +134,18 @@ class WorkflowNotification
     public function setTransitionName(string $transitionName): self
     {
         $this->transitionName = $transitionName;
+
+        return $this;
+    }
+
+    public function getSubject(): ?string
+    {
+        return $this->subject;
+    }
+
+    public function setSubject(string $subject): self
+    {
+        $this->subject = $subject;
 
         return $this;
     }
