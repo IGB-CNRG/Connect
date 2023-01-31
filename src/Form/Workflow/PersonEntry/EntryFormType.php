@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -8,6 +8,7 @@ namespace App\Form\Workflow\PersonEntry;
 
 use App\Entity\Person;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -36,6 +37,10 @@ class EntryFormType extends AbstractType
             ])
             ->add('email', EmailType::class, [
                 'required' => false,
+            ])
+            ->add('officeWorkOnly', CheckboxType::class, [
+                'required' => false,
+                'label' => 'Office work only?',
             ])
             ->add('roomAffiliations', CollectionType::class, [
                 'entry_type' => RoomAffiliationType::class,

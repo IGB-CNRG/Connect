@@ -1,13 +1,15 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
 namespace App\Workflow\Notification;
 
 use App\Entity\Person;
+use App\Entity\ThemeAffiliation;
 use App\Entity\WorkflowNotification;
+use App\Service\HistoricityManagerAware;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Contracts\Service\Attribute\SubscribedService;
@@ -17,7 +19,7 @@ use Twig\Environment;
 
 class NotificationDispatcher implements ServiceSubscriberInterface
 {
-    use ServiceSubscriberTrait;
+    use ServiceSubscriberTrait, HistoricityManagerAware;
 
     /**
      * Sends the given notification about the given subject
@@ -34,9 +36,12 @@ class NotificationDispatcher implements ServiceSubscriberInterface
         // todo stub
         // Render the notification
         $template = $this->twig()->createTemplate($notification->getTemplate());
+        $themes = array_map(fn(ThemeAffiliation $ta) => $ta->getTheme(),
+            $this->historicityManager()->getCurrentEntities($subject->getThemeAffiliations())->toArray());
         $body = $this->twig()->render($template, [
             // todo what arguments do we want to provide?
             'member' => $subject,
+            'themes' => $themes,
         ]);
 
         // Render the recipients

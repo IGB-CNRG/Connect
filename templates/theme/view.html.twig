@@ -12,14 +12,14 @@
                         <th>Full Name</th>
                         <td>{{ theme.fullName }}</td>
                     </tr>
-                    {% if themeLeaders|length > 0 %}
+                    {% if theme.themeLeaders|length > 0 %}
                         <tr>
-                            <th rowspan="{{ themeLeaders|length }}">Theme Leader{{ themeLeaders|length>1?'s':'' }}</th>
+                            <th rowspan="{{ theme.themeLeaders|length }}">Theme Leader{{ theme.themeLeaders|length>1?'s':'' }}</th>
                             <td>
-                                <a href="{{ path('person_view', {'slug': themeLeaders[0].slug}) }}">{{ themeLeaders[0] }}
+                                <a href="{{ path('person_view', {'slug': theme.themeLeaders[0].slug}) }}">{{ theme.themeLeaders[0] }}
                             </td>
                         </tr>
-                        {% for leader in themeLeaders %}
+                        {% for leader in theme.themeLeaders %}
                             {% if loop.index > 1 %}
                                 <tr>
                                     <td><a href="{{ path('person_view', {'slug': leader.slug}) }}">{{ leader }}</a></td>
@@ -27,14 +27,14 @@
                             {% endif %}
                         {% endfor %}
                     {% endif %}
-                    {% if themeAdmins|length > 0 %}
+                    {% if theme.themeAdmins|length > 0 %}
                         <tr>
-                            <th rowspan="{{ themeAdmins|length }}">Theme Admin{{ themeAdmins|length>1?'s':'' }}</th>
+                            <th rowspan="{{ theme.themeAdmins|length }}">Theme Admin{{ theme.themeAdmins|length>1?'s':'' }}</th>
                             <td>
-                                <a href="{{ path('person_view', {'slug': themeAdmins[0].slug}) }}">{{ themeAdmins[0] }}</a>
+                                <a href="{{ path('person_view', {'slug': theme.themeAdmins[0].slug}) }}">{{ theme.themeAdmins[0] }}</a>
                             </td>
                         </tr>
-                        {% for admin in themeAdmins %}
+                        {% for admin in theme.themeAdmins %}
                             {% if loop.index > 1 %}
                                 <tr>
                                     <td><a href="{{ path('person_view', {'slug': admin.slug}) }}">{{ admin }}</a></td>
@@ -42,14 +42,14 @@
                             {% endif %}
                         {% endfor %}
                     {% endif %}
-                    {% if labManagers|length > 0 %}
+                    {% if theme.labManagers|length > 0 %}
                         <tr>
-                            <th rowspan="{{ labManagers|length }}">Lab Manager{{ labManagers|length>1?'s':'' }}</th>
+                            <th rowspan="{{ theme.labManagers|length }}">Lab Manager{{ theme.labManagers|length>1?'s':'' }}</th>
                             <td>
-                                <a href="{{ path('person_view', {'slug': labManagers[0].slug}) }}">{{ labManagers[0] }}</a>
+                                <a href="{{ path('person_view', {'slug': theme.labManagers[0].slug}) }}">{{ theme.labManagers[0] }}</a>
                             </td>
                         </tr>
-                        {% for manager in labManagers %}
+                        {% for manager in theme.labManagers %}
                             {% if loop.index > 1 %}
                                 <tr>
                                     <td><a href="{{ path('person_view', {'slug': manager.slug}) }}">{{ manager }}</a>

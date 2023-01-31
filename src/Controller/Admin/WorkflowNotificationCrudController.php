@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -16,7 +16,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CodeEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -63,24 +63,35 @@ class WorkflowNotificationCrudController extends AbstractCrudController
                 ->setHelp('This name is for internal use only and will not be included in the email'),
             TextField::new('subject')
                 ->setLabel('Email subject'),
-            TextEditorField::new('template')
+            CodeEditorField::new('template')
                 ->setLabel('Email template')
                 ->setHelp(
                     'In this template, you can use the following keywords, which will be replaced with the appropriate values when the email is sent:
                         <dl>
                         <dt>{{member.name}}</dt>
-                        <dd>The member\'s full name (e.g. "John Smith")</dd>
+                        <dd>The member\'s full name (e.g., "John Smith")</dd>
                         <dt>{{member.firstName}}</dt>
-                        <dd>The member\'s first name (e.g. "John")</dd>
+                        <dd>The member\'s first name (e.g., "John")</dd>
                         <dt>{{member.lastName}}</dt>
-                        <dd>The member\'s last name (e.g. "Smith")</dd>
+                        <dd>The member\'s last name (e.g., "Smith")</dd>
+                        <dt>{{member.username}}</dt>
+                        <dd>The member\'s IGB username (e.g., "jsmith")</dd>
                         </dl>'
                 )
                 ->setFormTypeOption('help_html', true),
             TextField::new('recipients')
-                ->setHelp('Enter email addresses, separated by commas. You can also use <strong>{{approvers}}</strong> to include the list of people who can approve this workflow step.')
+                ->setHelp(
+                    'Enter email addresses, separated by commas. You can also use the following keywords:
+                        <dl>
+                        <dt>{{member}}</dt>
+                        <dd>The IGB member</dd>
+                        <dt>{{approvers}}</dt>
+                        <dd>The list of people who can approve this workflow step</dd>
+                        </dl>'
+                )
                 ->setFormTypeOption('help_html', true),
-            AssociationField::new('memberCategories'),
+            AssociationField::new('memberCategories')
+            ->setTemplatePath('admin/member_category.html.twig'),
             ChoiceField::new('transitionName')
                 ->setLabel('Workflow event')
                 ->setChoices($choices)

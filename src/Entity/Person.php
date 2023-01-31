@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -172,6 +172,9 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     #[ORM\Column(length: 255)]
     private ?string $membershipStatus = "need_entry_form";
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $officeWorkOnly = null;
 
     public function __construct()
     {
@@ -898,6 +901,18 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     public function setMembershipStatus(string $membershipStatus): self
     {
         $this->membershipStatus = $membershipStatus;
+
+        return $this;
+    }
+
+    public function isOfficeWorkOnly(): ?bool
+    {
+        return $this->officeWorkOnly;
+    }
+
+    public function setOfficeWorkOnly(?bool $officeWorkOnly): self
+    {
+        $this->officeWorkOnly = $officeWorkOnly;
 
         return $this;
     }

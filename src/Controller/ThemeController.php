@@ -1,13 +1,12 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
 namespace App\Controller;
 
 use App\Entity\Theme;
-use App\Enum\ThemeRole;
 use App\Repository\PersonRepository;
 use App\Repository\ThemeRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -32,14 +31,8 @@ class ThemeController extends AbstractController
     #[Route('/theme/{shortName}', name: 'theme_view')]
     public function view(Theme $theme, PersonRepository $personRepository): Response
     {
-        $themeLeaders = $personRepository->findByRoleInTheme($theme, ThemeRole::ThemeLeader);
-        $themeAdmins = $personRepository->findByRoleInTheme($theme, ThemeRole::ThemeAdmin);
-        $labManagers = $personRepository->findByRoleInTheme($theme, ThemeRole::LabManager);
         return $this->render('theme/view.html.twig', [
             'theme' => $theme,
-            'themeLeaders' => $themeLeaders,
-            'themeAdmins' => $themeAdmins,
-            'labManagers' => $labManagers,
         ]);
     }
 }
