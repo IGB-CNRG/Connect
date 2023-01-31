@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | Unit Partners{% endblock %}
+
+{% block content %}
+    <h2>Unit Partners</h2>
+    {% for college in colleges %}
+        <h3>{{ college.name }} <small>{{ college.faculty }} faculty, {{ college.affiliates }} affiliates</small></h3>
+        {% for department in college.departments %}
+            {% if department.faculty > 0 or department.affiliates > 0 %}
+                <p>{{ department.department }}
+                    <small>{{ department.faculty }} faculty, {{ department.affiliates }} affiliates</small></p>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+    <h3>Total
+        <small>{{ colleges|reduce((carry, v)=>carry+v.faculty) }} faculty,
+            {{ colleges|reduce((carry, v)=>carry+v.affiliates) }} affiliates</small></h3>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item" aria-current="page">
+        <a href="#">Reports</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        Unit Partners
+    </li>
+{% endblock %}
