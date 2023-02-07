@@ -28,9 +28,10 @@
             <div class="card-body">
                 {{ form_start(advancedSearchForm) }}
                 <div class="row">
-                    <div class="col-lg">{{ form_row(advancedSearchForm.theme) }}</div>
-                    <div class="col-lg">{{ form_row(advancedSearchForm.employeeType) }}</div>
-                    <div class="col-lg">{{ form_row(advancedSearchForm.role) }}</div>
+                    <div class="col-lg-6 col-xl">{{ form_row(advancedSearchForm.theme) }}</div>
+                    <div class="col-lg-6 col-xl">{{ form_row(advancedSearchForm.employeeType) }}</div>
+                    <div class="col-lg-6 col-xl">{{ form_row(advancedSearchForm.role) }}</div>
+                    <div class="col-lg-6 col-xl">{{ form_row(advancedSearchForm.department) }}</div>
                 </div>
                 {{ form_end(advancedSearchForm) }}
 

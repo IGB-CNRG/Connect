@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 import 'datatables.net-bs5/css/dataTables.bootstrap5.css';

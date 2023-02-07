@@ -65,6 +65,14 @@
             {% endif %}
         </td>
 
+        <td>
+            {% for departmentAffiliation in person.departmentAffiliations|current %}
+                <div class="theme-row">
+                    {{ departmentAffiliation.department }}
+                </div>
+            {% endfor %}
+        </td>
+
         {# Rooms Column #}
         <td>
             {% for roomAffiliation in person.roomAffiliations|current %}
@@ -86,6 +94,7 @@
         <th>Name</th>
         <th>Email</th>
         <th data-orderable="false">Theme</th>
+        <th>Department</th>
         <th>Room</th>
 
         {# Export columns #}

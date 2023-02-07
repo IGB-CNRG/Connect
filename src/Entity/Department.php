@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -35,6 +35,9 @@ class Department implements LogSubjectInterface
     #[ORM\OneToMany(mappedBy: 'department', targetEntity: Log::class)]
     private Collection $logs;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $shortName = null;
+
     public function __construct()
     {
         $this->departmentAffiliations = new ArrayCollection();
@@ -43,7 +46,7 @@ class Department implements LogSubjectInterface
 
     public function __toString()
     {
-        return $this->getName();
+        return $this->getShortName() ?? $this->getName();
     }
 
     public function getId(): ?int
@@ -131,6 +134,18 @@ class Department implements LogSubjectInterface
                 $log->setDepartment(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getShortName(): ?string
+    {
+        return $this->shortName;
+    }
+
+    public function setShortName(?string $shortName): self
+    {
+        $this->shortName = $shortName;
 
         return $this;
     }

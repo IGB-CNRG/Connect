@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -38,7 +38,9 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
             ->leftJoin('ta.theme', 't')
             ->leftJoin('p.roomAffiliations', 'ra')
             ->leftJoin('ra.room', 'r')
-            ->select('p,ta,t,ra,r');
+            ->leftJoin('p.departmentAffiliations', 'da')
+            ->leftJoin('da.department', 'd')
+            ->select('p,ta,t,ra,r,da,d');
     }
 
     public function findCurrentForIndex()
