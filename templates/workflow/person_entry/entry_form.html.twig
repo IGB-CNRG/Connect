@@ -54,3 +54,10 @@
         <div class="col-lg">{{ form_row(form.endedAt) }}</div>
     </div>
 {% endblock %}
+
+{% block captcha_widget %}
+    <div>
+        <img src="{{ captcha_code }}" title="captcha" width="{{ captcha_width }}" height="{{ captcha_height }}" style="margin-bottom: 0.5rem;"/>
+        {{ form_widget(form) }}
+    </div>
+{% endblock %}

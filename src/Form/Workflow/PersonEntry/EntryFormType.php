@@ -7,6 +7,8 @@
 namespace App\Form\Workflow\PersonEntry;
 
 use App\Entity\Person;
+use Gregwar\CaptchaBundle\Type\CaptchaType;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -17,6 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EntryFormType extends AbstractType
 {
+    public function __construct(private readonly Security $security) {}
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -84,7 +87,11 @@ class EntryFormType extends AbstractType
                 'allow_add' => false,
                 'allow_delete' => false,
             ])
-        ;
+            ;
+        if(!$this->security->isGranted('IS_AUTHENTICATED_FULLY')) {
+            // only show captcha when we're not logged in
+            $builder->add('captcha', CaptchaType::class);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void

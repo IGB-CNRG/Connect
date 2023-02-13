@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -23,8 +23,7 @@ use App\Log\ActivityLogger;
 use App\Repository\PersonRepository;
 use App\Service\HistoricityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -32,6 +31,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class PersonController extends AbstractController
 {
@@ -159,10 +159,9 @@ class PersonController extends AbstractController
     }
 
     #[Route('/person/{slug}/themeAffiliation/{id}/end', name: 'person_end_theme_affiliation')]
-    #[ParamConverter('person', options: ['mapping' => ['slug' => 'slug']])]
     #[IsGranted('PERSON_EDIT', 'person')]
     public function endThemeAffiliation(
-        Person $person,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Person $person,
         ThemeAffiliation $themeAffiliation,
         Request $request,
         EntityManagerInterface $em,
@@ -270,9 +269,8 @@ class PersonController extends AbstractController
     }
 
     #[Route('/person/{slug}/department/{id}/end', name: 'person_end_department_affiliation')]
-    #[ParamConverter('person', options: ['mapping' => ['slug' => 'slug']])]
     public function endDepartmentAffiliation(
-        Person $person,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Person $person,
         DepartmentAffiliation $departmentAffiliation,
         Request $request,
         EntityManagerInterface $em,
@@ -299,9 +297,8 @@ class PersonController extends AbstractController
     }
 
     #[Route('/person/{slug}/room/{id}/end', name: 'person_end_room_affiliation')]
-    #[ParamConverter('person', options: ['mapping' => ['slug' => 'slug']])]
     public function endRoomAffiliation(
-        Person $person,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Person $person,
         RoomAffiliation $roomAffiliation,
         Request $request,
         EntityManagerInterface $em,

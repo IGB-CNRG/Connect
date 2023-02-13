@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -9,19 +9,19 @@ namespace App\Controller;
 use App\Entity\Person;
 use App\Entity\SupervisorAffiliation;
 use App\Form\EndSupervisorAffiliationType;
-use App\Form\SuperviseeType;
-use App\Form\SupervisorType;
+use App\Form\Person\SuperviseeType;
+use App\Form\Person\SupervisorType;
 use App\Log\ActivityLogger;
 use App\Service\HistoricityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class SupervisorController extends AbstractController
 {
@@ -94,9 +94,8 @@ class SupervisorController extends AbstractController
     }
 
     #[Route('/person/{slug}/supervisor/{id}/end', name: 'person_end_supervisor_affiliation')]
-    #[ParamConverter('person', options: ['mapping' => ['slug' => 'slug']])]
     public function endSupervisorAffiliation(
-        Person $person,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Person $person,
         SupervisorAffiliation $supervisorAffiliation,
         Request $request,
         EntityManagerInterface $em,

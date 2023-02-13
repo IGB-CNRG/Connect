@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -18,13 +18,13 @@ use App\Form\Workflow\PersonEntry\CertificateUploadType;
 use App\Form\Workflow\PersonEntry\EntryFormType;
 use App\Log\ActivityLogger;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 class MembershipWorkflowController extends AbstractController
@@ -34,7 +34,7 @@ class MembershipWorkflowController extends AbstractController
         Request $request,
         EntityManagerInterface $em,
         ActivityLogger $logger,
-        WorkflowInterface $membershipWorkflow
+        WorkflowInterface $membershipStateMachine
     ): Response {
         // todo so far this form does not support saving and continuing. do we want to?
         // todo this form only represents the new member filling out a form for themselves while logged in as someone else
@@ -66,7 +66,7 @@ class MembershipWorkflowController extends AbstractController
             $em->persist($person);
 
             $logger->log($person, 'Submitted entry form');
-            $membershipWorkflow->apply($person, 'submit_entry_form');
+            $membershipStateMachine->apply($person, 'submit_entry_form');
 
             $em->flush();
 

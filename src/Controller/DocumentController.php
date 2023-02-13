@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -12,13 +12,13 @@ use App\Form\DocumentMetadataType;
 use App\Form\DocumentType;
 use App\Log\ActivityLogger;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class DocumentController extends AbstractController
 {
@@ -54,10 +54,9 @@ class DocumentController extends AbstractController
     }
 
     #[Route('/person/{slug}/document/{id}/edit', name: 'person_edit_document')]
-    #[ParamConverter('person', options: ['mapping' => ['slug' => 'slug']])]
     #[IsGranted('PERSON_EDIT', subject: 'person')]
     public function editDocument(
-        Person $person,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Person $person,
         Document $document,
         Request $request,
         EntityManagerInterface $em,
@@ -83,9 +82,8 @@ class DocumentController extends AbstractController
     }
 
     #[Route('/person/{slug}/document/{id}/delete', name: 'person_delete_document')]
-    #[ParamConverter('person', options: ['mapping' => ['slug' => 'slug']])]
     public function deleteDocument(
-        Person $person,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Person $person,
         Document $document,
         Request $request,
         EntityManagerInterface $em,
