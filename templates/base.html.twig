@@ -46,6 +46,18 @@
                                 {% endif %}
                             </ul>
                         </li>
+                        {% if is_granted("PERSON_ADD") %}
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" id="navbarFormsMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="fa fa-table-list"></span> Forms
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarFormsMenuLink">
+                                <li><a class="dropdown-item" href="{{ path('workflow_entry_entry_form') }}"><span class="fa fa-user-plus"></span> Entry Form</a></li>
+                                {# todo what are the permissions for exit forms? #}
+                                <li><a class="dropdown-item" href="#"><span class="fa fa-user-minus"></span> Exit Form</a></li>
+                            </ul>
+                        </li>
+                        {% endif %}
                     </ul>
 
                     <ul class="navbar-nav">
