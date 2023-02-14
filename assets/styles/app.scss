@@ -168,6 +168,12 @@ $callout-background-lighten: 50%;
   margin-bottom: 1.5rem;
 }
 
+label.required:after {
+  content: "*";
+  color: $red;
+  padding-left: 0.25rem;
+}
+
 /* DataTables Restyles */
 .dataTables_filter {
   display: inline-block;

@@ -24,11 +24,11 @@ class EntryFormType extends AbstractType
     {
         $builder
             ->add('firstName', TextType::class, [
-                'required' => false,
+                'required' => true,
                 'help' => 'As it appears on your passport, driver\'s license, or I-Card',
             ])
             ->add('lastName', TextType::class, [
-                'required' => false,
+                'required' => true,
             ])
             ->add('netid', TextType::class, [
                 'required' => false,
@@ -39,7 +39,7 @@ class EntryFormType extends AbstractType
                 'label' => 'UIN',
             ])
             ->add('email', EmailType::class, [
-                'required' => false,
+                'required' => true,
             ])
             ->add('officeWorkOnly', CheckboxType::class, [
                 'required' => false,
