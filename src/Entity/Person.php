@@ -176,6 +176,9 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\Column(nullable: true)]
     private ?bool $officeWorkOnly = null;
 
+    #[ORM\Column]
+    private ?\DateTimeImmutable $membershipUpdatedAt = null;
+
     public function __construct()
     {
         $this->roomAffiliations = new ArrayCollection();
@@ -913,6 +916,18 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     public function setOfficeWorkOnly(?bool $officeWorkOnly): self
     {
         $this->officeWorkOnly = $officeWorkOnly;
+
+        return $this;
+    }
+
+    public function getMembershipUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->membershipUpdatedAt;
+    }
+
+    public function setMembershipUpdatedAt(\DateTimeImmutable $membershipUpdatedAt): self
+    {
+        $this->membershipUpdatedAt = $membershipUpdatedAt;
 
         return $this;
     }

@@ -1,32 +1,25 @@
 {% extends 'base.html.twig' %}
 
 {% block content %}
-    {% if is_granted('ROLE_ADMIN') %}
-        <h1>My approvals</h1>
-    {% endif %}
-    {% with {approvals: myApprovals} %}
-        {% block approvals %}
-            {% for stage in approvals %}
-                <h2>{{ 'person_entry'~stage[0].stageName~'approval_title')|trans }}</h2> {# todo this will need to be generalized later #}
-                {% for approval in stage %}
-                    {# @var approval \App\Entity\Workflow\PersonEntryWorkflowProgress #}
-                    <p>
-                        <a href="{{ path(approval.stage.approvalRoute, {'slug': approval.person.slug}) }}">{{ approval.person }}</a>
-                    </p>
-                {% endfor %}
-            {% else %}
-                <h2>No approvals</h2>
-                <p>You have no approvals at this time.</p>
+    <h1>IGB Membership Approvals</h1>
+    <div class="card">
+        <table class="table">
+            <tr>
+                <th>Name</th>
+                <th>Approval</th>
+                <th>Submitted Date</th>
+            </tr>
+            {% for person in approvals %}
+                <tr>
+                    <td>{{ person }}</td>
+                    <td>
+                        <a href="{{ path(workflow_metadata(person, 'approval_route', person.membershipStatus), {'slug': person.slug}) }}">{{ ('membership.'~person.membershipStatus~'.approval_title')|trans }}</a>
+                    </td>
+                    <td>{{ person.membershipUpdatedAt|date('n/j/Y') }}</td>
+                </tr>
             {% endfor %}
-        {% endblock %}
-    {% endwith %}
-
-    {% if is_granted('ROLE_ADMIN') and allApprovals is not null %}
-        <h1>All approvals</h1>
-        {% with {approvals: allApprovals} %}
-            {{ block('approvals') }}
-        {% endwith %}
-    {% endif %}
+        </table>
+    </div>
 {% endblock %}
 
 {% block title %}{{ parent() }} | Approvals{% endblock %}

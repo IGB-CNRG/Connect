@@ -17,6 +17,7 @@ use App\Form\Workflow\PersonEntry\ApproveEntryFormType;
 use App\Form\Workflow\PersonEntry\CertificateUploadType;
 use App\Form\Workflow\PersonEntry\EntryFormType;
 use App\Log\ActivityLogger;
+use App\Repository\PersonRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -115,43 +116,22 @@ class MembershipWorkflowController extends AbstractController
 
     #[Route('/workflow/approvals', name: 'workflow_approvals')]
     #[IsGranted('ROLE_APPROVER')]
-    public function approvalIndex(WorkflowProgressRepository $entryWorkflowProgressRepository): Response
+    public function approvalIndex(WorkflowInterface $membershipStateMachine, PersonRepository $repository): Response
     {
-        $myApprovals = $entryWorkflowProgressRepository->findByApprover($this->getUser());
-        $myApprovalsByStage = $this->sortApprovalsForTemplate($myApprovals);
-
-        $allApprovalsByStage = null;
-        if ($this->isGranted('ROLE_ADMIN')) {
-            $allApprovals = $entryWorkflowProgressRepository->findAll();
-            $allApprovalsByStage = $this->sortApprovalsForTemplate($allApprovals);
-        }
+        $peopleToApprove = $repository->findAllNeedingApproval();
+        // TODO we need to test that the approval guard is working correctly
+        $myApprovals = array_filter($peopleToApprove, function (Person $person) use ($membershipStateMachine) {
+            // todo can we not hard code these transitions?
+            return $membershipStateMachine->can($person, 'approve_entry_form')
+                   || $membershipStateMachine->can(
+                    $person,
+                    'approve_certificates'
+                );
+        });
 
         return $this->render('workflow/approvals.html.twig', [
-            'myApprovals' => $myApprovalsByStage,
-            'allApprovals' => $allApprovalsByStage,
+            'approvals' => $myApprovals,
         ]);
-    }
-
-    /**
-     * @param WorkflowProgress[] $approvals
-     * @return WorkflowProgress[][]
-     */
-    private function sortApprovalsForTemplate($approvals): array
-    {
-        usort($approvals, function (WorkflowProgress $a, WorkflowProgress $b) {
-            if ($a->getStage()->position() === $b->getStage()->position()) {
-                return $a->getPerson()->getLastName() <=> $b->getPerson()->getLastName();
-            }
-            return $a->getStage()->position() <=> $b->getStage()->position();
-        });
-        $myApprovalsByStage = [];
-        foreach ($approvals as $approval) {
-            if (!key_exists($approval->getStage()->value, $myApprovalsByStage)) {
-                $myApprovalsByStage[$approval->getStage()->value] = [];
-            }
-            $myApprovalsByStage[$approval->getStage()->value][] = $approval;
-        }
-        return $myApprovalsByStage;
     }
 
     #[Route('/workflow/entry/certificate_upload/{slug}', name: 'workflow_entry_upload_certs')]
@@ -191,5 +171,11 @@ class MembershipWorkflowController extends AbstractController
         return $this->render('workflow/person_entry/upload_certs.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route('/workflow/entry/approve_certificates/{slug}', name: 'app_workflow_membershipworkflow_approvecerts')]
+    public function approveCerts()
+    {
+
     }
 }

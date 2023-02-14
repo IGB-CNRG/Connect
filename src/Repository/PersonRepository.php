@@ -43,6 +43,17 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
             ->select('p,ta,t,ra,r,da,d');
     }
 
+    public function findAllNeedingApproval()
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.membershipStatus in (:places)')
+            ->orderBy('p.lastName')
+            ->setParameter('places', ['entry_form_submitted', 'certificates_submitted'])
+            ->getQuery()
+            ->getResult();
+    }
+
+
     public function findCurrentForIndex()
     {
         $qb = $this->createIndexQueryBuilder()

@@ -17,12 +17,14 @@ framework:
                 entry_form_submitted:
                     metadata:
                         completion: 25
+                        approval_route: workflow_entry_approve_entry
                 need_certificates:
                     metadata:
                         completion: 50
                 certificates_submitted:
                     metadata:
                         completion: 75
+                        approval_route: app_workflow_membershipworkflow_approvecerts
                 active:
                 exit_form_submitted:
                 inactive:
