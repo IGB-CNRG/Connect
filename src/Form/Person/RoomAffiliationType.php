@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -41,7 +41,7 @@ class RoomAffiliationType extends AbstractType
                     $form->add('room', EntityType::class, [
                         'class' => Room::class,
                         'attr' => [
-                            'data-controller' => 'select2',
+                            'data-controller' => 'tom-select',
                         ],
                     ])
                         ->add('startedAt', StartDateType::class);

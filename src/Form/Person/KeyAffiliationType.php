@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -30,7 +30,7 @@ class KeyAffiliationType extends AbstractType
             ->add('cylinderKey', EntityType::class, [
                 'class' => Key::class,
                 'attr' => [
-                    'data-controller' => 'select2',
+                    'data-controller' => 'tom-select',
                 ],
             ])
         ;

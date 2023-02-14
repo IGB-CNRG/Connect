@@ -56,7 +56,7 @@ class ThemeAffiliationType extends AbstractType
                             'multiple' => true,
                             'required' => false,
                             'attr' => [
-                                'data-controller' => 'select2',
+                                'data-controller' => 'tom-select',
                             ],
                         ])
                         ->add('startedAt', StartDateType::class);

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -42,7 +42,7 @@ class SupervisorType extends AbstractType
                     $form->add('supervisor', EntityType::class, [
                         'class' => Person::class,
                         'attr' => [
-                            'data-controller' => 'select2',
+                            'data-controller' => 'tom-select',
                         ],
                         'query_builder' => function(PersonRepository $repository){
                             return $repository->createDropdownQueryBuilder();

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -114,7 +114,7 @@ class PersonType extends AbstractType
                     'choices' => Person::USER_ROLES,
                     'multiple' => true,
                     'attr' => [
-                        'data-controller' => 'select2',
+                        'data-controller' => 'tom-select',
                     ],
                     'required' => false,
                 ]);
