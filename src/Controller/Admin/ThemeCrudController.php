@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -46,8 +46,8 @@ class ThemeCrudController extends AbstractCrudController
         return [
             TextField::new('shortName'),
             TextField::new('fullName'),
-            BooleanField::new('isNonResearch'),
-            BooleanField::new('isOutsideGroup'),
+            BooleanField::new('isNonResearch')->renderAsSwitch(false),
+            BooleanField::new('isOutsideGroup')->renderAsSwitch(false),
             DateField::new('startedAt'),
             DateField::new('endedAt'),
         ];
