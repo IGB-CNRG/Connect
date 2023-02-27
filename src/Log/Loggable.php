@@ -1,10 +1,10 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
-namespace App\Attribute;
+namespace App\Log;
 
 use Attribute;
 

@@ -1,12 +1,11 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
 namespace App\Log;
 
-use App\Attribute\Loggable;
 use App\Entity\DepartmentAffiliation;
 use App\Entity\KeyAffiliation;
 use App\Entity\Log;
@@ -174,6 +173,37 @@ class ActivityLogger implements ServiceSubscriberInterface
         $this->log($person, $this->getEntityEditMessage($person));
         $uow = $this->entityManager()->getUnitOfWork();
         $uow->computeChangeSets();
+
+//        $reflection = new \ReflectionClass($person::class);
+//        $properties = $reflection->getProperties();
+//        foreach ($properties as $property){
+//            if(count($property->getAttributes(LoggableManyRelation::class))>0){
+//                /** @var Collection $collection */
+//                $collection = $property->getValue($person);
+//                if(is_a($collection, Collection::class)){
+//                    // TODO how do we generalize these three log calls?
+//                    if($collection->isDirty()){
+//                        $inserted = $collection->getInsertDiff();
+//                        foreach ($inserted as $keyAffiliation) {
+//                            $this->logNewKeyAffiliation($keyAffiliation);
+//                        }
+//                    }
+//                    foreach($collection as $item){
+//                        $this->log(
+//                            $person,
+//                            $this->getEntityEditMessage(
+//                                $keyAffiliation,
+//                                sprintf('Updated key assignment %s, ', $keyAffiliation->getCylinderKey()->getName())
+//                            )
+//                        );
+//                        $this->log(
+//                            $keyAffiliation->getCylinderKey(),
+//                            $this->getEntityEditMessage($keyAffiliation, sprintf('Updated key assignment for %s, ', $person))
+//                        );
+//                    }
+//                }
+//            }
+//        }
 
         // Log changes to key affiliations
         if ($person->getKeyAffiliations()->isDirty()) {

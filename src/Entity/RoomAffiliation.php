@@ -1,11 +1,12 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
 namespace App\Entity;
 
+use App\Log\Loggable;
 use App\Repository\RoomAffiliationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -22,6 +23,7 @@ class RoomAffiliation
 
     #[ORM\ManyToOne(targetEntity: Room::class, inversedBy: 'roomAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Loggable]
     private ?Room $room = null;
 
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'roomAffiliations')]

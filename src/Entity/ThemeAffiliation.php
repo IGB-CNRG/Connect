@@ -1,12 +1,13 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
 namespace App\Entity;
 
 use App\Enum\ThemeRole;
+use App\Log\Loggable;
 use App\Repository\ThemeAffiliationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -27,16 +28,20 @@ class ThemeAffiliation
 
     #[ORM\ManyToOne(targetEntity: Theme::class, inversedBy: 'themeAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Loggable]
     private Theme $theme;
 
     #[ORM\ManyToOne(targetEntity: MemberCategory::class, inversedBy: 'themeAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Loggable]
     private MemberCategory $memberCategory;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Loggable]
     private ?string $title = null;
 
     #[ORM\Column(type: 'json', enumType: ThemeRole::class)]
+    #[Loggable(type:'array')]
     private array $themeRoles = [];
 
     #[ORM\Column(length: 255, nullable: true)]

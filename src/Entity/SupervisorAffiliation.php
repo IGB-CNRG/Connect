@@ -1,11 +1,12 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
 namespace App\Entity;
 
+use App\Log\Loggable;
 use App\Repository\SupervisorAffiliationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -22,10 +23,12 @@ class SupervisorAffiliation
 
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'superviseeAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Loggable]
     private Person $supervisor;
 
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'supervisorAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Loggable]
     private Person $supervisee;
 
     public function getId(): ?int

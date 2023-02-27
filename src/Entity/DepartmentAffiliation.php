@@ -1,11 +1,12 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
 namespace App\Entity;
 
+use App\Log\Loggable;
 use App\Repository\DepartmentAffiliationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -22,12 +23,15 @@ class DepartmentAffiliation
 
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'departmentAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Loggable]
     private $person;
 
     #[ORM\ManyToOne(targetEntity: Department::class, inversedBy: 'departmentAffiliations')]
+    #[Loggable]
     private $department;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Loggable]
     private $otherDepartment;
 
     public function getId(): ?int

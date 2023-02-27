@@ -6,8 +6,9 @@
 
 namespace App\Entity;
 
-use App\Attribute\Loggable;
 use App\Enum\PreferredAddress;
+use App\Log\Loggable;
+use App\Log\LoggableManyRelation;
 use App\Log\LogSubjectInterface;
 use App\Repository\PersonRepository;
 use DateTimeImmutable;
@@ -105,23 +106,29 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     private bool $hasGivenKeyDeposit = false;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: RoomAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
+    #[LoggableManyRelation]
     private Collection $roomAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: KeyAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['startedAt' => 'ASC'])]
+    #[LoggableManyRelation]
     private Collection $keyAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: ThemeAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['startedAt' => 'DESC'])]
+    #[LoggableManyRelation]
     private Collection $themeAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'supervisee', targetEntity: SupervisorAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
+    #[LoggableManyRelation]
     private Collection $supervisorAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'supervisor', targetEntity: SupervisorAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
+    #[LoggableManyRelation]
     private Collection $superviseeAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: DepartmentAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
+    #[LoggableManyRelation]
     private Collection $departmentAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Log::class, orphanRemoval: true)]

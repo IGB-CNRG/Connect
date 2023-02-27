@@ -1,11 +1,12 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
 namespace App\Entity;
 
+use App\Log\Loggable;
 use App\Repository\KeyAffiliationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -26,6 +27,7 @@ class KeyAffiliation
 
     #[ORM\ManyToOne(targetEntity: Key::class, inversedBy: 'keyAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Loggable]
     private $cylinderKey;
 
     public function __toString()
