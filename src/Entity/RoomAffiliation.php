@@ -10,6 +10,7 @@ use App\Log\Loggable;
 use App\Repository\RoomAffiliationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: RoomAffiliationRepository::class)]
 class RoomAffiliation
@@ -24,6 +25,7 @@ class RoomAffiliation
     #[ORM\ManyToOne(targetEntity: Room::class, inversedBy: 'roomAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
     #[Loggable]
+    #[Groups(['log:person'])]
     private ?Room $room = null;
 
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'roomAffiliations')]

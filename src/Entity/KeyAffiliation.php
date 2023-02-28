@@ -10,6 +10,7 @@ use App\Log\Loggable;
 use App\Repository\KeyAffiliationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: KeyAffiliationRepository::class)]
 class KeyAffiliation
@@ -28,6 +29,7 @@ class KeyAffiliation
     #[ORM\ManyToOne(targetEntity: Key::class, inversedBy: 'keyAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
     #[Loggable]
+    #[Groups(['log:person'])]
     private $cylinderKey;
 
     public function __toString()

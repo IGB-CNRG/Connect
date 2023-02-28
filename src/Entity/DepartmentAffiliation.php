@@ -10,6 +10,7 @@ use App\Log\Loggable;
 use App\Repository\DepartmentAffiliationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: DepartmentAffiliationRepository::class)]
 class DepartmentAffiliation
@@ -28,10 +29,12 @@ class DepartmentAffiliation
 
     #[ORM\ManyToOne(targetEntity: Department::class, inversedBy: 'departmentAffiliations')]
     #[Loggable]
+    #[Groups(['log:person'])]
     private $department;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
+    #[Groups(['log:person'])]
     private $otherDepartment;
 
     public function getId(): ?int

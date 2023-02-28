@@ -10,6 +10,8 @@ use App\Log\Loggable;
 use App\Repository\SupervisorAffiliationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Serializer\Annotation\Context;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: SupervisorAffiliationRepository::class)]
 class SupervisorAffiliation
@@ -24,11 +26,15 @@ class SupervisorAffiliation
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'superviseeAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
     #[Loggable]
+    #[Groups(['log:person'])]
+    #[Context(context: ['groups'=>['log:related_person']], groups: ['log:person'])]
     private Person $supervisor;
 
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'supervisorAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
     #[Loggable]
+    #[Groups(['log:person'])]
+    #[Context(context: ['groups'=>['log:related_person']], groups: ['log:person'])]
     private Person $supervisee;
 
     public function getId(): ?int

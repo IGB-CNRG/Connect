@@ -11,6 +11,7 @@ use App\Log\Loggable;
 use App\Repository\ThemeAffiliationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ThemeAffiliationRepository::class)]
 class ThemeAffiliation
@@ -29,22 +30,27 @@ class ThemeAffiliation
     #[ORM\ManyToOne(targetEntity: Theme::class, inversedBy: 'themeAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
     #[Loggable]
+    #[Groups(['log:person'])]
     private Theme $theme;
 
     #[ORM\ManyToOne(targetEntity: MemberCategory::class, inversedBy: 'themeAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
     #[Loggable]
+    #[Groups(['log:person'])]
     private MemberCategory $memberCategory;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
+    #[Groups(['log:person'])]
     private ?string $title = null;
 
     #[ORM\Column(type: 'json', enumType: ThemeRole::class)]
     #[Loggable(type:'array')]
+    #[Groups(['log:person'])]
     private array $themeRoles = [];
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['log:person'])]
     private ?string $exitReason = null;
 
     public function __toString()

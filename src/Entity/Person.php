@@ -23,6 +23,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\Ignore;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
@@ -51,84 +52,104 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(['log:person', 'log:related_person'])]
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
+    #[Groups(['log:person', 'log:related_person'])]
     private ?string $firstName = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
+    #[Groups(['log:person', 'log:related_person'])]
     private ?string $lastName = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
+    #[Groups(['log:person'])]
     private ?string $middleInitial = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable(displayName: 'netID')]
+    #[Groups(['log:person', 'log:related_person'])]
     private ?string $netid = null;
 
     #[ORM\Column(type: 'string', length: 180, unique: true, nullable: true)]
     #[Loggable]
+    #[Groups(['log:person'])]
     private ?string $username = null;
 
     #[ORM\Column(type: 'integer', nullable: true)]
     #[Loggable(displayName: 'UIN')]
+    #[Groups(['log:person'])]
     private ?int $uin = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
+    #[Groups(['log:person'])]
     private ?string $email = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
+    #[Groups(['log:person'])]
     private ?string $officeNumber = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
+    #[Groups(['log:person'])]
     private ?string $officePhone = null;
 
     #[ORM\Column(type: 'boolean')]
     #[Loggable(displayName: 'DRS training')]
+    #[Groups(['log:person'])]
     private bool $isDrsTrainingComplete = false;
 
     #[ORM\Column(type: 'boolean')]
     #[Loggable(displayName: 'IGB training')]
+    #[Groups(['log:person'])]
     private bool $isIgbTrainingComplete = false;
 
     #[ORM\Column(type: 'date', nullable: true)]
     #[Loggable]
+    #[Groups(['log:person'])]
     private ?DateTimeInterface $offerLetterDate;
 
     #[ORM\Column(type: 'boolean')]
     #[Loggable(displayName: 'key deposit')]
+    #[Groups(['log:person'])]
     private bool $hasGivenKeyDeposit = false;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: RoomAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
     #[LoggableManyRelation]
+    #[Groups(['log:person'])]
     private Collection $roomAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: KeyAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['startedAt' => 'ASC'])]
     #[LoggableManyRelation]
+    #[Groups(['log:person'])]
     private Collection $keyAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: ThemeAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['startedAt' => 'DESC'])]
     #[LoggableManyRelation]
+    #[Groups(['log:person'])]
     private Collection $themeAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'supervisee', targetEntity: SupervisorAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
     #[LoggableManyRelation]
+    #[Groups(['log:person'])]
     private Collection $supervisorAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'supervisor', targetEntity: SupervisorAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
     #[LoggableManyRelation]
+    #[Groups(['log:person'])]
     private Collection $superviseeAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: DepartmentAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
     #[LoggableManyRelation]
+    #[Groups(['log:person'])]
     private Collection $departmentAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Log::class, orphanRemoval: true)]
@@ -139,18 +160,22 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     private Collection $logs;
 
     #[ORM\ManyToOne(targetEntity: Building::class, inversedBy: 'people')]
+    #[Groups(['log:person'])]
     private ?Building $officeBuilding;
 
     #[ORM\Column(type: 'string', length: 255, enumType: PreferredAddress::class)]
     #[Loggable]
+    #[Groups(['log:person'])]
     private PreferredAddress $preferredAddress = PreferredAddress::IGB;
 
     #[ORM\Column(type: 'json')]
     #[Loggable(type: 'array')]
+    #[Groups(['log:person'])]
     private ?array $roles = [];
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
+    #[Groups(['log:person'])]
     private ?string $preferredFirstName = null;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: Document::class, orphanRemoval: true)]
@@ -175,15 +200,19 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     private ?string $slug = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups(['log:person'])]
     private ?string $otherAddress = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['log:person'])]
     private ?string $membershipStatus = "need_entry_form";
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['log:person'])]
     private ?bool $officeWorkOnly = null;
 
     #[ORM\Column]
+    #[Groups(['log:person'])]
     private ?\DateTimeImmutable $membershipUpdatedAt = null;
 
     public function __construct()

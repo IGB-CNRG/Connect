@@ -1,12 +1,13 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
 namespace App\Entity;
 
 use App\Repository\LogRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
@@ -40,6 +41,9 @@ class Log
 
     #[ORM\ManyToOne(targetEntity: Department::class, inversedBy: 'logs')]
     private ?Department $department;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $context = null;
 
     public function getId(): ?int
     {
@@ -126,6 +130,18 @@ class Log
     public function setDepartment(?Department $department): self
     {
         $this->department = $department;
+
+        return $this;
+    }
+
+    public function getContext(): ?string
+    {
+        return $this->context;
+    }
+
+    public function setContext(?string $context): self
+    {
+        $this->context = $context;
 
         return $this;
     }

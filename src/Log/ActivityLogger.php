@@ -17,6 +17,9 @@ use App\Service\EntityManagerAware;
 use App\Service\SecurityAware;
 use ReflectionException;
 use ReflectionProperty;
+use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Contracts\Service\Attribute\SubscribedService;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Symfony\Contracts\Service\ServiceSubscriberTrait;
 
@@ -154,6 +157,7 @@ class ActivityLogger implements ServiceSubscriberInterface
                 $themeAffiliation->getExitReason()
             )
         );
+        // todo add a theme log?
     }
 
     public function logNewKeyAffiliation(KeyAffiliation $keyAffiliation)
@@ -173,37 +177,6 @@ class ActivityLogger implements ServiceSubscriberInterface
         $this->log($person, $this->getEntityEditMessage($person));
         $uow = $this->entityManager()->getUnitOfWork();
         $uow->computeChangeSets();
-
-//        $reflection = new \ReflectionClass($person::class);
-//        $properties = $reflection->getProperties();
-//        foreach ($properties as $property){
-//            if(count($property->getAttributes(LoggableManyRelation::class))>0){
-//                /** @var Collection $collection */
-//                $collection = $property->getValue($person);
-//                if(is_a($collection, Collection::class)){
-//                    // TODO how do we generalize these three log calls?
-//                    if($collection->isDirty()){
-//                        $inserted = $collection->getInsertDiff();
-//                        foreach ($inserted as $keyAffiliation) {
-//                            $this->logNewKeyAffiliation($keyAffiliation);
-//                        }
-//                    }
-//                    foreach($collection as $item){
-//                        $this->log(
-//                            $person,
-//                            $this->getEntityEditMessage(
-//                                $keyAffiliation,
-//                                sprintf('Updated key assignment %s, ', $keyAffiliation->getCylinderKey()->getName())
-//                            )
-//                        );
-//                        $this->log(
-//                            $keyAffiliation->getCylinderKey(),
-//                            $this->getEntityEditMessage($keyAffiliation, sprintf('Updated key assignment for %s, ', $person))
-//                        );
-//                    }
-//                }
-//            }
-//        }
 
         // Log changes to key affiliations
         if ($person->getKeyAffiliations()->isDirty()) {
@@ -320,16 +293,31 @@ class ActivityLogger implements ServiceSubscriberInterface
 
     public function log(LogSubjectInterface $subject, ?string $message)
     {
-        if($message){
+        if ($message) {
+            $context = null;
+            if($subject instanceof Person){
+                $context = $this->normalizePersonContext($subject); // todo later add a method to LogSubjectInterface that returns the context group
+            }
             $log = (new Log())
                 ->setText($message)
-                ->setUser($this->security()->getUser());
+                ->setUser($this->security()->getUser())
+                ->setContext($context);
             $subject->addLog($log);
             $this->entityManager()->persist($log);
         }
     }
 
     /* Helpers */
+    private function normalizePersonContext(Person $person): string
+    {
+        $normalizerContext = (new ObjectNormalizerContextBuilder())
+            ->withGroups('log:person')
+            ->withCircularReferenceHandler(function($object){
+                return $object->__toString();
+            })
+            ->toArray();
+        return $this->serializer()->serialize($person, 'json', $normalizerContext);
+    }
     private function getEntityEditMessage($entity, $messagePrefix = ''): ?string
     {
         $uow = $this->entityManager()->getUnitOfWork();
@@ -399,5 +387,11 @@ class ActivityLogger implements ServiceSubscriberInterface
             return null;
         }
         return ucfirst(sprintf('%s%s', $messagePrefix, join(', ', $changes)));
+    }
+
+    #[SubscribedService]
+    function serializer(): SerializerInterface
+    {
+        return $this->container->get(__CLASS__ . '::' . __FUNCTION__);
     }
 }

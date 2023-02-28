@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -13,6 +13,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: RoomRepository::class)]
 #[UniqueEntity(['number'])]
@@ -26,6 +27,7 @@ class Room implements LogSubjectInterface
     private ?int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['log:person'])]
     private ?string $number;
 
     #[ORM\Column(type: 'string', length: 255, unique: true, nullable: true)]

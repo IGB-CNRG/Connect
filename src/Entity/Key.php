@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -13,6 +13,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: KeyRepository::class)]
 #[ORM\Table(name: '`key`')]
@@ -27,6 +28,7 @@ class Key implements LogSubjectInterface
     private ?int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['log:person'])]
     private ?string $name;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
