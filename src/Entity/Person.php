@@ -215,6 +215,9 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[Groups(['log:person'])]
     private ?\DateTimeImmutable $membershipUpdatedAt = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $membershipNote = null;
+
     public function __construct()
     {
         $this->roomAffiliations = new ArrayCollection();
@@ -964,6 +967,18 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     public function setMembershipUpdatedAt(\DateTimeImmutable $membershipUpdatedAt): self
     {
         $this->membershipUpdatedAt = $membershipUpdatedAt;
+
+        return $this;
+    }
+
+    public function getMembershipNote(): ?string
+    {
+        return $this->membershipNote;
+    }
+
+    public function setMembershipNote(?string $membershipNote): self
+    {
+        $this->membershipNote = $membershipNote;
 
         return $this;
     }

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -30,11 +30,10 @@ class WorkflowNotificationRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('w')
             ->join('w.memberCategories', 'm')
             ->andWhere('m in (:categories)')
-            ->andWhere('w.stageName = :stage')
+            ->andWhere('w.transitionName = :transition')
             ->andWhere('w.workflowName = :workflow')
-            ->andWhere('w.event = :event')
             ->setParameter('categories', $categories)
-            ->setParameter('stage', $transition)
+            ->setParameter('transition', $transition)
             ->setParameter('workflow', $workflow)
             ->getQuery()
             ->getResult();

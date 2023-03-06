@@ -18,18 +18,14 @@ membership:
   # Places
   need_entry_form:
     label: "Waiting for entry form"
-    completion_message: "Welcome to the IGB! Please complete and submit your IGB Entry Form."
   entry_form_submitted:
     label: "Entry form submitted, waiting for approval"
     approval_title: "Entry form"
-    completion_message: "Your Entry Form has been received. Once it has been approved by a member of your theme, you will receive additional instructions."
   need_certificates:
     label: "Waiting for training certificates"
-    completion_message: "Your Entry Form has been approved. Please upload all requested training certificates."
   certificates_submitted:
     label: "Certificates uploaded, waiting for approval"
     approval_title: "Training certificates"
-    completion_message: "Your certificates have been received. You will receive a notification when they have been approved."
   active:
     label: Active
   exit_form_submitted:

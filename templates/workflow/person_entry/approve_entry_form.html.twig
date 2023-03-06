@@ -44,6 +44,12 @@
         </div>
     </div>
     <div class="row">
+        <div class="col">
+            <p class="approval-label">Office work only?</p>
+            <p class="approval-field">{{ person.officeWorkOnly ? 'Yes' : 'No' }}</p>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-lg">
             <p class="approval-label">{{ 'entry_form.department'|trans }}</p>
             <p class="approval-field">{{ person.departmentAffiliations|length>0 ? (person.departmentAffiliations[0].department??person.departmentAffiliations[0].otherDepartment) : '' }}</p>
@@ -75,7 +81,21 @@
             <p class="approval-field">{% if person.themeAffiliations|length>0 and person.themeAffiliations[0].endedAt is not null %}{{ person.themeAffiliations[0].endedAt|date('n/j/Y') }}{% endif %}</p>
         </div>
     </div>
+
+    <hr/>
+
+    {% if person.membershipNote %}
+        <p>This entry form was previously returned to the new IGB member with the following reason:</p>
+        <blockquote>{{ person.membershipNote }}</blockquote>
+    {% endif %}
+
     {# todo need better wording from Darci #}
-    <p>By checking the box below, I approve this entry form</p>
-    {{ form(form) }}
+    <div class="d-flex">
+            <div class="p-2" style="flex:1">
+                <p>Check the box below to approve this entry form</p>
+                {{ form(approvalForm) }}
+            </div>
+            <div class="flex-grow-0 p-2"><strong>OR</strong></div>
+            <div class="p-2" style="flex:1">{{ form(rejectionForm) }}</div>
+    </div>
 {% endblock %}

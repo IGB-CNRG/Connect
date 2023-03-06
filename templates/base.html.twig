@@ -100,13 +100,7 @@
     <main class="flex-shrink-0 mb-4">
         {# Main content box #}
         <div class="container">
-            {# todo move this to a new block elsewhere #}
-            {% if app.user is not null and workflow_metadata(app.user, 'completion', workflow_marked_places(app.user)[0]) is not null %}
-                <div class="callout callout-border-info clearfix">
-                    {{ _self.circular_progress(workflow_metadata(app.user, 'completion', workflow_marked_places(app.user)[0])) }}
-                    {{ workflow_place_completion_message(app.user)|trans }}
-                </div>
-            {% endif %}
+            {% include 'workflow/person_entry/_membership_status.html.twig' %}
 
             {% block content %}
             {% endblock %}
@@ -124,19 +118,3 @@
 {% endblock %}
 </body>
 </html>
-
-{% macro circular_progress(value) %}
-    <div class="progress float-start me-4">
-        <span class="progress-left">
-            <span class="progress-bar border-primary"
-                  {% if value>0 and value>50 %}style="transform: rotate({{ (value-50)/100*360 }}deg);"{% endif %}></span>
-        </span>
-        <span class="progress-right">
-            <span class="progress-bar border-primary" {% if value>=0 and value>50 %}style="transform: rotate(180deg);"
-                  {% elseif value>0 and value<=50 %}style="transform: rotate({{ value/100*360 }}deg);"{% endif %}></span>
-        </span>
-        <div class="progress-value rounded-circle d-flex align-items-center justify-content-center">
-            {{ value }}%
-        </div>
-    </div>
-{% endmacro %}

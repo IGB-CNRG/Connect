@@ -1,0 +1,47 @@
+{% if app.user is not null and workflow_metadata(app.user, 'completion', workflow_marked_places(app.user)[0]) is not null %}
+    {% set place=workflow_marked_places(app.user)[0] %}
+    <div class="callout callout-border-info d-flex">
+        <div class="flex-grow-0 flex-shrink-0">
+            {{ _self.circular_progress(workflow_metadata(app.user, 'completion', place)) }}
+        </div>
+        <div class="flex-grow-1 flex-shrink-1">
+            {% if place == 'need_entry_form' %}
+                <p>Welcome to the IGB! Please complete and submit your <a
+                            href="{{ path('app_workflow_membershipworkflow_continueentryform', {'slug':app.user.slug}) }}">IGB
+                        Entry Form</a>.</p>
+                {% if app.user.membershipNote %}
+                    <p>Your entry form was returned to you with the following note:</p>
+                    <p class="membership-note">{{ app.user.membershipNote }}</p>
+                {% endif %}
+            {% elseif place =='entry_form_submitted' %}
+                <p>Your Entry Form has been received. Once it has been approved by a member of your theme, you will
+                    receive additional instructions.</p>
+            {% elseif place =='need_certificates' %}
+                <p>Your Entry Form has been approved. Please upload all requested training certificates.</p>
+                {% if app.user.membershipNote %}
+                    <p>Your certificates were returned to you with the following note:</p>
+                    <p class="membership-note">{{ app.user.membershipNote }}</p>
+                {% endif %}
+            {% elseif place =='certificates_submitted' %}
+                <p>Your certificates have been received. You will receive a notification when they have been
+                    approved.</p>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
+
+{% macro circular_progress(value) %}
+    <div class="progress me-4">
+        <span class="progress-left">
+            <span class="progress-bar border-primary"
+                  {% if value>0 and value>50 %}style="transform: rotate({{ (value-50)/100*360 }}deg);"{% endif %}></span>
+        </span>
+        <span class="progress-right">
+            <span class="progress-bar border-primary" {% if value>=0 and value>50 %}style="transform: rotate(180deg);"
+                  {% elseif value>0 and value<=50 %}style="transform: rotate({{ value/100*360 }}deg);"{% endif %}></span>
+        </span>
+        <div class="progress-value rounded-circle d-flex align-items-center justify-content-center">
+            {{ value }}%
+        </div>
+    </div>
+{% endmacro %}
