@@ -17,6 +17,7 @@ framework:
                 entry_form_submitted:
                     metadata:
                         completion: 25
+                        approvalStrategy: App\Workflow\Approval\ThemeApproval
                         approval_route: workflow_entry_approve_entry
                 need_certificates:
                     metadata:
@@ -24,6 +25,7 @@ framework:
                 certificates_submitted:
                     metadata:
                         completion: 75
+                        approvalStrategy: App\Workflow\Approval\ReceptionApproval
                         approval_route: app_workflow_membershipworkflow_approvecerts
                 active:
                 exit_form_submitted:
@@ -36,6 +38,7 @@ framework:
                     from: entry_form_submitted
                     to: need_certificates
                     metadata:
+                        # todo we could eventually move the ApprovalGuard to use the Place metadata and remove these
                         approvalStrategy: App\Workflow\Approval\ThemeApproval
                 return_entry_form:
                     from: entry_form_submitted
