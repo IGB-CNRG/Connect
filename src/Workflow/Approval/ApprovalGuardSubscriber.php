@@ -6,9 +6,12 @@
 
 namespace App\Workflow\Approval;
 
+use App\Repository\PersonRepository;
 use App\Service\SecurityAware;
-use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\GuardEvent;
+use Symfony\Component\Workflow\WorkflowEvents;
+use Symfony\Contracts\Service\Attribute\SubscribedService;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Symfony\Contracts\Service\ServiceSubscriberTrait;
 
@@ -18,14 +21,18 @@ class ApprovalGuardSubscriber implements EventSubscriberInterface, ServiceSubscr
 
     public function approvalGuard(GuardEvent $event)
     {
+        if($this->security()->isGranted('ROLE_ADMIN')){
+            // an admin should always be able to approve
+            return;
+        }
         $approvalStrategyClass = $event->getMetadata('approvalStrategy', $event->getTransition());
         if ($approvalStrategyClass
             && class_exists($approvalStrategyClass)
             && in_array(ApprovalStrategy::class, class_implements($approvalStrategyClass))) {
             /** @var ApprovalStrategy $approvalStrategy */
-            $approvalStrategy = new $approvalStrategyClass();
+            $approvalStrategy = new $approvalStrategyClass($this->personRepository());
             $approvers = $approvalStrategy->getApprovers($event->getSubject());
-            if(!in_array($this->security()->getUser(), $approvers)){ // todo an admin should always be able to approve?
+            if(!in_array($this->security()->getUser(), $approvers)){
                 $event->setBlocked(true, "You are not authorized to approve this form.");
             }
         }
@@ -34,10 +41,16 @@ class ApprovalGuardSubscriber implements EventSubscriberInterface, ServiceSubscr
     /**
      * @inheritDoc
      */
-    public function getSubscribedEvents(): array
+    public static function getSubscribedEvents(): array
     {
         return [
-            "workflow.guard" => "approvalGuard"
+            WorkflowEvents::GUARD => "approvalGuard"
         ];
+    }
+
+    #[SubscribedService]
+    private function personRepository(): PersonRepository
+    {
+        return $this->container->get(__CLASS__ . '::' . __FUNCTION__);
     }
 }

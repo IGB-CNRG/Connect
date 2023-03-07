@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -9,18 +9,23 @@ namespace App\Security\Voter;
 use App\Entity\Person;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class StaffVoter extends Voter
 {
+    // todo what are theme admin and lab manager for?
     public const THEME_ADMIN = 'ROLE_THEME_ADMIN';
     public const LAB_MANAGER = 'ROLE_LAB_MANAGER';
+    public const APPROVER = 'ROLE_APPROVER';
+
+    public function __construct(private Security $security){}
 
     protected function supports(string $attribute, $subject): bool
     {
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
-        return in_array($attribute, [self::THEME_ADMIN, self::LAB_MANAGER]);
+        return in_array($attribute, [self::THEME_ADMIN, self::LAB_MANAGER, self::APPROVER]);
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
@@ -36,6 +41,10 @@ class StaffVoter extends Voter
         return match ($attribute) {
             self::THEME_ADMIN => $user->getThemeAdminThemeAffiliations()->count() > 0,
             self::LAB_MANAGER => $user->getLabManagerThemeAffiliations()->count() > 0,
+            // todo this may be naive, but it works for now
+            self::APPROVER => $this->security->isGranted('ROLE_KEY_MANAGER')
+                              || $user->getLabManagerThemeAffiliations()->count() > 0
+                              || $user->getThemeAdminThemeAffiliations()->count() > 0,
             default => false,
         };
     }
