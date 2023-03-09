@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | Training Certificates{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active" aria-current="page">
+        IGB Training Certificates
+    </li>
+{% endblock %}
+
+{% block content %}
+    <h2 class="mb-3">{{ person }} Training Certificates</h2>
+    {% for document in person.documents %}
+        {% if document.type == constant('App\\Enum\\DocumentCategory::Certificate') %}
+            <p><a href="{{ asset(vich_uploader_asset(document, 'file')) }}">{{ document }}</a></p>
+        {% endif %}
+    {% endfor %}
+
+    <hr/>
+
+    {% if person.membershipNote %}
+        <div class="callout callout-border-info">
+            <p>These certificates were previously returned to the new IGB member with the following reason:</p>
+            <p class="ms-2">{{ person.membershipNote }}</p>
+        </div>
+    {% endif %}
+
+    {# todo need better wording from Darci #}
+    <div class="d-flex">
+        <div class="p-2" style="flex:1">
+            <p>Check the box below to approve these certificates</p>
+            {{ form(approvalForm) }}
+        </div>
+        <div class="flex-grow-0 p-2"><strong>OR</strong></div>
+        <div class="p-2" style="flex:1">{{ form(rejectionForm) }}</div>
+    </div>
+{% endblock %}

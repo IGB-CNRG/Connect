@@ -13,9 +13,11 @@ use App\Entity\RoomAffiliation;
 use App\Entity\SupervisorAffiliation;
 use App\Entity\ThemeAffiliation;
 use App\Enum\DocumentCategory;
+use App\Form\Workflow\PersonEntry\ApproveCertificatesFormType;
 use App\Form\Workflow\PersonEntry\ApproveEntryFormType;
 use App\Form\Workflow\PersonEntry\CertificateUploadType;
 use App\Form\Workflow\PersonEntry\EntryFormType;
+use App\Form\Workflow\PersonEntry\RejectCertificatesFormType;
 use App\Form\Workflow\PersonEntry\RejectEntryFormType;
 use App\Log\ActivityLogger;
 use App\Repository\PersonRepository;
@@ -86,7 +88,7 @@ class MembershipWorkflowController extends AbstractController
         WorkflowInterface $membershipStateMachine,
         ActivityLogger $logger
     ): Response {
-        if($this->getUser() !== $person){
+        if ($this->getUser() !== $person) {
             throw $this->createAccessDeniedException();
         }
         // Create any missing affiliations
@@ -168,7 +170,6 @@ class MembershipWorkflowController extends AbstractController
     public function approvalIndex(WorkflowInterface $membershipStateMachine, PersonRepository $repository): Response
     {
         $peopleToApprove = $repository->findAllNeedingApproval();
-        // TODO we need to test that the approval guard is working correctly
         $myApprovals = array_filter($peopleToApprove, function (Person $person) use ($membershipStateMachine) {
             // todo can we not hard code these transitions?
             return $membershipStateMachine->can($person, 'approve_entry_form')
@@ -188,7 +189,7 @@ class MembershipWorkflowController extends AbstractController
         Person $person,
         Request $request,
         EntityManagerInterface $em,
-        WorkflowInterface $membershipWorkflow,
+        WorkflowInterface $membershipStateMachine,
         ActivityLogger $logger
     ): RedirectResponse|Response {
         $drsCert = (new Document())
@@ -210,7 +211,7 @@ class MembershipWorkflowController extends AbstractController
             $em->persist($igbCert);
 
             $logger->log($person, 'Uploaded training certificates');
-            $membershipWorkflow->apply($person, 'upload_certificates');
+            $membershipStateMachine->apply($person, 'upload_certificates');
 
             $em->flush();
 
@@ -223,7 +224,41 @@ class MembershipWorkflowController extends AbstractController
     }
 
     #[Route('/membership/approve-certificates/{slug}', name: 'app_workflow_membershipworkflow_approvecerts')]
-    public function approveCerts() {}
+    public function approveCerts(
+        Person $person,
+        Request $request,
+        EntityManagerInterface $em,
+        WorkflowInterface $membershipStateMachine,
+        ActivityLogger $logger
+    ) {
+        // todo restrict this route to only assigned approvers
+        $approvalForm = $this->createForm(ApproveCertificatesFormType::class)
+            ->add('approve', SubmitType::class);
+        $rejectionForm = $this->createForm(RejectCertificatesFormType::class, $person)
+            ->add('return', SubmitType::class);
+
+        $approvalForm->handleRequest($request);
+        if ($approvalForm->isSubmitted() && $approvalForm->isValid()) {
+            $membershipStateMachine->apply($person, 'approve_certificates');
+            $person->setMembershipNote(null);
+            $logger->log($person, "Approved certificates");
+            $em->flush();
+            return $this->redirectToRoute('workflow_approvals');
+        }
+
+        $rejectionForm->handleRequest($request);
+        if ($rejectionForm->isSubmitted() && $rejectionForm->isValid()) {
+            $membershipStateMachine->apply($person, 'return_certificates');
+            $logger->log($person, sprintf("Returned certificates with reason \"%s\"", $person->getMembershipNote()));
+            $em->flush();
+            return $this->redirectToRoute('workflow_approvals');
+        }
+        return $this->render('workflow/person_entry/approve_certs.html.twig', [
+            'person' => $person,
+            'approvalForm' => $approvalForm->createView(),
+            'rejectionForm' => $rejectionForm->createView(),
+        ]);
+    }
 
     protected function processEntryForm(
         Person $person,

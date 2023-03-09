@@ -85,8 +85,10 @@
     <hr/>
 
     {% if person.membershipNote %}
+        <div class="callout callout-border-info">
         <p>This entry form was previously returned to the new IGB member with the following reason:</p>
-        <blockquote>{{ person.membershipNote }}</blockquote>
+        <p class="ms-2">{{ person.membershipNote }}</p>
+        </div>
     {% endif %}
 
     {# todo need better wording from Darci #}
