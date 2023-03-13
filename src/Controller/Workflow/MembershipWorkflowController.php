@@ -280,6 +280,9 @@ class MembershipWorkflowController extends AbstractController
         if (!$departmentAffiliation->getDepartment() && !$departmentAffiliation->getOtherDepartment()) {
             $person->removeDepartmentAffiliation($departmentAffiliation);
         }
+        if(!$supervisorAffiliation->getSupervisor()){
+            $person->removeSupervisorAffiliation($supervisorAffiliation);
+        }
         $person->setUsername($person->getNetid());
         $em->persist($person);
 

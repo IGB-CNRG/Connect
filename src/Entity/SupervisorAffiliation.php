@@ -28,38 +28,38 @@ class SupervisorAffiliation
     #[Loggable]
     #[Groups(['log:person'])]
     #[Context(context: ['groups'=>['log:related_person']], groups: ['log:person'])]
-    private Person $supervisor;
+    private ?Person $supervisor = null;
 
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'supervisorAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
     #[Loggable]
     #[Groups(['log:person'])]
     #[Context(context: ['groups'=>['log:related_person']], groups: ['log:person'])]
-    private Person $supervisee;
+    private ?Person $supervisee = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getSupervisor(): Person
+    public function getSupervisor(): ?Person
     {
         return $this->supervisor;
     }
 
-    public function setSupervisor(Person $supervisor): self
+    public function setSupervisor(?Person $supervisor): self
     {
         $this->supervisor = $supervisor;
 
         return $this;
     }
 
-    public function getSupervisee(): Person
+    public function getSupervisee(): ?Person
     {
         return $this->supervisee;
     }
 
-    public function setSupervisee(Person $supervisee): self
+    public function setSupervisee(?Person $supervisee): self
     {
         $this->supervisee = $supervisee;
 
