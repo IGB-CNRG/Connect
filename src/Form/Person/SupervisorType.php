@@ -45,7 +45,7 @@ class SupervisorType extends AbstractType
                             'data-controller' => 'tom-select',
                         ],
                         'query_builder' => function(PersonRepository $repository){
-                            return $repository->createDropdownQueryBuilder();
+                            return $repository->createSupervisorDropdownQueryBuilder();
                         },
                     ])->add('startedAt', StartDateType::class);
                 }

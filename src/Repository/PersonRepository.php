@@ -112,4 +112,12 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
         $this->historicityManager()->addCurrentConstraint($qb, 'ta');
         return $qb;
     }
+
+    public function createSupervisorDropdownQueryBuilder()
+    {
+        return $this->createDropdownQueryBuilder()
+            ->leftJoin('ta.memberCategory', 'mc')
+            ->andWhere('mc.id in (:categories)')
+            ->setParameter('categories', [1,2,3,5,6,10]); // todo this is really bad, how can we make this better?
+    }
 }

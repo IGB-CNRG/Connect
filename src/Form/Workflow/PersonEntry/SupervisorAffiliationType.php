@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -8,6 +8,7 @@ namespace App\Form\Workflow\PersonEntry;
 
 use App\Entity\Person;
 use App\Entity\SupervisorAffiliation;
+use App\Repository\PersonRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -28,6 +29,9 @@ class SupervisorAffiliationType extends AbstractType
                 ],
                 'required' => false,
                 'label' => 'entry_form.supervisor',
+                'query_builder' => function(PersonRepository $repository){
+                    return $repository->createSupervisorDropdownQueryBuilder();
+                },
             ])
             ;
     }
