@@ -195,8 +195,8 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $imageSize;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Slug(fields: ['firstName', 'lastName'], unique_base: 'id')]
+    #[ORM\Column(type: 'string', length: 255, unique: true, nullable: true)]
+    #[Slug(fields: ['firstName', 'lastName'])]
     private ?string $slug = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
