@@ -192,6 +192,8 @@ class MembershipWorkflowController extends AbstractController
         WorkflowInterface $membershipStateMachine,
         ActivityLogger $logger
     ): RedirectResponse|Response {
+        // TODO shouldn't we just have the Person be the object of the form here? With one Documents input, with all the certs in it?
+        // TODO how do we handle this if we're repeating certificate upload?
         $drsCert = (new Document())
             ->setType(DocumentCategory::Certificate)
             ->setDisplayName("DRS Training Certificate")
