@@ -1,10 +1,10 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
-namespace App\Form\Workflow\PersonEntry;
+namespace App\Form\Workflow\Membership\EntryForm;
 
 use App\Entity\ThemeAffiliation;
 use App\Form\Fields\EndDateType;

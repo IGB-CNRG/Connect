@@ -178,7 +178,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[Groups(['log:person'])]
     private ?string $preferredFirstName = null;
 
-    #[ORM\OneToMany(mappedBy: 'person', targetEntity: Document::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'person', targetEntity: Document::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $documents;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]

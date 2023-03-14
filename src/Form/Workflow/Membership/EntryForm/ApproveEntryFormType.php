@@ -4,29 +4,28 @@
  * All rights reserved.
  */
 
-namespace App\Form\Workflow\PersonEntry;
+namespace App\Form\Workflow\Membership\EntryForm;
 
-use App\Entity\Person;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-// todo we can generalize this form and combine it with RejectEntryFormType
-class RejectCertificatesFormType extends AbstractType
+class ApproveEntryFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('membershipNote', TextareaType::class, [
-                "label" => "Return the certificates with the following note"
-            ]);
+            ->add('approved', CheckboxType::class, [
+                'label' => 'I approve this IGB entry form',
+            ])
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Person::class,
+            // Configure your form options here
         ]);
     }
 }

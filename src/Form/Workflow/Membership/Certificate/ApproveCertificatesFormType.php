@@ -4,20 +4,21 @@
  * All rights reserved.
  */
 
-namespace App\Form\Workflow\PersonEntry;
+namespace App\Form\Workflow\Membership\Certificate;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ApproveEntryFormType extends AbstractType
+// todo we can generalize this form and combine it with ApproveEntryFormType
+class ApproveCertificatesFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('approved', CheckboxType::class, [
-                'label' => 'I approve this IGB entry form',
+                'label' => 'I approve these training certificates',
             ])
         ;
     }

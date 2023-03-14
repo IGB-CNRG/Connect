@@ -4,29 +4,29 @@
  * All rights reserved.
  */
 
-namespace App\Form\Workflow\PersonEntry;
+namespace App\Form\Workflow\Membership\Certificate;
 
+use App\Entity\Person;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-// todo we can generalize this form and combine it with ApproveEntryFormType
-class ApproveCertificatesFormType extends AbstractType
+// todo we can generalize this form and combine it with RejectEntryFormType
+class RejectCertificatesFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('approved', CheckboxType::class, [
-                'label' => 'I approve these training certificates',
-            ])
-        ;
+            ->add('membershipNote', TextareaType::class, [
+                "label" => "Return the certificates with the following note"
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            // Configure your form options here
+            'data_class' => Person::class,
         ]);
     }
 }

@@ -4,7 +4,7 @@
  * All rights reserved.
  */
 
-namespace App\Form\Workflow\PersonEntry;
+namespace App\Form\Workflow\Membership\EntryForm;
 
 use App\Entity\Person;
 use Symfony\Component\Form\AbstractType;

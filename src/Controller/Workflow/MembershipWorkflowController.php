@@ -13,14 +13,15 @@ use App\Entity\RoomAffiliation;
 use App\Entity\SupervisorAffiliation;
 use App\Entity\ThemeAffiliation;
 use App\Enum\DocumentCategory;
-use App\Form\Workflow\PersonEntry\ApproveCertificatesFormType;
-use App\Form\Workflow\PersonEntry\ApproveEntryFormType;
-use App\Form\Workflow\PersonEntry\CertificateUploadType;
-use App\Form\Workflow\PersonEntry\EntryFormType;
-use App\Form\Workflow\PersonEntry\RejectCertificatesFormType;
-use App\Form\Workflow\PersonEntry\RejectEntryFormType;
+use App\Form\Workflow\Membership\Certificate\ApproveCertificatesFormType;
+use App\Form\Workflow\Membership\Certificate\CertificateUploadType;
+use App\Form\Workflow\Membership\Certificate\RejectCertificatesFormType;
+use App\Form\Workflow\Membership\EntryForm\ApproveEntryFormType;
+use App\Form\Workflow\Membership\EntryForm\EntryFormType;
+use App\Form\Workflow\Membership\EntryForm\RejectEntryFormType;
 use App\Log\ActivityLogger;
 use App\Repository\PersonRepository;
+use App\Service\CertificateHelper;
 use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -184,33 +185,42 @@ class MembershipWorkflowController extends AbstractController
         ]);
     }
 
-    #[Route('/membership/certificate-upload/{slug}', name: 'workflow_entry_upload_certs')]
+    #[Route('/membership/certificate-upload', name: 'workflow_entry_upload_certs')]
     public function certificateUpload(
-        Person $person,
         Request $request,
+        CertificateHelper $certificateHelper,
         EntityManagerInterface $em,
         WorkflowInterface $membershipStateMachine,
         ActivityLogger $logger
     ): RedirectResponse|Response {
-        // TODO shouldn't we just have the Person be the object of the form here? With one Documents input, with all the certs in it?
-        // TODO how do we handle this if we're repeating certificate upload?
-        $drsCert = (new Document())
-            ->setType(DocumentCategory::Certificate)
-            ->setDisplayName("DRS Training Certificate")
-            ->setUploadedBy($this->getUser());
-        $igbCert = (new Document())
-            ->setType(DocumentCategory::Certificate)
-            ->setDisplayName("IGB Training Certificate")
-            ->setUploadedBy($this->getUser());
+        // todo should we lock this down explicitly, or should we add an approvalstrategy for this step?
+        /** @var Person $person */
+        $person = $this->getUser();
+        if(!$membershipStateMachine->can($person, 'upload_certificates')){
+            throw $this->createAccessDeniedException();
+        }
+        $neededCertificates = $certificateHelper->requiredCertificates($person);
+        foreach ($neededCertificates as $neededCertificate) {
+            $certificateName = "$neededCertificate Training Certificate";
+            if (!$person->getDocuments()->exists(
+                fn($i, Document $document) => $document->getType() === DocumentCategory::Certificate
+                                          && $document->getDisplayName() === $certificateName
+            )) {
+                // Look for an existing certificate, create if needed
+                $certificate = (new Document())
+                    ->setType(DocumentCategory::Certificate)
+                    ->setDisplayName($certificateName)
+                    ->setUploadedBy($this->getUser());
+                $person->addDocument($certificate);
+            }
+        }
 
-        $form = $this->createForm(CertificateUploadType::class, ['drs' => $drsCert, 'igb' => $igbCert])
+        $form = $this->createForm(CertificateUploadType::class, $person)
             ->add('submit', SubmitType::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $person->addDocument($drsCert)->addDocument($igbCert);
-            $em->persist($drsCert);
-            $em->persist($igbCert);
+            $em->persist($person);
 
             $logger->log($person, 'Uploaded training certificates');
             $membershipStateMachine->apply($person, 'upload_certificates');
@@ -282,7 +292,7 @@ class MembershipWorkflowController extends AbstractController
         if (!$departmentAffiliation->getDepartment() && !$departmentAffiliation->getOtherDepartment()) {
             $person->removeDepartmentAffiliation($departmentAffiliation);
         }
-        if(!$supervisorAffiliation->getSupervisor()){
+        if (!$supervisorAffiliation->getSupervisor()) {
             $person->removeSupervisorAffiliation($supervisorAffiliation);
         }
         $person->setUsername($person->getNetid());

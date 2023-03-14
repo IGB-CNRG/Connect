@@ -22,7 +22,11 @@ class CertificateHelper
         self::IGB_STAFF=>'',
     ];
 
-    public function requiredCertificates(Person $person)
+    /**
+     * @param Person $person
+     * @return string[]
+     */
+    public function requiredCertificates(Person $person): array
     {
         if ($person->isOfficeWorkOnly()) {
             return [self::IGB_STAFF];
