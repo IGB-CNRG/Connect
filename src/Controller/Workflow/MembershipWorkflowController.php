@@ -13,12 +13,10 @@ use App\Entity\RoomAffiliation;
 use App\Entity\SupervisorAffiliation;
 use App\Entity\ThemeAffiliation;
 use App\Enum\DocumentCategory;
-use App\Form\Workflow\Membership\Certificate\ApproveCertificatesFormType;
+use App\Form\Workflow\ApproveType;
 use App\Form\Workflow\Membership\Certificate\CertificateUploadType;
-use App\Form\Workflow\Membership\Certificate\RejectCertificatesFormType;
-use App\Form\Workflow\Membership\EntryForm\ApproveEntryFormType;
 use App\Form\Workflow\Membership\EntryForm\EntryFormType;
-use App\Form\Workflow\Membership\EntryForm\RejectEntryFormType;
+use App\Form\Workflow\RejectType;
 use App\Log\ActivityLogger;
 use App\Repository\PersonRepository;
 use App\Service\CertificateHelper;
@@ -118,7 +116,6 @@ class MembershipWorkflowController extends AbstractController
 
             $em->flush();
 
-            // TODO redirect to some kind of workflow progress page? Or display workflow progress on view?
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
 
@@ -137,9 +134,13 @@ class MembershipWorkflowController extends AbstractController
         ActivityLogger $logger
     ): Response {
         // todo restrict this route to only assigned approvers
-        $approvalForm = $this->createForm(ApproveEntryFormType::class)
+        $approvalForm = $this->createForm(ApproveType::class, null, [
+            'approve_label' => 'I approve this IGB entry form',
+        ])
             ->add('approve', SubmitType::class);
-        $rejectionForm = $this->createForm(RejectEntryFormType::class, $person)
+        $rejectionForm = $this->createForm(RejectType::class, $person, [
+            'reject_label' => "Return the form with the following note"
+        ])
             ->add('return', SubmitType::class);
 
         $approvalForm->handleRequest($request);
@@ -196,7 +197,7 @@ class MembershipWorkflowController extends AbstractController
         // todo should we lock this down explicitly, or should we add an approvalstrategy for this step?
         /** @var Person $person */
         $person = $this->getUser();
-        if(!$membershipStateMachine->can($person, 'upload_certificates')){
+        if (!$membershipStateMachine->can($person, 'upload_certificates')) {
             throw $this->createAccessDeniedException();
         }
         $neededCertificates = $certificateHelper->requiredCertificates($person);
@@ -204,7 +205,7 @@ class MembershipWorkflowController extends AbstractController
             $certificateName = "$neededCertificate Training Certificate";
             if (!$person->getDocuments()->exists(
                 fn($i, Document $document) => $document->getType() === DocumentCategory::Certificate
-                                          && $document->getDisplayName() === $certificateName
+                                              && $document->getDisplayName() === $certificateName
             )) {
                 // Look for an existing certificate, create if needed
                 $certificate = (new Document())
@@ -242,11 +243,15 @@ class MembershipWorkflowController extends AbstractController
         EntityManagerInterface $em,
         WorkflowInterface $membershipStateMachine,
         ActivityLogger $logger
-    ) {
+    ): RedirectResponse|Response {
         // todo restrict this route to only assigned approvers
-        $approvalForm = $this->createForm(ApproveCertificatesFormType::class)
+        $approvalForm = $this->createForm(ApproveType::class, null, [
+            'approve_label' => 'I approve these training certificates',
+        ])
             ->add('approve', SubmitType::class);
-        $rejectionForm = $this->createForm(RejectCertificatesFormType::class, $person)
+        $rejectionForm = $this->createForm(RejectType::class, $person, [
+            'reject_label' => "Return the certificates with the following note"
+        ])
             ->add('return', SubmitType::class);
 
         $approvalForm->handleRequest($request);

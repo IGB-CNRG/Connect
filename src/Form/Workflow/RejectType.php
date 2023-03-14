@@ -4,7 +4,7 @@
  * All rights reserved.
  */
 
-namespace App\Form\Workflow\Membership\Certificate;
+namespace App\Form\Workflow;
 
 use App\Entity\Person;
 use Symfony\Component\Form\AbstractType;
@@ -12,14 +12,13 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-// todo we can generalize this form and combine it with RejectEntryFormType
-class RejectCertificatesFormType extends AbstractType
+class RejectType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('membershipNote', TextareaType::class, [
-                "label" => "Return the certificates with the following note"
+                "label" => $options['reject_label'],
             ]);
     }
 
@@ -27,6 +26,9 @@ class RejectCertificatesFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Person::class,
+        ]);
+        $resolver->setRequired([
+            'reject_label'
         ]);
     }
 }
