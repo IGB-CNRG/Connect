@@ -14,9 +14,9 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ThemeAffiliationRepository::class)]
-class ThemeAffiliation
+class ThemeAffiliation implements HistoricalEntityInterface
 {
-    use TimestampableEntity, HistoricalEntity;
+    use TimestampableEntity, HistoricalEntityTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

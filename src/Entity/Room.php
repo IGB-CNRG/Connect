@@ -17,9 +17,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: RoomRepository::class)]
 #[UniqueEntity(['number'])]
-class Room implements LogSubjectInterface
+class Room implements LogSubjectInterface, HistoricalEntityInterface
 {
-    use TimestampableEntity, HistoricalEntity;
+    use TimestampableEntity, HistoricalEntityTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

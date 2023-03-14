@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -8,7 +8,7 @@ namespace App\Command;
 
 use App\Entity\Department;
 use App\Entity\DepartmentAffiliation;
-use App\Entity\HistoricalEntity;
+use App\Entity\HistoricalEntityInterface;
 use App\Entity\MemberCategory;
 use App\Entity\Person;
 use App\Entity\RoomAffiliation;
@@ -597,10 +597,10 @@ class ImportPeopleCommand extends Command
 
     /**
      * @param array $from
-     * @param HistoricalEntity $to
+     * @param HistoricalEntityInterface $to
      * @return void
      */
-    private function setDatesFromResult(array $from, $to): void
+    private function setDatesFromResult(array $from, HistoricalEntityInterface $to): void
     {
         try {
             if ($from['start_date'] && $from['start_date'] != '0000-00-00') {

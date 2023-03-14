@@ -16,10 +16,12 @@ use App\Enum\DocumentCategory;
 use App\Form\Workflow\ApproveType;
 use App\Form\Workflow\Membership\Certificate\CertificateUploadType;
 use App\Form\Workflow\Membership\EntryForm\EntryFormType;
+use App\Form\Workflow\Membership\ExitFormType;
 use App\Form\Workflow\RejectType;
 use App\Log\ActivityLogger;
 use App\Repository\PersonRepository;
 use App\Service\CertificateHelper;
+use App\Service\HistoricityManager;
 use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -31,7 +33,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-class MembershipWorkflowController extends AbstractController
+class MembershipController extends AbstractController
 {
     /**
      * This route provides a blank entry form for a new user
@@ -41,7 +43,7 @@ class MembershipWorkflowController extends AbstractController
      * @param WorkflowInterface $membershipStateMachine
      * @return Response
      */
-    #[Route('/membership/entry-form', name: 'workflow_entry_entry_form')]
+    #[Route('/membership/entry-form', name: 'membership_entryForm')]
     public function entryForm(
         Request $request,
         EntityManagerInterface $em,
@@ -73,13 +75,13 @@ class MembershipWorkflowController extends AbstractController
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
 
-        return $this->render('workflow/person_entry/entry_form.html.twig', [
+        return $this->render('workflow/membership/entry_form.html.twig', [
             'person' => $person,
             'form' => $form->createView(),
         ]);
     }
 
-    #[Route('membership/continue-entry-form/{slug}', name: 'app_workflow_membershipworkflow_continueentryform')]
+    #[Route('membership/continue-entry-form/{slug}', name: 'membership_continueEntryForm')]
     public function continueEntryForm(
         Person $person,
         Request $request,
@@ -119,13 +121,13 @@ class MembershipWorkflowController extends AbstractController
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
 
-        return $this->render('workflow/person_entry/entry_form.html.twig', [
+        return $this->render('workflow/membership/entry_form.html.twig', [
             'person' => $person,
             'form' => $form->createView(),
         ]);
     }
 
-    #[Route('/membership/approve-entry-form/{slug}', name: 'workflow_entry_approve_entry')]
+    #[Route('/membership/approve-entry-form/{slug}', name: 'membership_approveEntryForm')]
     public function approveEntryForm(
         Person $person,
         Request $request,
@@ -149,7 +151,7 @@ class MembershipWorkflowController extends AbstractController
             $person->setMembershipNote(null);
             $logger->log($person, "Approved entry form");
             $em->flush();
-            return $this->redirectToRoute('workflow_approvals');
+            return $this->redirectToRoute('membership_approvals');
         }
 
         $rejectionForm->handleRequest($request);
@@ -157,17 +159,17 @@ class MembershipWorkflowController extends AbstractController
             $membershipStateMachine->apply($person, 'return_entry_form');
             $logger->log($person, sprintf("Returned entry form with reason \"%s\"", $person->getMembershipNote()));
             $em->flush();
-            return $this->redirectToRoute('workflow_approvals');
+            return $this->redirectToRoute('membership_approvals');
         }
 
-        return $this->render('workflow/person_entry/approve_entry_form.html.twig', [
+        return $this->render('workflow/membership/approve_entry_form.html.twig', [
             'person' => $person,
             'approvalForm' => $approvalForm->createView(),
             'rejectionForm' => $rejectionForm->createView(),
         ]);
     }
 
-    #[Route('/membership/approvals', name: 'workflow_approvals')]
+    #[Route('/membership/approvals', name: 'membership_approvals')]
     #[IsGranted('ROLE_APPROVER')]
     public function approvalIndex(WorkflowInterface $membershipStateMachine, PersonRepository $repository): Response
     {
@@ -186,7 +188,7 @@ class MembershipWorkflowController extends AbstractController
         ]);
     }
 
-    #[Route('/membership/certificate-upload', name: 'workflow_entry_upload_certs')]
+    #[Route('/membership/certificate-upload', name: 'membership_certificateUpload')]
     public function certificateUpload(
         Request $request,
         CertificateHelper $certificateHelper,
@@ -231,13 +233,13 @@ class MembershipWorkflowController extends AbstractController
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
 
-        return $this->render('workflow/person_entry/upload_certs.html.twig', [
-            'form' => $form->createView(),
+        return $this->render('workflow/membership/upload_certs.html.twig', [
+            'form' => $form->createView(), //todo refactor to remove createView everywhere
         ]);
     }
 
-    #[Route('/membership/approve-certificates/{slug}', name: 'app_workflow_membershipworkflow_approvecerts')]
-    public function approveCerts(
+    #[Route('/membership/approve-certificates/{slug}', name: 'membership_approveCertificates')]
+    public function approveCertificates(
         Person $person,
         Request $request,
         EntityManagerInterface $em,
@@ -260,7 +262,7 @@ class MembershipWorkflowController extends AbstractController
             $person->setMembershipNote(null);
             $logger->log($person, "Approved certificates");
             $em->flush();
-            return $this->redirectToRoute('workflow_approvals');
+            return $this->redirectToRoute('membership_approvals');
         }
 
         $rejectionForm->handleRequest($request);
@@ -268,12 +270,56 @@ class MembershipWorkflowController extends AbstractController
             $membershipStateMachine->apply($person, 'return_certificates');
             $logger->log($person, sprintf("Returned certificates with reason \"%s\"", $person->getMembershipNote()));
             $em->flush();
-            return $this->redirectToRoute('workflow_approvals');
+            return $this->redirectToRoute('membership_approvals');
         }
-        return $this->render('workflow/person_entry/approve_certs.html.twig', [
+        return $this->render('workflow/membership/approve_certs.html.twig', [
             'person' => $person,
             'approvalForm' => $approvalForm->createView(),
             'rejectionForm' => $rejectionForm->createView(),
+        ]);
+    }
+
+    #[Route('/membership/exit-form/{slug}', name: 'membership_exitForm')]
+    public function exitForm(
+        Person $person,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        HistoricityManager $historicityManager,
+        ActivityLogger $logger,
+        WorkflowInterface $membershipStateMachine
+    ): Response {
+        // todo restrict access (to whom?)
+        $form = $this->createForm(ExitFormType::class)
+            ->add('submit', SubmitType::class);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Set exit reason and end date on all current theme, supervisor, and room affiliations
+            $exitReason = $form->get('exitReason')->getData();
+            $endedAt = $form->get('endedAt')->getData();
+
+            $historicityManager->endAffiliations(
+                array_merge(
+                    $person->getSupervisorAffiliations()->toArray(),
+                    $person->getRoomAffiliations()->toArray(),
+                    $person->getThemeAffiliations()->toArray(),
+                    $person->getDepartmentAffiliations()->toArray(),
+                    $person->getSuperviseeAffiliations()->toArray()
+                ),
+                $endedAt,
+                $exitReason
+            );
+            $entityManager->persist($person);
+            $logger->log($person, "Submitted exit form (end date {$endedAt->format('n/j/Y')})");
+            $membershipStateMachine->apply($person, 'submit_exit_form');
+            $entityManager->flush();
+
+            return $this->redirectToRoute('person_view', ['slug'=>$person->getSlug()]);
+        }
+
+        return $this->render('workflow/membership/exit_form.html.twig', [
+            'person' => $person,
+            'form' => $form,
         ]);
     }
 

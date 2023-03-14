@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | Exit Form{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active" aria-current="page">
+        IGB Exit Form
+    </li>
+{% endblock %}
+
+{% block content %}
+    {{ form(form) }}
+{% endblock %}

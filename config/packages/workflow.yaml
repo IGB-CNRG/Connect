@@ -18,7 +18,7 @@ framework:
                     metadata:
                         completion: 25
                         approvalStrategy: App\Workflow\Approval\ThemeApproval
-                        approval_route: workflow_entry_approve_entry
+                        approval_route: membership_approveEntryForm
                 need_certificates:
                     metadata:
                         completion: 50
@@ -26,7 +26,7 @@ framework:
                     metadata:
                         completion: 75
                         approvalStrategy: App\Workflow\Approval\ReceptionApproval
-                        approval_route: app_workflow_membershipworkflow_approvecerts
+                        approval_route: membership_approveCertificates
                 active:
                 exit_form_submitted:
                 inactive:

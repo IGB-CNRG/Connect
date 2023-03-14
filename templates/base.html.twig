@@ -52,7 +52,7 @@
                                 <span class="fa fa-table-list"></span> Forms
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarFormsMenuLink">
-                                <li><a class="dropdown-item" href="{{ path('workflow_entry_entry_form') }}"><span class="fa fa-user-plus"></span> Entry Form</a></li>
+                                <li><a class="dropdown-item" href="{{ path('membership_entryForm') }}"><span class="fa fa-user-plus"></span> Entry Form</a></li>
                                 {# todo what are the permissions for exit forms? #}
                                 <li><a class="dropdown-item" href="#"><span class="fa fa-user-minus"></span> Exit Form</a></li>
                             </ul>
@@ -72,7 +72,7 @@
                                                     class="fa fa-gears"></span> Admin</a></li>
                                 {% endif %}
                                 {% if is_granted('ROLE_APPROVER') %}
-                                    <li><a class="dropdown-item" href="{{ path('workflow_approvals') }}"><span class="fa fa-thumbs-up"></span> Approvals</a></li>
+                                    <li><a class="dropdown-item" href="{{ path('membership_approvals') }}"><span class="fa fa-thumbs-up"></span> Approvals</a></li>
                                 {% endif %}
                                 <li><a class="dropdown-item" href="{{ path('logout') }}"><span
                                                 class="fa fa-right-from-bracket"></span> Logout</a></li>
@@ -100,7 +100,7 @@
     <main class="flex-shrink-0 mb-4">
         {# Main content box #}
         <div class="container">
-            {% include 'workflow/person_entry/_membership_status.html.twig' %}
+            {% include 'workflow/membership/_membership_status.html.twig' %}
 
             {% block content %}
             {% endblock %}

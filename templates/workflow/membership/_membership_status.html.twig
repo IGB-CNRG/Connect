@@ -7,7 +7,7 @@
         <div class="flex-grow-1 flex-shrink-1">
             {% if place == 'need_entry_form' %}
                 <p>Welcome to the IGB! Please complete and submit your <a
-                            href="{{ path('app_workflow_membershipworkflow_continueentryform', {'slug':app.user.slug}) }}">IGB
+                            href="{{ path('membership_continueEntryForm', {'slug':app.user.slug}) }}">IGB
                         Entry Form</a>.</p>
                 {% if app.user.membershipNote %}
                     <p>Your entry form was returned to you with the following note:</p>
@@ -17,7 +17,7 @@
                 <p>Your Entry Form has been received. Once it has been approved by a member of your theme, you will
                     receive additional instructions.</p>
             {% elseif place =='need_certificates' %}
-                <p>Your Entry Form has been approved. Please upload all requested training certificates <a href="{{ path('workflow_entry_upload_certs') }}">here</a>.</p>
+                <p>Your Entry Form has been approved. Please upload all requested training certificates <a href="{{ path('membership_certificateUpload') }}">here</a>.</p>
                 {% if app.user.membershipNote %}
                     <p>Your certificates were returned to you with the following note:</p>
                     <p class="membership-note">{{ app.user.membershipNote }}</p>

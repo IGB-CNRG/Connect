@@ -509,7 +509,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     }
 
     /**
-     * @return Collection<int, ThemeAffiliation>
+     * @return Collection<int, ThemeAffiliation>|ThemeAffiliation[]
      */
     public function getThemeAffiliations(): Collection
     {
