@@ -43,7 +43,10 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
             ->select('p,ta,t,ra,r,da,d');
     }
 
-    public function findAllNeedingApproval()
+    /**
+     * @return Person[]
+     */
+    public function findAllNeedingApproval(): array
     {
         return $this->createQueryBuilder('p')
             ->andWhere('p.membershipStatus in (:places)')
