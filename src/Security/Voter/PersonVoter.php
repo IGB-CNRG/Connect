@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -20,6 +20,7 @@ class PersonVoter extends Voter
     public const VIEW = 'PERSON_VIEW';
     public const ADD = 'PERSON_ADD';
     public const EDIT_HISTORY = 'PERSON_EDIT_HISTORY';
+    public const REMOVE = 'PERSON_REMOVE';
 
     public function __construct(private Security $security, private HistoricityManager $historicityManager) {}
 
@@ -27,7 +28,7 @@ class PersonVoter extends Voter
     {
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
-        return (in_array($attribute, [self::EDIT, self::VIEW])
+        return (in_array($attribute, [self::EDIT, self::VIEW, self::REMOVE])
                 && $subject instanceof Person)
                || $attribute === self::ADD
                || $attribute === self::EDIT_HISTORY;
@@ -50,10 +51,13 @@ class PersonVoter extends Voter
         // ... (check conditions and return true to grant permission) ...
         return match ($attribute) {
             // anyone who can edit can also edit history, for now
-            self::EDIT, self::EDIT_HISTORY => $this->security->isGranted('ROLE_HUMAN_RESOURCES')
-                          || $this->isEditorForPersonsTheme($user, $subject), // todo who else can edit?
+            self::EDIT, self::EDIT_HISTORY => $this->isEditorForPersonsTheme(
+                $user,
+                $subject
+            ), // todo who else can edit?
             self::VIEW => true,
-            self::ADD => $this->security->isGranted('ROLE_HUMAN_RESOURCES'), // todo who else can add?
+            self::ADD => $this->security->isGranted('ROLE_APPROVER'), // todo who else can add?
+            self::REMOVE => $user === $subject || $this->isEditorForPersonsTheme($user, $subject),
             default => false,
         };
     }
