@@ -37,16 +37,8 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     const USER_ROLES = [
         'CONNECT Admin' => 'ROLE_ADMIN',
-        'CONNECT Approver' => 'ROLE_APPROVER',
-        'CNRG' => 'ROLE_CNRG',
-        'Op/Fac' => 'ROLE_OP_FAC',
         'Key Manager' => 'ROLE_KEY_MANAGER',
-        'Director\'s Office' => 'ROLE_DIRECTORS_OFFICE',
-        'Human Resources' => 'ROLE_HUMAN_RESOURCES',
-        'Business Office' => 'ROLE_BUSINESS_OFFICE',
-        'Communications' => 'ROLE_COMMUNICATIONS',
-        'Outreach' => 'ROLE_OUTREACH',
-        'Core Facilities' => 'ROLE_CORE_FACILITIES',
+        'Certificate Manager' => 'ROLE_CERTIFICATE_MANAGER',
     ];
 
     #[ORM\Id]

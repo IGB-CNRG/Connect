@@ -42,8 +42,7 @@ class StaffVoter extends Voter
             self::THEME_ADMIN => $user->getThemeAdminThemeAffiliations()->count() > 0,
             self::LAB_MANAGER => $user->getLabManagerThemeAffiliations()->count() > 0,
             // todo this may be naive, but it works for now
-            self::APPROVER => $this->security->isGranted('ROLE_KEY_MANAGER')
-                              || $user->getLabManagerThemeAffiliations()->count() > 0
+            self::APPROVER => $user->getLabManagerThemeAffiliations()->count() > 0
                               || $user->getThemeAdminThemeAffiliations()->count() > 0,
             default => false,
         };

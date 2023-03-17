@@ -176,6 +176,7 @@ class MembershipController extends AbstractController
         $peopleToApprove = $repository->findAllNeedingApproval();
         $myApprovals = array_filter($peopleToApprove, function (Person $person) use ($membershipStateMachine) {
             // todo can we not hard code these transitions?
+            //  or maybe have a helper function to check if one Person can approve another Person
             return $membershipStateMachine->can($person, 'approve_entry_form')
                    || $membershipStateMachine->can(
                     $person,
