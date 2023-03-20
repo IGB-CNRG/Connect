@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -40,6 +40,9 @@ class WorkflowNotification
 
     #[ORM\Column(length: 255)]
     private ?string $subject = null;
+
+    #[ORM\Column]
+    private ?bool $isEnabled = null;
 
 
     public function __construct()
@@ -146,6 +149,18 @@ class WorkflowNotification
     public function setSubject(string $subject): self
     {
         $this->subject = $subject;
+
+        return $this;
+    }
+
+    public function isIsEnabled(): ?bool
+    {
+        return $this->isEnabled;
+    }
+
+    public function setIsEnabled(bool $isEnabled): self
+    {
+        $this->isEnabled = $isEnabled;
 
         return $this;
     }

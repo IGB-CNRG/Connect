@@ -32,6 +32,7 @@ class WorkflowNotificationRepository extends ServiceEntityRepository
             ->andWhere('m in (:categories)')
             ->andWhere('w.transitionName = :transition')
             ->andWhere('w.workflowName = :workflow')
+            ->andWhere('w.isEnabled = true')
             ->setParameter('categories', $categories)
             ->setParameter('transition', $transition)
             ->setParameter('workflow', $workflow)

@@ -15,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CodeEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -95,7 +96,8 @@ class WorkflowNotificationCrudController extends AbstractCrudController
             ChoiceField::new('transitionName')
                 ->setLabel('Workflow event')
                 ->setChoices($choices)
-                ->setFormTypeOption('choice_translation_domain', true)
+                ->setFormTypeOption('choice_translation_domain', true),
+            BooleanField::new('isEnabled')->renderAsSwitch(false),
 
         ];
     }
