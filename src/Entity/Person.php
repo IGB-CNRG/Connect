@@ -210,6 +210,9 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $membershipNote = null;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?ExitForm $exitForm = null;
+
     public function __construct()
     {
         $this->roomAffiliations = new ArrayCollection();
@@ -971,6 +974,18 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     public function setMembershipNote(?string $membershipNote): self
     {
         $this->membershipNote = $membershipNote;
+
+        return $this;
+    }
+
+    public function getExitForm(): ?ExitForm
+    {
+        return $this->exitForm;
+    }
+
+    public function setExitForm(?ExitForm $exitForm): self
+    {
+        $this->exitForm = $exitForm;
 
         return $this;
     }

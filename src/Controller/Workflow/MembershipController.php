@@ -8,6 +8,7 @@ namespace App\Controller\Workflow;
 
 use App\Entity\DepartmentAffiliation;
 use App\Entity\Document;
+use App\Entity\ExitForm;
 use App\Entity\Person;
 use App\Entity\RoomAffiliation;
 use App\Entity\SupervisorAffiliation;
@@ -290,29 +291,33 @@ class MembershipController extends AbstractController
         WorkflowInterface $membershipStateMachine
     ): Response {
         // todo restrict access (to whom?)
-        $form = $this->createForm(ExitFormType::class)
+        $exitForm = new ExitForm();
+        $form = $this->createForm(ExitFormType::class, $exitForm)
             ->add('submit', SubmitType::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            // Set exit reason and end date on all current theme, supervisor, and room affiliations
-            $exitReason = $form->get('exitReason')->getData();
-            $endedAt = $form->get('endedAt')->getData();
-
-            $historicityManager->endAffiliations(
-                array_merge(
-                    $person->getSupervisorAffiliations()->toArray(),
-                    $person->getRoomAffiliations()->toArray(),
-                    $person->getThemeAffiliations()->toArray(),
-                    $person->getDepartmentAffiliations()->toArray(),
-                    $person->getSuperviseeAffiliations()->toArray()
-                ),
-                $endedAt,
-                $exitReason
-            );
-            $entityManager->persist($person);
-            $logger->log($person, "Submitted exit form (end date {$endedAt->format('n/j/Y')})");
-            $membershipStateMachine->apply($person, 'submit_exit_form');
+            if($membershipStateMachine->can($person, 'force_exit_form')) {
+                // Set exit reason and end date on all current theme, supervisor, and room affiliations
+                $historicityManager->endAffiliations(
+                    array_merge(
+                        $person->getSupervisorAffiliations()->toArray(),
+                        $person->getRoomAffiliations()->toArray(),
+                        $person->getThemeAffiliations()->toArray(),
+                        $person->getDepartmentAffiliations()->toArray(),
+                        $person->getSuperviseeAffiliations()->toArray()
+                    ),
+                    $exitForm->getEndedAt(),
+                    $exitForm->getExitReason()
+                );
+                $entityManager->persist($person);
+                $membershipStateMachine->apply($person, 'force_exit_form');
+            } else {
+                // Submit exit form for approval
+                $person->setExitForm($exitForm);
+                $membershipStateMachine->apply($person, 'submit_exit_form');
+            }
+            $logger->log($person, "Submitted exit form (end date {$exitForm->getEndedAt()->format('n/j/Y')})");
             $entityManager->flush();
 
             return $this->redirectToRoute('person_view', ['slug'=>$person->getSlug()]);

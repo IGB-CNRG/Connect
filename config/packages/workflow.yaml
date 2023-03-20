@@ -62,9 +62,16 @@ framework:
                 submit_exit_form:
                     from: active
                     to: exit_form_submitted
+                force_exit_form:
+                    from: active
+                    to: inactive
+                    metadata:
+                        approvalStrategy: App\Workflow\Approval\ThemeApproval
                 deactivate:
                     from: exit_form_submitted
                     to: inactive
+                    metadata:
+                        approvalStrategy: App\Workflow\Approval\ThemeApproval
                 reenter:
                     from: inactive
                     to: need_entry_form

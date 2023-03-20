@@ -6,6 +6,7 @@
 
 namespace App\Form\Workflow\Membership;
 
+use App\Entity\ExitForm;
 use App\Form\Fields\EndDateType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -28,7 +29,7 @@ class ExitFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            // Configure your form options here
+            'data_class' => ExitForm::class,
         ]);
     }
 }
