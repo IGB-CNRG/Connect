@@ -92,28 +92,6 @@ class PersonController extends AbstractController
         ]);
     }
 
-    #[Route('/person/new', name: 'person_add', priority: 1)]
-    #[IsGranted('PERSON_ADD')]
-    public function new(Request $request, EntityManagerInterface $em, ActivityLogger $logger): Response
-    {
-        $person = new Person();
-        $form = $this->createForm(PersonType::class, $person);
-        $form->add('save', SubmitType::class);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($person);
-            $logger->log($person, 'Created record');
-            $em->flush();
-
-            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
-        }
-        return $this->render('person/new.html.twig', [
-            'person' => $person,
-            'form' => $form->createView(),
-        ]);
-    }
-
     #[Route('/person/{slug}/add-theme-affiliation', name: 'person_add_theme_affiliation')]
     #[IsGranted('PERSON_EDIT', 'person')]
     public function newThemeAffiliation(
