@@ -37,7 +37,7 @@ security:
   role_hierarchy:
     ROLE_ADMIN:
       - ROLE_ALLOWED_TO_SWITCH
-      - ROLE_KEY_MANAGER
+#      - ROLE_KEY_MANAGER
       - ROLE_CERTIFICATE_MANAGER
       - ROLE_APPROVER
     ROLE_CERTIFICATE_MANAGER:
