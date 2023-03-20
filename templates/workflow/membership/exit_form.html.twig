@@ -9,5 +9,14 @@
 {% endblock %}
 
 {% block content %}
+    <h2>IGB Exit Form</h2>
+    {% if person == app.user and is_granted('ROLE_APPROVER') %}
+        <div class="callout callout-border-warning">
+            This will submit an exit form on <strong>your</strong> behalf! To submit an exit form for someone else,
+            please click the Exit Form button on their profile page.
+        </div>
+    {% endif %}
+    <label class="approval-label">Name</label>
+    <div class="approval-field">{{ person }}</div>
     {{ form(form) }}
 {% endblock %}

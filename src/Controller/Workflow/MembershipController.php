@@ -52,7 +52,6 @@ class MembershipController extends AbstractController
         WorkflowInterface $membershipStateMachine
     ): Response {
         // todo so far this form does not support saving and continuing. do we want to?
-        // todo this form only represents the new member filling out a form for themselves while logged in as someone else
 
         $roomAffiliation = new RoomAffiliation();
         $departmentAffiliation = new DepartmentAffiliation();
