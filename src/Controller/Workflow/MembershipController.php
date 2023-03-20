@@ -290,7 +290,10 @@ class MembershipController extends AbstractController
         ActivityLogger $logger,
         WorkflowInterface $membershipStateMachine
     ): Response {
-        // todo restrict access (to whom?)
+        if(!($person===$this->getUser() || $membershipStateMachine->can($person, 'force_exit_form'))){
+            throw $this->createAccessDeniedException();
+        }
+
         $exitForm = new ExitForm();
         $form = $this->createForm(ExitFormType::class, $exitForm)
             ->add('submit', SubmitType::class);
