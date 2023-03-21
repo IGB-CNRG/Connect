@@ -17,7 +17,8 @@ use App\Enum\DocumentCategory;
 use App\Form\Workflow\ApproveType;
 use App\Form\Workflow\Membership\Certificate\CertificateUploadType;
 use App\Form\Workflow\Membership\EntryForm\EntryFormType;
-use App\Form\Workflow\Membership\ExitFormType;
+use App\Form\Workflow\Membership\ExitForm\ExitFormApprovalType;
+use App\Form\Workflow\Membership\ExitForm\ExitFormType;
 use App\Form\Workflow\RejectType;
 use App\Log\ActivityLogger;
 use App\Repository\PersonRepository;
@@ -287,7 +288,7 @@ class MembershipController extends AbstractController
         ActivityLogger $logger,
         WorkflowInterface $membershipStateMachine
     ): Response {
-        if(!($person===$this->getUser() || $membershipStateMachine->can($person, 'force_exit_form'))){
+        if (!($person === $this->getUser() || $membershipStateMachine->can($person, 'force_exit_form'))) {
             throw $this->createAccessDeniedException();
         }
 
@@ -297,19 +298,9 @@ class MembershipController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if($membershipStateMachine->can($person, 'force_exit_form')) {
+            if ($membershipStateMachine->can($person, 'force_exit_form')) {
                 // Set exit reason and end date on all current theme, supervisor, and room affiliations
-                $historicityManager->endAffiliations(
-                    array_merge(
-                        $person->getSupervisorAffiliations()->toArray(),
-                        $person->getRoomAffiliations()->toArray(),
-                        $person->getThemeAffiliations()->toArray(),
-                        $person->getDepartmentAffiliations()->toArray(),
-                        $person->getSuperviseeAffiliations()->toArray()
-                    ),
-                    $exitForm->getEndedAt(),
-                    $exitForm->getExitReason()
-                );
+                $this->processExit($historicityManager, $person, $exitForm->getEndedAt(), $exitForm->getExitReason());
                 $entityManager->persist($person);
                 $membershipStateMachine->apply($person, 'force_exit_form');
             } else {
@@ -317,16 +308,82 @@ class MembershipController extends AbstractController
                 $person->setExitForm($exitForm);
                 $membershipStateMachine->apply($person, 'submit_exit_form');
             }
-            $logger->log($person, "Submitted exit form (end date {$exitForm->getEndedAt()->format('n/j/Y')})");
+            $logger->log($person, "Submitted exit form (end date {$exitForm->getEndedAt()->format('n/j/Y')}, exit reason \"{$exitForm->getExitReason()}\")");
             $entityManager->flush();
 
-            return $this->redirectToRoute('person_view', ['slug'=>$person->getSlug()]);
+            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
 
         return $this->render('workflow/membership/exit_form.html.twig', [
             'person' => $person,
             'form' => $form,
         ]);
+    }
+
+    #[Route('/membership/exit-form/{slug}/approval', name: 'membership_approveExitForm')]
+    public function exitFormApproval(
+        Person $person,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        WorkflowInterface $membershipStateMachine,
+        HistoricityManager $historicityManager,
+        ActivityLogger $logger
+    ): Response {
+        $form = $this->createForm(
+            ExitFormApprovalType::class,
+            ['endedAt' => $person->getExitForm()->getEndedAt()],
+            ['approve_label' => 'I approve this exit form']
+        )
+            ->add('Approve', SubmitType::class);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $endedAt = $form->get('endedAt')->getData();
+            $exitReason = $form->get('exitReason')->getData();
+            $this->processExit(
+                $historicityManager,
+                $person,
+                $endedAt,
+                $exitReason
+            );
+            $entityManager->persist($person);
+            $membershipStateMachine->apply($person, 'deactivate');
+            $logger->log($person, "Approved exit form (end date {$endedAt->format('n/j/Y')}, exit reason \"{$exitReason}\")");
+            $entityManager->flush();
+
+            return $this->redirectToRoute('membership_approvals');
+        }
+
+        return $this->render('workflow/membership/approve_exit_form.html.twig', [
+            'person' => $person,
+            'form' => $form,
+        ]);
+    }
+
+    /**
+     * @param HistoricityManager $historicityManager
+     * @param Person $person
+     * @param DateTimeInterface $endedAt
+     * @param string $exitReason
+     * @return void
+     */
+    protected function processExit(
+        HistoricityManager $historicityManager,
+        Person $person,
+        DateTimeInterface $endedAt,
+        string $exitReason
+    ): void {
+        $historicityManager->endAffiliations(
+            array_merge(
+                $person->getSupervisorAffiliations()->toArray(),
+                $person->getRoomAffiliations()->toArray(),
+                $person->getThemeAffiliations()->toArray(),
+                $person->getDepartmentAffiliations()->toArray(),
+                $person->getSuperviseeAffiliations()->toArray()
+            ),
+            $endedAt,
+            $exitReason
+        );
     }
 
     protected function processEntryForm(

@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | Exit Form Approval{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active" aria-current="page">
+        IGB Exit Form Approval
+    </li>
+{% endblock %}
+
+{% block content %}
+    <h2>IGB Exit Form</h2>
+
+    <p class="approval-label">Name</p>
+    <p class="approval-field">{{ person }}</p>
+
+    <p class="approval-label">Exit Reason</p>
+    <p class="approval-field">{{ person.exitForm.exitReason }}</p>
+
+    <p class="approval-label">End Date</p>
+    <p class="approval-field">{{ person.exitForm.endedAt|date('n/j/Y') }}</p>
+
+    <h3>Approval</h3>
+    <p>Make any adjustments as necessary</p>
+    {{ form_start(form) }}
+    {{ form_row(form.exitReason) }}
+    {{ form_row(form.endedAt) }}
+    <p>Approving this exit form will set the end date on all theme appointments, supervisory relationships, and room assignments. This cannot easily be undone.</p>
+    {{ form_end(form) }}
+{% endblock %}

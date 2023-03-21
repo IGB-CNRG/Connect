@@ -4,7 +4,7 @@
  * All rights reserved.
  */
 
-namespace App\Form\Workflow\Membership;
+namespace App\Form\Workflow\Membership\ExitForm;
 
 use App\Entity\ExitForm;
 use App\Form\Fields\EndDateType;
@@ -19,9 +19,10 @@ class ExitFormType extends AbstractType
         $builder
             ->add('exitReason')
             ->add('endedAt', EndDateType::class, [
-                'data' => new \DateTime(),
+                'data' => new \DateTimeImmutable(),
                 'required' => true,
                 'help' => null,
+                'input'=>'datetime_immutable',
             ])
         ;
     }
