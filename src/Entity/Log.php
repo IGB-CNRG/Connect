@@ -39,8 +39,8 @@ class Log
     #[ORM\ManyToOne(targetEntity: Key::class, inversedBy: 'logs')]
     private ?Key $cylinderKey;
 
-    #[ORM\ManyToOne(targetEntity: Department::class, inversedBy: 'logs')]
-    private ?Department $department;
+    #[ORM\ManyToOne(targetEntity: Unit::class, inversedBy: 'logs')]
+    private ?Unit $unit;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $context = null;
@@ -122,14 +122,14 @@ class Log
         return $this;
     }
 
-    public function getDepartment(): ?Department
+    public function getUnit(): ?Unit
     {
-        return $this->department;
+        return $this->unit;
     }
 
-    public function setDepartment(?Department $department): self
+    public function setUnit(?Unit $unit): self
     {
-        $this->department = $department;
+        $this->unit = $unit;
 
         return $this;
     }

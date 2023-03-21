@@ -3,15 +3,15 @@
 {% block content %}
     <div class="callout callout-info">
         <ul>
-            <li>Please indicate the new department for {{ person.name }}, and their start date.</li>
+            <li>Please indicate the new unit for {{ person.name }}, and their start date.</li>
             <li>If no end date is known, leave blank.</li>
         </ul>
     </div>
     {{ form_start(form) }}
     <div class="row">
         <div class="col-lg" data-controller="other-entry">
-            {{ form_row(form.department) }}
-            {{ form_row(form.otherDepartment) }}
+            {{ form_row(form.unit) }}
+            {{ form_row(form.otherUnit) }}
         </div>
     </div>
     <div class="row">
@@ -23,7 +23,7 @@
 
 
 {% block title %}
-    {{ parent() }} | Add Department
+    {{ parent() }} | Add Unit
 {% endblock %}
 
 {% block breadcrumb %}
@@ -34,6 +34,6 @@
         <a href="{{ path('person_view', {'slug': person.slug}) }}">{{ person.name }}</a>
     </li>
     <li class="breadcrumb-item active" aria-current="page">
-        Add Department
+        Add Unit
     </li>
 {% endblock %}

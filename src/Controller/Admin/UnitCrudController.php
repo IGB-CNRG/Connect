@@ -6,24 +6,24 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Department;
+use App\Entity\Unit;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
-class DepartmentCrudController extends AbstractCrudController
+class UnitCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
-        return Department::class;
+        return Unit::class;
     }
 
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('Department')
-            ->setEntityLabelInPlural('Departments')//            ->setEntityPermission('ROLE_ADMIN')
+            ->setEntityLabelInSingular('Unit')
+            ->setEntityLabelInPlural('Units')//            ->setEntityPermission('ROLE_ADMIN')
             ;
     }
 
@@ -32,7 +32,7 @@ class DepartmentCrudController extends AbstractCrudController
         return [
             TextField::new('name'),
             TextField::new('shortName'),
-            AssociationField::new('college')->setRequired(false),
+            AssociationField::new('parentUnit')->setRequired(false),
         ];
     }
 

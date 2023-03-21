@@ -7,35 +7,36 @@
 namespace App\Entity;
 
 use App\Log\Loggable;
-use App\Repository\DepartmentAffiliationRepository;
+use App\Repository\UnitAffiliationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ORM\Entity(repositoryClass: DepartmentAffiliationRepository::class)]
-class DepartmentAffiliation implements HistoricalEntityInterface
+#[ORM\Entity(repositoryClass: UnitAffiliationRepository::class)]
+class UnitAffiliation implements HistoricalEntityInterface
 {
-    use TimestampableEntity, HistoricalEntityTrait;
+    use HistoricalEntityTrait;
+    use TimestampableEntity;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'departmentAffiliations')]
+    #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'unitAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
     #[Loggable]
-    private $person;
+    private ?Person $person = null;
 
-    #[ORM\ManyToOne(targetEntity: Department::class, inversedBy: 'departmentAffiliations')]
+    #[ORM\ManyToOne(targetEntity: Unit::class, inversedBy: 'unitAffiliations')]
     #[Loggable]
     #[Groups(['log:person'])]
-    private $department;
+    private ?Unit $unit = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
     #[Groups(['log:person'])]
-    private $otherDepartment;
+    private $otherUnit;
 
     public function getId(): ?int
     {
@@ -54,26 +55,26 @@ class DepartmentAffiliation implements HistoricalEntityInterface
         return $this;
     }
 
-    public function getDepartment(): ?Department
+    public function getUnit(): ?Unit
     {
-        return $this->department;
+        return $this->unit;
     }
 
-    public function setDepartment(?Department $department): self
+    public function setUnit(?Unit $unit): self
     {
-        $this->department = $department;
+        $this->unit = $unit;
 
         return $this;
     }
 
-    public function getOtherDepartment(): ?string
+    public function getOtherUnit(): ?string
     {
-        return $this->otherDepartment;
+        return $this->otherUnit;
     }
 
-    public function setOtherDepartment(?string $otherDepartment): self
+    public function setOtherUnit(?string $otherUnit): self
     {
-        $this->otherDepartment = $otherDepartment;
+        $this->otherUnit = $otherUnit;
 
         return $this;
     }

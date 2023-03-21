@@ -127,10 +127,10 @@ past.
 
 CONNECT is specifically *not* designed to do the following:
 
--   Store any confidential or protected information, including HR data
-    and demographic information
+- Store any confidential or protected information, including HR data
+  and demographic information
 
--   Duplicate data in existing databases
+- Duplicate data in existing databases
 
 ## Challenges
 
@@ -161,37 +161,37 @@ incentive for our members to complete the exit form. As such, a major
 challenge will be to identify when members have actually left. There are
 a few mechanisms by which we might do this:
 
--   CNRG currently uses password expiration to determine when members
-    have left the IGB. All members are required to change their IGB
-    password once per year. If they fail to do so, their account is
-    locked. After six months, locked accounts are removed. At this
-    point, for CNRG's purposes it is assumed that the user has left the
-    IGB. However, it is entirely possible (and especially with remote
-    work more common at present) that many IGB members do not need or
-    will not notice the removal of their IGB account. This method may
-    produce false positives, and results in a delay of up to 18 months.
+- CNRG currently uses password expiration to determine when members
+  have left the IGB. All members are required to change their IGB
+  password once per year. If they fail to do so, their account is
+  locked. After six months, locked accounts are removed. At this
+  point, for CNRG's purposes it is assumed that the user has left the
+  IGB. However, it is entirely possible (and especially with remote
+  work more common at present) that many IGB members do not need or
+  will not notice the removal of their IGB account. This method may
+  produce false positives, and results in a delay of up to 18 months.
 
--   Lab Managers, Theme Admins, and Supervisors will often (but not
-    always) know when members they are responsible for leave. Sending
-    requests to at least Lab Managers and Theme Admins at the end of
-    each semester to verify their members will hopefully be our primary
-    method for catching exited IGB members. This may result in a delay
-    of up to several months, but Lab Managers and Theme Admins will be
-    encouraged to update the system before the end of the semester as
-    well. As familiarity and engagement with the system increases, this
-    method should become more efficient.
+- Lab Managers, Theme Admins, and Supervisors will often (but not
+  always) know when members they are responsible for leave. Sending
+  requests to at least Lab Managers and Theme Admins at the end of
+  each semester to verify their members will hopefully be our primary
+  method for catching exited IGB members. This may result in a delay
+  of up to several months, but Lab Managers and Theme Admins will be
+  encouraged to update the system before the end of the semester as
+  well. As familiarity and engagement with the system increases, this
+  method should become more efficient.
 
--   One class of IGB member in particular which can be captured more
-    effectively is rotation students - graduate students who rotate into
-    one of our labs and may or may not remain here. By including an
-    optional Projected End Date on the Entry Form, rotation students can
-    be easily removed after they have left, perhaps after automatically
-    being prompted to verify if they are staying.
+- One class of IGB member in particular which can be captured more
+  effectively is rotation students - graduate students who rotate into
+  one of our labs and may or may not remain here. By including an
+  optional Projected End Date on the Entry Form, rotation students can
+  be easily removed after they have left, perhaps after automatically
+  being prompted to verify if they are staying.
 
--   The simplest option would be to send a prompt to every IGB member
-    once a year, asking them to click "Yes" if they are still an IGB
-    member. This will most likely be seen as a nuisance, but if handled
-    properly might be a workable option.
+- The simplest option would be to send a prompt to every IGB member
+  once a year, asking them to click "Yes" if they are still an IGB
+  member. This will most likely be seen as a nuisance, but if handled
+  properly might be a workable option.
 
 Additionally, an IGB member exiting needs to trigger a number of events
 or notifications (depending on the member type) so that their exit can
@@ -226,7 +226,7 @@ members' record will be visible to different roles.
 The information stored about each IGB member will be, for the most part,
 limited to basic directory information (name, office, email, phone
 number, etc.). Each IGB member's theme affiliations, supervisors, and
-home departments will be stored as well, in such a way that records will
+home units will be stored as well, in such a way that records will
 be kept of all past affiliations and supervisors, so that reports can be
 generated when necessary. A few other incidental data will be stored as
 well, such as training certificates and cylinder key allocation.
@@ -273,69 +273,35 @@ history, but many fields we do. For some fields a detailed log may be
 enough, for some we will need to actually have data structures to keep
 track of their history.
 
--   Person
-
--   Name (First/last/middle initial)
-
--   NetID
-
--   IGB username (this can be different from NetID in some cases!)
-
--   UIN
-
--   Photo?
-
--   Cell number
-
--   Email address
-
--   IGB Office Room number (multiple concurrent rooms possible) (Follow up w/Jesse about room numbers)
-
--   IGB Office phone number
-
--   Home address
-
--   Primary campus address
-
--   Could be the same as IGB office, or not
-
--   DRS training complete (store the certificate?)
-
--   IGB training complete (store the certificate?)
-
--   Department (multiple, historical)
-
--   Position in department (e.g., Associate Professor, Graduate Student, etc.)
-
--   Offer Letter (Attached document)
-
--   Theme Affiliation (multiple, historical)
-
--   Role (e.g., Faculty/Affiliate/Fellow/etc.)
-
--   Start Date
-
--   End Date
-
--   Supervisor (multiple, historical)
-
--   Keys (multiple, historical)
-
--   Theme
-
--   Short name
-
--   Full name
-
--   Leader (historical)
-
--   Non-research (some themes, such as ADM or possibly a \"core users\" theme, are administrative and not research themes, and shouldn\'t be included in statistics)
-
--   Department
-
--   Name
-
--   College
+- Person
+    - Name (First/last/middle initial)
+    - NetID
+    - IGB username (this can be different from NetID in some cases!)
+    - UIN
+    - Photo
+    - Email address
+    - IGB Office Room number (multiple concurrent rooms possible) (Follow up w/Jesse about room numbers)
+    - IGB Office phone number
+    - Primary campus address
+        - Could be the same as IGB office, or not
+    - Unit (multiple, historical)
+        - Position in unit (e.g., Associate Professor, Graduate Student, etc.)
+    - Theme Affiliation (multiple, historical)
+        - Role (e.g., Faculty/Affiliate/Fellow/etc.)
+        - Start Date
+        - End Date
+    - Supervisor (multiple, historical)
+    - Keys (multiple, historical)
+- Theme
+    - Short name
+    - Full name
+    - Leader (historical)
+    - Non-research (some themes, such as ADM or possibly a \"core users\" theme, are administrative and not research
+      themes,
+      and shouldn\'t be included in statistics)
+- Unit
+    - Name
+    - Parent Unit
 
 **Tech Note** IGB Staff fall under a special \"theme\" called
 \"Administration\" (ADM).
@@ -344,55 +310,55 @@ track of their history.
 
 #### LDAP Accounts
 
--   When an IGB member enters, we can automatically create their LDAP
-    account.
+- When an IGB member enters, we can automatically create their LDAP
+  account.
 
--   Supervisors can add or remove access to their group folders to/from
-    the people they supervise.
+- Supervisors can add or remove access to their group folders to/from
+  the people they supervise.
 
--   When an IGB member exists, we can automatically set their LDAP
-    account to expire in 6 months.
+- When an IGB member exists, we can automatically set their LDAP
+  account to expire in 6 months.
 
 #### Mailing Lists
 
--   On entrance or role change, add the person to the appropriate
-    mailman list (e.g., faculty get added to the faculty mailing list,
-    affiliates to the affiliate mailing list, etc.)
+- On entrance or role change, add the person to the appropriate
+  mailman list (e.g., faculty get added to the faculty mailing list,
+  affiliates to the affiliate mailing list, etc.)
 
--   All IGB members get added to the master list on entry.
+- All IGB members get added to the master list on entry.
 
--   Theme members get added to the theme mailing list on entry to the
-    theme and removed on exit from the theme.
+- Theme members get added to the theme mailing list on entry to the
+  theme and removed on exit from the theme.
 
--   On exit, remove the person from all mailman lists.
+- On exit, remove the person from all mailman lists.
 
 #### IGB Website
 
--   On entrance or directory information change, update the IGB website
-    directory.
+- On entrance or directory information change, update the IGB website
+  directory.
 
--   On exit, remove the person from the IGB website directory.
+- On exit, remove the person from the IGB website directory.
 
 #### Core
 
--   CONNECT should communicate with the Core billing service when Core
-    users come and go. It is unclear at this time in which direction
-    that communication should go, and what status exactly Core users
-    should have in CONNECT.
+- CONNECT should communicate with the Core billing service when Core
+  users come and go. It is unclear at this time in which direction
+  that communication should go, and what status exactly Core users
+  should have in CONNECT.
 
 #### Keys
 
--   On entrance and exit, the key manager will be notified by email
-    about any keys/card access that needs to be given. Key information
-    will be logged in each user's record by the key manager.
+- On entrance and exit, the key manager will be notified by email
+  about any keys/card access that needs to be given. Key information
+  will be logged in each user's record by the key manager.
 
 #### Notifications
 
--   Email notifications can be configured to be sent for a variety of
-    different "events," such as IGB member entrance/exit, the updating
-    of various types of records, etc. Examples include:
+- Email notifications can be configured to be sent for a variety of
+  different "events," such as IGB member entrance/exit, the updating
+  of various types of records, etc. Examples include:
 
--   When an IGB staff member enters the IGB, a welcome email is sent with new employee information.
+- When an IGB staff member enters the IGB, a welcome email is sent with new employee information.
 
 ### Roles
 
@@ -403,69 +369,69 @@ multiple roles (or none).
 
 CONNECT Roles are as follows:
 
--   CONNECT Admin -- Superusers who can access all aspects of CONNECT.
-    This has no relation to Theme Admins or other Admin Staff.
+- CONNECT Admin -- Superusers who can access all aspects of CONNECT.
+  This has no relation to Theme Admins or other Admin Staff.
 
--   Theme Admin -- Administrative staff for each theme. This role will
-    be tied to a specific theme for each user, i.e., each Theme Admin
-    will potentially have special privileges within and receive
-    notifications about their theme, but not all themes.
+- Theme Admin -- Administrative staff for each theme. This role will
+  be tied to a specific theme for each user, i.e., each Theme Admin
+  will potentially have special privileges within and receive
+  notifications about their theme, but not all themes.
 
--   Lab Manager -- Theme lab managers. Like Theme Admins, this role is
-    tied to a specific Theme.
+- Lab Manager -- Theme lab managers. Like Theme Admins, this role is
+  tied to a specific Theme.
 
--   Operations and Facilities - TBD
+- Operations and Facilities - TBD
 
--   Key Manager -- The Key Manager controls access to cylinder keys
-    within the IGB and maintains a list of what keys each member has.
+- Key Manager -- The Key Manager controls access to cylinder keys
+  within the IGB and maintains a list of what keys each member has.
 
--   Director's Office
+- Director's Office
 
--   Human Resources
+- Human Resources
 
--   CNRG -- CNRG is the IGB IT group. For the purposes of CONNECT, CNRG
-    controls LDAP computer accounts.
+- CNRG -- CNRG is the IGB IT group. For the purposes of CONNECT, CNRG
+  controls LDAP computer accounts.
 
--   Business Office
+- Business Office
 
--   Communications
+- Communications
 
--   Outreach
+- Outreach
 
--   Core Facilities
+- Core Facilities
 
 ### Member Types
 
--   Civil Service
+- Civil Service
 
--   Academic Professional
+- Academic Professional
 
--   Academic Hourly
+- Academic Hourly
 
--   Extra Help
+- Extra Help
 
--   Faculty
+- Faculty
 
--   Affiliate
+- Affiliate
 
--   Graduate Student
+- Graduate Student
 
--   Undergraduate Student
+- Undergraduate Student
 
--   Visitor/Visiting Scholar
+- Visitor/Visiting Scholar
 
--   Research Staff/Specialist
+- Research Staff/Specialist
 
--   Post Doc
+- Post Doc
 
--   Fellow
+- Fellow
 
--   Volunteer
+- Volunteer
 
--   Non-IGB Member -- This includes any people we need to have in our
-    system who are not IGB members, including core facility users and
-    members of affiliated organizations (e.g., Carver Biotech Center,
-    iSEE, etc.).
+- Non-IGB Member -- This includes any people we need to have in our
+  system who are not IGB members, including core facility users and
+  members of affiliated organizations (e.g., Carver Biotech Center,
+  iSEE, etc.).
 
 ### Workflows
 
@@ -480,34 +446,34 @@ anything (when possible).
 
 There are three entry points to the new member workflow:
 
-1.  HR or Op/Fac creates the new member (very briefly including name and
-    username). Their LDAP account is automatically created and they are
-    sent a link to sign in and complete the entry form.
+1. HR or Op/Fac creates the new member (very briefly including name and
+   username). Their LDAP account is automatically created and they are
+   sent a link to sign in and complete the entry form.
 
-2.  HR or Op/Fac enters the new members' email to send a unique one-time
-    registration link. The new member can use that link to access their
-    entry form
+2. HR or Op/Fac enters the new members' email to send a unique one-time
+   registration link. The new member can use that link to access their
+   entry form
 
-3.  HR or Op/Fac can bring up an entry form and allow the new member to
-    fill out the form in person.
+3. HR or Op/Fac can bring up an entry form and allow the new member to
+   fill out the form in person.
 
 However the workflow was initiated, it continues as follows:
 
--   The new member fills out the entry form and submits it
+- The new member fills out the entry form and submits it
 
--   A message is sent to their lab manager or theme admin for approval
+- A message is sent to their lab manager or theme admin for approval
 
--   The approver clicks a link in the email to view the entry form and
-    approve it, with the option to correct it if necessary
+- The approver clicks a link in the email to view the entry form and
+  approve it, with the option to correct it if necessary
 
--   A welcome email is sent to the new member with information and
-    instructions on what to do next, including a link to upload their
-    training certificates
+- A welcome email is sent to the new member with information and
+  instructions on what to do next, including a link to upload their
+  training certificates
 
--   The new member completes necessary trainings and receives
-    certificates
+- The new member completes necessary trainings and receives
+  certificates
 
--   The new member uploads their certificates to their CONNECT profile
+- The new member uploads their certificates to their CONNECT profile
 
 #### Member Exit Workflow
 
@@ -576,53 +542,53 @@ built-in template engine in Symfony.
 
 #### Person
 
--   firstName (string)
+- firstName (string)
 
--   lastName (string)
+- lastName (string)
 
--   middleInitial (string)
+- middleInitial (string)
 
--   netid (string)
+- netid (string)
 
--   username (string)
+- username (string)
 
--   uin (integer)
+- uin (integer)
 
--   email (string)
+- email (string)
 
--   officeNumber (string)
+- officeNumber (string)
 
--   officePhone (string)
+- officePhone (string)
 
--   officeBuilding (OneToMany, Building)
+- officeBuilding (OneToMany, Building)
 
--   homeAddress (text)
+- homeAddress (text)
 
--   campusAddress (text)
+- campusAddress (text)
 
--   isCampusAddressPreferred (Boolean)
+- isCampusAddressPreferred (Boolean)
 
--   isDrsTrainingComplete (Boolean)
+- isDrsTrainingComplete (Boolean)
 
--   isIgbTrainingComplete (Boolean)
+- isIgbTrainingComplete (Boolean)
 
--   departmentAffiliations (OneToMany, DepartmentAffiliation)
+- unitAffiliations (OneToMany, UnitAffiliation)
 
--   offerLetterDate (date)
+- offerLetterDate (date)
 
--   themeAffiliations (OneToMany, ThemeAffiliation)
+- themeAffiliations (OneToMany, ThemeAffiliation)
 
--   supervisors (OneToMany, SupervisorAffiliation)
+- supervisors (OneToMany, SupervisorAffiliation)
 
--   supervisees (OneToMany, SupervisorAffiliation)
+- supervisees (OneToMany, SupervisorAffiliation)
 
--   roles (string)
+- roles (string)
 
--   memberCategoryAffiliations (ManyToOne, MemberCategoryAffiliation)
+- memberCategoryAffiliations (ManyToOne, MemberCategoryAffiliation)
 
--   keyRelation (ManyToOne, KeyRelation)
+- keyRelation (ManyToOne, KeyRelation)
 
--   keyDeposit (Boolean)
+- keyDeposit (Boolean)
 
 **Open question:** what's the best way to store an uploaded file? As
 blobs, or as files in some "uploads" directory?
@@ -634,122 +600,117 @@ so that new member types can be created on-the-fly, if necessary, in
 future. This also allows us to easily define workflow associations with
 various member types.
 
--   name (string) -- e.g., Graduate Student
+- name (string) -- e.g., Graduate Student
 
--   memberCategoryAffiliations (OneToMany, MemberCategoryAffiliation)
+- memberCategoryAffiliations (OneToMany, MemberCategoryAffiliation)
 
 #### Theme
 
 Uses HistoricalEntity
 
--   shortName (string)
+- shortName (string)
 
--   fullName (string)
+- fullName (string)
 
--   leaders (OneToMany, ThemeLeaderAffiliation)
+- leaders (OneToMany, ThemeLeaderAffiliation)
 
--   isNonResearch (Boolean)
+- isNonResearch (Boolean)
 
--   themeMembers (OneToMany, ThemeAffiliation)
+- themeMembers (OneToMany, ThemeAffiliation)
 
 #### Building
 
--   fullName (string)
+- fullName (string)
 
--   shortName (string)
+- shortName (string)
 
--   address (text)
+- address (text)
 
--   buildingNumber (integer)
+- buildingNumber (integer)
 
 #### Room
 
 Rooms will be associated with people (i.e., for office numbers) and with
 keys (each key opens one or more rooms).
 
--   number (string)
+- number (string)
 
--   name (string, optional)
+- name (string, optional)
 
 #### RoomAffiliation
 
 Uses HistoricalEntity
 
--   room
+- room
 
--   person
+- person
 
 #### RoomKeyAffiliation
 
 Uses HistoricalEntity
 
--   room
+- room
 
--   key
+- key
 
 #### Key
 
--   rooms (ManyToMany, Room)
+- rooms (ManyToMany, Room)
 
--   name (string) -- e.g., A, GM1, TBBC21
+- name (string) -- e.g., A, GM1, TBBC21
 
--   description (string) -- e.g., Server Room Key, CNRG Office Key
+- description (string) -- e.g., Server Room Key, CNRG Office Key
 
--   keyAffiliations (OneToMany, KeyAffiliation)
+- keyAffiliations (OneToMany, KeyAffiliation)
 
 #### KeyAffiliation
 
 Uses HistoricalEntity
 
--   person (ManyToOne, Person)
+- person (ManyToOne, Person)
 
--   key (ManyToOne, Key)
+- key (ManyToOne, Key)
 
-#### Department
+#### Unit
 
--   name (string)
+- name (string)
 
--   college (ManyToOne, College)
+- parentUnit (ManyToOne, Unit)
 
-#### College
-
--   departments (OneToMany, Department)
-
--   name (string)
 
 #### ThemeAffiliation
 
 Uses HistoricalEntity
 
--   person (ManyToOne, Person)
+- person (ManyToOne, Person)
 
--   theme (ManyToOne, Theme)
+- theme (ManyToOne, Theme)
 
--   memberCategory (ManyToOne, MemberCategory)
+- memberCategory (ManyToOne, MemberCategory)
 
 #### ThemeLeaderAffiliation
 
 Uses HistoricalEntity
 
--   person (ManyToOne, Person)
+- person (ManyToOne, Person)
 
--   theme (ManyToOne, Theme)
+- theme (ManyToOne, Theme)
 
 #### SupervisorAffiliation
 
 Uses HistoricalEntity
 
--   supervisor (ManyToOne, Person)
+- supervisor (ManyToOne, Person)
 
--   supervisee (ManyToOne, Person)
+- supervisee (ManyToOne, Person)
 
-#### DepartmentAffiliation
+#### UnitAffiliation
 
 Uses HistoricalEntity
 
--   person (ManyToOne, Person)
+- person (ManyToOne, Person)
 
--   department (ManyToOne, Department)
+- unit (ManyToOne, Unit)
 
 #### Note
 
@@ -758,63 +719,63 @@ be visible only to IT personnel, a General note will be visible to all.
 
 Uses TimestampableEntity
 
--   person (ManyToOne, Person)
+- person (ManyToOne, Person)
 
--   note (text)
+- note (text)
 
--   type (string)
+- type (string)
 
 #### HistoricalEntity
 
--   startedAt (date)
+- startedAt (date)
 
--   endedAt (date)
+- endedAt (date)
 
 #### Log
 
 Uses TimestampableEntity
 
--   user (ManyToOne, Person)
+- user (ManyToOne, Person)
 
--   message (string)
+- message (string)
 
--   person (ManyToOne, Person)
+- person (ManyToOne, Person)
 
--   theme (ManyToOne, Theme)
+- theme (ManyToOne, Theme)
 
--   room
+- room
 
--   key
+- key
 
--   workflow
+- workflow
 
 #### Workflow
 
--   name (string)
+- name (string)
 
 #### WorkflowStep
 
--   name (string)
+- name (string)
 
 #### WorkflowStepCategory
 
--   workflowStep (ManyToOne, workflowStep)
+- workflowStep (ManyToOne, workflowStep)
 
--   memberCategory (ManyToOne, MemberCategory)
+- memberCategory (ManyToOne, MemberCategory)
 
--   position (integer)
+- position (integer)
 
 #### WorkflowProgress
 
 Uses HistoricalEntity
 
--   person (ManyToOne, Person)
+- person (ManyToOne, Person)
 
--   workflowStep (ManyToOne, WorkflowStep)
+- workflowStep (ManyToOne, WorkflowStep)
 
 #### RegistrationLink
 
--   secretKey (string)
+- secretKey (string)
 
 ### Validation
 
@@ -869,12 +830,12 @@ applied to all corresponding repositories.
 
 We will need some basic access controls for:
 
--   Notes: We need a voter to determine whether a user can view a note
-    based on the note\'s type and the user\'s roles
+- Notes: We need a voter to determine whether a user can view a note
+  based on the note\'s type and the user\'s roles
 
--   Private information: We need a voter to determine whether a user can
-    view a member\'s private information, based on whether they are
-    their supervisor, admin staff, etc.
+- Private information: We need a voter to determine whether a user can
+  view a member\'s private information, based on whether they are
+  their supervisor, admin staff, etc.
 
 #### Workflow System
 
@@ -957,69 +918,69 @@ be changed.
 
 Form Fields:
 
--   First Name (text)
+- First Name (text)
 
--   Last Name (text)
+- Last Name (text)
 
--   Middle Initial (text)
+- Middle Initial (text)
 
--   NetID (text)
+- NetID (text)
 
--   IGB Username (text)
+- IGB Username (text)
 
--   UIN (text)
+- UIN (text)
 
--   Email (email)
+- Email (email)
 
--   Office Number (text)
+- Office Number (text)
 
--   Office Phone (phone)
+- Office Phone (phone)
 
--   Office Building (dropdown, defaults to IGB)
+- Office Building (dropdown, defaults to IGB)
 
--   Home Address (textarea)
+- Home Address (textarea)
 
--   Campus Address (text)
+- Campus Address (text)
 
--   Campus Address Preferred (checkbox)
+- Campus Address Preferred (checkbox)
 
--   DRS Training Complete (checkbox)
+- DRS Training Complete (checkbox)
 
--   IGB Training Complete (checkbox)
+- IGB Training Complete (checkbox)
 
--   Departments (dropdown, multiple)
+- Units (dropdown, multiple)
 
--   Offer Letter Date (date)
+- Offer Letter Date (date)
 
--   Key Deposit (checkbox)
+- Key Deposit (checkbox)
 
--   Themes (collection)
+- Themes (collection)
 
--   Theme (dropdown)
+- Theme (dropdown)
 
--   Start (date)
+- Start (date)
 
--   End (date)
+- End (date)
 
--   Supervisors (collection)
+- Supervisors (collection)
 
--   Supervisor (dropdown)
+- Supervisor (dropdown)
 
--   Start (date)
+- Start (date)
 
--   End (date)
+- End (date)
 
--   Roles (dropdown, multiple)
+- Roles (dropdown, multiple)
 
--   Member Types (collection)
+- Member Types (collection)
 
--   Member Type
+- Member Type
 
--   Start (date)
+- Start (date)
 
--   End (date)
+- End (date)
 
--   Keys (dropdown, multiple)
+- Keys (dropdown, multiple)
 
 #### Add Theme Affiliation
 
@@ -1092,65 +1053,65 @@ This is based on the Member Edit form, but with some fields removed.
 
 Form Fields:
 
--   First Name (text)
+- First Name (text)
 
--   Last Name (text)
+- Last Name (text)
 
--   Middle Initial (text)
+- Middle Initial (text)
 
--   NetID (text)
+- NetID (text)
 
--   IGB Username (text)
+- IGB Username (text)
 
--   UIN (text)
+- UIN (text)
 
--   Email (email)
+- Email (email)
 
--   Office Number (text)
+- Office Number (text)
 
--   Office Phone (phone)
+- Office Phone (phone)
 
--   Office Building (dropdown, defaults to IGB)
+- Office Building (dropdown, defaults to IGB)
 
--   Home Address (textarea)
+- Home Address (textarea)
 
--   Campus Address (text)
+- Campus Address (text)
 
--   Campus Address Preferred (checkbox)
+- Campus Address Preferred (checkbox)
 
--   DRS Training Complete (checkbox)
+- DRS Training Complete (checkbox)
 
--   IGB Training Complete (checkbox)
+- IGB Training Complete (checkbox)
 
--   Departments (dropdown, multiple)
+- Units (dropdown, multiple)
 
--   Offer Letter Date (date)
+- Offer Letter Date (date)
 
--   Themes (collection)
+- Themes (collection)
 
--   Theme (dropdown)
+- Theme (dropdown)
 
--   Start (date)
+- Start (date)
 
--   End (date)
+- End (date)
 
--   Supervisors (collection)
+- Supervisors (collection)
 
--   Supervisor (dropdown)
+- Supervisor (dropdown)
 
--   Start (date)
+- Start (date)
 
--   End (date)
+- End (date)
 
--   Roles (dropdown, multiple)
+- Roles (dropdown, multiple)
 
--   Member Types (collection)
+- Member Types (collection)
 
--   Member Type
+- Member Type
 
--   Start (date)
+- Start (date)
 
--   End (date)
+- End (date)
 
 #### Entry Form Approval
 
@@ -1186,11 +1147,11 @@ A form to edit the information associated with a given key.
 
 Form fields:
 
--   Name (text)
+- Name (text)
 
--   Description (text)
+- Description (text)
 
--   Room (dropdown, Rooms)
+- Room (dropdown, Rooms)
 
 #### Themes
 
@@ -1206,11 +1167,11 @@ The page users will see when they first log in; the default view. This
 page provides quick access to common operations and stats, which will be
 different based on the user\'s role. Some examples include:
 
--   Links to create new user by any of the three methods (see New Staff
-    Member Workflow)
+- Links to create new user by any of the three methods (see New Staff
+  Member Workflow)
 
--   Number of members of each type (possibly broken out by the user\'s
-    theme for certain roles, or supervisees if the user is a supervisor)
+- Number of members of each type (possibly broken out by the user\'s
+  theme for certain roles, or supervisees if the user is a supervisor)
 
 #### Login
 
@@ -1370,19 +1331,19 @@ rest of the project.
 
 Deliverables:
 
--   Data structures
+- Data structures
 
--   Basic style template
+- Basic style template
 
--   Logging service
+- Logging service
 
--   Basic member views
+- Basic member views
 
--   Admin views
+- Admin views
 
--   Login/security system
+- Login/security system
 
--   Access control systems
+- Access control systems
 
 In progress as of 2/15/22, complete as of 4/1/22.
 
@@ -1393,11 +1354,11 @@ sources will be implemented.
 
 Deliverables:
 
--   Data import procedures
+- Data import procedures
 
--   Import initial staff data
+- Import initial staff data
 
--   Import IGB data (keys, rooms, themes, etc.)
+- Import IGB data (keys, rooms, themes, etc.)
 
 In progress as of 2/1/22.
 
@@ -1408,17 +1369,17 @@ implemented.
 
 Deliverables:
 
--   Base workflow system
+- Base workflow system
 
--   Workflow admin views
+- Workflow admin views
 
--   Staff entry workflow hooks
+- Staff entry workflow hooks
 
--   New member workflow views
+- New member workflow views
 
--   Staff exit workflow hooks
+- Staff exit workflow hooks
 
--   Staff exit workflow views
+- Staff exit workflow views
 
 #### TBD
 
@@ -1428,35 +1389,35 @@ More milestones to be determined
 
 ## Open Questions
 
--   Can we get iCard photos automatically?
+- Can we get iCard photos automatically?
 
--   Can we connect to the business copier?
+- Can we connect to the business copier?
 
 ## References
 
 #### Documentation
 
--   Symfony Framework - <https://symfony.com/>
+- Symfony Framework - <https://symfony.com/>
 
--   Twig - <https://twig.symfony.com>
+- Twig - <https://twig.symfony.com>
 
--   VichUploaderBundle - <https://github.com/dustin10/VichUploaderBundle>
+- VichUploaderBundle - <https://github.com/dustin10/VichUploaderBundle>
 
--   EasyAdmin - <https://symfony.com/doc/current/EasyAdminBundle/index.html>
+- EasyAdmin - <https://symfony.com/doc/current/EasyAdminBundle/index.html>
 
--   symfonyCollectionJs -
-    <https://github.com/ruano-a/symfonyCollectionJs>
+- symfonyCollectionJs -
+  <https://github.com/ruano-a/symfonyCollectionJs>
 
--   Bootstrap - <https://getbootstrap.com>
+- Bootstrap - <https://getbootstrap.com>
 
--   Font Awesome - <https://fontawesome.com/>
+- Font Awesome - <https://fontawesome.com/>
 
 #### Data Sources
 
--   Building list -
-    <https://fs.illinois.edu/about-us/building-list-by-building-number>
+- Building list -
+  <https://fs.illinois.edu/about-us/building-list-by-building-number>
 
--   School/College list - <http://catalog.illinois.edu/schools/>
+- School/College list - <http://catalog.illinois.edu/schools/>
 
 ## Acknowledgements
 

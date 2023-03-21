@@ -66,9 +66,9 @@
         </td>
 
         <td>
-            {% for departmentAffiliation in person.departmentAffiliations|current %}
+            {% for unitAffiliation in person.unitAffiliations|current %}
                 <div class="theme-row">
-                    {{ departmentAffiliation.department }}
+                    {{ unitAffiliation.unit }}
                 </div>
             {% endfor %}
         </td>
@@ -94,7 +94,7 @@
         <th>Name</th>
         <th>Email</th>
         <th data-orderable="false">Theme</th>
-        <th>Department</th>
+        <th>Unit</th>
         <th>Room</th>
 
         {# Export columns #}

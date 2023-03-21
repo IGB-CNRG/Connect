@@ -2,20 +2,20 @@
 
 {% block content %}
     <div class="callout callout-info">
-        Please enter the date upon which the IGB member's affiliation with this department ended (or will end)
+        Please enter the date upon which the IGB member's affiliation with this unit ended (or will end)
     </div>
     <div class="row">
         <div class="col">
             <div class="card">
-                <div class="card-header">Department Affiliation</div>
+                <div class="card-header">Unit Affiliation</div>
                 <table class="table">
                     <tr>
-                        <th>Department</th>
-                        <td>{{ departmentAffiliation.department??departmentAffiliation.otherDepartment }}</td>
+                        <th>Unit</th>
+                        <td>{{ unitAffiliation.unit??unitAffiliation.otherUnit }}</td>
                     </tr>
                     <tr>
                         <th>{{ 'person.started_at'|trans }}</th>
-                        <td>{{ departmentAffiliation.startedAt|date('n/j/Y') }}</td>
+                        <td>{{ unitAffiliation.startedAt|date('n/j/Y') }}</td>
                     </tr>
                 </table>
             </div>
@@ -27,7 +27,7 @@
 {% endblock %}
 
 {% block title %}
-    {{ parent() }} | End Department Affiliation
+    {{ parent() }} | End Unit Affiliation
 {% endblock %}
 
 {% block breadcrumb %}
@@ -38,6 +38,6 @@
         <a href="{{ path('person_view', {'slug': person.slug}) }}">{{ person.name }}</a>
     </li>
     <li class="breadcrumb-item active" aria-current="page">
-        End Department Affiliation
+        End Unit Affiliation
     </li>
 {% endblock %}

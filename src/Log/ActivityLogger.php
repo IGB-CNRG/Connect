@@ -6,13 +6,13 @@
 
 namespace App\Log;
 
-use App\Entity\DepartmentAffiliation;
 use App\Entity\KeyAffiliation;
 use App\Entity\Log;
 use App\Entity\Person;
 use App\Entity\RoomAffiliation;
 use App\Entity\SupervisorAffiliation;
 use App\Entity\ThemeAffiliation;
+use App\Entity\UnitAffiliation;
 use App\Service\EntityManagerAware;
 use App\Service\SecurityAware;
 use ReflectionException;
@@ -29,40 +29,40 @@ class ActivityLogger implements ServiceSubscriberInterface
 
     private const DATE_FORMAT = 'n/j/Y';
 
-    public function logNewDepartmentAffiliation(DepartmentAffiliation $departmentAffiliation)
+    public function logNewUnitAffiliation(UnitAffiliation $unitAffiliation)
     {
         $this->log(
-            $departmentAffiliation->getPerson(),
+            $unitAffiliation->getPerson(),
             sprintf(
-                'Added department %s',
-                $departmentAffiliation->getDepartment() ?? $departmentAffiliation->getOtherDepartment()
+                'Added unit %s',
+                $unitAffiliation->getUnit() ?? $unitAffiliation->getOtherUnit()
             )
         );
-        if ($departmentAffiliation->getDepartment()) {
+        if ($unitAffiliation->getUnit()) {
             $this->log(
-                $departmentAffiliation->getDepartment(),
-                sprintf('Added person %s', $departmentAffiliation->getPerson())
+                $unitAffiliation->getUnit(),
+                sprintf('Added person %s', $unitAffiliation->getPerson())
             );
         }
     }
 
-    public function logEndDepartmentAffiliation(DepartmentAffiliation $departmentAffiliation)
+    public function logEndUnitAffiliation(UnitAffiliation $unitAffiliation)
     {
         $this->log(
-            $departmentAffiliation->getPerson(),
+            $unitAffiliation->getPerson(),
             sprintf(
-                "Ended department affiliation with %s on %s",
-                $departmentAffiliation->getDepartment() ?? $departmentAffiliation->getOtherDepartment(),
-                $departmentAffiliation->getEndedAt()->format(self::DATE_FORMAT)
+                "Ended unit affiliation with %s on %s",
+                $unitAffiliation->getUnit() ?? $unitAffiliation->getOtherUnit(),
+                $unitAffiliation->getEndedAt()->format(self::DATE_FORMAT)
             )
         );
-        if ($departmentAffiliation->getDepartment()) {
+        if ($unitAffiliation->getUnit()) {
             $this->log(
-                $departmentAffiliation->getDepartment(),
+                $unitAffiliation->getUnit(),
                 sprintf(
                     "Ended affiliation with %s on %s",
-                    $departmentAffiliation->getPerson(),
-                    $departmentAffiliation->getEndedAt()->format(self::DATE_FORMAT)
+                    $unitAffiliation->getPerson(),
+                    $unitAffiliation->getEndedAt()->format(self::DATE_FORMAT)
                 )
             );
         }

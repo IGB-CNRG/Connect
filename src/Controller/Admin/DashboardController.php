@@ -1,21 +1,20 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
 namespace App\Controller\Admin;
 
 use App\Entity\Building;
-use App\Entity\College;
-use App\Entity\Department;
-use App\Entity\DepartmentAffiliation;
 use App\Entity\Key;
 use App\Entity\KeyAffiliation;
 use App\Entity\MemberCategory;
 use App\Entity\Person;
 use App\Entity\Room;
 use App\Entity\Theme;
+use App\Entity\Unit;
+use App\Entity\UnitAffiliation;
 use App\Entity\WorkflowNotification;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -75,7 +74,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToRoute('Back to CONNECT', 'fa fa-rotate-left', 'default');
         yield MenuItem::section('IGB');
         yield MenuItem::linkToCrud('All People', 'fas fa-list', Person::class);
-        yield MenuItem::linkToCrud('New Departments', 'fas fa-list', DepartmentAffiliation::class);
+        yield MenuItem::linkToCrud('New Units', 'fas fa-list', UnitAffiliation::class);
         yield MenuItem::linkToCrud('Member Categories', 'fas fa-list', MemberCategory::class);
         yield MenuItem::linkToCrud('Keys', 'fas fa-list', Key::class);
         yield MenuItem::linkToCrud('Key Assignments', 'fas fa-list', KeyAffiliation::class);
@@ -83,8 +82,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Themes', 'fas fa-list', Theme::class);
         yield MenuItem::section('UIUC');
         yield MenuItem::linkToCrud('Buildings', 'fas fa-list', Building::class);
-        yield MenuItem::linkToCrud('Colleges', 'fas fa-list', College::class);
-        yield MenuItem::linkToCrud('Departments', 'fas fa-list', Department::class);
+        yield MenuItem::linkToCrud('Units', 'fas fa-list', Unit::class);
         yield MenuItem::section('Workflows');
         yield MenuItem::linkToCrud('Notifications', 'fas fa-envelope', WorkflowNotification::class);
     }

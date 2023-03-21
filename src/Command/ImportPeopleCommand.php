@@ -6,8 +6,6 @@
 
 namespace App\Command;
 
-use App\Entity\Department;
-use App\Entity\DepartmentAffiliation;
 use App\Entity\HistoricalEntityInterface;
 use App\Entity\MemberCategory;
 use App\Entity\Person;
@@ -15,13 +13,15 @@ use App\Entity\RoomAffiliation;
 use App\Entity\SupervisorAffiliation;
 use App\Entity\Theme;
 use App\Entity\ThemeAffiliation;
+use App\Entity\Unit;
+use App\Entity\UnitAffiliation;
 use App\Enum\ThemeRole;
 use App\Log\ActivityLogger;
-use App\Repository\DepartmentRepository;
 use App\Repository\MemberCategoryRepository;
 use App\Repository\PersonRepository;
 use App\Repository\RoomRepository;
 use App\Repository\ThemeRepository;
+use App\Repository\UnitRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -53,7 +53,7 @@ class ImportPeopleCommand extends Command
         private readonly PersonRepository $personRepository,
         private readonly ThemeRepository $themeRepository,
         private readonly MemberCategoryRepository $categoryRepository,
-        private readonly DepartmentRepository $departmentRepository,
+        private readonly UnitRepository $unitRepository,
         private readonly RoomRepository $roomRepository,
         private readonly ActivityLogger $logger,
         string $name = null
@@ -110,14 +110,14 @@ class ImportPeopleCommand extends Command
     }
 
     /**
-     * @param Department[] $departmentsById
-     * @param array $otherDepartmentsById
+     * @param Unit[] $unitsById
+     * @param array $otherUnitsById
      * @param ThemeAffiliation[][] $validThemeAffiliations
      * @return array{Person[], array}
      */
     protected function getPeople(
-        array $departmentsById,
-        array $otherDepartmentsById,
+        array $unitsById,
+        array $otherUnitsById,
         array $validThemeAffiliations
     ): array {
         $peopleById = [];
@@ -159,16 +159,16 @@ class ImportPeopleCommand extends Command
                         }
 
                         if ($user['dept_id']) {
-                            $departmentAffiliation = new DepartmentAffiliation();
-                            if (isset($departmentsById[$user['dept_id']])) {
-                                $departmentAffiliation
-                                    ->setDepartment($departmentsById[$user['dept_id']]);
+                            $unitAffiliation = new UnitAffiliation();
+                            if (isset($unitsById[$user['dept_id']])) {
+                                $unitAffiliation
+                                    ->setUnit($unitsById[$user['dept_id']]);
                             } else {
-                                $departmentAffiliation->setOtherDepartment(
-                                    $otherDepartmentsById[$user['dept_id']]['name']
+                                $unitAffiliation->setOtherUnit(
+                                    $otherUnitsById[$user['dept_id']]['name']
                                 );
                             }
-                            $person->addDepartmentAffiliation($departmentAffiliation);
+                            $person->addUnitAffiliation($unitAffiliation);
                         }
 
                         if (preg_match('/^\\(217\\) (300|333|265|244)/u', $user['igb'])) {
@@ -357,22 +357,22 @@ class ImportPeopleCommand extends Command
     /**
      * @return array
      */
-    protected function parseDepartments(): array
+    protected function parseUnits(): array
     {
-        $department_sql = "select * from department";
-        $departments = $this->db->query($department_sql);
-        $departmentsById = [];
-        $peopleDepartmentsById = [];
-        foreach ($departments as $department) {
-            $peopleDepartmentsById[$department['dept_id']] = $department;
-            $foundDepartment = $this->departmentRepository->findOneBy(
-                ['name' => $this->translateDepartment($department['name'])]
+        $unit_sql = "select * from unit";
+        $units = $this->db->query($unit_sql);
+        $unitsById = [];
+        $peopleUnitsById = [];
+        foreach ($units as $unit) {
+            $peopleUnitsById[$unit['dept_id']] = $unit;
+            $foundUnit = $this->unitRepository->findOneBy(
+                ['name' => $this->translateUnit($unit['name'])]
             );
-            if ($foundDepartment) {
-                $departmentsById[$department['dept_id']] = $foundDepartment;
+            if ($foundUnit) {
+                $unitsById[$unit['dept_id']] = $foundUnit;
             }
         }
-        return array($departmentsById, $peopleDepartmentsById);
+        return array($unitsById, $peopleUnitsById);
     }
 
     /**
@@ -453,7 +453,7 @@ class ImportPeopleCommand extends Command
         };
     }
 
-    private function translateDepartment(string $name): string
+    private function translateUnit(string $name): string
     {
         return match ($name) {
             'Veterinary Medicine' => 'Veterinary Clinical Medicine',
@@ -524,10 +524,10 @@ class ImportPeopleCommand extends Command
         $typesById = $this->parseMemberCategories();
         $progress->advance();
 
-        // Parse departments
-        $progress->setMessage("Correlating departments");
+        // Parse units
+        $progress->setMessage("Correlating units");
         $progress->display();
-        list($departmentsById, $otherDepartmentsById) = $this->parseDepartments();
+        [$unitsById, $otherUnitsById] = $this->parseUnits();
         $progress->advance();
 
         // Gather theme affiliations (w/ reasonable dates)
@@ -542,9 +542,9 @@ class ImportPeopleCommand extends Command
         // First build up the basic people info
         $progress->setMessage('Importing valid users');
         $progress->display();
-        list($peopleById, $usersById) = $this->getPeople(
-            $departmentsById,
-            $otherDepartmentsById,
+        [$peopleById, $usersById] = $this->getPeople(
+            $unitsById,
+            $otherUnitsById,
             $validThemeAffiliations
         );
         $progress->advance();

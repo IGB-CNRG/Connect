@@ -87,7 +87,7 @@ You will use this IGB username and password to log in to CONNECT.
 
 ### Intial settings
 
-Colleges, Departments, Keys, Member Categories, Rooms, and Themes are set manually. You can either import these from an
+Units, Keys, Member Categories, Rooms, and Themes are set manually. You can either import these from an
 existing installation of CONNECT or enter them manually in EasyAdmin.
 
 ### People database import

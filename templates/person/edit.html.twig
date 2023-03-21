@@ -66,11 +66,11 @@
                 </div>
             </div>
             <div class="card mb-3">
-                <div class="card-header">Departments</div>
+                <div class="card-header">Units</div>
                 <div class="card-body" data-controller="form-collection">
-                    {{ form_row(form.departmentAffiliations) }}
+                    {{ form_row(form.unitAffiliations) }}
                     <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd"
-                            id="departmentAffiliation-add">Add Department
+                            id="unitAffiliation-add">Add Unit
                     </button>
                 </div>
             </div>
@@ -204,25 +204,25 @@
     </div>
 {% endblock %}
 
-{% block DepartmentAffiliation_row %}
-    <div class="collection-row"{% if form.department is defined %} data-controller="other-entry"{% endif %}>
+{% block UnitAffiliation_row %}
+    <div class="collection-row"{% if form.unit is defined %} data-controller="other-entry"{% endif %}>
         {% if data is not null %}
         <div class="collection-label">
-            {{ data.department??data.otherDepartment }}
+            {{ data.unit??data.otherUnit }}
             <span class="float-end">
-                <a href="#department-affiliation-collapse-{{ data.id }}" data-bs-toggle="collapse" data-controller="edit-warning" data-action="edit-warning#warn:once">
+                <a href="#unit-affiliation-collapse-{{ data.id }}" data-bs-toggle="collapse" data-controller="edit-warning" data-action="edit-warning#warn:once">
                     <span class="fas fa-pencil"></span>
                 </a>
             </span>
         </div>
-        <div id="department-affiliation-collapse-{{ data.id }}" class="collapse">
+        <div id="unit-affiliation-collapse-{{ data.id }}" class="collapse">
             {% endif %}
             {% if data is null %}
                 <div class="float-end"><button type="button" class="btn-close" aria-label="Close" data-action="form-collection#deleteRow"></button></div>
             {% endif %}
-            {% if form.department is defined %}
-                {{ form_row(form.department) }}
-                {{ form_row(form.otherDepartment) }}
+            {% if form.unit is defined %}
+                {{ form_row(form.unit) }}
+                {{ form_row(form.otherUnit) }}
             {% endif %}
             <div class="row">
                 <div class="col">

@@ -1,19 +1,19 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
 namespace App\Command;
 
-use App\Entity\DepartmentAffiliation;
 use App\Entity\MemberCategory;
 use App\Entity\Person;
 use App\Entity\ThemeAffiliation;
-use App\Repository\DepartmentRepository;
+use App\Entity\UnitAffiliation;
 use App\Repository\MemberCategoryRepository;
 use App\Repository\PersonRepository;
 use App\Repository\ThemeRepository;
+use App\Repository\UnitRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -41,7 +41,7 @@ class ImportFacultySpreadsheetCommand extends Command
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly PersonRepository $personRepository,
-        private readonly DepartmentRepository $departmentRepository,
+        private readonly UnitRepository $unitRepository,
         private readonly ThemeRepository $themeRepository,
         private readonly MemberCategoryRepository $categoryRepository,
         string $name = null
@@ -90,7 +90,7 @@ class ImportFacultySpreadsheetCommand extends Command
             $lastName = $facultySheet->getCell('D' . $row)->getValue();
             $middleInitial = $facultySheet->getCell("F$row")->getValue();
             $isUofI = $facultySheet->getCell("G$row")->getStyle()->getFill() == Fill::FILL_NONE;
-            $departmentName = $facultySheet->getCell("P$row")->getValue();
+            $unitName = $facultySheet->getCell("P$row")->getValue();
             $email = $facultySheet->getCell("Q$row")->getValue();
 
             if (preg_match('/(.+)@illinois.edu/u', $email, $emailMatches)) {
@@ -132,8 +132,8 @@ class ImportFacultySpreadsheetCommand extends Command
                     ->setEmail($email)
                     ->setNetid($netid);
                 if ($isUofI) {
-                    $departmentAffiliation = $this->getDepartmentAffiliation($departmentName);
-                    $person->addDepartmentAffiliation($departmentAffiliation);
+                    $unitAffiliation = $this->getUnitAffiliation($unitName);
+                    $person->addUnitAffiliation($unitAffiliation);
                 }
                 foreach ($themes as $themeInfo) {
                     $themeAffiliation = $this->getThemeAffiliation($themeInfo);
@@ -149,23 +149,23 @@ class ImportFacultySpreadsheetCommand extends Command
                     $person->setNetid($netid); // Update the netid if we have one to update
                 }
 
-                // Add departmental affiliation only if a similar one does not already exist
+                // Add unit affiliation only if a similar one does not already exist
                 if ($isUofI) {
-                    $newDepartmentAffiliation = $this->getDepartmentAffiliation($departmentName);
+                    $newUnitAffiliation = $this->getUnitAffiliation($unitName);
                     $foundOverlap = false;
-                    foreach ($person->getDepartmentAffiliations() as $departmentAffiliation) {
-                        if ((($newDepartmentAffiliation->getDepartment() !== null
-                              && $newDepartmentAffiliation->getDepartment() === $departmentAffiliation->getDepartment())
-                             || ($newDepartmentAffiliation->getDepartment() === null
-                                 && $newDepartmentAffiliation->getOtherDepartment()
-                                    === $departmentAffiliation->getOtherDepartment()))
-                            && $newDepartmentAffiliation->overlaps($departmentAffiliation)) {
+                    foreach ($person->getUnitAffiliations() as $unitAffiliation) {
+                        if ((($newUnitAffiliation->getUnit() !== null
+                              && $newUnitAffiliation->getUnit() === $unitAffiliation->getUnit())
+                             || ($newUnitAffiliation->getUnit() === null
+                                 && $newUnitAffiliation->getOtherUnit()
+                                    === $unitAffiliation->getOtherUnit()))
+                            && $newUnitAffiliation->overlaps($unitAffiliation)) {
                             $foundOverlap = true;
                             break;
                         }
                     }
                     if (!$foundOverlap) {
-                        $person->addDepartmentAffiliation($newDepartmentAffiliation);
+                        $person->addUnitAffiliation($newUnitAffiliation);
                     }
                 }
 
@@ -259,19 +259,19 @@ class ImportFacultySpreadsheetCommand extends Command
     }
 
     /**
-     * @param mixed $departmentName
-     * @return DepartmentAffiliation
+     * @param mixed $unitName
+     * @return UnitAffiliation
      */
-    protected function getDepartmentAffiliation(mixed $departmentName): DepartmentAffiliation
+    protected function getUnitAffiliation(mixed $unitName): UnitAffiliation
     {
-        $department = $this->departmentRepository->findOneBy(['name' => $this->translateDepartment($departmentName)]);
-        $departmentAffiliation = new DepartmentAffiliation();
-        if ($department === null) {
-            $departmentAffiliation->setOtherDepartment($departmentName);
+        $unit = $this->unitRepository->findOneBy(['name' => $this->translateUnit($unitName)]);
+        $unitAffiliation = new UnitAffiliation();
+        if ($unit === null) {
+            $unitAffiliation->setOtherUnit($unitName);
         } else {
-            $departmentAffiliation->setDepartment($department);
+            $unitAffiliation->setUnit($unit);
         }
-        return $departmentAffiliation;
+        return $unitAffiliation;
     }
 
     /**
@@ -280,7 +280,7 @@ class ImportFacultySpreadsheetCommand extends Command
      */
     protected function getThemeAffiliation(array $themeInfo): ?ThemeAffiliation
     {
-        list($name, $start, $end, $category) = $themeInfo;
+        [$name, $start, $end, $category] = $themeInfo;
         $name = trim($name);
         $theme = $this->themeRepository->findOneBy(['shortName' => $this->translateTheme($name)]);
         if ($theme === null) {
@@ -316,7 +316,7 @@ class ImportFacultySpreadsheetCommand extends Command
         };
     }
 
-    private function translateDepartment(string $name): string
+    private function translateUnit(string $name): string
     {
         return match ($name) {
             'Natural Resources & Environmental Science' => 'Natural Resources & Environmental Sciences',

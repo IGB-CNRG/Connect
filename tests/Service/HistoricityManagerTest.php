@@ -2,8 +2,8 @@
 
 namespace App\Tests\Service;
 
-use App\Entity\DepartmentAffiliation;
 use App\Entity\ThemeAffiliation;
+use App\Entity\UnitAffiliation;
 use App\Service\HistoricityManager;
 use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -29,12 +29,12 @@ class HistoricityManagerTest extends KernelTestCase
         $exitReason = "Test reason";
         $differentExitReason = "Another test reason";
 
-        $da1 = (new DepartmentAffiliation())
+        $da1 = (new UnitAffiliation())
             ->setStartedAt($fourWeeks);
-        $da2 = (new DepartmentAffiliation())
+        $da2 = (new UnitAffiliation())
             ->setStartedAt($fourWeeks)
             ->setEndedAt($threeWeeks);
-        $da3 = (new DepartmentAffiliation())
+        $da3 = (new UnitAffiliation())
             ->setStartedAt($fourWeeks)
             ->setEndedAt($oneWeek);
         $ta1 = (new ThemeAffiliation())

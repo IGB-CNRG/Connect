@@ -6,8 +6,7 @@
 
 namespace App\Controller;
 
-use App\Repository\CollegeRepository;
-use App\Repository\DepartmentRepository;
+use App\Repository\UnitRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,26 +14,25 @@ use Symfony\Component\Routing\Annotation\Route;
 class ReportController extends AbstractController
 {
     #[Route('/report/unit-partners', name: 'report_unit_partners')]
-    public function unitPartners(CollegeRepository $collegeRepository, DepartmentRepository $departmentRepository): Response
+    public function unitPartners(UnitRepository $unitRepository): Response
     {
-        $departments = $departmentRepository->getFacultyAffiliatesDigest();
+        $units = $unitRepository->getFacultyAffiliatesDigest();
         $colleges = [];
-        foreach($departments as $department){
-            $college = $department['college'] ?? 'Other';
+        foreach($units as $unit){
+            $college = $unit['college'] ?? 'Other';
             if(!key_exists($college, $colleges)){
                 $colleges[$college] = [
                     'name' => $college,
-                    'departments' => [],
+                    'units' => [],
                     'faculty' => 0,
                     'affiliates' => 0,
                 ];
             }
-            $colleges[$college]['departments'][] = $department;
-            $colleges[$college]['faculty'] += $department['faculty'];
-            $colleges[$college]['affiliates'] += $department['affiliates'];
+            $colleges[$college]['units'][] = $unit;
+            $colleges[$college]['faculty'] += $unit['faculty'];
+            $colleges[$college]['affiliates'] += $unit['affiliates'];
         }
         sort($colleges);
-        dump($colleges);
         return $this->render('report/unit_partners.html.twig', [
             'colleges' => $colleges,
         ]);

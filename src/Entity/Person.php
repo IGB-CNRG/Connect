@@ -140,10 +140,10 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[Groups(['log:person'])]
     private Collection $superviseeAffiliations;
 
-    #[ORM\OneToMany(mappedBy: 'person', targetEntity: DepartmentAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'person', targetEntity: UnitAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
     #[LoggableManyRelation]
     #[Groups(['log:person'])]
-    private Collection $departmentAffiliations;
+    private Collection $unitAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Log::class, orphanRemoval: true)]
     private Collection $ownedLogs;
@@ -221,7 +221,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         $this->themeAffiliations = new ArrayCollection();
         $this->supervisorAffiliations = new ArrayCollection();
         $this->superviseeAffiliations = new ArrayCollection();
-        $this->departmentAffiliations = new ArrayCollection();
+        $this->unitAffiliations = new ArrayCollection();
         $this->ownedLogs = new ArrayCollection();
         $this->logs = new ArrayCollection();
         $this->documents = new ArrayCollection();
@@ -595,29 +595,29 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     }
 
     /**
-     * @return Collection<int, DepartmentAffiliation>|DepartmentAffiliation[]
+     * @return Collection<int, UnitAffiliation>|UnitAffiliation[]
      */
-    public function getDepartmentAffiliations(): Collection
+    public function getUnitAffiliations(): Collection
     {
-        return $this->departmentAffiliations;
+        return $this->unitAffiliations;
     }
 
-    public function addDepartmentAffiliation(DepartmentAffiliation $departmentAffiliation): self
+    public function addUnitAffiliation(UnitAffiliation $unitAffiliation): self
     {
-        if (!$this->departmentAffiliations->contains($departmentAffiliation)) {
-            $this->departmentAffiliations[] = $departmentAffiliation;
-            $departmentAffiliation->setPerson($this);
+        if (!$this->unitAffiliations->contains($unitAffiliation)) {
+            $this->unitAffiliations[] = $unitAffiliation;
+            $unitAffiliation->setPerson($this);
         }
 
         return $this;
     }
 
-    public function removeDepartmentAffiliation(DepartmentAffiliation $departmentAffiliation): self
+    public function removeUnitAffiliation(UnitAffiliation $unitAffiliation): self
     {
-        if ($this->departmentAffiliations->removeElement($departmentAffiliation)) {
+        if ($this->unitAffiliations->removeElement($unitAffiliation)) {
             // set the owning side to null (unless already changed)
-            if ($departmentAffiliation->getPerson() === $this) {
-                $departmentAffiliation->setPerson(null);
+            if ($unitAffiliation->getPerson() === $this) {
+                $unitAffiliation->setPerson(null);
             }
         }
 

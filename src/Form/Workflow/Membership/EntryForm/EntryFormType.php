@@ -58,8 +58,8 @@ class EntryFormType extends AbstractType
                 'required' => false,
                 'label' => 'entry_form.phone',
             ])
-            ->add('departmentAffiliations', CollectionType::class, [
-                'entry_type' => DepartmentAffiliationType::class,
+            ->add('unitAffiliations', CollectionType::class, [
+                'entry_type' => UnitAffiliationType::class,
                 'label' => false,
                 'entry_options' => [
                     'label' => false,

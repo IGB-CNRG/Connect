@@ -6,22 +6,23 @@
 
 namespace App\Form\Workflow\Membership\EntryForm;
 
-use App\Entity\DepartmentAffiliation;
-use App\Form\Fields\DepartmentType;
+use App\Entity\UnitAffiliation;
+use App\Form\Fields\UnitType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class DepartmentAffiliationType extends AbstractType
+class UnitAffiliationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('department', DepartmentType::class, [
-                'label' => 'entry_form.department',
+            ->add('unit', UnitType::class, [
+                'label' => 'entry_form.unit',
             ])
-            ->add('otherDepartment', TextType::class, [
+            ->add('otherUnit', TextType::class, [
+                'label' => 'Other department',
                 'required' => false,
                 'attr' => [
                     'data-other-entry-target' => 'other',
@@ -32,7 +33,7 @@ class DepartmentAffiliationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => DepartmentAffiliation::class,
+            'data_class' => UnitAffiliation::class,
         ]);
     }
 }

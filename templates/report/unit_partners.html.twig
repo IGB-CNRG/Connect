@@ -6,10 +6,10 @@
     <h2>Unit Partners</h2>
     {% for college in colleges %}
         <h3>{{ college.name }} <small>{{ college.faculty }} faculty, {{ college.affiliates }} affiliates</small></h3>
-        {% for department in college.departments %}
-            {% if department.faculty > 0 or department.affiliates > 0 %}
-                <p>{{ department.department }}
-                    <small>{{ department.faculty }} faculty, {{ department.affiliates }} affiliates</small></p>
+        {% for unit in college.units %}
+            {% if unit.faculty > 0 or unit.affiliates > 0 %}
+                <p>{{ unit.unit }}
+                    <small>{{ unit.faculty }} faculty, {{ unit.affiliates }} affiliates</small></p>
             {% endif %}
         {% endfor %}
     {% endfor %}

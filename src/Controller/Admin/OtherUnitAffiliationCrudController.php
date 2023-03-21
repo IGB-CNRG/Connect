@@ -1,13 +1,13 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
 namespace App\Controller\Admin;
 
-use App\Entity\Department;
-use App\Entity\DepartmentAffiliation;
+use App\Entity\Unit;
+use App\Entity\UnitAffiliation;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
@@ -23,11 +23,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use LogicException;
 
-class OtherDepartmentAffiliationCrudController extends AbstractCrudController
+class OtherUnitAffiliationCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
-        return DepartmentAffiliation::class;
+        return UnitAffiliation::class;
     }
 
     public function createIndexQueryBuilder(
@@ -42,23 +42,23 @@ class OtherDepartmentAffiliationCrudController extends AbstractCrudController
             $fields,
             $filters
         )
-            ->andWhere('entity.otherDepartment is not null');
+            ->andWhere('entity.otherUnit is not null');
     }
 
     public function configureCrud(Crud $crud): Crud
     {
         return parent::configureCrud($crud)
-            ->setPageTitle(Crud::PAGE_INDEX, '"Other" Departments')
-            ->overrideTemplate('crud/edit', 'admin/edit_department.html.twig');
+            ->setPageTitle(Crud::PAGE_INDEX, '"Other" Units')
+            ->overrideTemplate('crud/edit', 'admin/edit_unit.html.twig');
     }
 
     public function configureActions(Actions $actions): Actions
     {
-        $resolveDepartmentAction = Action::new('resolve')
+        $resolveUnitAction = Action::new('resolve')
             ->linkToCrudAction('resolve');
         return parent::configureActions($actions)
             ->disable(Action::DELETE, Action::NEW)
-            ->add(Crud::PAGE_INDEX, $resolveDepartmentAction);
+            ->add(Crud::PAGE_INDEX, $resolveUnitAction);
     }
 
     public function configureAssets(Assets $assets): Assets
@@ -71,9 +71,9 @@ class OtherDepartmentAffiliationCrudController extends AbstractCrudController
     {
         return [
             AssociationField::new('person')->hideOnForm(),
-            AssociationField::new('department')->onlyOnForms()->setQueryBuilder(
+            AssociationField::new('unit')->onlyOnForms()->setQueryBuilder(
                 fn(QueryBuilder $queryBuilder) => $queryBuilder->getEntityManager()
-                    ->getRepository(Department::class)
+                    ->getRepository(Unit::class)
                     ->createFormSortedQueryBuilder()
             )->setFormTypeOptions([
                 'attr' => [
@@ -81,15 +81,15 @@ class OtherDepartmentAffiliationCrudController extends AbstractCrudController
                     'data-action' => 'change->other-entry#toggle',
                 ],
                 'placeholder' => 'Other (please specify)',
-                'group_by' => function (Department $choice, $key, $value) {
-                    if ($choice->getCollege()) {
-                        return $choice->getCollege();
+                'group_by' => function (Unit $choice, $key, $value) {
+                    if ($choice->getParentUnit()) {
+                        return $choice->getParentUnit();
                     } else {
                         return null;
                     }
                 },
             ]),
-            TextField::new('otherDepartment')->setFormTypeOptions([
+            TextField::new('otherUnit')->setFormTypeOptions([
                 'attr' => [
                     'data-other-entry-target' => 'other',
                 ],
@@ -100,9 +100,9 @@ class OtherDepartmentAffiliationCrudController extends AbstractCrudController
 
     public function resolve(AdminContext $adminContext)
     {
-        $departmentAffiliation = $adminContext->getEntity()->getInstance();
-        if (!$departmentAffiliation instanceof DepartmentAffiliation) {
-            throw new LogicException('Entity is missing or not a DepartmentAffiliation');
+        $unitAffiliation = $adminContext->getEntity()->getInstance();
+        if (!$unitAffiliation instanceof UnitAffiliation) {
+            throw new LogicException('Entity is missing or not a UnitAffiliation');
         }
     }
 }

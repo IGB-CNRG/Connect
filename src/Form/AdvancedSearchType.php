@@ -6,11 +6,11 @@
 
 namespace App\Form;
 
-use App\Entity\Department;
 use App\Entity\MemberCategory;
+use App\Entity\Unit;
 use App\Form\Fields\ThemeType;
-use App\Repository\DepartmentRepository;
 use App\Repository\MemberCategoryRepository;
+use App\Repository\UnitRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -62,21 +62,22 @@ class AdvancedSearchType extends AbstractType
                     'Lab Manager' => 'Lab Manager'
                 ],
             ])
-            ->add('department', EntityType::class, [
-                'class' => Department::class,
+            ->add('unit', EntityType::class, [
+                'class' => Unit::class,
                 'multiple' => true,
                 'attr' => [
                     'data-controller' => 'tom-select',
-                    'data-placeholder' => 'Filter by department',
+                    'data-placeholder' => 'Filter by unit',
                     'data-action' => 'datatables#columnSearch',
                     'data-column' => 3,
                     'style' => 'width:100%',
                 ],
-                'choice_value' => fn(Department $department) => $department->__toString(),
-                'query_builder' => fn(DepartmentRepository $departmentRepository) => $departmentRepository->createFormSortedQueryBuilder(),
-                'group_by' => function (Department $choice, $key, $value) {
-                    if ($choice->getCollege()) {
-                        return $choice->getCollege();
+                'choice_value' => fn(Unit $unit) => $unit->__toString(),
+                'query_builder' => fn(UnitRepository $unitRepository) => $unitRepository->createFormSortedQueryBuilder(),
+                'choice_filter' => fn(Unit $unit) => $unit->getChildUnits()->count()===0,
+                'group_by' => function (Unit $choice, $key, $value) {
+                    if ($choice->getParentUnit()) {
+                        return $choice->getParentUnit();
                     } else {
                         return null;
                     }

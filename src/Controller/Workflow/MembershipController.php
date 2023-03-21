@@ -6,13 +6,13 @@
 
 namespace App\Controller\Workflow;
 
-use App\Entity\DepartmentAffiliation;
 use App\Entity\Document;
 use App\Entity\ExitForm;
 use App\Entity\Person;
 use App\Entity\RoomAffiliation;
 use App\Entity\SupervisorAffiliation;
 use App\Entity\ThemeAffiliation;
+use App\Entity\UnitAffiliation;
 use App\Enum\DocumentCategory;
 use App\Form\Workflow\ApproveType;
 use App\Form\Workflow\Membership\Certificate\CertificateUploadType;
@@ -56,12 +56,12 @@ class MembershipController extends AbstractController
         // todo so far this form does not support saving and continuing. do we want to?
 
         $roomAffiliation = new RoomAffiliation();
-        $departmentAffiliation = new DepartmentAffiliation();
+        $unitAffiliation = new UnitAffiliation();
         $themeAffiliation = new ThemeAffiliation();
         $supervisorAffiliation = new SupervisorAffiliation();
         $person = (new Person())
             ->addRoomAffiliation($roomAffiliation)
-            ->addDepartmentAffiliation($departmentAffiliation)
+            ->addUnitAffiliation($unitAffiliation)
             ->addThemeAffiliation($themeAffiliation)
             ->addSupervisorAffiliation($supervisorAffiliation);
         $form = $this->createForm(EntryFormType::class, $person)
@@ -99,9 +99,9 @@ class MembershipController extends AbstractController
             $roomAffiliation = new RoomAffiliation();
             $person->addRoomAffiliation($roomAffiliation);
         }
-        if ($person->getDepartmentAffiliations()->count() === 0) {
-            $departmentAffiliation = new DepartmentAffiliation();
-            $person->addDepartmentAffiliation($departmentAffiliation);
+        if ($person->getUnitAffiliations()->count() === 0) {
+            $unitAffiliation = new UnitAffiliation();
+            $person->addUnitAffiliation($unitAffiliation);
         }
         if ($person->getSupervisorAffiliations()->count() === 0) {
             $supervisorAffiliation = new SupervisorAffiliation();
@@ -375,7 +375,7 @@ class MembershipController extends AbstractController
                 $person->getSupervisorAffiliations()->toArray(),
                 $person->getRoomAffiliations()->toArray(),
                 $person->getThemeAffiliations()->toArray(),
-                $person->getDepartmentAffiliations()->toArray(),
+                $person->getUnitAffiliations()->toArray(),
                 $person->getSuperviseeAffiliations()->toArray()
             ),
             $endedAt,
@@ -392,16 +392,16 @@ class MembershipController extends AbstractController
     ): void {
         $roomAffiliation = $person->getRoomAffiliations()[0];
         $supervisorAffiliation = $person->getSupervisorAffiliations()[0];
-        $departmentAffiliation = $person->getDepartmentAffiliations()[0];
+        $unitAffiliation = $person->getUnitAffiliations()[0];
 
         $roomAffiliation->setStartedAt($startDate);
         $supervisorAffiliation->setStartedAt($startDate);
-        $departmentAffiliation->setStartedAt($startDate);
+        $unitAffiliation->setStartedAt($startDate);
         if (!$roomAffiliation->getRoom()) {
             $person->removeRoomAffiliation($roomAffiliation);
         }
-        if (!$departmentAffiliation->getDepartment() && !$departmentAffiliation->getOtherDepartment()) {
-            $person->removeDepartmentAffiliation($departmentAffiliation);
+        if (!$unitAffiliation->getUnit() && !$unitAffiliation->getOtherUnit()) {
+            $person->removeUnitAffiliation($unitAffiliation);
         }
         if (!$supervisorAffiliation->getSupervisor()) {
             $person->removeSupervisorAffiliation($supervisorAffiliation);

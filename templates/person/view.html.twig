@@ -69,10 +69,10 @@
                             </td>
                         </tr>
                     {% endfor %}
-                    {% for departmentAffiliation in person.departmentAffiliations|current %}
+                    {% for unitAffiliation in person.unitAffiliations|current %}
                         <tr>
-                            <th>Department</th>
-                            <td>{{ departmentAffiliation.department??departmentAffiliation.otherDepartment }}</td>
+                            <th>Unit</th>
+                            <td>{{ unitAffiliation.unit??unitAffiliation.otherUnit }}</td>
                         </tr>
                     {% endfor %}
 
@@ -359,33 +359,33 @@
         </div>
     </div>
     <div class="card mb-3">
-        <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#department_table"
+        <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#unit_table"
              aria-expanded="false" role="button">
-            Departments
+            Units
         </div>
-        <div class="collapse" id="department_table">
+        <div class="collapse" id="unit_table">
             {% if is_granted("PERSON_EDIT", person) %}
                 <div class="card-body">
-                    <a href="{{ path('person_add_department', {'slug': person.slug}) }}"
+                    <a href="{{ path('person_add_unit', {'slug': person.slug}) }}"
                        class="btn btn-primary"><span
                                 class="fa fa-plus"></span> Add</a>
                 </div>
             {% endif %}
             <table class="table">
                 <tr>
-                    <th>Department</th>
+                    <th>Unit</th>
                     <th>Start Date</th>
                     <th>End Date</th>
                     <th class="shrink"></th>
                 </tr>
-                {% for departmentAffiliation in person.departmentAffiliations %}
+                {% for unitAffiliation in person.unitAffiliations %}
                     <tr>
-                        <td>{{ departmentAffiliation.department??departmentAffiliation.otherDepartment }}</td>
-                        <td>{% if departmentAffiliation.startedAt is not null %}{{ departmentAffiliation.startedAt|date('n/j/Y') }}{% endif %}</td>
-                        <td>{% if departmentAffiliation.endedAt is not null %}{{ departmentAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
+                        <td>{{ unitAffiliation.unit??unitAffiliation.otherUnit }}</td>
+                        <td>{% if unitAffiliation.startedAt is not null %}{{ unitAffiliation.startedAt|date('n/j/Y') }}{% endif %}</td>
+                        <td>{% if unitAffiliation.endedAt is not null %}{{ unitAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
                         <td class="shrink">
-                            {% if departmentAffiliation.endedAt is null and is_granted("PERSON_EDIT", person) %}
-                                <a href="{{ path('person_end_department_affiliation', {'id': departmentAffiliation.id, 'slug': person.slug}) }}">
+                            {% if unitAffiliation.endedAt is null and is_granted("PERSON_EDIT", person) %}
+                                <a href="{{ path('person_end_unit_affiliation', {'id': unitAffiliation.id, 'slug': person.slug}) }}">
                                     End
                                 </a>
                             {% endif %}

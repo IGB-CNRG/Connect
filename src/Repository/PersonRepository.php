@@ -40,8 +40,8 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
             ->leftJoin('ta.theme', 't')
             ->leftJoin('p.roomAffiliations', 'ra')
             ->leftJoin('ra.room', 'r')
-            ->leftJoin('p.departmentAffiliations', 'da')
-            ->leftJoin('da.department', 'd')
+            ->leftJoin('p.unitAffiliations', 'da')
+            ->leftJoin('da.unit', 'd')
             ->select('p,ta,t,ra,r,da,d');
     }
 
