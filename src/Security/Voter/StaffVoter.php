@@ -19,7 +19,7 @@ class StaffVoter extends Voter
     public const LAB_MANAGER = 'ROLE_LAB_MANAGER';
     public const APPROVER = 'ROLE_APPROVER';
 
-    public function __construct(private Security $security){}
+    public function __construct(private Security $security) {}
 
     protected function supports(string $attribute, $subject): bool
     {
@@ -42,7 +42,8 @@ class StaffVoter extends Voter
             self::THEME_ADMIN => $user->getThemeAdminThemeAffiliations()->count() > 0,
             self::LAB_MANAGER => $user->getLabManagerThemeAffiliations()->count() > 0,
             // todo this may be naive, but it works for now
-            self::APPROVER => $user->getLabManagerThemeAffiliations()->count() > 0
+            self::APPROVER => $this->security->isGranted('ROLE_CERTIFICATE_MANAGER')
+                              || $user->getLabManagerThemeAffiliations()->count() > 0
                               || $user->getThemeAdminThemeAffiliations()->count() > 0,
             default => false,
         };

@@ -24,7 +24,10 @@ class PersonVoter extends Voter
     public const VIEW_DOCUMENTS = 'PERSON_VIEW_DOCUMENTS';
     public const VIEW_EXIT_REASON = 'PERSON_VIEW_EXIT_REASON';
 
-    public function __construct(private Security $security, private HistoricityManager $historicityManager) {}
+    public function __construct(
+        private readonly Security $security,
+        private readonly HistoricityManager $historicityManager
+    ) {}
 
     protected function supports(string $attribute, $subject): bool
     {
@@ -52,17 +55,12 @@ class PersonVoter extends Voter
         // ... (check conditions and return true to grant permission) ...
         return match ($attribute) {
             // anyone who can edit can also edit history, for now
-            self::EDIT, self::EDIT_HISTORY => $this->isEditorForPersonsTheme(
-                $user,
-                $subject
-            ), // todo who else can edit?
+            // todo who else can edit?
+            self::EDIT, self::EDIT_HISTORY => $this->isEditorForPersonsTheme($user, $subject),
             self::VIEW => true,
-            self::ADD => $this->security->isGranted('ROLE_APPROVER'), // todo who else can add?
+            self::ADD, self::VIEW_DOCUMENTS, self::VIEW_EXIT_REASON => $this->security->isGranted('ROLE_APPROVER'),
             self::REMOVE => $user === $subject || $this->isEditorForPersonsTheme($user, $subject),
-            self::VIEW_DOCUMENTS, self::VIEW_EXIT_REASON => $this->security->isGranted('ROLE_CERTIFICATE_MANAGER')
-                                    || $user->getLabManagerThemeAffiliations()->count() > 0
-                                    || $user->getThemeAdminThemeAffiliations()->count() > 0,
-            
+
             default => false,
         };
     }
@@ -85,6 +83,7 @@ class PersonVoter extends Voter
         if (count(array_intersect($userThemes, $labManagerThemes)) > 0) {
             return true;
         }
+
         return false;
     }
 }
