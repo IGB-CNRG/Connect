@@ -29,6 +29,8 @@ framework:
                         approval_route: membership_approveCertificates
                 active:
                 exit_form_submitted:
+                    metadata:
+                        completion: 50
                 inactive:
             transitions:
                 submit_entry_form:
