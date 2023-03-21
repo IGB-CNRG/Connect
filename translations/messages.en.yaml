@@ -30,6 +30,7 @@ membership:
     label: Active
   exit_form_submitted:
     label: Exit form submitted, waiting for approval
+    approval_title: "Exit form"
   inactive:
     label: Inactive
   # Transitions

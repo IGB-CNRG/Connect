@@ -51,7 +51,8 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
         return $this->createQueryBuilder('p')
             ->andWhere('p.membershipStatus in (:places)')
             ->orderBy('p.lastName')
-            ->setParameter('places', ['entry_form_submitted', 'certificates_submitted'])
+            // todo can we not hard code these places? maybe with a workflow helper?
+            ->setParameter('places', ['entry_form_submitted', 'certificates_submitted', 'exit_form_submitted'])
             ->getQuery()
             ->getResult();
     }

@@ -31,6 +31,7 @@ framework:
                 exit_form_submitted:
                     metadata:
                         completion: 50
+                        approval_route: membership_approveExitForm
                 inactive:
             transitions:
                 submit_entry_form:
