@@ -22,6 +22,7 @@ class PersonVoter extends Voter
     public const EDIT_HISTORY = 'PERSON_EDIT_HISTORY';
     public const REMOVE = 'PERSON_REMOVE';
     public const VIEW_DOCUMENTS = 'PERSON_VIEW_DOCUMENTS';
+    public const VIEW_EXIT_REASON = 'PERSON_VIEW_EXIT_REASON';
 
     public function __construct(private Security $security, private HistoricityManager $historicityManager) {}
 
@@ -31,7 +32,7 @@ class PersonVoter extends Voter
         // https://symfony.com/doc/current/security/voters.html
         return (in_array($attribute, [self::EDIT, self::VIEW, self::REMOVE])
                 && $subject instanceof Person)
-               || in_array($attribute, [self::ADD, self::EDIT_HISTORY, self::VIEW_DOCUMENTS]);
+               || in_array($attribute, [self::ADD, self::EDIT_HISTORY, self::VIEW_DOCUMENTS, self::VIEW_EXIT_REASON]);
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
@@ -58,9 +59,10 @@ class PersonVoter extends Voter
             self::VIEW => true,
             self::ADD => $this->security->isGranted('ROLE_APPROVER'), // todo who else can add?
             self::REMOVE => $user === $subject || $this->isEditorForPersonsTheme($user, $subject),
-            self::VIEW_DOCUMENTS => $this->security->isGranted('ROLE_CERTIFICATE_MANAGER')
+            self::VIEW_DOCUMENTS, self::VIEW_EXIT_REASON => $this->security->isGranted('ROLE_CERTIFICATE_MANAGER')
                                     || $user->getLabManagerThemeAffiliations()->count() > 0
                                     || $user->getThemeAdminThemeAffiliations()->count() > 0,
+            
             default => false,
         };
     }
