@@ -24,6 +24,7 @@ use App\Log\ActivityLogger;
 use App\Repository\PersonRepository;
 use App\Service\CertificateHelper;
 use App\Service\HistoricityManager;
+use App\Workflow\Membership;
 use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -148,7 +149,7 @@ class MembershipController extends AbstractController
 
         $approvalForm->handleRequest($request);
         if ($approvalForm->isSubmitted() && $approvalForm->isValid()) {
-            $membershipStateMachine->apply($person, 'approve_entry_form');
+            $membershipStateMachine->apply($person, Membership::TRANS_APPROVE_ENTRY_FORM);
             $person->setMembershipNote(null);
             $logger->log($person, "Approved entry form");
             $em->flush();
@@ -157,7 +158,7 @@ class MembershipController extends AbstractController
 
         $rejectionForm->handleRequest($request);
         if ($rejectionForm->isSubmitted() && $rejectionForm->isValid()) {
-            $membershipStateMachine->apply($person, 'return_entry_form');
+            $membershipStateMachine->apply($person, Membership::TRANS_RETURN_ENTRY_FORM);
             $logger->log($person, sprintf("Returned entry form with reason \"%s\"", $person->getMembershipNote()));
             $em->flush();
             return $this->redirectToRoute('membership_approvals');
@@ -172,15 +173,11 @@ class MembershipController extends AbstractController
 
     #[Route('/membership/approvals', name: 'membership_approvals')]
     #[IsGranted('ROLE_APPROVER')]
-    public function approvalIndex(WorkflowInterface $membershipStateMachine, PersonRepository $repository): Response
+    public function approvalIndex(Membership $membership, PersonRepository $repository): Response
     {
         $peopleToApprove = $repository->findAllNeedingApproval();
-        $myApprovals = array_filter($peopleToApprove, function (Person $person) use ($membershipStateMachine) {
-            // todo can we not hard code these transitions?
-            //  or maybe have a helper function to check if one Person can approve another Person
-            return $membershipStateMachine->can($person, 'approve_entry_form')
-                   || $membershipStateMachine->can($person, 'approve_certificates')
-                   || $membershipStateMachine->can($person, 'deactivate');
+        $myApprovals = array_filter($peopleToApprove, function (Person $person) use ($membership) {
+            return $membership->canApprove($person);
         });
 
         return $this->render('workflow/approvals.html.twig', [
@@ -199,7 +196,7 @@ class MembershipController extends AbstractController
         // todo should we lock this down explicitly, or should we add an approvalstrategy for this step?
         /** @var Person $person */
         $person = $this->getUser();
-        if (!$membershipStateMachine->can($person, 'upload_certificates')) {
+        if (!$membershipStateMachine->can($person, Membership::TRANS_UPLOAD_CERTIFICATES)) {
             throw $this->createAccessDeniedException();
         }
         $neededCertificates = $certificateHelper->requiredCertificates($person);
@@ -226,7 +223,7 @@ class MembershipController extends AbstractController
             $em->persist($person);
 
             $logger->log($person, 'Uploaded training certificates');
-            $membershipStateMachine->apply($person, 'upload_certificates');
+            $membershipStateMachine->apply($person, Membership::TRANS_UPLOAD_CERTIFICATES);
 
             $em->flush();
 
@@ -258,7 +255,7 @@ class MembershipController extends AbstractController
 
         $approvalForm->handleRequest($request);
         if ($approvalForm->isSubmitted() && $approvalForm->isValid()) {
-            $membershipStateMachine->apply($person, 'approve_certificates');
+            $membershipStateMachine->apply($person, Membership::TRANS_APPROVE_CERTIFICATES);
             $person->setMembershipNote(null);
             $logger->log($person, "Approved certificates");
             $em->flush();
@@ -267,7 +264,7 @@ class MembershipController extends AbstractController
 
         $rejectionForm->handleRequest($request);
         if ($rejectionForm->isSubmitted() && $rejectionForm->isValid()) {
-            $membershipStateMachine->apply($person, 'return_certificates');
+            $membershipStateMachine->apply($person, Membership::TRANS_RETURN_CERTIFICATES);
             $logger->log($person, sprintf("Returned certificates with reason \"%s\"", $person->getMembershipNote()));
             $em->flush();
             return $this->redirectToRoute('membership_approvals');
@@ -288,7 +285,7 @@ class MembershipController extends AbstractController
         ActivityLogger $logger,
         WorkflowInterface $membershipStateMachine
     ): Response {
-        if (!($person === $this->getUser() || $membershipStateMachine->can($person, 'force_exit_form'))) {
+        if (!($person === $this->getUser() || $membershipStateMachine->can($person, Membership::TRANS_FORCE_EXIT_FORM))) {
             throw $this->createAccessDeniedException();
         }
 
@@ -298,15 +295,15 @@ class MembershipController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($membershipStateMachine->can($person, 'force_exit_form')) {
+            if ($membershipStateMachine->can($person, Membership::TRANS_FORCE_EXIT_FORM)) {
                 // Set exit reason and end date on all current theme, supervisor, and room affiliations
                 $this->processExit($historicityManager, $person, $exitForm->getEndedAt(), $exitForm->getExitReason());
                 $entityManager->persist($person);
-                $membershipStateMachine->apply($person, 'force_exit_form');
+                $membershipStateMachine->apply($person, Membership::TRANS_FORCE_EXIT_FORM);
             } else {
                 // Submit exit form for approval
                 $person->setExitForm($exitForm);
-                $membershipStateMachine->apply($person, 'submit_exit_form');
+                $membershipStateMachine->apply($person, Membership::TRANS_SUBMIT_EXIT_FORM);
             }
             $logger->log($person, "Submitted exit form (end date {$exitForm->getEndedAt()->format('n/j/Y')}, exit reason \"{$exitForm->getExitReason()}\")");
             $entityManager->flush();
@@ -347,7 +344,7 @@ class MembershipController extends AbstractController
                 $exitReason
             );
             $entityManager->persist($person);
-            $membershipStateMachine->apply($person, 'deactivate');
+            $membershipStateMachine->apply($person, Membership::TRANS_DEACTIVATE);
             $logger->log($person, "Approved exit form (end date {$endedAt->format('n/j/Y')}, exit reason \"{$exitReason}\")");
             $entityManager->flush();
 
@@ -413,6 +410,6 @@ class MembershipController extends AbstractController
         $em->persist($person);
 
         $logger->log($person, 'Submitted entry form');
-        $membershipStateMachine->apply($person, 'submit_entry_form');
+        $membershipStateMachine->apply($person, Membership::TRANS_SUBMIT_ENTRY_FORM);
     }
 }

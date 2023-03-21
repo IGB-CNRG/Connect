@@ -5,7 +5,7 @@
             {{ _self.circular_progress(workflow_metadata(app.user, 'completion', place)) }}
         </div>
         <div class="flex-grow-1 flex-shrink-1">
-            {% if place == 'need_entry_form' %}
+            {% if place == constant('App\\Workflow\\Membership::PLACE_NEED_ENTRY_FORM') %}
                 <p>Welcome to the IGB! Please complete and submit your <a
                             href="{{ path('membership_continueEntryForm', {'slug':app.user.slug}) }}">IGB
                         Entry Form</a>.</p>
@@ -13,20 +13,20 @@
                     <p>Your entry form was returned to you with the following note:</p>
                     <p class="membership-note">{{ app.user.membershipNote }}</p>
                 {% endif %}
-            {% elseif place =='entry_form_submitted' %}
+            {% elseif place == constant('App\\Workflow\\Membership::PLACE_ENTRY_FORM_SUBMITTED') %}
                 <p>Your Entry Form has been received. Once it has been approved by a member of your theme, you will
                     receive additional instructions.</p>
-            {% elseif place =='need_certificates' %}
+            {% elseif place == constant('App\\Workflow\\Membership::PLACE_NEED_CERTIFICATES') %}
                 <p>Your Entry Form has been approved. Please upload all requested training certificates <a
                             href="{{ path('membership_certificateUpload') }}">here</a>.</p>
                 {% if app.user.membershipNote %}
                     <p>Your certificates were returned to you with the following note:</p>
                     <p class="membership-note">{{ app.user.membershipNote }}</p>
                 {% endif %}
-            {% elseif place =='certificates_submitted' %}
+            {% elseif place ==constant('App\\Workflow\\Membership::PLACE_CERTIFICATES_SUBMITTED') %}
                 <p>Your certificates have been received. You will receive a notification when they have been
                     approved.</p>
-            {% elseif place=='exit_form_submitted' %}
+            {% elseif place==constant('App\\Workflow\\Membership::PLACE_EXIT_FORM_SUBMITTED') %}
                 <p>Your exit form has been received. You will receive a notification when it has been accepted.</p>
             {% endif %}
         </div>

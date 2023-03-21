@@ -11,6 +11,7 @@ use App\Log\Loggable;
 use App\Log\LoggableManyRelation;
 use App\Log\LogSubjectInterface;
 use App\Repository\PersonRepository;
+use App\Workflow\Membership;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -197,7 +198,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     #[ORM\Column(length: 255)]
     #[Groups(['log:person'])]
-    private ?string $membershipStatus = "need_entry_form";
+    private ?string $membershipStatus = Membership::PLACE_NEED_ENTRY_FORM;
 
     #[ORM\Column(nullable: true)]
     #[Groups(['log:person'])]

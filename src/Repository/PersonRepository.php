@@ -10,6 +10,7 @@ use App\Entity\Person;
 use App\Entity\Theme;
 use App\Enum\ThemeRole;
 use App\Service\HistoricityManagerAware;
+use App\Workflow\Membership;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -24,7 +25,8 @@ use Symfony\Contracts\Service\ServiceSubscriberTrait;
  */
 class PersonRepository extends ServiceEntityRepository implements ServiceSubscriberInterface
 {
-    use ServiceSubscriberTrait, HistoricityManagerAware;
+    use HistoricityManagerAware;
+    use ServiceSubscriberTrait;
 
     public function __construct(ManagerRegistry $registry)
     {
@@ -51,8 +53,7 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
         return $this->createQueryBuilder('p')
             ->andWhere('p.membershipStatus in (:places)')
             ->orderBy('p.lastName')
-            // todo can we not hard code these places? maybe with a workflow helper?
-            ->setParameter('places', ['entry_form_submitted', 'certificates_submitted', 'exit_form_submitted'])
+            ->setParameter('places', Membership::PLACES_NEEDING_APPROVAL)
             ->getQuery()
             ->getResult();
     }

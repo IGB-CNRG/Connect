@@ -5,6 +5,7 @@ namespace App\Tests\Repository;
 use App\Entity\Person;
 use App\Repository\PersonRepository;
 use App\Tests\Utils\DatabaseTestCase;
+use App\Workflow\Membership;
 
 class PersonRepositoryTest extends DatabaseTestCase
 {
@@ -35,35 +36,35 @@ class PersonRepositoryTest extends DatabaseTestCase
         $test1 = (new Person())
             ->setUsername('test1')
             ->setLastName('A')
-            ->setMembershipStatus('need_entry_form')
+            ->setMembershipStatus(Membership::PLACE_NEED_ENTRY_FORM)
             ->setMembershipUpdatedAt($now);
         $this->entityManager->persist($test1);
 
         $test2 = (new Person())
             ->setUsername('test2')
             ->setLastName('B')
-            ->setMembershipStatus('entry_form_submitted')
+            ->setMembershipStatus(Membership::PLACE_ENTRY_FORM_SUBMITTED)
             ->setMembershipUpdatedAt($now);
         $this->entityManager->persist($test2);
 
         $test3 = (new Person())
             ->setUsername('test3')
             ->setLastName('C')
-            ->setMembershipStatus('need_certificates')
+            ->setMembershipStatus(Membership::PLACE_NEED_CERTIFICATES)
             ->setMembershipUpdatedAt($now);
         $this->entityManager->persist($test3);
 
         $test4 = (new Person())
             ->setUsername('test4')
             ->setLastName('D')
-            ->setMembershipStatus('certificates_submitted')
+            ->setMembershipStatus(Membership::PLACE_CERTIFICATES_SUBMITTED)
             ->setMembershipUpdatedAt($now);
         $this->entityManager->persist($test4);
 
         $test5 = (new Person())
             ->setUsername('test5')
             ->setLastName('E')
-            ->setMembershipStatus('active')
+            ->setMembershipStatus(Membership::PLACE_ACTIVE)
             ->setMembershipUpdatedAt($now);
         $this->entityManager->persist($test5);
 
