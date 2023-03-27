@@ -60,11 +60,10 @@ class NotificationDispatcher implements ServiceSubscriberInterface
             'member' => $subject->getEmail(),
         ]);
 
-        $email = (new Email())
-            ->from('do-not-reply@igb.illinois.edu') // todo parameterize this and figure out what it should be
-            ->to($recipients)
-            ->subject($notification->getSubject())
-            ->html($body);
+        $email = (new Email())->from(
+                'do-not-reply@igb.illinois.edu'
+            ) // todo parameterize this and figure out what it should be
+            ->to($recipients)->subject($notification->getSubject())->html($body);
 
         // Send the notification to each recipient
         $this->mailer()->send($email);
@@ -81,7 +80,7 @@ class NotificationDispatcher implements ServiceSubscriberInterface
         $approvalEmails = '';
         /** @var WorkflowInterface $membershipStateMachine */
         try {
-            $membershipStateMachine = $this->container->get('state_machine.' . $notification->getWorkflowName());
+            $membershipStateMachine = $this->container->get('state_machine.'.$notification->getWorkflowName());
         } catch (NotFoundExceptionInterface|ContainerExceptionInterface $e) {
             return $approvalEmails;
         }
@@ -104,14 +103,12 @@ class NotificationDispatcher implements ServiceSubscriberInterface
             && in_array(ApprovalStrategy::class, class_implements($approvalStrategyClass))) {
             /** @var ApprovalStrategy $approvalStrategy */
             $approvalStrategy = new $approvalStrategyClass($this->personRepository());
-            $approvers = $approvalStrategy->getApprovers($subject);
             $approvalEmails = join(
                 ",",
-                array_map(function (Person $approver) {
-                    return $approver->getEmail();
-                }, $approvers)
+                $approvalStrategy->getApprovalEmails($subject)
             );
         }
+
         return $approvalEmails;
     }
 
@@ -120,19 +117,19 @@ class NotificationDispatcher implements ServiceSubscriberInterface
     #[SubscribedService]
     private function twig(): Environment
     {
-        return $this->container->get(__CLASS__ . '::' . __FUNCTION__);
+        return $this->container->get(__CLASS__.'::'.__FUNCTION__);
     }
 
     #[SubscribedService]
     private function mailer(): MailerInterface
     {
-        return $this->container->get(__CLASS__ . '::' . __FUNCTION__);
+        return $this->container->get(__CLASS__.'::'.__FUNCTION__);
     }
 
     #[SubscribedService]
     private function personRepository(): PersonRepository
     {
-        return $this->container->get(__CLASS__ . '::' . __FUNCTION__);
+        return $this->container->get(__CLASS__.'::'.__FUNCTION__);
     }
 
     public static function getSubscribedServices(): array

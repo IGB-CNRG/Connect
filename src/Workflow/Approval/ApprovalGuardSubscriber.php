@@ -7,6 +7,7 @@
 namespace App\Workflow\Approval;
 
 use App\Repository\PersonRepository;
+use App\Service\HistoricityManagerAware;
 use App\Service\SecurityAware;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\GuardEvent;
@@ -17,7 +18,7 @@ use Symfony\Contracts\Service\ServiceSubscriberTrait;
 
 class ApprovalGuardSubscriber implements EventSubscriberInterface, ServiceSubscriberInterface
 {
-    use ServiceSubscriberTrait, SecurityAware;
+    use ServiceSubscriberTrait, SecurityAware, HistoricityManagerAware;
 
     public function approvalGuard(GuardEvent $event)
     {
@@ -30,7 +31,8 @@ class ApprovalGuardSubscriber implements EventSubscriberInterface, ServiceSubscr
             && class_exists($approvalStrategyClass)
             && in_array(ApprovalStrategy::class, class_implements($approvalStrategyClass))) {
             /** @var ApprovalStrategy $approvalStrategy */
-            $approvalStrategy = new $approvalStrategyClass($this->personRepository());
+            $approvalStrategy = new $approvalStrategyClass($this->personRepository(), $this->historicityManager());
+            // todo could we get the strategy from the container so we can support autowiring?
             $approvers = $approvalStrategy->getApprovers($event->getSubject());
             if(!in_array($this->security()->getUser(), $approvers)){
                 $event->setBlocked(true, "You are not authorized to approve this form.");

@@ -44,6 +44,12 @@ class Theme implements LogSubjectInterface, HistoricalEntityInterface
     #[ORM\Column(type: 'boolean')]
     private bool $isOutsideGroup = false;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $adminEmail = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $labManagerEmail = null;
+
     public function __construct()
     {
         $this->themeAffiliations = new ArrayCollection();
@@ -195,6 +201,30 @@ class Theme implements LogSubjectInterface, HistoricalEntityInterface
     public function setIsOutsideGroup(bool $isOutsideGroup): self
     {
         $this->isOutsideGroup = $isOutsideGroup;
+
+        return $this;
+    }
+
+    public function getAdminEmail(): ?string
+    {
+        return $this->adminEmail;
+    }
+
+    public function setAdminEmail(?string $adminEmail): self
+    {
+        $this->adminEmail = $adminEmail;
+
+        return $this;
+    }
+
+    public function getLabManagerEmail(): ?string
+    {
+        return $this->labManagerEmail;
+    }
+
+    public function setLabManagerEmail(?string $labManagerEmail): self
+    {
+        $this->labManagerEmail = $labManagerEmail;
 
         return $this;
     }

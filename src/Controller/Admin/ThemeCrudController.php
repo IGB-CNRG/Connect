@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class ThemeCrudController extends AbstractCrudController
@@ -46,10 +47,12 @@ class ThemeCrudController extends AbstractCrudController
         return [
             TextField::new('shortName'),
             TextField::new('fullName'),
-            BooleanField::new('isNonResearch')->renderAsSwitch(false),
-            BooleanField::new('isOutsideGroup')->renderAsSwitch(false),
-            DateField::new('startedAt'),
+            BooleanField::new('isNonResearch')->onlyOnForms(),
+            BooleanField::new('isOutsideGroup')->onlyOnForms(),
+            DateField::new('startedAt')->onlyOnForms(),
             DateField::new('endedAt'),
+            EmailField::new('adminEmail'),
+            EmailField::new('labManagerEmail'),
         ];
     }
 }
