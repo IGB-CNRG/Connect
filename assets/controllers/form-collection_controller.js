@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -22,6 +22,8 @@ export default class extends Controller {
     }
 
     deleteRow(event) {
+        event.preventDefault();
+        if(confirm("Only delete entries if they were created by mistake. Otherwise, please set the end date appropriately.\n\nAre you sure you want to delete this entry? This cannot be undone."))
         $(event.target).closest('.collection-row').remove();
     }
 }
