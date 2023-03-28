@@ -8,14 +8,14 @@ namespace App\Workflow\Approval;
 
 use App\Entity\Person;
 use App\Repository\PersonRepository;
-use App\Service\HistoricityManager;
+use App\Settings\SettingManager;
 
 // TODO rename this to something more genericized
 class ReceptionApproval implements ApprovalStrategy
 {
     public function __construct(
         private readonly PersonRepository $personRepository,
-        private readonly HistoricityManager $historicityManager
+        private readonly SettingManager $settingManager,
     ) {}
 
     /**
@@ -28,6 +28,6 @@ class ReceptionApproval implements ApprovalStrategy
 
     public function getApprovalEmails(Person $person): array
     {
-        return ["kmillage@illinois.edu"]; // todo what should this be?
+        return [$this->settingManager->get('certificate_manager_email')];
     }
 }

@@ -32,7 +32,7 @@ class ApprovalGuardSubscriber implements EventSubscriberInterface, ServiceSubscr
             && in_array(ApprovalStrategy::class, class_implements($approvalStrategyClass))) {
             /** @var ApprovalStrategy $approvalStrategy */
             $approvalStrategy = new $approvalStrategyClass($this->personRepository(), $this->historicityManager());
-            // todo could we get the strategy from the container so we can support autowiring?
+
             $approvers = $approvalStrategy->getApprovers($event->getSubject());
             if(!in_array($this->security()->getUser(), $approvers)){
                 $event->setBlocked(true, "You are not authorized to approve this form.");

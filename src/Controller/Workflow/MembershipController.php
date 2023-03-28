@@ -53,8 +53,6 @@ class MembershipController extends AbstractController
         ActivityLogger $logger,
         WorkflowInterface $membershipStateMachine
     ): Response {
-        // todo so far this form does not support saving and continuing. do we want to?
-
         $roomAffiliation = new RoomAffiliation();
         $unitAffiliation = new UnitAffiliation();
         $themeAffiliation = new ThemeAffiliation();
@@ -73,7 +71,6 @@ class MembershipController extends AbstractController
 
             $em->flush();
 
-            // TODO redirect to some kind of workflow progress page? Or display workflow progress on view?
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
 
@@ -231,7 +228,7 @@ class MembershipController extends AbstractController
         }
 
         return $this->render('workflow/membership/upload_certs.html.twig', [
-            'form' => $form->createView(), //todo refactor to remove createView everywhere
+            'form' => $form->createView(),
         ]);
     }
 

@@ -9,11 +9,12 @@ namespace App\Workflow\Notification;
 use App\Entity\Person;
 use App\Entity\ThemeAffiliation;
 use App\Entity\WorkflowNotification;
-use App\Repository\PersonRepository;
 use App\Service\HistoricityManagerAware;
+use App\Settings\SettingManager;
 use App\Workflow\Approval\ApprovalStrategy;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\DependencyInjection\Attribute\TaggedLocator;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Workflow\Transition;
@@ -25,10 +26,21 @@ use Twig\Environment;
 
 class NotificationDispatcher implements ServiceSubscriberInterface
 {
-    use ServiceSubscriberTrait {
-        getSubscribedServices as traitSubscribedServices;
-    }
+    use ServiceSubscriberTrait;
+
+    //    {
+    //        getSubscribedServices as traitSubscribedServices;
+    //    }
     use HistoricityManagerAware;
+
+    private readonly ServiceLocator $approvalLocator;
+
+    public function __construct(
+        #[TaggedLocator(ApprovalStrategy::class)]
+        ServiceLocator $approvalLocator
+    ) {
+        $this->approvalLocator = $approvalLocator;
+    }
 
     /**
      * Sends the given notification about the given subject
@@ -52,6 +64,12 @@ class NotificationDispatcher implements ServiceSubscriberInterface
             'themes' => $themes,
         ]);
 
+        // Render a base notification template with the signature
+        $html = $this->twig()->render('workflow/notification/base.html.twig', [
+            'body' => $body,
+            'subject' => $notification->getSubject(),
+        ]);
+
         // Render the recipients
         $recipientTemplate = $this->twig()->createTemplate($notification->getRecipients());
         $recipients = $this->twig()->render($recipientTemplate, [
@@ -60,10 +78,11 @@ class NotificationDispatcher implements ServiceSubscriberInterface
             'member' => $subject->getEmail(),
         ]);
 
-        $email = (new Email())->from(
-                'do-not-reply@igb.illinois.edu'
-            ) // todo parameterize this and figure out what it should be
-            ->to($recipients)->subject($notification->getSubject())->html($body);
+        $email = (new Email())
+            ->from($this->settingManager()->get('notification_from'))
+            ->to($recipients)
+            ->subject($notification->getSubject())
+            ->html($html);
 
         // Send the notification to each recipient
         $this->mailer()->send($email);
@@ -78,12 +97,7 @@ class NotificationDispatcher implements ServiceSubscriberInterface
     {
         // get the workflow transition, get the metadata, hydrate the ApprovalStrategy, get the approvers, make a list of their emails
         $approvalEmails = '';
-        /** @var WorkflowInterface $membershipStateMachine */
-        try {
-            $membershipStateMachine = $this->container->get('state_machine.'.$notification->getWorkflowName());
-        } catch (NotFoundExceptionInterface|ContainerExceptionInterface $e) {
-            return $approvalEmails;
-        }
+        $membershipStateMachine = $this->membershipStateMachine();
         /** @var Transition $transition */
         $transition = current(
             array_filter(
@@ -102,7 +116,7 @@ class NotificationDispatcher implements ServiceSubscriberInterface
             && class_exists($approvalStrategyClass)
             && in_array(ApprovalStrategy::class, class_implements($approvalStrategyClass))) {
             /** @var ApprovalStrategy $approvalStrategy */
-            $approvalStrategy = new $approvalStrategyClass($this->personRepository());
+            $approvalStrategy = $this->approvalLocator->get($approvalStrategyClass);
             $approvalEmails = join(
                 ",",
                 $approvalStrategy->getApprovalEmails($subject)
@@ -126,15 +140,15 @@ class NotificationDispatcher implements ServiceSubscriberInterface
         return $this->container->get(__CLASS__.'::'.__FUNCTION__);
     }
 
-    #[SubscribedService]
-    private function personRepository(): PersonRepository
+    #[SubscribedService(attributes: new Autowire(service: 'state_machine.membership'))]
+    private function membershipStateMachine(): WorkflowInterface
     {
         return $this->container->get(__CLASS__.'::'.__FUNCTION__);
     }
 
-    public static function getSubscribedServices(): array
+    #[SubscribedService]
+    private function settingManager(): SettingManager
     {
-        return array_merge(static::traitSubscribedServices(), ['state_machine.membership' => WorkflowInterface::class]);
+        return $this->container->get(__CLASS__.'::'.__FUNCTION__);
     }
-
 }

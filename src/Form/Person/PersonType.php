@@ -107,7 +107,7 @@ class PersonType extends AbstractType
             ->add('unitAffiliations', HistoricalCollectionType::class, [
                 'entry_type' => UnitAffiliationType::class,
             ]);
-        // todo hide fields based on user roles
+        // show/hide fields based on user roles
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $builder
                 ->add('roles', ChoiceType::class, [

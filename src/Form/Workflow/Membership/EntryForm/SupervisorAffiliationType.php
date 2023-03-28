@@ -20,7 +20,6 @@ class SupervisorAffiliationType extends AbstractType
     {
         $builder
             // todo update this to work like the other supervisor dropdown after merge
-                // todo or should this be faculty only?
             ->add('supervisor', EntityType::class, [
                 'class' => Person::class,
                 'attr' => [

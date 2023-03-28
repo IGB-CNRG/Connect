@@ -7,16 +7,11 @@
 namespace App\Workflow\Approval;
 
 use App\Entity\Person;
-use App\Repository\PersonRepository;
-use App\Service\HistoricityManager;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
+#[AutoconfigureTag]
 interface ApprovalStrategy
 {
-    public function __construct(
-        PersonRepository $personRepository,
-        HistoricityManager $historicityManager
-    );
-
     /**
      * @param Person $person
      * @return Person[]

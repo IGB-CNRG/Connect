@@ -12,6 +12,7 @@ use App\Entity\KeyAffiliation;
 use App\Entity\MemberCategory;
 use App\Entity\Person;
 use App\Entity\Room;
+use App\Entity\Setting;
 use App\Entity\Theme;
 use App\Entity\Unit;
 use App\Entity\UnitAffiliation;
@@ -72,6 +73,7 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::linkToRoute('Back to CONNECT', 'fa fa-rotate-left', 'default');
+        yield MenuItem::linkToCrud('Settings', 'fa fa-gear', Setting::class);
         yield MenuItem::section('IGB');
         yield MenuItem::linkToCrud('All People', 'fas fa-list', Person::class);
         yield MenuItem::linkToCrud('New Units', 'fas fa-list', UnitAffiliation::class);
