@@ -2,45 +2,57 @@
 
 {% block title %}{{ parent() }} | Login{% endblock %}
 
+{% block body_class %}login-main{% endblock %}
+
 {% block content %}
     <div class="row">
-        <div class="col-sm-6 mb-sm-0 mb-3">
-            <form action="{{ path('login') }}" method="post">
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" id="username" name="_username" value="{{ last_username }}" class="form-control" autofocus="autofocus"
-                           aria-describedby="usernameHelp"/>
-                    <div id="usernameHelp" class="form-text">Please use your IGB username and password</div>
+        <div class="col-sm-9 col-md-6 offset-lg-1 mb-sm-0 mb-3 mt-0 mt-sm-3">
+            <div class="card login-card">
+                <div class="card-header">
+                    <h3>Login</h3>
                 </div>
 
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" id="password" name="_password" class="form-control"/>
-                    {% if error %}
-                        <div class="text-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-                    {% endif %}
-                </div>
+                <form action="{{ path('login') }}" method="post">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" id="username" name="_username" value="{{ last_username }}"
+                                   class="form-control" autofocus="autofocus"
+                                   aria-describedby="usernameHelp"/>
+                            <div id="usernameHelp" class="form-text">Please use your IGB username and password</div>
+                        </div>
 
-                {# If you want to control the URL the user is redirected to on success
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" id="password" name="_password" class="form-control"/>
+                            {% if error %}
+                                <div class="text-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                            {% endif %}
+                        </div>
+
+                        {# If you want to control the URL the user is redirected to on success
         <input type="hidden" name="_target_path" value="/account"/> #}
 
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
-
-                <button type="submit" class="btn btn-primary">Login</button>
-            </form>
-        </div>
-        <div class="col-sm-6">
-            <div style="height:400px;" class="placeholder-image">
-                <p style="font-size: 140%">CONNECT</p>
-                <p class="text-muted">
-                    Comprehensive<br/>
-                    ONline<br/>
-                    Network of<br/>
-                    Employees,<br/>
-                    Centers, and<br/>
-                    Themes
-                </p>
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </div>
+                </form>
             </div>
         </div>
+        {#        <div class="col-sm-6"> #}
+        {#            <div style="height:400px;" class="placeholder-image"> #}
+        {#                <p style="font-size: 140%">CONNECT</p> #}
+        {#                <p class="text-muted"> #}
+        {#                    Comprehensive<br/> #}
+        {#                    ONline<br/> #}
+        {#                    Network of<br/> #}
+        {#                    Employees,<br/> #}
+        {#                    Centers, and<br/> #}
+        {#                    Themes #}
+        {#                </p> #}
+        {#            </div> #}
+        {#        </div> #}
     </div>
 {% endblock %}

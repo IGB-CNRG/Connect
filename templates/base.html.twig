@@ -23,7 +23,7 @@
         {{ encore_entry_script_tags('app') }}
     {% endblock %}
 </head>
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-column h-100 {% block body_class %}{% endblock %}">
 <header>
     <nav class="navbar fixed-top navbar-dark navbar-expand-md bg-primary border-uiuc">
         <div class="container">
@@ -65,18 +65,19 @@
                         </li>
 
                         {% if is_granted('ROLE_ADMIN') %}
-                        <li class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" id="navbarReportsMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="fa fa-file-lines"></span> Reports
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarReportsMenuLink">
-                                <li>
-                                    <a class="dropdown-item" href="{{ path('report_unit_partners') }}">
-                                        Unit Partners
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" id="navbarReportsMenuLink" role="button"
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="fa fa-file-lines"></span> Reports
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarReportsMenuLink">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ path('report_unit_partners') }}">
+                                            Unit Partners
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
                         {% endif %}
 
                     </ul>
@@ -128,15 +129,14 @@
             {% endblock %}
         </div>
     </main>
-
-    {# Copyright footer #}
-    <footer class="copyright d-print-none mt-auto">
-        <div class="container d-flex">
-            <a href="#" class="me-2">About</a>
-            <a href="{{ path('copyright') }}" class="me-auto">Copyright</a>
-            <span>IGB CONNECT v0.1&beta;</span>
-        </div>
-    </footer>
 {% endblock %}
+{# Copyright footer #}
+<footer class="copyright d-print-none mt-auto">
+    <div class="container d-flex">
+        <a href="#" class="me-2">About</a>
+        <a href="{{ path('copyright') }}" class="me-auto">Copyright</a>
+        <span>IGB CONNECT v0.1&beta;</span>
+    </div>
+</footer>
 </body>
 </html>

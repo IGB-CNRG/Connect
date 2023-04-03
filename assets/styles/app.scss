@@ -18,6 +18,19 @@ $info: $teal;
 
 @import "progress-circular";
 
+.login-main {
+  background-image: url("../images/IGB.jpg");
+  background-size: cover;
+
+  .breadcrumb-bar {
+    box-shadow: none;
+  }
+}
+
+.login-card {
+  box-shadow: 3px 3px 8px rgba(0,0,0,0.3);
+}
+
 /* Footer */
 .copyright {
   background-color: $blue;
