@@ -127,6 +127,7 @@ class MembershipController extends AbstractController
     }
 
     #[Route('/membership/approve-entry-form/{slug}', name: 'membership_approveEntryForm')]
+    #[IsGranted('ROLE_APPROVER')]
     public function approveEntryForm(
         Person $person,
         Request $request,
@@ -140,7 +141,7 @@ class MembershipController extends AbstractController
         ])
             ->add('approve', SubmitType::class);
         $rejectionForm = $this->createForm(RejectType::class, $person, [
-            'reject_label' => "Return the form with the following note"
+            'reject_label' => "Return the form with the following note",
         ])
             ->add('return', SubmitType::class);
 
@@ -150,6 +151,7 @@ class MembershipController extends AbstractController
             $person->setMembershipNote(null);
             $logger->log($person, "Approved entry form");
             $em->flush();
+
             return $this->redirectToRoute('membership_approvals');
         }
 
@@ -158,6 +160,7 @@ class MembershipController extends AbstractController
             $membershipStateMachine->apply($person, Membership::TRANS_RETURN_ENTRY_FORM);
             $logger->log($person, sprintf("Returned entry form with reason \"%s\"", $person->getMembershipNote()));
             $em->flush();
+
             return $this->redirectToRoute('membership_approvals');
         }
 
@@ -191,6 +194,10 @@ class MembershipController extends AbstractController
         ActivityLogger $logger
     ): RedirectResponse|Response {
         // todo should we lock this down explicitly, or should we add an approvalstrategy for this step?
+        if ($membershipStateMachine->getMarking($this->getUser())->getPlaces()[0]
+            != Membership::PLACE_NEED_CERTIFICATES) {
+            throw $this->createAccessDeniedException();
+        }
         /** @var Person $person */
         $person = $this->getUser();
         if (!$membershipStateMachine->can($person, Membership::TRANS_UPLOAD_CERTIFICATES)) {
@@ -233,6 +240,7 @@ class MembershipController extends AbstractController
     }
 
     #[Route('/membership/approve-certificates/{slug}', name: 'membership_approveCertificates')]
+    #[IsGranted('ROLE_APPROVER')]
     public function approveCertificates(
         Person $person,
         Request $request,
@@ -246,7 +254,7 @@ class MembershipController extends AbstractController
         ])
             ->add('approve', SubmitType::class);
         $rejectionForm = $this->createForm(RejectType::class, $person, [
-            'reject_label' => "Return the certificates with the following note"
+            'reject_label' => "Return the certificates with the following note",
         ])
             ->add('return', SubmitType::class);
 
@@ -256,6 +264,7 @@ class MembershipController extends AbstractController
             $person->setMembershipNote(null);
             $logger->log($person, "Approved certificates");
             $em->flush();
+
             return $this->redirectToRoute('membership_approvals');
         }
 
@@ -264,8 +273,10 @@ class MembershipController extends AbstractController
             $membershipStateMachine->apply($person, Membership::TRANS_RETURN_CERTIFICATES);
             $logger->log($person, sprintf("Returned certificates with reason \"%s\"", $person->getMembershipNote()));
             $em->flush();
+
             return $this->redirectToRoute('membership_approvals');
         }
+
         return $this->render('workflow/membership/approve_certs.html.twig', [
             'person' => $person,
             'approvalForm' => $approvalForm->createView(),
@@ -282,7 +293,8 @@ class MembershipController extends AbstractController
         ActivityLogger $logger,
         WorkflowInterface $membershipStateMachine
     ): Response {
-        if (!($person === $this->getUser() || $membershipStateMachine->can($person, Membership::TRANS_FORCE_EXIT_FORM))) {
+        if (!($person === $this->getUser()
+              || $membershipStateMachine->can($person, Membership::TRANS_FORCE_EXIT_FORM))) {
             throw $this->createAccessDeniedException();
         }
 
@@ -302,7 +314,10 @@ class MembershipController extends AbstractController
                 $person->setExitForm($exitForm);
                 $membershipStateMachine->apply($person, Membership::TRANS_SUBMIT_EXIT_FORM);
             }
-            $logger->log($person, "Submitted exit form (end date {$exitForm->getEndedAt()->format('n/j/Y')}, exit reason \"{$exitForm->getExitReason()}\")");
+            $logger->log(
+                $person,
+                "Submitted exit form (end date {$exitForm->getEndedAt()->format('n/j/Y')}, exit reason \"{$exitForm->getExitReason()}\")"
+            );
             $entityManager->flush();
 
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
@@ -315,6 +330,7 @@ class MembershipController extends AbstractController
     }
 
     #[Route('/membership/exit-form/{slug}/approval', name: 'membership_approveExitForm')]
+    #[IsGranted('ROLE_APPROVER')]
     public function exitFormApproval(
         Person $person,
         Request $request,
@@ -342,7 +358,10 @@ class MembershipController extends AbstractController
             );
             $entityManager->persist($person);
             $membershipStateMachine->apply($person, Membership::TRANS_DEACTIVATE);
-            $logger->log($person, "Approved exit form (end date {$endedAt->format('n/j/Y')}, exit reason \"{$exitReason}\")");
+            $logger->log(
+                $person,
+                "Approved exit form (end date {$endedAt->format('n/j/Y')}, exit reason \"{$exitReason}\")"
+            );
             $entityManager->flush();
 
             return $this->redirectToRoute('membership_approvals');
