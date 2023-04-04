@@ -109,14 +109,16 @@
     </nav>
     {# breadcrumb #}
     <div class="breadcrumb-bar d-print-none">
-        <div class="container">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    {% block breadcrumb %}
-                    {% endblock %}
-                </ol>
-            </nav>
-        </div>
+        {% if block('breadcrumb')|trim is not empty %}
+            <div class="container pt-3">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        {% block breadcrumb %}
+                        {% endblock %}
+                    </ol>
+                </nav>
+            </div>
+        {% endif %}
     </div>
 </header>
 {% block body %}

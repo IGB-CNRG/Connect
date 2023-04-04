@@ -23,7 +23,7 @@ $info: $teal;
   background-size: cover;
 
   .breadcrumb-bar {
-    box-shadow: none;
+    box-shadow: 3px 3px 8px rgba(0,0,0,0.3);
   }
 }
 
@@ -78,7 +78,6 @@ $info: $teal;
 .breadcrumb-bar {
   border-bottom: 2px solid $gray-300;
   background-color: $gray-200;
-  padding-top: 1rem;
   margin-top: 3.5rem;
   margin-bottom: 1.5rem;
   box-shadow: 3px 3px 8px #eee;
