@@ -36,9 +36,9 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 {
     use TimestampableEntity;
 
-    const USER_ROLES = [
+    public const USER_ROLES = [
         'CONNECT Admin' => 'ROLE_ADMIN',
-//        'Key Manager' => 'ROLE_KEY_MANAGER',
+        //        'Key Manager' => 'ROLE_KEY_MANAGER',
         'Certificate Manager' => 'ROLE_CERTIFICATE_MANAGER',
     ];
 
@@ -92,16 +92,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[Loggable]
     #[Groups(['log:person'])]
     private ?string $officePhone = null;
-
-    #[ORM\Column(type: 'boolean')]
-    #[Loggable(displayName: 'DRS training')]
-    #[Groups(['log:person'])]
-    private bool $isDrsTrainingComplete = false;
-
-    #[ORM\Column(type: 'boolean')]
-    #[Loggable(displayName: 'IGB training')]
-    #[Groups(['log:person'])]
-    private bool $isIgbTrainingComplete = false;
 
     #[ORM\Column(type: 'date', nullable: true)]
     #[Loggable]
@@ -392,30 +382,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     public function setOfficePhone(?string $officePhone): self
     {
         $this->officePhone = $officePhone;
-
-        return $this;
-    }
-
-    public function getIsDrsTrainingComplete(): ?bool
-    {
-        return $this->isDrsTrainingComplete;
-    }
-
-    public function setIsDrsTrainingComplete(bool $isDrsTrainingComplete): self
-    {
-        $this->isDrsTrainingComplete = $isDrsTrainingComplete;
-
-        return $this;
-    }
-
-    public function getIsIgbTrainingComplete(): ?bool
-    {
-        return $this->isIgbTrainingComplete;
-    }
-
-    public function setIsIgbTrainingComplete(bool $isIgbTrainingComplete): self
-    {
-        $this->isIgbTrainingComplete = $isIgbTrainingComplete;
 
         return $this;
     }
