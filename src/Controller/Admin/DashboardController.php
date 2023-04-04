@@ -66,6 +66,7 @@ class DashboardController extends AbstractDashboardController
         return Dashboard::new()
             ->setTitle('CONNECT')
             ->generateRelativeUrls()
+            ->setFaviconPath("build/images/favicon.ico")
         ;
     }
 

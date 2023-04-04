@@ -30,6 +30,7 @@ class SettingCrudController extends AbstractCrudController
     {
         return parent::configureCrud($crud)
             ->setDefaultSort(['displayName'=>'ASC'])
+            ->setPageTitle(Crud::PAGE_INDEX, 'Settings')
             ;
     }
 
