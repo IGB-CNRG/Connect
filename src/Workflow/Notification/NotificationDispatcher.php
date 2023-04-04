@@ -123,6 +123,10 @@ class NotificationDispatcher implements ServiceSubscriberInterface
             );
         }
 
+        if(strlen($approvalEmails) === 0){
+            $approvalEmails = $this->settingManager()->get('fallback_approver_email');
+        }
+
         return $approvalEmails;
     }
 
