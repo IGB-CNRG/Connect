@@ -4,7 +4,7 @@
 {% block content %}
     {{ parent() }}
     <p>
-        An error occurred while trying to load this page. Please report this along with the following information:
+        An error occurred while trying to load this page. Please report this to <a href="mailto:help@igb.illinois.edu?subject=CONNECT error">help@igb.illinois.edu</a> along with the following information:
     </p>
     <p class="error-trace">
         {{ "now"|date("Y-m-d g:i:sa") }} {{ exception.file }} line {{ exception.line }}; "{{ exception.message }}"<br/>
