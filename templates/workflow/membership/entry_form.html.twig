@@ -15,11 +15,10 @@
         <div class="col-lg">{{ form_row(form.firstName) }}</div>
         <div class="col-lg">{{ form_row(form.lastName) }}</div>
     </div>
-    <div class="row">
-        {# todo add netid-check after merge #}
-        <div class="col-lg">{{ form_row(form.netid) }}</div>
+    <div class="row" data-controller="username-check netid-autofill" data-username-check-url-value="{{ path('api_person_username') }}">
+        <div class="col-lg">{{ form_row(form.netid, {'attr':{'data-action':'netid-autofill#updateFields change->username-check#checkIfUsernameUnique', 'data-username-check-target':'username'}}) }}</div>
         <div class="col-lg">{{ form_row(form.uin) }}</div>
-        <div class="col-lg">{{ form_row(form.email) }}</div>
+        <div class="col-lg">{{ form_row(form.email, {'attr':{'data-netid-autofill-target':'email'}}) }}</div>
     </div>
     <div class="row">
         <div class="col-lg">{{ form_row(form.roomAffiliations) }}</div>

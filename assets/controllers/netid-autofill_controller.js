@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -11,7 +11,11 @@ export default class extends Controller {
     static targets = ['username', 'email'];
 
     updateFields(event){
-        this.usernameTarget.value = event.target.value;
-        this.emailTarget.value = event.target.value + '@illinois.edu';
+        if(this.hasUsernameTarget) {
+            this.usernameTarget.value = event.target.value;
+        }
+        if(this.hasEmailTarget) {
+            this.emailTarget.value = event.target.value + '@illinois.edu';
+        }
     }
 }
