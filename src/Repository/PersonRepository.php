@@ -40,9 +40,48 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
             ->leftJoin('ta.theme', 't')
             ->leftJoin('p.roomAffiliations', 'ra')
             ->leftJoin('ra.room', 'r')
-            ->leftJoin('p.unitAffiliations', 'da')
-            ->leftJoin('da.unit', 'd')
-            ->select('p,ta,t,ra,r,da,d');
+            ->leftJoin('p.unitAffiliations', 'ua')
+            ->leftJoin('ua.unit', 'u')
+            ->select('p,ta,t,ra,r,ua,u');
+    }
+
+    public function createMembersOnlyIndexQueryBuilder(): QueryBuilder {
+        return $this->createIndexQueryBuilder()
+            ->andWhere('ta is not null')
+            ->andWhere('t.isOutsideGroup = false');
+    }
+
+
+    public function findCurrentForMembersOnlyIndex()
+    {
+        $qb = $this->createMembersOnlyIndexQueryBuilder();
+        $this->historicityManager()->addCurrentConstraint($qb, 'ta');
+
+        return $qb->getQuery()
+            ->getResult();
+    }
+
+    public function findAllForMembersOnlyIndex()
+    {
+        return $this->createMembersOnlyIndexQueryBuilder()
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findCurrentForIndex()
+    {
+        $qb = $this->createIndexQueryBuilder();
+        $this->historicityManager()->addCurrentConstraint($qb, 'ta');
+
+        return $qb->getQuery()
+            ->getResult();
+    }
+
+    public function findAllForIndex()
+    {
+        return $this->createIndexQueryBuilder()
+            ->getQuery()
+            ->getResult();
     }
 
     /**
@@ -54,23 +93,6 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
             ->andWhere('p.membershipStatus in (:places)')
             ->orderBy('p.lastName')
             ->setParameter('places', Membership::PLACES_NEEDING_APPROVAL)
-            ->getQuery()
-            ->getResult();
-    }
-
-
-    public function findCurrentForIndex()
-    {
-        $qb = $this->createIndexQueryBuilder()
-            ->andWhere('ta is not null');
-        $this->historicityManager()->addCurrentConstraint($qb, 'ta');
-        return $qb->getQuery()
-            ->getResult();
-    }
-
-    public function findAllForIndex()
-    {
-        return $this->createIndexQueryBuilder()
             ->getQuery()
             ->getResult();
     }
@@ -104,6 +126,7 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
             ->setParameter('theme', $theme)
             ->setParameter('role', "%$role->value%");
         $this->historicityManager()->addCurrentConstraint($qb, 'ta');
+
         return $qb->getQuery()
             ->getResult();
     }
@@ -115,6 +138,7 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
             ->andWhere('ta is not null')
             ->addOrderBy('p.lastName');
         $this->historicityManager()->addCurrentConstraint($qb, 'ta');
+
         return $qb;
     }
 
@@ -123,6 +147,6 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
         return $this->createDropdownQueryBuilder()
             ->leftJoin('ta.memberCategory', 'mc')
             ->andWhere('mc.id in (:categories)')
-            ->setParameter('categories', [1,2,3,5,6,10]); // todo this is really bad, how can we make this better?
+            ->setParameter('categories', [1, 2, 3, 5, 6, 10]); // todo this is really bad, how can we make this better?
     }
 }

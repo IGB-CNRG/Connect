@@ -25,7 +25,7 @@
 
 {% block breadcrumb %}
     <li class="breadcrumb-item" aria-current="page">
-        <a href="{{ path('person') }}">IGB Members</a>
+        <a href="{{ path('person_currentmembers') }}">IGB Members</a>
     </li>
     <li class="breadcrumb-item active" aria-current="page">
         <a href="{{ path('person_view', {'slug': person.slug}) }}">{{ person.name }}</a>

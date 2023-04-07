@@ -43,10 +43,10 @@
                     Faculty and MMG Faculty will be displayed.
                 </div>
 
-                {% if app.request.get('_route') != 'person_everyone' %}
+                {% if app.request.get('_route') != 'person_allmembers' %}
                     <div class="row mt-3">
                         <div class="col">
-                            <a class="btn btn-secondary" href="{{ path('person_everyone') }}">
+                            <a class="btn btn-secondary" href="{{ path('person_allmembers') }}">
                                 <span class="fas fa-eye"></span>
                                 See all members past and present
                             </a>
@@ -55,7 +55,7 @@
                 {% else %}
                     <div class="row mt-3">
                         <div class="col">
-                            <a class="btn btn-secondary" href="{{ path('person') }}">
+                            <a class="btn btn-secondary" href="{{ path('person_currentmembers') }}">
                                 <span class="fas fa-eye-slash"></span>
                                 See only current members
                             </a>

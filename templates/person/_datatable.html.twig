@@ -23,46 +23,30 @@
         <td>{{ person.email }}</td>
 
         {# Theme Affiliations Column #}
-        <td data-search="{%- if app.request.get('_route' == 'person_everyone') -%}
-                {%- for themeAffiliation in person.themeAffiliations -%}
-                    {%- block comboSearch -%}
+        <td data-search="{%- for themeAffiliation in person.themeAffiliations -%}
                         {{- themeAffiliation.theme.shortName -}},
                         {{- themeAffiliation.memberCategory.shortName??themeAffiliation.memberCategory.name -}},
                         {%- for role in themeAffiliation.themeRoles -%}
                             {{ role.displayName }}
                         {%- endfor -%}
                         ;
-                    {%- endblock -%}
-                {%- endfor -%}
-            {%- else -%}
-                {%- for themeAffiliation in person.themeAffiliations|current -%}
-                    {{ block('comboSearch') }}
-                {%- endfor -%}
-            {%- endif -%}">
-            {% if app.request.get('_route') == 'person_everyone' %}
-                {% for themeAffiliation in person.themeAffiliations %}
-                    {% block themes %}
-                        <div class="{{ html_classes('theme-row', {'text-muted': not themeAffiliation.isCurrent}) }}">
+                {%- endfor -%}">
+            {% for themeAffiliation in person.themeAffiliations %}
+                <div class="{{ html_classes('theme-row', {'text-muted': not themeAffiliation.isCurrent}) }}">
 
-                            <a href="{{ path('theme_view', {'shortName': themeAffiliation.theme.shortName}) }}">{{ themeAffiliation.theme.shortName }}</a>
+                    <a href="{{ path('theme_view', {'shortName': themeAffiliation.theme.shortName}) }}">{{ themeAffiliation.theme.shortName }}</a>
 
-                            {{ themeAffiliation.memberCategory.shortName??themeAffiliation.memberCategory.name }}
+                    {{ themeAffiliation.memberCategory.shortName??themeAffiliation.memberCategory.name }}
 
-                            {% if themeAffiliation.title %}
-                                ({{ themeAffiliation.title }})
-                            {% endif %}
-                            {% for role in themeAffiliation.themeRoles %}
-                                ({{ role.displayName }})
-                            {% endfor %}
+                    {% if themeAffiliation.title %}
+                        ({{ themeAffiliation.title }})
+                    {% endif %}
+                    {% for role in themeAffiliation.themeRoles %}
+                        ({{ role.displayName }})
+                    {% endfor %}
 
-                        </div>
-                    {% endblock %}
-                {% endfor %}
-            {% else %}
-                {% for themeAffiliation in person.themeAffiliations|current %}
-                    {{ block('themes') }}
-                {% endfor %}
-            {% endif %}
+                </div>
+            {% endfor %}
         </td>
 
         <td>

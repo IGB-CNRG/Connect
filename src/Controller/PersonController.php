@@ -36,22 +36,46 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class PersonController extends AbstractController
 {
     #[Route('/', name: 'default')]
-    #[Route('/person', name: 'person')]
-    public function index(PersonRepository $personRepository): Response
+    #[Route('/members', name: 'person_currentmembers')]
+    public function currentMembers(PersonRepository $personRepository): Response
     {
-        $people = $personRepository->findCurrentForIndex();
-        $advancedSearchForm = $this->createForm(AdvancedSearchType::class);
-        return $this->render('person/index.html.twig', [
-            'people' => $people,
-            'advancedSearchForm' => $advancedSearchForm->createView(),
-        ]);
+        $people = $personRepository->findCurrentForMembersOnlyIndex();
+
+        return $this->index($people);
     }
 
-    #[Route('/person/everyone', name: 'person_everyone', priority: 1)]
-    public function all(PersonRepository $personRepository): Response
+    #[Route('/members/all', name: 'person_allmembers')]
+    public function allMembers(PersonRepository $personRepository): Response
+    {
+        $people = $personRepository->findAllForMembersOnlyIndex();
+
+        return $this->index($people);
+    }
+
+    #[Route('/people', name: 'person_currentpeople')]
+    public function currentPeople(PersonRepository $personRepository): Response
+    {
+        $people = $personRepository->findCurrentForIndex();
+
+        return $this->index($people);
+    }
+
+    #[Route('/people/all', name: 'person_allpeople')]
+    public function allPeople(PersonRepository $personRepository): Response
     {
         $people = $personRepository->findAllForIndex();
+
+        return $this->index($people);
+    }
+
+    /**
+     * @param mixed $people
+     * @return Response
+     */
+    protected function index(mixed $people): Response
+    {
         $advancedSearchForm = $this->createForm(AdvancedSearchType::class);
+
         return $this->render('person/index.html.twig', [
             'people' => $people,
             'advancedSearchForm' => $advancedSearchForm->createView(),
@@ -86,6 +110,7 @@ class PersonController extends AbstractController
 
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
+
         return $this->render('person/edit.html.twig', [
             'person' => $person,
             'form' => $form->createView(),
@@ -316,6 +341,7 @@ class PersonController extends AbstractController
                     'slug' => '',
                 ]);
             }
+
             return $this->json([
                 'id' => $person->getId(),
                 'name' => $person->getName(),
