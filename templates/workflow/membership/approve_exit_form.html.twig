@@ -4,7 +4,10 @@
 
 {% block breadcrumb %}
     <li class="breadcrumb-item active" aria-current="page">
-        IGB Exit Form Approval
+        <a href="{{ path('membership_approvals', {'slug': person.slug}) }}">Membership Approvals</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        {{ person.name }} Exit Form
     </li>
 {% endblock %}
 
