@@ -137,7 +137,7 @@ class PersonController extends AbstractController
                 'class' => ThemeAffiliation::class,
                 'choices' => $historicityManager->getCurrentEntities($person->getThemeAffiliations())->toArray(),
             ])
-            ->add('Add', SubmitType::class);
+            ->add('add', SubmitType::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

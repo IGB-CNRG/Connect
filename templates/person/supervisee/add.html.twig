@@ -1,13 +1,18 @@
 {% extends 'base.html.twig' %}
+{% use 'form.html.twig' %}
 
 {% block content %}
+    <h2>Add Supervisee</h2>
     <div class="callout callout-info">
         <ul>
             <li>Please indicate the new supervisee for {{ person.name }}, and their start date.</li>
             <li>If no end date is known, leave blank. </li>
         </ul>
     </div>
-    {{ form_start(form) }}
+    {% form_theme form "form_themes/_inline-buttons-theme.html.twig" %}
+    {{ block('form_card') }}
+{% endblock %}
+{% block form_card_body %}
     <div class="row">
         <div class="col-lg">{{ form_row(form.supervisee) }}</div>
     </div>
@@ -15,8 +20,12 @@
         <div class="col-lg">{{ form_row(form.startedAt) }}</div>
         <div class="col-lg">{{ form_row(form.endedAt) }}</div>
     </div>
-    {{ form_end(form) }}
 {% endblock %}
+{% block form_card_footer %}
+    {{ form_row(form.save) }}
+{% endblock %}
+
+
 
 
 {% block title %}

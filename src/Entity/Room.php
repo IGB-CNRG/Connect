@@ -19,12 +19,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[UniqueEntity(['number'])]
 class Room implements LogSubjectInterface, HistoricalEntityInterface
 {
-    use TimestampableEntity, HistoricalEntityTrait;
+    use HistoricalEntityTrait;
+    use TimestampableEntity;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private ?int $id;
+    private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(['log:person'])]

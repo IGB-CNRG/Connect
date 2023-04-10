@@ -1,6 +1,8 @@
 {% extends 'base.html.twig' %}
+{% use 'form.html.twig' %}
 
 {% block content %}
+    <h2>End Theme Affiliation</h2>
     <div class="callout callout-info">
         Please enter the date upon which the IGB member's affiliation with this theme ended (or will end)
     </div>
@@ -33,9 +35,17 @@
             </div>
         </div>
         <div class="col">
-            {{ form(form) }}
+            {% form_theme form "form_themes/_inline-buttons-theme.html.twig" %}
+            {{ block('form_card') }}
         </div>
     </div>
+{% endblock %}
+{% block form_card_body %}
+    {{ form_row(form.endedAt) }}
+    {{ form_row(form.exitReason) }}
+{% endblock %}
+{% block form_card_footer %}
+    {{ form_row(form.save) }}
 {% endblock %}
 
 {% block title %}

@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% use 'form.html.twig' %}
 
 {% block title %}{{ parent() }} | Entry Form{% endblock %}
 
@@ -9,8 +10,11 @@
 {% endblock %}
 
 {% block content %}
-    {% form_theme form _self %}
-    {{ form_start(form) }}
+    <h2>IGB Entry Request Form</h2>
+    {% form_theme form _self "form_themes/_inline-buttons-theme.html.twig" %}
+    {{ block('form_card') }}
+{% endblock %}
+{% block form_card_body %}
     <div class="row">
         <div class="col-lg">{{ form_row(form.firstName) }}</div>
         <div class="col-lg">{{ form_row(form.lastName) }}</div>
@@ -24,9 +28,22 @@
         <div class="col-lg">{{ form_row(form.roomAffiliations) }}</div>
         <div class="col-lg">{{ form_row(form.officePhone) }}</div>
     </div>
-    {{ form_rest(form) }}
-    {{ form_end(form) }}
+    <div class="row">
+        <div class="col-lg">{{ form_row(form.officeWorkOnly) }}</div>
+    </div>
+    <div class="row">
+        <div class="col-lg">{{ form_row(form.unitAffiliations) }}</div>
+    </div>
+    <div class="row">
+        <div class="col-lg">{{ form_row(form.supervisorAffiliations) }}</div>
+    </div>
+    {{ form_row(form.themeAffiliations) }}
 {% endblock %}
+{% block form_card_footer %}
+    {{ form_row(form.submit) }}
+{% endblock %}
+
+
 
 {% block collection_row %}
     {{ block("form_widget") }}

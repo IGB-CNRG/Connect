@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block content %}
+    <h2>Edit '{{ person.name }}'</h2>
     <div class="callout callout-info">
         All fields are optional. {# todo better help text here #}
     </div>
@@ -40,15 +41,15 @@
                 <div class="card-header">Misc. Info</div>
                 <div class="card-body">
                     {{ form_row(form.imageFile) }}
-                    {{ form_row(form.isDrsTrainingComplete) }}
-                    {{ form_row(form.isIgbTrainingComplete) }}
                     {{ form_row(form.offerLetterDate) }}
                 </div>
             </div>
-            <div class="card mb-3">
+            <div class="card mb-3" data-controller="form-collection">
                 <div class="card-header">Themes</div>
-                <div class="card-body" data-controller="form-collection">
+                <div class="card-body">
                     {{ form_row(form.themeAffiliations) }}
+                </div>
+                <div class="card-footer">
                     <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd"
                             id="themeAffiliation-add">Add Theme
                     </button>
@@ -56,37 +57,45 @@
             </div>
         </div>
         <div class="col-lg">
-            <div class="card mb-3">
+            <div class="card mb-3" data-controller="form-collection">
                 <div class="card-header">Rooms</div>
-                <div class="card-body" data-controller="form-collection">
+                <div class="card-body">
                     {{ form_row(form.roomAffiliations) }}
+                </div>
+                <div class="card-footer">
                     <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd"
                             id="roomAffiliation-add">Add Room
                     </button>
                 </div>
             </div>
-            <div class="card mb-3">
+            <div class="card mb-3" data-controller="form-collection">
                 <div class="card-header">Units</div>
-                <div class="card-body" data-controller="form-collection">
+                <div class="card-body">
                     {{ form_row(form.unitAffiliations) }}
+                </div>
+                <div class="card-footer">
                     <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd"
                             id="unitAffiliation-add">Add Unit
                     </button>
                 </div>
             </div>
-            <div class="card mb-3">
+            <div class="card mb-3" data-controller="form-collection">
                 <div class="card-header">Supervisors</div>
-                <div class="card-body" data-controller="form-collection">
+                <div class="card-body">
                     {{ form_row(form.supervisorAffiliations) }}
+                </div>
+                <div class="card-footer">
                     <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd"
                             id="supervisorAffiliation-add">Add Supervisor
                     </button>
                 </div>
             </div>
-            <div class="card mb-3">
+            <div class="card mb-3" data-controller="form-collection">
                 <div class="card-header">Supervisees</div>
-                <div class="card-body" data-controller="form-collection">
+                <div class="card-body">
                     {{ form_row(form.superviseeAffiliations) }}
+                </div>
+                <div class="card-footer">
                     <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd"
                             id="superviseeAffiliation-add">Add Supervisee
                     </button>
@@ -104,11 +113,13 @@
     </div>
 
     {% if form.keyAffiliations is defined %}
-        <div class="card mb-3">
+        <div class="card mb-3" data-controller="form-collection">
             <div class="card-header">Keys</div>
-            <div class="card-body" data-controller="form-collection">
+            <div class="card-body">
                 {{ form_row(form.hasGivenKeyDeposit) }}
                 {{ form_row(form.keyAffiliations) }}
+            </div>
+            <div class="card-footer">
                 <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd"
                         id="keyAffiliation-add">Add Key
                 </button>

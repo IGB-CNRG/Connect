@@ -15,12 +15,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: RoomAffiliationRepository::class)]
 class RoomAffiliation implements HistoricalEntityInterface
 {
-    use TimestampableEntity, HistoricalEntityTrait;
+    use HistoricalEntityTrait;
+    use TimestampableEntity;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private ?int $id;
+    private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Room::class, inversedBy: 'roomAffiliations')]
     #[ORM\JoinColumn(nullable: false)]

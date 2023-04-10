@@ -1,0 +1,12 @@
+{% block form_card %}
+    <div class="card">
+        {{ form_start(form) }}
+        <div class="card-body">
+            {{ block('form_card_body') }}
+        </div>
+        <div class="card-footer">
+            {{ block('form_card_footer') }}
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

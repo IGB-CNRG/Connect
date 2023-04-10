@@ -1,12 +1,25 @@
 {% extends 'base.html.twig' %}
+{% use 'form.html.twig' %}
 
 {% block content %}
-
-{{ form(form) }}
+    <h2>Upload Document</h2>
+    {% form_theme form "form_themes/_inline-buttons-theme.html.twig" %}
+    {{ block('form_card') }}
 {% endblock %}
 
+{% block form_card_body %}
+    {{ form_row(form.file) }}
+    {{ form_row(form.type) }}
+    {{ form_row(form.displayName) }}
+{% endblock %}
+{% block form_card_footer %}
+    {{ form_row(form.upload) }}
+{% endblock %}
+
+
+
 {% block title %}
-{{ parent() }} | Upload Document
+    {{ parent() }} | Upload Document
 {% endblock %}
 
 {% block breadcrumb %}

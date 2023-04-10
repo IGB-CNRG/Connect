@@ -64,14 +64,6 @@ class PersonType extends AbstractType
             ->add('officePhone', TextType::class, [
                 'required' => false,
             ])
-            ->add('isDrsTrainingComplete', CheckboxType::class, [
-                'required' => false,
-                'label' => 'DRS Training Complete',
-            ])
-            ->add('isIgbTrainingComplete', CheckboxType::class, [
-                'required' => false,
-                'label' => 'IGB Training Complete',
-            ])
             ->add('offerLetterDate', DateType::class, [
                 'required' => false,
                 'widget' => 'single_text',

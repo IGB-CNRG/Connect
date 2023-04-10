@@ -194,7 +194,7 @@ class MembershipController extends AbstractController
         ActivityLogger $logger
     ): RedirectResponse|Response {
         // todo should we lock this down explicitly, or should we add an approvalstrategy for this step?
-        if ($membershipStateMachine->getMarking($this->getUser())->getPlaces()[0]
+        if (array_keys($membershipStateMachine->getMarking($this->getUser())->getPlaces())[0]
             != Membership::PLACE_NEED_CERTIFICATES) {
             throw $this->createAccessDeniedException();
         }
@@ -325,7 +325,7 @@ class MembershipController extends AbstractController
 
         return $this->render('workflow/membership/exit_form.html.twig', [
             'person' => $person,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -344,7 +344,7 @@ class MembershipController extends AbstractController
             ['endedAt' => $person->getExitForm()->getEndedAt()],
             ['approve_label' => 'I approve this exit form']
         )
-            ->add('Approve', SubmitType::class);
+            ->add('approve', SubmitType::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

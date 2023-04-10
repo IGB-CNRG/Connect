@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% use 'form.html.twig' %}
 
 {% block title %}{{ parent() }} | Exit Form{% endblock %}
 
@@ -22,7 +23,17 @@
             please click the Exit Form button on their profile page.
         </div>
     {% endif %}
+    {% form_theme form "form_themes/_inline-buttons-theme.html.twig" %}
+    {{ block('form_card') }}
+{% endblock %}
+
+{% block form_card_body %}
     <p class="approval-label">Name</p>
     <p class="approval-field">{{ person }}</p>
-    {{ form(form) }}
+    {{ form_row(form.exitReason) }}
+    {{ form_row(form.endedAt) }}
+{% endblock %}
+
+{% block form_card_footer %}
+    {{ form_row(form.submit) }}
 {% endblock %}
