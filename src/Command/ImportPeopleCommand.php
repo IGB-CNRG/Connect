@@ -22,7 +22,9 @@ use App\Repository\PersonRepository;
 use App\Repository\RoomRepository;
 use App\Repository\ThemeRepository;
 use App\Repository\UnitRepository;
+use App\Workflow\Membership;
 use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use LogicException;
@@ -102,22 +104,22 @@ class ImportPeopleCommand extends Command
                 $supervisorAffiliation = new SupervisorAffiliation();
                 $peopleById[$user['user_id']]->addSupervisorAffiliation($supervisorAffiliation);
                 $peopleById[$user['supervisor_id']]->addSuperviseeAffiliation($supervisorAffiliation);
-                $supervisorAffiliation->setStartedAt($peopleById[$user['user_id']]->getStartedAt())->setEndedAt(
-                    $peopleById[$user['user_id']]->getEndedAt()
-                );
+                $supervisorAffiliation
+                    ->setStartedAt($this->getPersonStartDate($peopleById[$user['user_id']]))
+                    ->setEndedAt($this->getPersonEndDate($peopleById[$user['user_id']]));
             }
         }
     }
 
     /**
      * @param Unit[] $unitsById
-     * @param array $otherUnitsById
+     * @param array $otherDepartmentsById
      * @param ThemeAffiliation[][] $validThemeAffiliations
      * @return array{Person[], array}
      */
     protected function getPeople(
         array $unitsById,
-        array $otherUnitsById,
+        array $otherDepartmentsById,
         array $validThemeAffiliations
     ): array {
         $peopleById = [];
@@ -147,8 +149,7 @@ class ImportPeopleCommand extends Command
                             ->setFirstName($user['first_name'])
                             ->setLastName($user['last_name'])
                             ->setEmail($user['email'])
-                            ->setIsIgbTrainingComplete($user['safety_training'] == 1)
-                            ->setIsDrsTrainingComplete($user['safety_training'] == 1);
+                            ->setMembershipUpdatedAt(new DateTimeImmutable());
                         if ($user['netid']) {
                             $person
                                 ->setNetid($user['netid'])
@@ -165,7 +166,7 @@ class ImportPeopleCommand extends Command
                                     ->setUnit($unitsById[$user['dept_id']]);
                             } else {
                                 $unitAffiliation->setOtherUnit(
-                                    $otherUnitsById[$user['dept_id']]['name']
+                                    $otherDepartmentsById[$user['dept_id']]['name']
                                 );
                             }
                             $person->addUnitAffiliation($unitAffiliation);
@@ -195,6 +196,12 @@ class ImportPeopleCommand extends Command
                         foreach ($validThemeAffiliations[$user['user_id']] as $themeAffiliation) {
                             $person->addThemeAffiliation($themeAffiliation);
                             $this->em->persist($themeAffiliation);
+                        }
+
+                        if($person->getIsCurrent()){
+                            $person->setMembershipStatus(Membership::PLACE_ACTIVE);
+                        } else {
+                            $person->setMembershipStatus(Membership::PLACE_INACTIVE);
                         }
 
                         // create an initial log entry
@@ -359,20 +366,20 @@ class ImportPeopleCommand extends Command
      */
     protected function parseUnits(): array
     {
-        $unit_sql = "select * from unit";
-        $units = $this->db->query($unit_sql);
+        $department_sql = "select * from department";
+        $departments = $this->db->query($department_sql);
         $unitsById = [];
-        $peopleUnitsById = [];
-        foreach ($units as $unit) {
-            $peopleUnitsById[$unit['dept_id']] = $unit;
+        $peopleDepartmentsById = [];
+        foreach ($departments as $department) {
+            $peopleDepartmentsById[$department['dept_id']] = $department;
             $foundUnit = $this->unitRepository->findOneBy(
-                ['name' => $this->translateUnit($unit['name'])]
+                ['name' => $this->translateUnit($department['name'])]
             );
             if ($foundUnit) {
-                $unitsById[$unit['dept_id']] = $foundUnit;
+                $unitsById[$department['dept_id']] = $foundUnit;
             }
         }
-        return array($unitsById, $peopleUnitsById);
+        return array($unitsById, $peopleDepartmentsById);
     }
 
     /**
@@ -412,8 +419,8 @@ class ImportPeopleCommand extends Command
                             ->setRoom($room);
                         $peopleById[$user_room['user_id']]->addRoomAffiliation($roomAffiliation);
 
-                        $roomAffiliation->setStartedAt($peopleById[$user_room['user_id']]->getStartedAt())
-                            ->setEndedAt($peopleById[$user_room['user_id']]->getEndedAt());
+                        $roomAffiliation->setStartedAt($this->getPersonStartDate($peopleById[$user_room['user_id']]))
+                            ->setEndedAt($this->getPersonEndDate($peopleById[$user_room['user_id']]));
                     }
                 }
             }
@@ -527,7 +534,7 @@ class ImportPeopleCommand extends Command
         // Parse units
         $progress->setMessage("Correlating units");
         $progress->display();
-        [$unitsById, $otherUnitsById] = $this->parseUnits();
+        [$unitsById, $otherDepartmentsById] = $this->parseUnits();
         $progress->advance();
 
         // Gather theme affiliations (w/ reasonable dates)
@@ -544,7 +551,7 @@ class ImportPeopleCommand extends Command
         $progress->display();
         [$peopleById, $usersById] = $this->getPeople(
             $unitsById,
-            $otherUnitsById,
+            $otherDepartmentsById,
             $validThemeAffiliations
         );
         $progress->advance();
@@ -611,5 +618,43 @@ class ImportPeopleCommand extends Command
             }
         } catch (Exception) {
         }
+    }
+
+    private function getPersonStartDate(Person $person)
+    {
+        if ($person->getThemeAffiliations()->count() > 0) {
+            return array_reduce(
+                $person->getThemeAffiliations()->toArray(),
+                function (?DateTimeInterface $carry, ThemeAffiliation $themeAffiliation) {
+                    if ($carry === null || $themeAffiliation->getStartedAt() > $carry) {
+                        return $carry;
+                    }
+
+                    return $themeAffiliation->getStartedAt();
+                },
+                $person->getThemeAffiliations()->toArray()[0]->getStartedAt()
+            );
+        }
+
+        return null;
+    }
+    private function getPersonEndDate(Person $person)
+    {
+        if ($person->getThemeAffiliations()->count() > 0) {
+            return array_reduce(
+                $person->getThemeAffiliations()->toArray(),
+                function (?DateTimeInterface $carry, ThemeAffiliation $themeAffiliation) {
+                    if ($themeAffiliation->getEndedAt() !== null && ( $carry === null
+                        || $themeAffiliation->getEndedAt() < $carry )) {
+                        return $carry;
+                    }
+
+                    return $themeAffiliation->getEndedAt();
+                },
+                $person->getThemeAffiliations()->toArray()[0]->getEndedAt()
+            );
+        }
+
+        return null;
     }
 }

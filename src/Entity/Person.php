@@ -32,7 +32,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[Vich\Uploadable]
 #[UniqueEntity('username', 'A person with this username already exists')]
 class Person implements UserInterface, PasswordAuthenticatedUserInterface, Serializable, LogSubjectInterface
-// TODO Is it a bug that we have to implement PasswordAuthenticatedUserInterface even though this entity doesn't handle authentication?
+    // TODO Is it a bug that we have to implement PasswordAuthenticatedUserInterface even though this entity doesn't handle authentication?
 {
     use TimestampableEntity;
 
@@ -227,9 +227,10 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     public function getName(): string
     {
         if ($this->getPreferredFirstName()) {
-            return $this->getPreferredFirstName() . ' ' . $this->getLastName();
+            return $this->getPreferredFirstName().' '.$this->getLastName();
         }
-        return $this->getFirstName() . ' ' . $this->getLastName(); // TODO this should be a little smarter
+
+        return $this->getFirstName().' '.$this->getLastName(); // TODO this should be a little smarter
     }
 
     public function getIsCurrent(): bool
@@ -851,40 +852,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         $this->otherAddress = $otherAddress;
 
         return $this;
-    }
-
-    public function getStartedAt(): ?DateTimeInterface
-    {
-        if ($this->getThemeAffiliations()->count() > 0) {
-            return array_reduce(
-                $this->getThemeAffiliations()->toArray(),
-                function (?DateTimeInterface $carry, ThemeAffiliation $themeAffiliation) {
-                    if ($carry === null || $themeAffiliation->getStartedAt() > $carry) {
-                        return $carry;
-                    }
-                    return $themeAffiliation->getStartedAt();
-                },
-                $this->getThemeAffiliations()->toArray()[0]->getStartedAt()
-            );
-        }
-        return null;
-    }
-
-    public function getEndedAt(): ?DateTimeInterface
-    {
-        if ($this->getThemeAffiliations()->count() > 0) {
-            return array_reduce(
-                $this->getThemeAffiliations()->toArray(),
-                function (?DateTimeInterface $carry, ThemeAffiliation $themeAffiliation) {
-                    if ($carry === null || $themeAffiliation->getEndedAt() < $carry) {
-                        return $carry;
-                    }
-                    return $themeAffiliation->getEndedAt();
-                },
-                $this->getThemeAffiliations()->toArray()[0]->getEndedAt()
-            );
-        }
-        return null;
     }
 
     public function getMemberCategories(): array

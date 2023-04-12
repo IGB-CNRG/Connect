@@ -57,7 +57,8 @@
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/html-extra": "^3.4",
         "twig/twig": "^2.12|^3.0",
-        "vich/uploader-bundle": "^1.19"
+        "vich/uploader-bundle": "^2.1",
+      "ext-yaml": "*"
     },
     "config": {
         "allow-plugins": {

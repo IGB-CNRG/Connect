@@ -1,12 +1,13 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
 namespace App\Command;
 
 use App\Entity\Person;
+use App\Workflow\Membership;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -31,13 +32,16 @@ class FirstRunCommand extends Command
     {
         $this
             ->addArgument('username', InputArgument::REQUIRED, 'Admin username to create')
-        ;
+            ->addArgument('firstName', InputArgument::REQUIRED, 'Admin first name')
+            ->addArgument('lastName', InputArgument::REQUIRED, 'Admin last name');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $username = $input->getArgument('username');
+        $firstname = $input->getArgument('firstName');
+        $lastname = $input->getArgument('lastName');
 
         $helper = $this->getHelper('question');
         $question = new ConfirmationQuestion(
@@ -53,7 +57,11 @@ class FirstRunCommand extends Command
         // Create admin user
         $user = (new Person())
             ->setUsername($username)
-            ->setRoles(['ROLE_ADMIN']);
+            ->setFirstName($firstname)
+            ->setLastName($lastname)
+            ->setRoles(['ROLE_ADMIN'])
+            ->setMembershipStatus(Membership::PLACE_ACTIVE)
+            ->setMembershipUpdatedAt(new \DateTimeImmutable());
         $this->em->persist($user);
 
         $this->em->flush();

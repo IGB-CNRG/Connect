@@ -14,6 +14,7 @@ use App\Repository\MemberCategoryRepository;
 use App\Repository\PersonRepository;
 use App\Repository\ThemeRepository;
 use App\Repository\UnitRepository;
+use App\Workflow\Membership;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -33,7 +34,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class ImportFacultySpreadsheetCommand extends Command
 {
-    const AFFILIATE_COLUMNS = 5;
+    const AFFILIATE_COLUMNS = 4;
     const FACULTY_COLUMNS = 3;
     const FACULTY_COLUMN = 'U';
     const AFFILIATE_COLUMN = 'AD';
@@ -130,7 +131,8 @@ class ImportFacultySpreadsheetCommand extends Command
                     ->setLastName($lastName)
                     ->setMiddleInitial($middleInitial)
                     ->setEmail($email)
-                    ->setNetid($netid);
+                    ->setNetid($netid)
+                ->setMembershipUpdatedAt(new DateTimeImmutable());
                 if ($isUofI) {
                     $unitAffiliation = $this->getUnitAffiliation($unitName);
                     $person->addUnitAffiliation($unitAffiliation);
@@ -140,6 +142,11 @@ class ImportFacultySpreadsheetCommand extends Command
                     if ($themeAffiliation) {
                         $person->addThemeAffiliation($themeAffiliation);
                     }
+                }
+                if($person->getIsCurrent()){
+                    $person->setMembershipStatus(Membership::PLACE_ACTIVE);
+                } else {
+                    $person->setMembershipStatus(Membership::PLACE_INACTIVE);
                 }
             } else {
                 $found++;

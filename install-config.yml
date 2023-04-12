@@ -1,0 +1,14 @@
+first-run:
+  username: username
+  first-name: User
+  last-name: Name
+import-sql: filename.sql
+import-people:
+  host: 127.0.0.1
+  port: 3306
+  database: people
+  username: people
+  password: ChangeMe!
+import-faculty:
+  file: Faculty.xlsx
+  rows: 444
