@@ -202,6 +202,13 @@ class ImportPeopleCommand extends Command
                             $person->setMembershipStatus(Membership::PLACE_ACTIVE);
                         } else {
                             $person->setMembershipStatus(Membership::PLACE_INACTIVE);
+                            // Set exit reasons
+                            $exitReason = $user['reason_leaving'];
+                            foreach($person->getThemeAffiliations() as $themeAffiliation){
+                                if(!$themeAffiliation->isCurrent()){
+                                    $themeAffiliation->setExitReason($exitReason);
+                                }
+                            }
                         }
 
                         // create an initial log entry
