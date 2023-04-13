@@ -237,7 +237,7 @@
                         <tr>
                             <th>Membership status</th>
                             <td>
-                                {{ workflow_place_label(person)|trans }}
+                                {{ workflow_place_label(person)|trans }} since {{ person.membershipUpdatedAt|date('n/j/y') }}
                             </td>
                         </tr>
                     </table>
