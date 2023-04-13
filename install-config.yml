@@ -1,14 +1,21 @@
-first-run:
+# Defines an admin user that will be created
+initialize-admin-user:
   username: username
   first-name: User
   last-name: Name
+
+# Defines an SQL file with initial settings that will be imported
 import-sql: filename.sql
+
+# Defines connection parameters for the IGB People Database
 import-people:
   host: 127.0.0.1
   port: 3306
   database: people
   username: people
   password: ChangeMe!
+
+# Defines the path to the faculty master list spreadsheet, and its length
 import-faculty:
   file: Faculty.xlsx
   rows: 444

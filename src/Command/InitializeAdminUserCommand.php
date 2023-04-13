@@ -18,10 +18,10 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'app:first-run',
-    description: 'First-run setup',
+    name: 'app:initialize-admin-user',
+    description: 'Create an admin user',
 )]
-class FirstRunCommand extends Command
+class InitializeAdminUserCommand extends Command
 {
     public function __construct(private readonly EntityManagerInterface $em, string $name = null)
     {

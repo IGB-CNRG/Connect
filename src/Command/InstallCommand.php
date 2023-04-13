@@ -20,7 +20,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'app:install',
-    description: 'Add a short description for your command',
+    description: 'Run all installation commands',
 )]
 class InstallCommand extends Command
 {
@@ -35,7 +35,7 @@ class InstallCommand extends Command
     {
         $this
             ->addArgument('config', InputArgument::REQUIRED, 'Config file')
-            ->addOption('skip-to', 's', InputOption::VALUE_OPTIONAL, 'Specify a step to skip to (create-database, first-run, import-sql, import-people, import-faculty)', null);
+            ->addOption('skip-to', 's', InputOption::VALUE_OPTIONAL, 'Specify a step to skip to (create-database, initialize-admin-user, import-sql, import-people, import-faculty)', null);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -47,7 +47,7 @@ class InstallCommand extends Command
         $skipImportPeople = $skipImportFaculty || $skipTo === 'import-faculty';
         $skipImportSql = $skipImportPeople || $skipTo === 'import-people';
         $skipFirstRun = $skipImportSql || $skipTo === 'import-sql';
-        $skipCreateDatabase = $skipFirstRun || $skipTo === 'first-run';
+        $skipCreateDatabase = $skipFirstRun || $skipTo === 'initialize-admin-user';
         $skipPrecheck = $skipCreateDatabase || $skipTo === 'create-database';
 
         $config = yaml_parse_file($configPath);
@@ -79,12 +79,12 @@ class InstallCommand extends Command
         }
 
         if(!$skipFirstRun) {
-            $io->title('Running first-run command');
-            $firstRunCommand = $this->getApplication()->find('app:first-run');
+            $io->title('Running initialize-admin-user command');
+            $firstRunCommand = $this->getApplication()->find('app:initialize-admin-user');
             $firstRunInput = new ArrayInput([
-                'username' => $config['first-run']['username'],
-                'firstName' => $config['first-run']['first-name'],
-                'lastName' => $config['first-run']['last-name'],
+                'username' => $config['initialize-admin-user']['username'],
+                'firstName' => $config['initialize-admin-user']['first-name'],
+                'lastName' => $config['initialize-admin-user']['last-name'],
             ]);
             $firstRunCommand->run($firstRunInput, $output);
         }

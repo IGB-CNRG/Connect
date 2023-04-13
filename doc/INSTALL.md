@@ -14,6 +14,7 @@ CONNECT requires PHP 8.1+, as well as the following extensions:
 - ldap
 - pdo
 - posix
+- yaml
 - zip
 
 CONNECT also requires `npm` and `yarn`.
@@ -48,8 +49,7 @@ Now, install the required composer packages:
 symfony composer install
 ```
 
-Run the following command to check whether all Symfony installation requirements
-are met:
+Run the following command to check whether all Symfony installation requirements are met:
 
 ```shell
 symfony check:requirements
@@ -57,13 +57,10 @@ symfony check:requirements
 
 If any requirements are not met, install them before proceeding.
 
-Now, initialize the database:
+## Frontend dependencies
 
-```shell
-symfony console doctrine:migrations:migrate
-```
-
-Finally, install and build the frontend dependencies:
+The frontend (javascript/CSS) dependencies are managed and built with yarn. To install and build the frontend
+dependencies:
 
 ```shell
 yarn install
@@ -75,22 +72,71 @@ production server.
 
 ## Data import
 
-### Admin account creation
+### Quick install
+
+A single installation command is provided to run through the remaining installation steps. These steps will be outlined
+below if you want or need to run them separately.
+
+A configuration file is required to run the installation command. A sample configuration is provided
+in `install-config.yml`
+
+```yaml
+# Defines an admin user that will be created
+initialize-admin-user:
+  username: username
+  first-name: User
+  last-name: Name
+
+# Defines an SQL file with initial settings that will be imported
+import-sql: filename.sql
+
+# Defines connection parameters for the IGB People Database
+import-people:
+  host: 127.0.0.1
+  port: 3306
+  database: people
+  username: people
+  password: ChangeMe!
+
+# Defines the path to the faculty master list spreadsheet, and its length
+import-faculty:
+  file: Faculty.xlsx
+  rows: 444
+```
+
+This file defines the parameters that are passed to each install step. Copy this file to `install-config.local.yml` and
+update the fields to suit your installation. Finally, run the following command and follow the prompts to complete installation:
+
+```shell
+symfony console app:install install-config.local.yml
+```
+
+When the command finishes, installation is complete. You do **not** need to continue to the next section.
+
+### Manual install
+
+Initialize the database:
+
+```shell
+symfony console doctrine:migrations:migrate
+```
+
+#### Admin account creation
 
 Use the following console command to create an initial admin user.
 
 ```shell
-symfony console app:first-run <USERNAME>
+symfony console app:initialize-admin-user <USERNAME> <FIRSTNAME> <LASTNAME>
 ```
 
 You will use this IGB username and password to log in to CONNECT.
 
-### Intial settings
+#### Intial settings
 
-Units, Keys, Member Categories, Rooms, and Themes are set manually. You can either import these from an
-existing installation of CONNECT or enter them manually in EasyAdmin.
+Units, Keys, Member Categories, Rooms, and Themes are set manually. You can either import these from an existing
+installation of CONNECT or enter them manually in EasyAdmin.
 
-### People database import
+#### People database import
 
 First, copy the `users` directory from the people database images folder into a folder called `people_images`.
 
@@ -105,7 +151,7 @@ symfony console app:import-people -p <MYSQL_PASSWORD>
 Note that this command will ignore any IGB members whose details cannot be determined from the People database, such as
 those members who have left the IGB and are marked as "alumnus."
 
-### Faculty/Affiliate master list import
+#### Faculty/Affiliate master list import
 
 Use the following console command to create or update all faculty and affiliates from the master list spreadsheet.
 Replace SPREADSHEET_PATH with the path to the master list spreadsheet, and HIGHEST_ROW with the number of the last row
@@ -115,7 +161,7 @@ in the spreadsheet.
 symfony console app:import-faculty-spreadsheet <SPREADSHEET_PATH> <HIGHEST_ROW>
 ```
 
-### Key assignment import
+#### Key assignment import
 
 Use the following console command to import the list of key assignments:
 
