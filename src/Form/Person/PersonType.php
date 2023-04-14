@@ -14,7 +14,6 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -64,11 +63,6 @@ class PersonType extends AbstractType
             ->add('officePhone', TextType::class, [
                 'required' => false,
             ])
-            ->add('offerLetterDate', DateType::class, [
-                'required' => false,
-                'widget' => 'single_text',
-                'label' => 'Offer Letter Date',
-            ])// todo only display if member is faculty/affiliate?
             ->add('preferredAddress', EnumType::class, [
                 'class' => PreferredAddress::class,
             ])

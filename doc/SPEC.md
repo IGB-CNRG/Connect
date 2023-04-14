@@ -424,7 +424,6 @@ in other projects in CNRG, and is the built-in template engine in Symfony.
 - officeBuilding (OneToMany, Building)
 - otherAddress (text)
 - preferredAddress (Boolean)
-- offerLetterDate (date)
 - keyDeposit (Boolean)
 - unitAffiliations (OneToMany, UnitAffiliation)
 - themeAffiliations (OneToMany, ThemeAffiliation)

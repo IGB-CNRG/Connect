@@ -13,7 +13,6 @@ use App\Log\LogSubjectInterface;
 use App\Repository\PersonRepository;
 use App\Workflow\Membership;
 use DateTimeImmutable;
-use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -92,11 +91,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[Loggable]
     #[Groups(['log:person'])]
     private ?string $officePhone = null;
-
-    #[ORM\Column(type: 'date', nullable: true)]
-    #[Loggable]
-    #[Groups(['log:person'])]
-    private ?DateTimeInterface $offerLetterDate;
 
     #[ORM\Column(type: 'boolean')]
     #[Loggable(displayName: 'key deposit')]
@@ -196,7 +190,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     #[ORM\Column]
     #[Groups(['log:person'])]
-    private ?\DateTimeImmutable $membershipUpdatedAt = null;
+    private ?DateTimeImmutable $membershipUpdatedAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $membershipNote = null;
@@ -383,18 +377,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     public function setOfficePhone(?string $officePhone): self
     {
         $this->officePhone = $officePhone;
-
-        return $this;
-    }
-
-    public function getOfferLetterDate(): ?DateTimeInterface
-    {
-        return $this->offerLetterDate;
-    }
-
-    public function setOfferLetterDate(?DateTimeInterface $offerLetterDate): self
-    {
-        $this->offerLetterDate = $offerLetterDate;
 
         return $this;
     }
@@ -888,12 +870,12 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         return $this;
     }
 
-    public function getMembershipUpdatedAt(): ?\DateTimeImmutable
+    public function getMembershipUpdatedAt(): ?DateTimeImmutable
     {
         return $this->membershipUpdatedAt;
     }
 
-    public function setMembershipUpdatedAt(\DateTimeImmutable $membershipUpdatedAt): self
+    public function setMembershipUpdatedAt(DateTimeImmutable $membershipUpdatedAt): self
     {
         $this->membershipUpdatedAt = $membershipUpdatedAt;
 
