@@ -20,8 +20,8 @@ class ExitFormApprovalType extends ApproveType
                 'choices' => [
                     'Resigned' => 'Resigned',
                     'Graduated' => 'Graduated',
-                    'Terminated' => 'Terminated',
-                    'Let go' => 'Let go',
+//                    'Terminated' => 'Terminated',
+//                    'Let go' => 'Let go',
                     'Retired' => 'Retired',
                     'Deceased' => 'Deceased',
                 ],
