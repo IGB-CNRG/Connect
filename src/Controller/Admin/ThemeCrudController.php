@@ -38,7 +38,8 @@ class ThemeCrudController extends AbstractCrudController
     {
         return $crud
             ->setEntityLabelInSingular('Theme')
-            ->setEntityLabelInPlural('Themes')//            ->setEntityPermission('ROLE_ADMIN')
+            ->setEntityLabelInPlural('Themes')
+            ->setDefaultSort(['shortName' => 'ASC'])
             ;
     }
 

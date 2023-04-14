@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -17,6 +17,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TelephoneField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class PersonCrudController extends AbstractCrudController
@@ -64,6 +65,7 @@ class PersonCrudController extends AbstractCrudController
             'linkField' => 'theme',
             'linkCrudFqcn' => ThemeCrudController::class,
         ]);
+        yield TextareaField::new('otherAddress');
         if ($this->isGranted('ROLE_KEY_MANAGER')) {
             yield AssociationField::new('keyAffiliations')
                 ->onlyOnDetail()

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -21,6 +21,12 @@ class BuildingRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Building::class);
+    }
+
+    public function createQueryBuilderForDropdown()
+    {
+        return $this->createQueryBuilder('b')
+            ->addOrderBy('b.name', 'ASC');
     }
 
     // /**

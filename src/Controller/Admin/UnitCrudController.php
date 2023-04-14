@@ -23,7 +23,8 @@ class UnitCrudController extends AbstractCrudController
     {
         return $crud
             ->setEntityLabelInSingular('Unit')
-            ->setEntityLabelInPlural('Units')//            ->setEntityPermission('ROLE_ADMIN')
+            ->setEntityLabelInPlural('Units')
+            ->setDefaultSort(['name' => 'ASC'])
             ;
     }
 

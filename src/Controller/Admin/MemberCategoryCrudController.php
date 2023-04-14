@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -22,7 +22,8 @@ class MemberCategoryCrudController extends AbstractCrudController
     {
         return $crud
             ->setEntityLabelInSingular('Member Category')
-            ->setEntityLabelInPlural('Member Categories')//            ->setEntityPermission('ROLE_ADMIN')
+            ->setEntityLabelInPlural('Member Categories')
+            ->setDefaultSort(['name' => 'ASC'])
             ;
     }
 

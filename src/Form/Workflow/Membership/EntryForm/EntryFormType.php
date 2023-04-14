@@ -8,6 +8,7 @@ namespace App\Form\Workflow\Membership\EntryForm;
 
 use App\Entity\Building;
 use App\Entity\Person;
+use App\Repository\BuildingRepository;
 use Gregwar\CaptchaBundle\Type\CaptchaType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -96,8 +97,14 @@ class EntryFormType extends AbstractType
             ])
             ->add('officeBuilding', EntityType::class, [
                 'required' => false,
+                'label' => 'Building',
                 'class' => Building::class,
                 'help' => 'Non-IGB campus address building',
+                'attr' => [
+                    'data-controller' => 'tom-select',
+                    'data-tom-select-open-on-focus-value' => 'false',
+                ],
+                'query_builder' => fn(BuildingRepository $repository)=>$repository->createQueryBuilderForDropdown(),
             ])
             ;
         if(!$this->security->isGranted('IS_AUTHENTICATED_FULLY')) {

@@ -25,7 +25,7 @@ class Building implements HistoricalEntityInterface
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $name;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $shortName;
 
     #[ORM\Column(type: 'text', nullable: true)]
@@ -40,6 +40,10 @@ class Building implements HistoricalEntityInterface
     public function __construct()
     {
         $this->people = new ArrayCollection();
+    }
+
+    public function __toString(){
+        return $this->getName();
     }
 
     public function getId(): ?int
