@@ -36,10 +36,30 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                     <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('person_currentmembers') }}">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarMembersMenuLink" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
                                 <span class="fa fa-users"></span> IGB Members
                             </a>
+                            {# todo is this a bit of a mess? #}
+                            <ul class="dropdown-menu" aria-labelledby="navbarMembersMenuLink">
+                                <li>
+                                    <a class="dropdown-item" href="{{ path('person_currentmembers') }}">Current
+                                        Members</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ path('person_allmembers') }}">All Past/Present
+                                        Members</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ path('person_currentpeople') }}">Current
+                                        People</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ path('person_allpeople') }}">All Past/Present
+                                        People</a>
+                                </li>
+                            </ul>
                         </li>
 
                         <li class="nav-item dropdown">
@@ -136,7 +156,7 @@
 <footer class="copyright d-print-none mt-auto">
     <div class="container d-flex">
         {# todo hide link until the about page is written #}
-{#        <a href="#" class="me-2">About</a>#}
+        {#        <a href="#" class="me-2">About</a> #}
         <a href="{{ path('copyright') }}" class="me-auto">Copyright</a>
         <span>IGB CONNECT v0.2&beta;</span>
     </div>
