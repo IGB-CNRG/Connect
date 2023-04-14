@@ -31,9 +31,22 @@
     <div class="row">
         <div class="col-lg">{{ form_row(form.officeWorkOnly) }}</div>
     </div>
+    <hr/>
+    <div class="row">
+        <div class="col-lg">
+            <div class="mb-2">Preferred Campus Address</div>
+            <div class="mb-2 form-text">Leave blank if preferred address is IGB</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg">{{ form_row(form.officeNumber) }}</div>
+        <div class="col-lg">{{ form_row(form.officeBuilding) }}</div>
+    </div>
+    <hr/>
     <div class="row">
         <div class="col-lg">{{ form_row(form.unitAffiliations) }}</div>
     </div>
+    <hr/>
     <div class="row">
         <div class="col-lg">{{ form_row(form.supervisorAffiliations) }}</div>
     </div>

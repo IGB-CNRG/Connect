@@ -6,8 +6,10 @@
 
 namespace App\Form\Workflow\Membership\EntryForm;
 
+use App\Entity\Building;
 use App\Entity\Person;
 use Gregwar\CaptchaBundle\Type\CaptchaType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -86,6 +88,16 @@ class EntryFormType extends AbstractType
                 ],
                 'allow_add' => false,
                 'allow_delete' => false,
+            ])
+
+            ->add('officeNumber', TextType::class, [
+                'required' => false,
+                'help' => 'Non-IGB campus address room number'
+            ])
+            ->add('officeBuilding', EntityType::class, [
+                'required' => false,
+                'class' => Building::class,
+                'help' => 'Non-IGB campus address building',
             ])
             ;
         if(!$this->security->isGranted('IS_AUTHENTICATED_FULLY')) {
