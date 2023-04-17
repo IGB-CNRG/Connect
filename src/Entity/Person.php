@@ -12,6 +12,7 @@ use App\Log\LogSubjectInterface;
 use App\Repository\PersonRepository;
 use App\Workflow\Membership;
 use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -182,9 +183,9 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[Groups(['log:person'])]
     private ?bool $officeWorkOnly = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'datetime')]
     #[Groups(['log:person'])]
-    private ?DateTimeImmutable $membershipUpdatedAt = null;
+    private ?DateTimeInterface $membershipUpdatedAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $membershipNote = null;
@@ -852,12 +853,12 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         return $this;
     }
 
-    public function getMembershipUpdatedAt(): ?DateTimeImmutable
+    public function getMembershipUpdatedAt(): ?DateTimeInterface
     {
         return $this->membershipUpdatedAt;
     }
 
-    public function setMembershipUpdatedAt(DateTimeImmutable $membershipUpdatedAt): self
+    public function setMembershipUpdatedAt(DateTimeInterface $membershipUpdatedAt): self
     {
         $this->membershipUpdatedAt = $membershipUpdatedAt;
 

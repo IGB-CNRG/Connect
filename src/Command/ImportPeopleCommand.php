@@ -148,8 +148,7 @@ class ImportPeopleCommand extends Command
                         $person
                             ->setFirstName($user['first_name'])
                             ->setLastName($user['last_name'])
-                            ->setEmail($user['email'])
-                            ->setMembershipUpdatedAt(new DateTimeImmutable());
+                            ->setEmail($user['email']);
                         if ($user['netid']) {
                             $person
                                 ->setNetid($user['netid'])
@@ -199,9 +198,11 @@ class ImportPeopleCommand extends Command
                         }
 
                         if($person->getIsCurrent()){
-                            $person->setMembershipStatus(Membership::PLACE_ACTIVE);
+                            $person->setMembershipStatus(Membership::PLACE_ACTIVE)
+                                ->setMembershipUpdatedAt($this->getPersonStartDate($person) ?? new DateTimeImmutable());
                         } else {
-                            $person->setMembershipStatus(Membership::PLACE_INACTIVE);
+                            $person->setMembershipStatus(Membership::PLACE_INACTIVE)
+                                ->setMembershipUpdatedAt($this->getPersonEndDate($person) ?? new DateTimeImmutable());
                             // Set exit reasons
                             $exitReason = $user['reason_leaving'];
                             foreach($person->getThemeAffiliations() as $themeAffiliation){
@@ -636,7 +637,7 @@ class ImportPeopleCommand extends Command
         }
     }
 
-    private function getPersonStartDate(Person $person)
+    private function getPersonStartDate(Person $person): ?DateTimeInterface
     {
         if ($person->getThemeAffiliations()->count() > 0) {
             return array_reduce(
@@ -654,7 +655,7 @@ class ImportPeopleCommand extends Command
 
         return null;
     }
-    private function getPersonEndDate(Person $person)
+    private function getPersonEndDate(Person $person): ?DateTimeInterface
     {
         if ($person->getThemeAffiliations()->count() > 0) {
             return array_reduce(
