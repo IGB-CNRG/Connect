@@ -52,7 +52,11 @@ class Unit implements LogSubjectInterface
 
     public function __toString()
     {
-        return $this->getShortName() ?? $this->getName();
+        if ($this->getShortName()) {
+            return "{$this->getName()} ({$this->getShortName()})";
+        } else {
+            return $this->getName();
+        }
     }
 
     public function getId(): ?int

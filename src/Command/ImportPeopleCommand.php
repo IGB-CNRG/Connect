@@ -479,11 +479,20 @@ class ImportPeopleCommand extends Command
             'Materials Science & Engineerng' => 'Materials Science & Engineering',
             'Institute for Sustainability, Energy and Environme' => 'Institute for Sustainablility, Energy, and Environment',
             'Electrical & Computer Eng' => 'Electrical & Computer Engineering',
-            'Ecology, Evolution, and Conservation Biology' => '	Evolution, Ecology, & Behavior',
             'Comparative Biosciences' => 'Comparative Sciences',
             'Chemical & Biomolecular Engr' => 'Chemical & Biomolecular Engineering',
             'Agricultural & Consumar Economics' => 'Agricultural & Consumer Economics',
             'Agricultural & Biological Engr' => 'Agricultural & Biological Engineering',
+            'Biophysics' => 'Biophysics & Quantitative Biology',
+            'Biotechnology Center' => 'Roy J. Carver Biotechnology Center',
+            'Speech and Hearing' => 'Speech and Hearing Science',
+            'Medical Biochemistry' => 'Biochemistry',
+            'Medical Cell & Structural Biology' => 'Cell & Developmental Biology',
+            'Agr, Consumer, & Env Sciences' => 'College of Agricultural, Consumer & Environmental Sciences',
+            'Business' => 'Gies College of Business',
+            'Aerospace & Astro Engineering' => 'Aerospace Engineering',
+            'Nuclear, Plasma, & Rad Engr' => 'Nuclear, Plasma & Radiological Engineering',
+            'Life Sciences' => 'School of Integrative Biology',
             default => $name
         };
     }

@@ -58,7 +58,8 @@ class OtherUnitAffiliationCrudController extends AbstractCrudController
             ->linkToCrudAction('resolve');
         return parent::configureActions($actions)
             ->disable(Action::DELETE, Action::NEW)
-            ->add(Crud::PAGE_INDEX, $resolveUnitAction);
+//            ->add(Crud::PAGE_INDEX, $resolveUnitAction)
+            ;
     }
 
     public function configureAssets(Assets $assets): Assets

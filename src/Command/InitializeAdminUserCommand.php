@@ -46,9 +46,9 @@ class InitializeAdminUserCommand extends Command
         $helper = $this->getHelper('question');
         $question = new ConfirmationQuestion(
             sprintf(
-                'This operation will create a user with username %s so you can log in and complete setup. Only run this command if the database has not yet been initialized. Continue? (y/N) ',
+                'This operation will create a user with username %s so you can log in and complete setup. Only run this command if the database has not yet been initialized. Continue? (Y/n) ',
                 $username
-            ), false
+            ), true
         );
         if (!$helper->ask($input, $output, $question)) {
             return Command::SUCCESS;
