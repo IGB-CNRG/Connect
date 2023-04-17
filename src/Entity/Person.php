@@ -6,7 +6,6 @@
 
 namespace App\Entity;
 
-use App\Enum\PreferredAddress;
 use App\Log\Loggable;
 use App\Log\LoggableManyRelation;
 use App\Log\LogSubjectInterface;
@@ -139,11 +138,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\ManyToOne(targetEntity: Building::class, inversedBy: 'people')]
     #[Groups(['log:person'])]
     private ?Building $officeBuilding;
-
-    #[ORM\Column(type: 'string', length: 255, enumType: PreferredAddress::class)]
-    #[Loggable]
-    #[Groups(['log:person'])]
-    private PreferredAddress $preferredAddress = PreferredAddress::IGB;
 
     #[ORM\Column(type: 'json')]
     #[Loggable(type: 'array')]
@@ -641,18 +635,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     public function setOfficeBuilding(?Building $officeBuilding): self
     {
         $this->officeBuilding = $officeBuilding;
-
-        return $this;
-    }
-
-    public function getPreferredAddress(): ?PreferredAddress
-    {
-        return $this->preferredAddress;
-    }
-
-    public function setPreferredAddress(PreferredAddress $preferredAddress): self
-    {
-        $this->preferredAddress = $preferredAddress;
 
         return $this;
     }

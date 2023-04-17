@@ -8,14 +8,12 @@ namespace App\Form\Person;
 
 use App\Entity\Building;
 use App\Entity\Person;
-use App\Enum\PreferredAddress;
 use App\Form\Fields\HistoricalCollectionType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -58,13 +56,10 @@ class PersonType extends AbstractType
             ])
             ->add('officeNumber', TextType::class, [
                 'required' => false,
-                'help' => 'Non-IGB campus address room number'
+                'help' => 'Non-IGB campus address room number',
             ])
             ->add('officePhone', TextType::class, [
                 'required' => false,
-            ])
-            ->add('preferredAddress', EnumType::class, [
-                'class' => PreferredAddress::class,
             ])
             ->add('officeBuilding', EntityType::class, [
                 'required' => false,
