@@ -1,24 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="joebuntu (dev)" deleteMissingItems="true" confirmBeforeUploading="false" compareModeInSync="TIMESTAMP">
+  <component name="PublishConfigData" serverName="www-app-php81" deleteMissingItems="true" confirmBeforeUploading="false" compareModeInSync="TIMESTAMP">
     <option name="confirmBeforeUploading" value="false" />
     <serverData>
-      <paths name="joebuntu (dev)">
-        <serverdata>
-          <mappings>
-            <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
-          </mappings>
-          <excludedPaths>
-            <excludedPath path="/var" />
-            <excludedPath path="/vendor" />
-            <excludedPath path="/.env.local" />
-            <excludedPath path="/node_modules" />
-            <excludedPath path="/public" />
-            <excludedPath path="/package-lock.json" />
-            <excludedPath path="/.stversions" />
-          </excludedPaths>
-        </serverdata>
-      </paths>
       <paths name="www-app-php81">
         <serverdata>
           <mappings>
@@ -34,6 +18,7 @@
             <excludedPath path="/public/uploads" />
             <excludedPath path="/public/media" />
             <excludedPath local="true" path="$PROJECT_DIR$/docker-compose.local.yml" />
+            <excludedPath path="/install-config.local.yml" />
           </excludedPaths>
         </serverdata>
       </paths>

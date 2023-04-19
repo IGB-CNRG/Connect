@@ -2,13 +2,6 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="f9c436c6-e0bd-4e69-a5e6-198bc06a6219" name="joebuntu (dev)" url="http://joebuntu.igb.illinois.edu/connect-dev">
-        <fileTransfer rootFolder="/var/www/connect_dev" accessType="SFTP" host="joebuntu.igb.illinois.edu" port="22" sshConfigId="cc39bf36-ead8-4719-bc03-aeaf376c124c" sshConfig="joe@joebuntu.igb.illinois.edu:22 key" keyPair="true">
-          <advancedOptions>
-            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
-          </advancedOptions>
-        </fileTransfer>
-      </webServer>
       <webServer id="fbd37447-247f-4cc6-bcf1-6244ffd35793" name="www-app-php81" url="http://www-app-php81.igb.illinois.edu/connect">
         <fileTransfer rootFolder="/var/www/connect" accessType="SFTP" host="www-app-php81.igb.illinois.edu" port="22" sshConfigId="96a77ce2-a302-463e-a327-9f4d2eaf3d7a" sshConfig="root@www-app-php81.igb.illinois.edu:22 password">
           <advancedOptions>

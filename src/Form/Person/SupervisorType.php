@@ -12,12 +12,12 @@ use App\Form\Fields\EndDateType;
 use App\Form\Fields\StartDateType;
 use App\Repository\PersonRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Security;
 
 class SupervisorType extends AbstractType
 {

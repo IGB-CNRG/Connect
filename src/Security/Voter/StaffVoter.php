@@ -7,9 +7,9 @@
 namespace App\Security\Voter;
 
 use App\Entity\Person;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class StaffVoter extends Voter
@@ -19,7 +19,7 @@ class StaffVoter extends Voter
     public const LAB_MANAGER = 'ROLE_LAB_MANAGER';
     public const APPROVER = 'ROLE_APPROVER';
 
-    public function __construct(private Security $security) {}
+    public function __construct(private readonly Security $security) {}
 
     protected function supports(string $attribute, $subject): bool
     {

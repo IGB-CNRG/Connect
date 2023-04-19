@@ -10,13 +10,13 @@ use App\Entity\UnitAffiliation;
 use App\Form\Fields\EndDateType;
 use App\Form\Fields\StartDateType;
 use App\Form\Fields\UnitType;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Security;
 
 class UnitAffiliationType extends AbstractType
 {

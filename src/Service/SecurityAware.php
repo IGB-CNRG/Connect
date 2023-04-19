@@ -1,12 +1,12 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
 namespace App\Service;
 
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Contracts\Service\Attribute\SubscribedService;
 
 trait SecurityAware
