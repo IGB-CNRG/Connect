@@ -194,7 +194,7 @@
                                     None
                                 {% endfor %}
                             </td>
-                            <td class="shrink"><a href="{{ path('person_edit_keys', {'id': person.id}) }}"><span
+                            <td class="shrink"><a href="{{ path('person_edit_keys', {'slug': person.slug}) }}"><span
                                             class="fa fa-pencil"></span></a></td>
                         </tr>
                         <tr>
@@ -399,7 +399,7 @@
                 </div>
                 <div class="collapse" id="key_table">
                     <div class="card-body">
-                        <a href="{{ path('person_edit_keys', {'id': person.id}) }}" class="btn btn-primary"><span
+                        <a href="{{ path('person_edit_keys', {'slug': person.slug}) }}" class="btn btn-primary"><span
                                     class="fa fa-pencil"></span> Edit Keys</a>
                     </div>
                     <table class="table">

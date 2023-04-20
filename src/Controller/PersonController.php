@@ -189,7 +189,7 @@ class PersonController extends AbstractController
         ]);
     }
 
-    #[Route('/person/{id}/edit-keys', name: 'person_edit_keys')]
+    #[Route('/person/{slug}/edit-keys', name: 'person_edit_keys')]
     #[IsGranted('ROLE_KEY_MANAGER')]
     public function editKeys(
         Person $person,

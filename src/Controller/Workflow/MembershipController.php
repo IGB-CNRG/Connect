@@ -80,7 +80,7 @@ class MembershipController extends AbstractController
         ]);
     }
 
-    #[Route('membership/continue-entry-form/{slug}', name: 'membership_continueEntryForm')]
+    #[Route('membership/entry-form/{slug}', name: 'membership_continueEntryForm')]
     public function continueEntryForm(
         Person $person,
         Request $request,
@@ -126,7 +126,7 @@ class MembershipController extends AbstractController
         ]);
     }
 
-    #[Route('/membership/approve-entry-form/{slug}', name: 'membership_approveEntryForm')]
+    #[Route('/membership/entry-form/{slug}/approve', name: 'membership_approveEntryForm')]
     #[IsGranted('ROLE_APPROVER')]
     public function approveEntryForm(
         Person $person,
@@ -185,7 +185,7 @@ class MembershipController extends AbstractController
         ]);
     }
 
-    #[Route('/membership/certificate-upload', name: 'membership_certificateUpload')]
+    #[Route('/membership/certificates', name: 'membership_certificateUpload')]
     public function certificateUpload(
         Request $request,
         CertificateHelper $certificateHelper,
@@ -239,7 +239,7 @@ class MembershipController extends AbstractController
         ]);
     }
 
-    #[Route('/membership/approve-certificates/{slug}', name: 'membership_approveCertificates')]
+    #[Route('/membership/certificates/{slug}/approve', name: 'membership_approveCertificates')]
     #[IsGranted('ROLE_APPROVER')]
     public function approveCertificates(
         Person $person,
