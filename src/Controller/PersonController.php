@@ -27,7 +27,6 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -325,28 +324,5 @@ class PersonController extends AbstractController
             'roomAffiliation' => $roomAffiliation,
             'form' => $form->createView(),
         ]);
-    }
-
-    #[Route('/api/person', name: 'api_person_username', methods: ['GET'])]
-    public function personJson(Request $request, PersonRepository $personRepository): JsonResponse
-    {
-        $username = $request->query->get('username');
-        if ($username) {
-            $person = $personRepository->findOneBy(['username' => $username]);
-            if (!$person) {
-                // todo we might want this to have a different default return value, later
-                return $this->json([
-                    'id' => 0,
-                    'name' => '',
-                    'slug' => '',
-                ]);
-            }
-
-            return $this->json([
-                'id' => $person->getId(),
-                'name' => $person->getName(),
-                'slug' => $person->getSlug(),
-            ]);
-        }
     }
 }

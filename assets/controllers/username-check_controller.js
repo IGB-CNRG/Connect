@@ -14,16 +14,24 @@ export default class extends Controller {
         'url': String,
     };
 
-    checkIfUsernameUnique(){
-        const usernameTarget = this.usernameTarget;
-        $.ajax(this.urlValue+'?username='+this.usernameTarget.value, {
-            'success': function(data){
-                if(data.id>0) {
-                    const personUrl = Routing.generate('person_view', {'slug': data.slug});
-                    $(usernameTarget).addClass('is-invalid').after('<div class="invalid-feedback">A user with this username already exists: <a href="' + personUrl + '">' + data.name + '</a></div>');
-                } else {
-                    $(usernameTarget).removeClass('is-invalid').next('.invalid-feedback').remove();
-                }
+    checkIfUsernameUnique() {
+        fetch(this.urlValue + '?username=' + this.usernameTarget.value, {
+            headers: {
+                'Accept': 'application/json',
+            },
+            credentials: 'same-origin',
+        }).then(response => {
+            if (response.status === 200) {
+                response.json().then(data => {
+                    $(this.usernameTarget).next('.invalid-feedback').remove();
+                    if (data.length === 1) {
+                        const person = data[0];
+                        const personUrl = Routing.generate('person_view', {'slug': person.slug});
+                        $(this.usernameTarget).addClass('is-invalid').after('<div class="invalid-feedback">A user with this username already exists: <a href="' + personUrl + '">' + person.name + '</a></div>');
+                    } else {
+                        $(this.usernameTarget).removeClass('is-invalid');
+                    }
+                });
             }
         });
     }

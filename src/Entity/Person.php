@@ -6,6 +6,11 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use App\Log\Loggable;
 use App\Log\LoggableManyRelation;
 use App\Log\LogSubjectInterface;
@@ -30,6 +35,14 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\Entity(repositoryClass: PersonRepository::class)]
 #[Vich\Uploadable]
 #[UniqueEntity('username', 'A person with this username already exists')]
+#[ApiResource(
+    operations: [
+        new Get(),
+        new GetCollection(),
+    ],
+    normalizationContext: ['groups'=>'person:read']
+)]
+#[ApiFilter(SearchFilter::class, properties: ['id'=>'exact','username'=>'exact'])]
 class Person implements UserInterface, PasswordAuthenticatedUserInterface, Serializable, LogSubjectInterface
     // TODO Is it a bug that we have to implement PasswordAuthenticatedUserInterface even though this entity doesn't handle authentication?
 {
@@ -49,12 +62,12 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
-    #[Groups(['log:person', 'log:related_person'])]
+    #[Groups(['log:person', 'log:related_person', 'person:read'])]
     private ?string $firstName = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
-    #[Groups(['log:person', 'log:related_person'])]
+    #[Groups(['log:person', 'log:related_person', 'person:read'])]
     private ?string $lastName = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -64,22 +77,22 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable(displayName: 'netID')]
-    #[Groups(['log:person', 'log:related_person'])]
+    #[Groups(['log:person', 'log:related_person', 'person:read'])]
     private ?string $netid = null;
 
     #[ORM\Column(type: 'string', length: 180, unique: true, nullable: true)]
     #[Loggable]
-    #[Groups(['log:person'])]
+    #[Groups(['log:person', 'person:read'])]
     private ?string $username = null;
 
     #[ORM\Column(type: 'integer', nullable: true)]
     #[Loggable(displayName: 'UIN')]
-    #[Groups(['log:person'])]
+    #[Groups(['log:person', 'person:read'])]
     private ?int $uin = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
-    #[Groups(['log:person'])]
+    #[Groups(['log:person', 'person:read'])]
     private ?string $email = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -147,7 +160,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]
-    #[Groups(['log:person'])]
+    #[Groups(['log:person', 'person:read'])]
     private ?string $preferredFirstName = null;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: Document::class, cascade: ['persist'], orphanRemoval: true)]
@@ -169,6 +182,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     #[ORM\Column(type: 'string', length: 255, unique: true, nullable: true)]
     #[Slug(fields: ['firstName', 'lastName'])]
+    #[Groups(['person:read'])]
     private ?string $slug = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
@@ -213,6 +227,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     /* Helper Functions */
 
+    #[Groups(['person:read'])]
     public function getName(): string
     {
         if ($this->getPreferredFirstName()) {
@@ -222,6 +237,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         return $this->getFirstName().' '.$this->getLastName(); // TODO this should be a little smarter
     }
 
+    #[Groups(['person:read'])]
     public function getIsCurrent(): bool
     {
         return $this->getThemeAffiliations()->filter(function (ThemeAffiliation $themeAffiliation) {

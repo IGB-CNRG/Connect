@@ -11,7 +11,7 @@
         <div class="col-lg">
             <div class="card mb-3">
                 <div class="card-header">Personal Info</div>
-                <div class="card-body" {{ stimulus_controller('username-check', {'url': path('api_person_username')}) }}>
+                <div class="card-body" {{ stimulus_controller('username-check', {'url': path('_api_/people{._format}_get_collection')}) }}>
                     {{ form_row(form.firstName) }}
                     {{ form_row(form.lastName) }}
                     {{ form_row(form.middleInitial) }}
