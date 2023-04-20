@@ -5,13 +5,17 @@
 {% block content %}
     <h2>Unit Partners</h2>
     {% for college in colleges %}
-        <h3>{{ college.name }} <small>{{ college.faculty }} faculty, {{ college.affiliates }} affiliates</small></h3>
-        {% for unit in college.units %}
-            {% if unit.faculty > 0 or unit.affiliates > 0 %}
-                <p>{{ unit.unit }}
-                    <small>{{ unit.faculty }} faculty, {{ unit.affiliates }} affiliates</small></p>
-            {% endif %}
-        {% endfor %}
+        {% if college.faculty > 0 or college.affiliates > 0 %}
+            <h3>{{ college.name }}
+                <small>{{ college.faculty }} faculty, {{ college.affiliates }} affiliates</small>
+            </h3>
+            {% for unit in college.units %}
+                {% if unit.faculty > 0 or unit.affiliates > 0 %}
+                    <p>{{ unit.unit }}
+                        <small>{{ unit.faculty }} faculty, {{ unit.affiliates }} affiliates</small></p>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
     {% endfor %}
     <h3>Total
         <small>{{ colleges|reduce((carry, v)=>carry+v.faculty) }} faculty,

@@ -19,6 +19,7 @@
             <excludedPath path="/public/media" />
             <excludedPath local="true" path="$PROJECT_DIR$/docker-compose.local.yml" />
             <excludedPath path="/install-config.local.yml" />
+            <excludedPath path="/.php-version" />
           </excludedPaths>
         </serverdata>
       </paths>
