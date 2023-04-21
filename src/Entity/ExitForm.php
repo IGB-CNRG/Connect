@@ -25,6 +25,9 @@ class ExitForm
     #[ORM\Column(length: 255)]
     private ?string $exitReason = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $forwardingEmail = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -50,6 +53,18 @@ class ExitForm
     public function setExitReason(string $exitReason): self
     {
         $this->exitReason = $exitReason;
+
+        return $this;
+    }
+
+    public function getForwardingEmail(): ?string
+    {
+        return $this->forwardingEmail;
+    }
+
+    public function setForwardingEmail(?string $forwardingEmail): self
+    {
+        $this->forwardingEmail = $forwardingEmail;
 
         return $this;
     }

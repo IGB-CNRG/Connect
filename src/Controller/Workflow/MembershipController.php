@@ -299,14 +299,20 @@ class MembershipController extends AbstractController
         }
 
         $exitForm = new ExitForm();
-        $form = $this->createForm(ExitFormType::class, $exitForm)
+        $form = $this->createForm(ExitFormType::class, $exitForm, ['force' => $person !== $this->getUser()])
             ->add('submit', SubmitType::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             if ($membershipStateMachine->can($person, Membership::TRANS_FORCE_EXIT_FORM)) {
                 // Set exit reason and end date on all current theme, supervisor, and room affiliations
-                $this->processExit($historicityManager, $person, $exitForm->getEndedAt(), $exitForm->getExitReason());
+                $this->processExit(
+                    $historicityManager,
+                    $person,
+                    $exitForm->getEndedAt(),
+                    $exitForm->getExitReason(),
+                    $exitForm->getForwardingEmail()
+                );
                 $entityManager->persist($person);
                 $membershipStateMachine->apply($person, Membership::TRANS_FORCE_EXIT_FORM);
             } else {
@@ -354,7 +360,8 @@ class MembershipController extends AbstractController
                 $historicityManager,
                 $person,
                 $endedAt,
-                $exitReason
+                $exitReason,
+                $person->getExitForm()->getForwardingEmail()
             );
             $entityManager->persist($person);
             $membershipStateMachine->apply($person, Membership::TRANS_DEACTIVATE);
@@ -378,13 +385,15 @@ class MembershipController extends AbstractController
      * @param Person $person
      * @param DateTimeInterface $endedAt
      * @param string $exitReason
+     * @param string $forwardingEmail
      * @return void
      */
     protected function processExit(
         HistoricityManager $historicityManager,
         Person $person,
         DateTimeInterface $endedAt,
-        string $exitReason
+        string $exitReason,
+        string $forwardingEmail
     ): void {
         $historicityManager->endAffiliations(
             array_merge(
@@ -397,6 +406,7 @@ class MembershipController extends AbstractController
             $endedAt,
             $exitReason
         );
+        $person->setEmail($forwardingEmail);
     }
 
     protected function processEntryForm(

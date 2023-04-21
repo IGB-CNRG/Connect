@@ -10,10 +10,10 @@ services:
       MARIADB_PASSWORD: ChangeMe!
       MARIADB_ROOT_PASSWORD: ChangeMe!
     volumes:
-      - connect-workflow-data:/var/lib/mysql:rw
+      - db:/var/lib/mysql:rw
 ###< doctrine/doctrine-bundle ###
 
 volumes:
 ###> doctrine/doctrine-bundle ###
-  connect-workflow-data:
+  db:
 ###< doctrine/doctrine-bundle ###

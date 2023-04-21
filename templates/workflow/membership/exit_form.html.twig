@@ -30,6 +30,7 @@
 {% block form_card_body %}
     <p class="approval-label">Name</p>
     <p class="approval-field">{{ person }}</p>
+    {{ form_row(form.forwardingEmail) }}
     {{ form_row(form.exitReason) }}
     {{ form_row(form.endedAt) }}
 {% endblock %}
