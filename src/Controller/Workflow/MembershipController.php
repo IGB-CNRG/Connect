@@ -29,6 +29,7 @@ use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -62,12 +63,15 @@ class MembershipController extends AbstractController
             ->addUnitAffiliation($unitAffiliation)
             ->addThemeAffiliation($themeAffiliation)
             ->addSupervisorAffiliation($supervisorAffiliation);
-        $form = $this->createForm(EntryFormType::class, $person)
+        $form = $this->createForm(EntryFormType::class, $person, [
+            'allow_silent' => $membershipStateMachine->can($person, Membership::TRANS_FORCE_ENTRY_FORM),
+            'use_captcha' => !$this->isGranted('IS_AUTHENTICATED_FULLY'),
+        ])
             ->add('submit', SubmitType::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->processEntryForm($person, $themeAffiliation->getStartedAt(), $em, $logger, $membershipStateMachine);
+            $this->processEntryForm($form, $person, $themeAffiliation->getStartedAt(), $em, $logger, $membershipStateMachine);
 
             $em->flush();
 
@@ -105,7 +109,10 @@ class MembershipController extends AbstractController
             $person->addSupervisorAffiliation($supervisorAffiliation);
         }
 
-        $form = $this->createForm(EntryFormType::class, $person)
+        $form = $this->createForm(EntryFormType::class, $person, [
+            'allow_silent' => $this->isGranted('ROLE_APPROVER'),
+            'use_captcha' => !$this->isGranted('IS_AUTHENTICATED_FULLY'),
+        ])
             ->add('submit', SubmitType::class);
 
         $form->handleRequest($request);
@@ -113,7 +120,7 @@ class MembershipController extends AbstractController
             // todo what do we do if the person has more than one theme affiliation? does it matter?
             $startDate = $person->getThemeAffiliations()[0]->getStartedAt();
 
-            $this->processEntryForm($person, $startDate, $em, $logger, $membershipStateMachine);
+            $this->processEntryForm($form, $person, $startDate, $em, $logger, $membershipStateMachine);
 
             $em->flush();
 
@@ -148,7 +155,7 @@ class MembershipController extends AbstractController
         $approvalForm->handleRequest($request);
         if ($approvalForm->isSubmitted() && $approvalForm->isValid()) {
             // Skip the certificates if we can
-            if($membershipStateMachine->can($person, Membership::TRANS_ACTIVATE_WITHOUT_CERTIFICATES)){
+            if ($membershipStateMachine->can($person, Membership::TRANS_ACTIVATE_WITHOUT_CERTIFICATES)) {
                 $membershipStateMachine->apply($person, Membership::TRANS_ACTIVATE_WITHOUT_CERTIFICATES);
             } else {
                 $membershipStateMachine->apply($person, Membership::TRANS_APPROVE_ENTRY_FORM);
@@ -415,6 +422,7 @@ class MembershipController extends AbstractController
     }
 
     protected function processEntryForm(
+        FormInterface $form,
         Person $person,
         DateTimeInterface $startDate,
         EntityManagerInterface $em,
@@ -440,7 +448,12 @@ class MembershipController extends AbstractController
         $person->setUsername($person->getNetid());
         $em->persist($person);
 
-        $logger->log($person, 'Submitted entry form');
-        $membershipStateMachine->apply($person, Membership::TRANS_SUBMIT_ENTRY_FORM);
+        if($form->has('isSilent') && $form->get('isSilent')->getData()) {
+            $logger->log($person, 'Silently submitted entry form');
+            $membershipStateMachine->apply($person, Membership::TRANS_FORCE_ENTRY_FORM);
+        } else {
+            $logger->log($person, 'Submitted entry form');
+            $membershipStateMachine->apply($person, Membership::TRANS_SUBMIT_ENTRY_FORM);
+        }
     }
 }

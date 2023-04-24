@@ -69,8 +69,7 @@ framework:
                 force_entry_form:
                     from: need_entry_form
                     to: active
-                    metadata:
-                        approvalStrategy: App\Workflow\Approval\ThemeApproval
+                    guard: "is_granted('ROLE_APPROVER')" # can't check for theme approval before the user has a theme
                 # the rest of this may be naive for now, until we better define the exit workflow
                 submit_exit_form:
                     from: active

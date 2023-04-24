@@ -23,6 +23,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class EntryFormType extends AbstractType
 {
     public function __construct(private readonly Security $security) {}
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -83,17 +84,16 @@ class EntryFormType extends AbstractType
             //  or cell phones (as we no longer collect home address, etc.)
             ->add('themeAffiliations', CollectionType::class, [
                 'entry_type' => ThemeAffiliationType::class,
-                'label'=> false,
+                'label' => false,
                 'entry_options' => [
                     'label' => false,
                 ],
                 'allow_add' => false,
                 'allow_delete' => false,
             ])
-
             ->add('officeNumber', TextType::class, [
                 'required' => false,
-                'help' => 'Non-IGB campus address room number'
+                'help' => 'Non-IGB campus address room number',
             ])
             ->add('officeBuilding', EntityType::class, [
                 'required' => false,
@@ -104,12 +104,19 @@ class EntryFormType extends AbstractType
                     'data-controller' => 'tom-select',
                     'data-tom-select-open-on-focus-value' => 'false',
                 ],
-                'query_builder' => fn(BuildingRepository $repository)=>$repository->createQueryBuilderForDropdown(),
-            ])
-            ;
-        if(!$this->security->isGranted('IS_AUTHENTICATED_FULLY')) {
+                'query_builder' => fn(BuildingRepository $repository) => $repository->createQueryBuilderForDropdown(),
+            ]);
+        if ($options['use_captcha']) {
             // only show captcha when we're not logged in
             $builder->add('captcha', CaptchaType::class);
+        }
+        if($options['allow_silent']){
+            $builder->add('isSilent', CheckboxType::class, [
+                'mapped' => false,
+                'required' => false,
+                'label' => 'Create member silently',
+                'help' => 'Check this box to bypass the rest of the new member workflow without sending any further notifications'
+            ]);
         }
     }
 
@@ -117,6 +124,10 @@ class EntryFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Person::class,
-        ]);
+        ])
+            ->setRequired([
+                'allow_silent',
+                'use_captcha',
+            ]);
     }
 }

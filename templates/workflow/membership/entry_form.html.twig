@@ -51,6 +51,14 @@
         <div class="col-lg">{{ form_row(form.supervisorAffiliations) }}</div>
     </div>
     {{ form_row(form.themeAffiliations) }}
+    {% if form.captcha is defined %}
+        <hr/>
+        {{ form_row(form.captcha) }}
+    {% endif %}
+    {% if form.isSilent is defined %}
+        <hr/>
+        {{ form_row(form.isSilent) }}
+    {% endif %}
 {% endblock %}
 {% block form_card_footer %}
     {{ form_row(form.submit) }}
