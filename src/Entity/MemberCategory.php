@@ -22,17 +22,23 @@ class MemberCategory
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     #[Groups(['log:person'])]
-    private ?int $id;
+    private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(['log:person'])]
-    private ?string $name;
+    private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'memberCategory', targetEntity: ThemeAffiliation::class, orphanRemoval: true)]
     private Collection $themeAffiliations;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $shortName;
+    private ?string $shortName = null;
+
+    #[ORM\Column]
+    private ?bool $canSupervise = null;
+
+    #[ORM\Column]
+    private ?bool $needsCertificates = null;
 
     public function __construct()
     {
@@ -99,6 +105,30 @@ class MemberCategory
     public function setShortName(?string $shortName): self
     {
         $this->shortName = $shortName;
+
+        return $this;
+    }
+
+    public function isCanSupervise(): ?bool
+    {
+        return $this->canSupervise;
+    }
+
+    public function setCanSupervise(bool $canSupervise): self
+    {
+        $this->canSupervise = $canSupervise;
+
+        return $this;
+    }
+
+    public function isNeedsCertificates(): ?bool
+    {
+        return $this->needsCertificates;
+    }
+
+    public function setNeedsCertificates(bool $needsCertificates): self
+    {
+        $this->needsCertificates = $needsCertificates;
 
         return $this;
     }

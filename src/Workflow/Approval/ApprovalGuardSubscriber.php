@@ -18,9 +18,11 @@ use Symfony\Contracts\Service\ServiceSubscriberTrait;
 
 class ApprovalGuardSubscriber implements EventSubscriberInterface, ServiceSubscriberInterface
 {
-    use ServiceSubscriberTrait, SecurityAware, HistoricityManagerAware;
+    use HistoricityManagerAware;
+    use SecurityAware;
+    use ServiceSubscriberTrait;
 
-    public function approvalGuard(GuardEvent $event)
+    public function approvalGuard(GuardEvent $event): void
     {
         if($this->security()->isGranted('ROLE_ADMIN')){
             // an admin should always be able to approve

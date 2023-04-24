@@ -9,6 +9,7 @@ namespace App\Controller\Admin;
 use App\Entity\MemberCategory;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class MemberCategoryCrudController extends AbstractCrudController
@@ -32,6 +33,8 @@ class MemberCategoryCrudController extends AbstractCrudController
         return [
             TextField::new('name'),
             TextField::new('shortName'),
+            BooleanField::new('canSupervise')->renderAsSwitch(false),
+            BooleanField::new('needsCertificates')->renderAsSwitch(false)
         ];
     }
 }

@@ -22,9 +22,11 @@ class Membership
     public const TRANS_SUBMIT_ENTRY_FORM = 'submit_entry_form';
     public const TRANS_APPROVE_ENTRY_FORM = 'approve_entry_form';
     public const TRANS_RETURN_ENTRY_FORM = 'return_entry_form';
+    public const TRANS_ACTIVATE_WITHOUT_CERTIFICATES = 'activate_without_certificates';
     public const TRANS_UPLOAD_CERTIFICATES = 'upload_certificates';
     public const TRANS_APPROVE_CERTIFICATES = 'approve_certificates';
     public const TRANS_RETURN_CERTIFICATES = 'return_certificates';
+    public const TRANS_FORCE_ENTRY_FORM = 'force_entry_form';
     public const TRANS_SUBMIT_EXIT_FORM = 'submit_exit_form';
     public const TRANS_FORCE_EXIT_FORM = 'force_exit_form';
     public const TRANS_DEACTIVATE = 'deactivate';

@@ -45,7 +45,8 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
             ->select('p,ta,t,ra,r,ua,u');
     }
 
-    public function createMembersOnlyIndexQueryBuilder(): QueryBuilder {
+    public function createMembersOnlyIndexQueryBuilder(): QueryBuilder
+    {
         return $this->createIndexQueryBuilder()
             ->andWhere('ta is not null')
             ->andWhere('t.isOutsideGroup = false');
@@ -146,7 +147,6 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
     {
         return $this->createDropdownQueryBuilder()
             ->leftJoin('ta.memberCategory', 'mc')
-            ->andWhere('mc.id in (:categories)')
-            ->setParameter('categories', [1, 2, 3, 5, 6, 10]); // todo this is really bad, how can we make this better?
+            ->andWhere('mc.canSupervise = true');
     }
 }

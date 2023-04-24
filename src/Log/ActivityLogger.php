@@ -316,6 +316,7 @@ class ActivityLogger implements ServiceSubscriberInterface
                 return $object->__toString();
             })
             ->toArray();
+        $normalizerContext['iri'] = false;
         return $this->serializer()->serialize($person, 'json', $normalizerContext);
     }
     private function getEntityEditMessage($entity, $messagePrefix = ''): ?string

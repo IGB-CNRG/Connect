@@ -328,17 +328,13 @@ Workflow.Staff.09162021.pptx).
 The individual steps of each workflow will be stored in the database so that they can be modified relatively easily
 without reprogramming anything (when possible).
 
-#### New Member Workflow
+#### Membership Workflow
 
-There are three entry points to the new member workflow:
+There are two entry points to the new member workflow:
 
-1. HR or Op/Fac creates the new member (very briefly including name and username). Their LDAP account is automatically
-   created and they are sent a link to sign in and complete the entry form.
+1. HR or Op/Fac can send the new member a link to fill out the form
 
-2. HR or Op/Fac enters the new members' email to send a unique one-time registration link. The new member can use that
-   link to access their entry form
-
-3. HR or Op/Fac can bring up an entry form and allow the new member to fill out the form in person.
+2. HR or Op/Fac can bring up an entry form and allow the new member to fill out the form in person.
 
 However the workflow was initiated, it continues as follows:
 
@@ -613,6 +609,8 @@ transitioning. Each workflow transition can have any number of associated notifi
 ## Workflows
 
 ### Membership Workflow
+
+![Membership workflow diagram](membership.svg)
 
 #### Entry Form
 

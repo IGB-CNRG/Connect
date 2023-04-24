@@ -147,7 +147,12 @@ class MembershipController extends AbstractController
 
         $approvalForm->handleRequest($request);
         if ($approvalForm->isSubmitted() && $approvalForm->isValid()) {
-            $membershipStateMachine->apply($person, Membership::TRANS_APPROVE_ENTRY_FORM);
+            // Skip the certificates if we can
+            if($membershipStateMachine->can($person, Membership::TRANS_ACTIVATE_WITHOUT_CERTIFICATES)){
+                $membershipStateMachine->apply($person, Membership::TRANS_ACTIVATE_WITHOUT_CERTIFICATES);
+            } else {
+                $membershipStateMachine->apply($person, Membership::TRANS_APPROVE_ENTRY_FORM);
+            }
             $person->setMembershipNote(null);
             $logger->log($person, "Approved entry form");
             $em->flush();

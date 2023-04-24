@@ -48,6 +48,11 @@ framework:
                     to: need_entry_form
                     metadata:
                         approvalStrategy: App\Workflow\Approval\ThemeApproval
+                activate_without_certificates:
+                    from: entry_form_submitted
+                    to: active
+                    metadata:
+                        approvalStrategy: App\Workflow\Approval\ThemeApproval
                 upload_certificates:
                     from: need_certificates
                     to: certificates_submitted
@@ -61,6 +66,11 @@ framework:
                     to: need_certificates
                     metadata:
                         approvalStrategy: App\Workflow\Approval\ReceptionApproval
+                force_entry_form:
+                    from: need_entry_form
+                    to: active
+                    metadata:
+                        approvalStrategy: App\Workflow\Approval\ThemeApproval
                 # the rest of this may be naive for now, until we better define the exit workflow
                 submit_exit_form:
                     from: active

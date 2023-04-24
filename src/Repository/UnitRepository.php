@@ -42,7 +42,7 @@ class UnitRepository extends ServiceEntityRepository implements ServiceSubscribe
         $nonFacultyQB = $this->_em->createQueryBuilder()
             ->select('identity(ta3.person)')
             ->from('App:ThemeAffiliation', 'ta3')
-            ->andWhere('ta3.memberCategory=5');
+            ->andWhere('ta3.memberCategory=5'); // todo this is bad but will be made better when we have a report system
 
         $facultyQB = $this->_em->createQueryBuilder()
             ->select('count(p)')
