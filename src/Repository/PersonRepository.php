@@ -149,4 +149,10 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
             ->leftJoin('ta.memberCategory', 'mc')
             ->andWhere('mc.canSupervise = true');
     }
+
+    public function createSortedQueryBuilder()
+    {
+        return $this->createQueryBuilder('p')
+            ->addOrderBy('p.lastName');
+    }
 }

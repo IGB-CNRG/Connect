@@ -43,9 +43,10 @@ class SuperviseeType extends AbstractType
                         'class' => Person::class,
                         'attr' => [
                             'data-controller' => 'tom-select',
+                            'data-tom-select-open-on-focus-value' => 'false',
                         ],
                         'query_builder' => function(PersonRepository $repository){
-                            return $repository->createDropdownQueryBuilder();
+                            return $repository->createSortedQueryBuilder();
                         },
                     ])->add('startedAt', StartDateType::class);
                 }
