@@ -11,7 +11,6 @@ use App\Entity\Person;
 use App\Repository\BuildingRepository;
 use Gregwar\CaptchaBundle\Type\CaptchaType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -22,8 +21,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EntryFormType extends AbstractType
 {
-    public function __construct(private readonly Security $security) {}
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -110,12 +107,12 @@ class EntryFormType extends AbstractType
             // only show captcha when we're not logged in
             $builder->add('captcha', CaptchaType::class);
         }
-        if($options['allow_silent']){
+        if ($options['allow_silent']) {
             $builder->add('isSilent', CheckboxType::class, [
                 'mapped' => false,
                 'required' => false,
                 'label' => 'Create member silently',
-                'help' => 'Check this box to bypass the rest of the new member workflow without sending any further notifications'
+                'help' => 'Check this box to bypass the rest of the new member workflow without sending any further notifications',
             ]);
         }
     }

@@ -2,11 +2,12 @@
 
 {% block content %}
     <h2>Edit '{{ person.name }}'</h2>
-    <div class="callout callout-info">
-        All fields are optional. {# todo better help text here #}
-    </div>
+{#    <div class="callout callout-info">#}
+{#        All fields are optional. #}{# todo better help text here #}
+{#    </div>#}
     {% form_theme form _self 'form_themes/_keys.html.twig' %}
     {{ form_start(form) }}
+    {# todo these columns need to be rearranged a bit #}
     <div class="row" data-controller="netid-autofill">
         <div class="col-lg">
             <div class="card mb-3">
