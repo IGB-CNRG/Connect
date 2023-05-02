@@ -36,6 +36,10 @@
                     </td>
                     <td>{{ person.membershipUpdatedAt|date('n/j/Y') }}</td>
                 </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4" class="text-center py-3">No forms waiting for approval</td>
+                </tr>
             {% endfor %}
         </table>
     </div>
