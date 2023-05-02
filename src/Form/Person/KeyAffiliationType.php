@@ -32,6 +32,7 @@ class KeyAffiliationType extends AbstractType
                 'attr' => [
                     'data-controller' => 'tom-select',
                 ],
+                'placeholder' => '',
             ])
         ;
     }

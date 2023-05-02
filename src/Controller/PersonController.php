@@ -141,12 +141,12 @@ class PersonController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($themeAffiliation);
-            $logger->logNewThemeAffiliation($themeAffiliation);
+            $logger->logNewAffiliation($themeAffiliation);
             foreach ($form->get('endPreviousAffiliations')->getData() as $endingAffiliation) {
                 /** @var ThemeAffiliation $endingAffiliation */
                 $endingAffiliation->setEndedAt($themeAffiliation->getStartedAt());
                 $em->persist($endingAffiliation);
-                $logger->logEndThemeAffiliation($endingAffiliation);
+                $logger->logUpdatedAffiliation($endingAffiliation);
             }
 
             $em->flush();
@@ -175,7 +175,7 @@ class PersonController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($themeAffiliation);
-            $logger->logEndThemeAffiliation($themeAffiliation);
+            $logger->logUpdatedAffiliation($themeAffiliation);
             $em->flush();
 
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
@@ -230,7 +230,7 @@ class PersonController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($roomAffiliation);
-            $logger->logNewRoomAffiliation($roomAffiliation);
+            $logger->logNewAffiliation($roomAffiliation);
             $em->flush();
 
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
@@ -258,7 +258,7 @@ class PersonController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($unitAffiliation);
-            $logger->logNewUnitAffiliation($unitAffiliation);
+            $logger->logNewAffiliation($unitAffiliation);
             $em->flush();
 
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
@@ -285,7 +285,7 @@ class PersonController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($unitAffiliation);
-            $logger->logEndUnitAffiliation($unitAffiliation);
+            $logger->logUpdatedAffiliation($unitAffiliation);
             $em->flush();
 
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
@@ -313,7 +313,7 @@ class PersonController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($roomAffiliation);
-            $logger->logEndRoomAffiliation($roomAffiliation);
+            $logger->logUpdatedAffiliation($roomAffiliation);
             $em->flush();
 
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);

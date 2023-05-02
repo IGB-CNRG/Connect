@@ -7,15 +7,17 @@
 namespace App\Entity;
 
 use App\Log\Loggable;
+use App\Log\LoggableAffiliationInterface;
 use App\Repository\KeyAffiliationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: KeyAffiliationRepository::class)]
-class KeyAffiliation implements HistoricalEntityInterface
+class KeyAffiliation implements HistoricalEntityInterface, LoggableAffiliationInterface
 {
-    use TimestampableEntity, HistoricalEntityTrait;
+    use HistoricalEntityTrait;
+    use TimestampableEntity;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -64,5 +66,45 @@ class KeyAffiliation implements HistoricalEntityInterface
         $this->cylinderKey = $cylinderKey;
 
         return $this;
+    }
+
+    public function getSideA()
+    {
+        return $this->getPerson();
+    }
+
+    public function getSideB()
+    {
+        return $this->getCylinderKey();
+    }
+
+    public function getAddLogMessageA(): string
+    {
+        return "Added key {$this->getCylinderKey()->getName()}";
+    }
+
+    public function getUpdateLogMessageA(): string
+    {
+        return "Updated key assignment {$this->getCylinderKey()->getName()}, ";
+    }
+
+    public function getRemoveLogMessageA(): string
+    {
+        return "Removed key {$this->getCylinderKey()->getName()}";
+    }
+
+    public function getAddLogMessageB(): string
+    {
+        return "Key given to {$this->getPerson()->getName()}";
+    }
+
+    public function getUpdateLogMessageB(): string
+    {
+        return "Updated key assignment for {$this->getPerson()->getName()}, ";
+    }
+
+    public function getRemoveLogMessageB(): string
+    {
+        return "{$this->getPerson()->getName()} returned key";
     }
 }

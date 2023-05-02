@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -18,6 +18,7 @@ class MemberCategoryType extends EntityType
         parent::configureOptions($resolver);
         $resolver->setDefaults([
             'class' => MemberCategory::class,
+            'placeholder' => '',
             'query_builder' => function (MemberCategoryRepository $repository) {
                 return $repository->createFormSortedQueryBuilder();
             },

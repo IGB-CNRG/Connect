@@ -43,6 +43,7 @@ class RoomAffiliationType extends AbstractType
                         'attr' => [
                             'data-controller' => 'tom-select',
                         ],
+                        'placeholder' => '',
                     ])
                         ->add('startedAt', StartDateType::class);
                 }

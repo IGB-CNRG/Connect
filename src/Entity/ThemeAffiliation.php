@@ -8,15 +8,17 @@ namespace App\Entity;
 
 use App\Enum\ThemeRole;
 use App\Log\Loggable;
+use App\Log\LoggableAffiliationInterface;
 use App\Repository\ThemeAffiliationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ThemeAffiliationRepository::class)]
-class ThemeAffiliation implements HistoricalEntityInterface
+class ThemeAffiliation implements HistoricalEntityInterface, LoggableAffiliationInterface
 {
-    use TimestampableEntity, HistoricalEntityTrait;
+    use HistoricalEntityTrait;
+    use TimestampableEntity;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -167,5 +169,45 @@ class ThemeAffiliation implements HistoricalEntityInterface
         $this->exitReason = $exitReason;
 
         return $this;
+    }
+
+    public function getSideA()
+    {
+        return $this->getPerson();
+    }
+
+    public function getSideB()
+    {
+        return $this->getTheme();
+    }
+
+    public function getAddLogMessageA(): string
+    {
+        return "Added affiliation with theme {$this->getTheme()} ({$this->getMemberCategory()})";
+    }
+
+    public function getUpdateLogMessageA(): string
+    {
+        return "Updated theme affiliation with {$this->getTheme()}, ";
+    }
+
+    public function getRemoveLogMessageA(): string
+    {
+        return "Removed affiliation with theme {$this->getTheme()} ({$this->getMemberCategory()})";
+    }
+
+    public function getAddLogMessageB(): string
+    {
+        return "Added member affiliation with {$this->getPerson()} ({$this->getMemberCategory()})";
+    }
+
+    public function getUpdateLogMessageB(): string
+    {
+        return "Updated member affiliation for {$this->getPerson()}, ";
+    }
+
+    public function getRemoveLogMessageB(): string
+    {
+        return "Removed member affiliation with {$this->getPerson()} ({$this->getMemberCategory()})";
     }
 }

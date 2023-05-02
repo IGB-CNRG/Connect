@@ -7,13 +7,14 @@
 namespace App\Entity;
 
 use App\Log\Loggable;
+use App\Log\LoggableAffiliationInterface;
 use App\Repository\UnitAffiliationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UnitAffiliationRepository::class)]
-class UnitAffiliation implements HistoricalEntityInterface
+class UnitAffiliation implements HistoricalEntityInterface, LoggableAffiliationInterface
 {
     use HistoricalEntityTrait;
     use TimestampableEntity;
@@ -77,5 +78,45 @@ class UnitAffiliation implements HistoricalEntityInterface
         $this->otherUnit = $otherUnit;
 
         return $this;
+    }
+
+    public function getSideA()
+    {
+        return $this->getPerson();
+    }
+
+    public function getSideB()
+    {
+        return $this->getUnit();
+    }
+
+    public function getAddLogMessageA(): string
+    {
+        return "Added unit {$this->getUnit()}";
+    }
+
+    public function getUpdateLogMessageA(): string
+    {
+        return "Updated unit affiliation with {$this->getUnit()}, ";
+    }
+
+    public function getRemoveLogMessageA(): string
+    {
+        return "Removed unit affiliation with {$this->getUnit()}";
+    }
+
+    public function getAddLogMessageB(): string
+    {
+        return "Added person {$this->getPerson()}";
+    }
+
+    public function getUpdateLogMessageB(): string
+    {
+        return "Updated affiliation with {$this->getPerson()}, ";
+    }
+
+    public function getRemoveLogMessageB(): string
+    {
+        return "Removed affiliation with {$this->getPerson()}";
     }
 }

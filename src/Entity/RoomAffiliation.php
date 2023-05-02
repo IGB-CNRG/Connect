@@ -7,13 +7,14 @@
 namespace App\Entity;
 
 use App\Log\Loggable;
+use App\Log\LoggableAffiliationInterface;
 use App\Repository\RoomAffiliationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: RoomAffiliationRepository::class)]
-class RoomAffiliation implements HistoricalEntityInterface
+class RoomAffiliation implements HistoricalEntityInterface, LoggableAffiliationInterface
 {
     use HistoricalEntityTrait;
     use TimestampableEntity;
@@ -60,5 +61,45 @@ class RoomAffiliation implements HistoricalEntityInterface
         $this->person = $person;
 
         return $this;
+    }
+
+    public function getSideA()
+    {
+        return $this->getPerson();
+    }
+
+    public function getSideB()
+    {
+        return $this->getRoom();
+    }
+
+    public function getAddLogMessageA(): string
+    {
+        return "Added room {$this->getRoom()}";
+    }
+
+    public function getUpdateLogMessageA(): string
+    {
+        return "Updated room affiliation with {$this->getRoom()}, ";
+    }
+
+    public function getRemoveLogMessageA(): string
+    {
+        return "Removed room {$this->getRoom()}";
+    }
+
+    public function getAddLogMessageB(): string
+    {
+        return "Added person {$this->getPerson()}";
+    }
+
+    public function getUpdateLogMessageB(): string
+    {
+        return "Updated member affiliation for {$this->getPerson()}, ";
+    }
+
+    public function getRemoveLogMessageB(): string
+    {
+        return "Removed person {$this->getPerson()}";
     }
 }

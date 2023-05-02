@@ -424,12 +424,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     public function removeRoomAffiliation(RoomAffiliation $roomAffiliation): self
     {
-        if ($this->roomAffiliations->removeElement($roomAffiliation)) {
-            // set the owning side to null (unless already changed)
-            if ($roomAffiliation->getPerson() === $this) {
-                $roomAffiliation->setPerson(null);
-            }
-        }
+        $this->roomAffiliations->removeElement($roomAffiliation);
 
         return $this;
     }
@@ -454,12 +449,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     public function removeKeyAffiliation(KeyAffiliation $keyAffiliation): self
     {
-        if ($this->keyAffiliations->removeElement($keyAffiliation)) {
-            // set the owning side to null (unless already changed)
-            if ($keyAffiliation->getPerson() === $this) {
-                $keyAffiliation->setPerson(null);
-            }
-        }
+        $this->keyAffiliations->removeElement($keyAffiliation);
 
         return $this;
     }
@@ -484,12 +474,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     public function removeThemeAffiliation(ThemeAffiliation $themeAffiliation): self
     {
-        if ($this->themeAffiliations->removeElement($themeAffiliation)) {
-            // set the owning side to null (unless already changed)
-            if ($themeAffiliation->getPerson() === $this) {
-                $themeAffiliation->setPerson(null);
-            }
-        }
+        $this->themeAffiliations->removeElement($themeAffiliation);
 
         return $this;
     }
@@ -514,12 +499,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     public function removeSupervisorAffiliation(SupervisorAffiliation $supervisorAffiliation): self
     {
-        if ($this->supervisorAffiliations->removeElement($supervisorAffiliation)) {
-            // set the owning side to null (unless already changed)
-            if ($supervisorAffiliation->getSupervisee() === $this) {
-                $supervisorAffiliation->setSupervisee(null);
-            }
-        }
+        $this->supervisorAffiliations->removeElement($supervisorAffiliation);
 
         return $this;
     }
@@ -544,12 +524,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     public function removeSuperviseeAffiliation(SupervisorAffiliation $superviseeAffiliation): self
     {
-        if ($this->superviseeAffiliations->removeElement($superviseeAffiliation)) {
-            // set the owning side to null (unless already changed)
-            if ($superviseeAffiliation->getSupervisor() === $this) {
-                $superviseeAffiliation->setSupervisor(null);
-            }
-        }
+        $this->superviseeAffiliations->removeElement($superviseeAffiliation);
 
         return $this;
     }
@@ -574,12 +549,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     public function removeUnitAffiliation(UnitAffiliation $unitAffiliation): self
     {
-        if ($this->unitAffiliations->removeElement($unitAffiliation)) {
-            // set the owning side to null (unless already changed)
-            if ($unitAffiliation->getPerson() === $this) {
-                $unitAffiliation->setPerson(null);
-            }
-        }
+        $this->unitAffiliations->removeElement($unitAffiliation);
 
         return $this;
     }

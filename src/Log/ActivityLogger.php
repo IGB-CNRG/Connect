@@ -6,17 +6,16 @@
 
 namespace App\Log;
 
-use App\Entity\KeyAffiliation;
 use App\Entity\Log;
 use App\Entity\Person;
-use App\Entity\RoomAffiliation;
-use App\Entity\SupervisorAffiliation;
-use App\Entity\ThemeAffiliation;
-use App\Entity\UnitAffiliation;
 use App\Service\EntityManagerAware;
 use App\Service\SecurityAware;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\PersistentCollection;
+use ReflectionClass;
 use ReflectionException;
 use ReflectionProperty;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Service\Attribute\SubscribedService;
@@ -25,278 +24,20 @@ use Symfony\Contracts\Service\ServiceSubscriberTrait;
 
 class ActivityLogger implements ServiceSubscriberInterface
 {
-    use ServiceSubscriberTrait, EntityManagerAware, SecurityAware;
+    use EntityManagerAware;
+    use SecurityAware;
+    use ServiceSubscriberTrait;
 
     private const DATE_FORMAT = 'n/j/Y';
 
-    public function logNewUnitAffiliation(UnitAffiliation $unitAffiliation)
-    {
-        $this->log(
-            $unitAffiliation->getPerson(),
-            sprintf(
-                'Added unit %s',
-                $unitAffiliation->getUnit() ?? $unitAffiliation->getOtherUnit()
-            )
-        );
-        if ($unitAffiliation->getUnit()) {
-            $this->log(
-                $unitAffiliation->getUnit(),
-                sprintf('Added person %s', $unitAffiliation->getPerson())
-            );
-        }
-    }
-
-    public function logEndUnitAffiliation(UnitAffiliation $unitAffiliation)
-    {
-        $this->log(
-            $unitAffiliation->getPerson(),
-            sprintf(
-                "Ended unit affiliation with %s on %s",
-                $unitAffiliation->getUnit() ?? $unitAffiliation->getOtherUnit(),
-                $unitAffiliation->getEndedAt()->format(self::DATE_FORMAT)
-            )
-        );
-        if ($unitAffiliation->getUnit()) {
-            $this->log(
-                $unitAffiliation->getUnit(),
-                sprintf(
-                    "Ended affiliation with %s on %s",
-                    $unitAffiliation->getPerson(),
-                    $unitAffiliation->getEndedAt()->format(self::DATE_FORMAT)
-                )
-            );
-        }
-    }
-
-    public function logNewRoomAffiliation(RoomAffiliation $roomAffiliation)
-    {
-        $this->log($roomAffiliation->getPerson(), sprintf('Added room %s', $roomAffiliation->getRoom()));
-        $this->log($roomAffiliation->getRoom(), sprintf('Added person %s', $roomAffiliation->getPerson()));
-    }
-
-    public function logEndRoomAffiliation(RoomAffiliation $roomAffiliation)
-    {
-        $this->log(
-            $roomAffiliation->getPerson(),
-            sprintf(
-                "Ended room affiliation with %s on %s",
-                $roomAffiliation->getRoom(),
-                $roomAffiliation->getEndedAt()->format(self::DATE_FORMAT)
-            )
-        );
-        $this->log(
-            $roomAffiliation->getRoom(),
-            sprintf(
-                "Ended affiliation with %s on %s",
-                $roomAffiliation->getPerson(),
-                $roomAffiliation->getEndedAt()->format(self::DATE_FORMAT)
-            )
-        );
-    }
-
-    public function logNewSupervisorAffiliation(SupervisorAffiliation $supervisorAffiliation)
-    {
-        $this->log(
-            $supervisorAffiliation->getSupervisor(),
-            sprintf('Added supervisee %s', $supervisorAffiliation->getSupervisee())
-        );
-        $this->log(
-            $supervisorAffiliation->getSupervisee(),
-            sprintf('Added supervisor %s', $supervisorAffiliation->getSupervisor()->getName())
-        );
-    }
-
-    public function logEndSupervisorAffiliation(SupervisorAffiliation $supervisorAffiliation)
-    {
-        $this->log(
-            $supervisorAffiliation->getSupervisor(),
-            sprintf(
-                "Ended supervisee affiliation with %s on %s",
-                $supervisorAffiliation->getSupervisee(),
-                $supervisorAffiliation->getEndedAt()->format(self::DATE_FORMAT)
-            )
-        );
-        $this->log(
-            $supervisorAffiliation->getSupervisee(),
-            sprintf(
-                "Ended supervisor affiliation with %s on %s",
-                $supervisorAffiliation->getSupervisor(),
-                $supervisorAffiliation->getEndedAt()->format(self::DATE_FORMAT)
-            )
-        );
-    }
-
-    public function logNewThemeAffiliation(ThemeAffiliation $themeAffiliation)
-    {
-        $this->log(
-            $themeAffiliation->getPerson(),
-            sprintf(
-                'Added affiliation with theme %s (%s)',
-                $themeAffiliation->getTheme()->getShortName(),
-                $themeAffiliation->getMemberCategory()->getName()
-            )
-        );
-        $this->log(
-            $themeAffiliation->getTheme(),
-            sprintf(
-                'Added member affiliation with %s (%s)',
-                $themeAffiliation->getPerson()->getName(),
-                $themeAffiliation->getMemberCategory()->getName()
-            )
-        );
-    }
-
-    public function logEndThemeAffiliation(ThemeAffiliation $themeAffiliation)
-    {
-        $this->log(
-            $themeAffiliation->getPerson(),
-            sprintf(
-                "Ended theme affiliation with %s on %s. Exit reason: \"%s\"",
-                $themeAffiliation->getTheme()->getShortName(),
-                $themeAffiliation->getEndedAt()->format(self::DATE_FORMAT),
-                $themeAffiliation->getExitReason()
-            )
-        );
-        // todo add a theme log?
-    }
-
-    public function logNewKeyAffiliation(KeyAffiliation $keyAffiliation)
-    {
-        $this->log(
-            $keyAffiliation->getPerson(),
-            sprintf("Added key %s", $keyAffiliation->getCylinderKey()->getName())
-        );
-        $this->log(
-            $keyAffiliation->getCylinderKey(),
-            sprintf("Key given to %s", $keyAffiliation->getPerson())
-        );
-    }
-
-    public function logPersonEdit(Person $person)
-    {
-        $this->log($person, $this->getEntityEditMessage($person));
-        $uow = $this->entityManager()->getUnitOfWork();
-        $uow->computeChangeSets();
-
-        // Log changes to key affiliations
-        if ($person->getKeyAffiliations()->isDirty()) {
-            $inserted = $person->getKeyAffiliations()->getInsertDiff();
-            foreach ($inserted as $keyAffiliation) {
-                $this->logNewKeyAffiliation($keyAffiliation);
-            }
-        }
-        foreach ($person->getKeyAffiliations() as $keyAffiliation) {
-            $this->log(
-                $person,
-                $this->getEntityEditMessage(
-                    $keyAffiliation,
-                    sprintf('Updated key assignment %s, ', $keyAffiliation->getCylinderKey()->getName())
-                )
-            );
-            $this->log(
-                $keyAffiliation->getCylinderKey(),
-                $this->getEntityEditMessage($keyAffiliation, sprintf('Updated key assignment for %s, ', $person))
-            );
-        }
-
-        // Log supervisor
-        if ($person->getSupervisorAffiliations()->isDirty()) {
-            $inserted = $person->getSupervisorAffiliations()->getInsertDiff();
-            foreach ($inserted as $supervisorAffiliation) {
-                $this->logNewSupervisorAffiliation($supervisorAffiliation);
-            }
-        }
-        foreach ($person->getSupervisorAffiliations() as $supervisorAffiliation) {
-            $this->log(
-                $person,
-                $this->getEntityEditMessage(
-                    $supervisorAffiliation,
-                    sprintf('Updated supervisor assignment %s, ', $supervisorAffiliation->getSupervisor()->getName())
-                )
-            );
-            $this->log(
-                $supervisorAffiliation->getSupervisor(),
-                $this->getEntityEditMessage(
-                    $supervisorAffiliation,
-                    sprintf('Updated supervisee assignment %s, ', $person->getName())
-                )
-            );
-        }
-
-        // Log supervisees
-        if ($person->getSuperviseeAffiliations()->isDirty()) {
-            $inserted = $person->getSuperviseeAffiliations()->getInsertDiff();
-            foreach ($inserted as $superviseeAffiliation) {
-                $this->logNewSupervisorAffiliation($superviseeAffiliation);
-            }
-        }
-        foreach ($person->getSuperviseeAffiliations() as $superviseeAffiliation) {
-            $this->log(
-                $person,
-                $this->getEntityEditMessage(
-                    $superviseeAffiliation,
-                    sprintf('Updated supervisee assignment %s, ', $superviseeAffiliation->getSupervisee()->getName())
-                )
-            );
-            $this->log(
-                $superviseeAffiliation->getSupervisee(),
-                $this->getEntityEditMessage(
-                    $superviseeAffiliation,
-                    sprintf('Updated supervisor assignment %s, ', $person->getName())
-                )
-            );
-        }
-
-        // Log theme changes
-        if ($person->getThemeAffiliations()->isDirty()) {
-            $inserted = $person->getThemeAffiliations()->getInsertDiff();
-            foreach ($inserted as $themeAffiliation) {
-                $this->logNewThemeAffiliation($themeAffiliation);
-            }
-        }
-        foreach ($person->getThemeAffiliations() as $themeAffiliation) {
-            $this->log(
-                $person,
-                $this->getEntityEditMessage(
-                    $themeAffiliation,
-                    sprintf('Updated theme affiliation with %s, ', $themeAffiliation->getTheme()->getShortName())
-                )
-            );
-            $this->log(
-                $themeAffiliation->getTheme(),
-                $this->getEntityEditMessage($themeAffiliation, sprintf('Updated member affiliation for %s, ', $person))
-            );
-        }
-        // Log room changes
-        if ($person->getRoomAffiliations()->isDirty()) {
-            $inserted = $person->getRoomAffiliations()->getInsertDiff();
-            foreach ($inserted as $roomAffiliation) {
-                $this->logNewRoomAffiliation($roomAffiliation);
-            }
-        }
-        foreach ($person->getRoomAffiliations() as $roomAffiliation) {
-            $this->log(
-                $person,
-                $this->getEntityEditMessage(
-                    $roomAffiliation,
-                    sprintf('Updated room affiliation with %s, ', $roomAffiliation->getRoom())
-                )
-            );
-            $this->log(
-                $roomAffiliation->getRoom(),
-                $this->getEntityEditMessage($roomAffiliation, sprintf('Updated member affiliation for %s, ', $person))
-            );
-        }
-    }
-
-    /* Entity Logging Function */
-
-    public function log(LogSubjectInterface $subject, ?string $message)
+    public function log(LogSubjectInterface $subject, ?string $message): void
     {
         if ($message) {
             $context = null;
-            if($subject instanceof Person){
-                $context = $this->normalizePersonContext($subject); // todo later add a method to LogSubjectInterface that returns the context group
+            if ($subject instanceof Person) {
+                $context = $this->normalizePersonContext(
+                    $subject
+                ); // todo later add a method to LogSubjectInterface that returns the context group
             }
             $log = (new Log())
                 ->setText($message)
@@ -307,18 +48,83 @@ class ActivityLogger implements ServiceSubscriberInterface
         }
     }
 
+    public function logPersonEdit(Person $person): void
+    {
+        $this->log($person, $this->getEntityEditMessage($person));
+        $uow = $this->entityManager()->getUnitOfWork();
+        $uow->computeChangeSets();
+
+        $reflection = new ReflectionClass($person::class);
+        foreach ($reflection->getProperties() as $property) {
+            $propertyReflection = new ReflectionProperty($person::class, $property->name);
+            $attributes = $propertyReflection->getAttributes(LoggableManyRelation::class);
+            if (count($attributes) > 0) {
+                $this->logAffiliationChanges($this->propertyAccessor()->getValue($person, $property->name));
+            }
+        }
+    }
+
+    public function logNewAffiliation(LoggableAffiliationInterface $affiliation): void
+    {
+        $this->log($affiliation->getSideA(), $affiliation->getAddLogMessageA());
+        $this->log($affiliation->getSideB(), $affiliation->getAddLogMessageB());
+    }
+
+    public function logUpdatedAffiliation(LoggableAffiliationInterface $affiliation): void
+    {
+        $this->log(
+            $affiliation->getSideA(),
+            $this->getEntityEditMessage($affiliation, $affiliation->getUpdateLogMessageA())
+        );
+        $this->log(
+            $affiliation->getSideB(),
+            $this->getEntityEditMessage($affiliation, $affiliation->getUpdateLogMessageB())
+        );
+    }
+
+    public function logRemovedAffiliation(LoggableAffiliationInterface $affiliation): void
+    {
+        $this->log($affiliation->getSideA(), $affiliation->getRemoveLogMessageA());
+        $this->log($affiliation->getSideB(), $affiliation->getRemoveLogMessageB());
+    }
+
     /* Helpers */
+
+    /**
+     * @param PersistentCollection $affiliations
+     * @return void
+     */
+    private function logAffiliationChanges(Collection $affiliations): void
+    {
+        if ($affiliations->isDirty()) {
+            $inserted = $affiliations->getInsertDiff();
+            /** @var LoggableAffiliationInterface $affiliation */
+            foreach ($inserted as $affiliation) {
+                $this->logNewAffiliation($affiliation);
+            }
+            $deleted = $affiliations->getDeleteDiff();
+            foreach ($deleted as $affiliation) {
+                $this->logRemovedAffiliation($affiliation);
+            }
+        }
+        foreach ($affiliations as $affiliation) {
+            $this->logUpdatedAffiliation($affiliation);
+        }
+    }
+
     private function normalizePersonContext(Person $person): string
     {
         $normalizerContext = (new ObjectNormalizerContextBuilder())
             ->withGroups('log:person')
-            ->withCircularReferenceHandler(function($object){
+            ->withCircularReferenceHandler(function ($object) {
                 return $object->__toString();
             })
             ->toArray();
         $normalizerContext['iri'] = false;
+
         return $this->serializer()->serialize($person, 'json', $normalizerContext);
     }
+
     private function getEntityEditMessage($entity, $messagePrefix = ''): ?string
     {
         $uow = $this->entityManager()->getUnitOfWork();
@@ -348,7 +154,7 @@ class ActivityLogger implements ServiceSubscriberInterface
                                     $new = $change[1]->format(self::DATE_FORMAT);
                                 } elseif (array_key_exists('type', $loggableArguments)
                                           && $loggableArguments['type'] == 'array') {
-                                    $new = '[' . join(', ', $change[1]) . ']';
+                                    $new = '['.join(', ', $change[1]).']';
                                 } else {
                                     $new = $change[1];
                                 }
@@ -360,25 +166,23 @@ class ActivityLogger implements ServiceSubscriberInterface
                     } elseif ($change[1] == null) {
                         // Removed
                         $changes[] = sprintf("removed %s", $fieldName);
-                    } else {
+                    } elseif (!array_key_exists('details', $loggableArguments)
+                              || $loggableArguments['details'] === true) {
                         // Changed
-                        if (!array_key_exists('details', $loggableArguments)
-                            || $loggableArguments['details'] === true) {
-                            if (array_key_exists('type', $loggableArguments) && $loggableArguments['type'] == 'date') {
-                                $old = $change[0]->format(self::DATE_FORMAT);
-                                $new = $change[1]->format(self::DATE_FORMAT);
-                            } elseif (array_key_exists('type', $loggableArguments)
-                                      && $loggableArguments['type'] == 'array') {
-                                $old = '[' . join(', ', $change[0]) . ']';
-                                $new = '[' . join(', ', $change[1]) . ']';
-                            } else {
-                                $old = $change[0];
-                                $new = $change[1];
-                            }
-                            $changes[] = sprintf("changed %s from '%s' to '%s'", $fieldName, $old, $new);
+                        if (array_key_exists('type', $loggableArguments) && $loggableArguments['type'] == 'date') {
+                            $old = $change[0]->format(self::DATE_FORMAT);
+                            $new = $change[1]->format(self::DATE_FORMAT);
+                        } elseif (array_key_exists('type', $loggableArguments)
+                                  && $loggableArguments['type'] == 'array') {
+                            $old = '['.join(', ', $change[0]).']';
+                            $new = '['.join(', ', $change[1]).']';
                         } else {
-                            $changes[] = sprintf("changed %s", $fieldName);
+                            $old = $change[0];
+                            $new = $change[1];
                         }
+                        $changes[] = sprintf("changed %s from '%s' to '%s'", $fieldName, $old, $new);
+                    } else {
+                        $changes[] = sprintf("changed %s", $fieldName);
                     }
                 }
             } catch (ReflectionException) {
@@ -387,12 +191,19 @@ class ActivityLogger implements ServiceSubscriberInterface
         if (count($changes) === 0) {
             return null;
         }
+
         return ucfirst(sprintf('%s%s', $messagePrefix, join(', ', $changes)));
     }
 
     #[SubscribedService]
     function serializer(): SerializerInterface
     {
-        return $this->container->get(__CLASS__ . '::' . __FUNCTION__);
+        return $this->container->get(__CLASS__.'::'.__FUNCTION__);
+    }
+
+    #[SubscribedService]
+    function propertyAccessor(): PropertyAccessorInterface
+    {
+        return $this->container->get(__CLASS__.'::'.__FUNCTION__);
     }
 }

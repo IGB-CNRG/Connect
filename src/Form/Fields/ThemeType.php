@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -22,6 +22,7 @@ class ThemeType extends EntityType
             'attr' => [
                 'data-controller' => 'tom-select',
             ],
+            'placeholder' => '',
             'query_builder' => function (ThemeRepository $themeRepository) {
                 return $themeRepository->createFormSortedQueryBuilder();
             },

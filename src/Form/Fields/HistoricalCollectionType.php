@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -20,7 +20,7 @@ class HistoricalCollectionType extends CollectionType
             ],
             'label'=>false,
             'allow_add' => true,
-            'allow_delete' => false,
+            'allow_delete' => true,
             'by_reference' => false,
             'prototype' => true,
             'required' => false,

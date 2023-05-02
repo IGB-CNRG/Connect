@@ -42,7 +42,7 @@ class SupervisorController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($supervisorAffiliation);
-            $logger->logNewSupervisorAffiliation($supervisorAffiliation);
+            $logger->logNewAffiliation($supervisorAffiliation);
             $em->flush();
 
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
@@ -81,7 +81,7 @@ class SupervisorController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($supervisorAffiliation);
-            $logger->logNewSupervisorAffiliation($supervisorAffiliation);
+            $logger->logNewAffiliation($supervisorAffiliation);
             $em->flush();
 
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
@@ -108,7 +108,7 @@ class SupervisorController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($supervisorAffiliation);
-            $logger->logEndSupervisorAffiliation($supervisorAffiliation);
+            $logger->logUpdatedAffiliation($supervisorAffiliation);
             $em->flush();
 
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);

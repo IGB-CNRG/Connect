@@ -45,6 +45,7 @@ class SuperviseeType extends AbstractType
                             'data-controller' => 'tom-select',
                             'data-tom-select-open-on-focus-value' => 'false',
                         ],
+                        'placeholder' => '',
                         'query_builder' => function(PersonRepository $repository){
                             return $repository->createSortedQueryBuilder();
                         },
