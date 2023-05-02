@@ -55,6 +55,12 @@ class DashboardController extends AbstractDashboardController
         // TODO put some cool charts on this dashboard, or something
     }
 
+    #[Route('/admin/workflow', name: 'admin_workflow_display')]
+    public function workflowDisplay()
+    {
+        return $this->render('admin/workflows.html.twig');
+    }
+
     public function configureAssets(): Assets
     {
         // todo will this break on production?
@@ -87,6 +93,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Buildings', 'fas fa-list', Building::class);
         yield MenuItem::linkToCrud('Units', 'fas fa-list', Unit::class);
         yield MenuItem::section('Workflows');
+        yield MenuItem::linkToRoute('Workflow information', 'fas fa-diagram-project', 'admin_workflow_display');
         yield MenuItem::linkToCrud('Notifications', 'fas fa-envelope', WorkflowNotification::class);
     }
 }

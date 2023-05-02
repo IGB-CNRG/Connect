@@ -14,79 +14,106 @@ framework:
                 need_entry_form:
                     metadata:
                         completion: 0
+                        label: Need entry form
                 entry_form_submitted:
                     metadata:
                         completion: 25
                         approvalStrategy: App\Workflow\Approval\ThemeApproval
                         approval_route: membership_approveEntryForm
+                        label: Entry form submitted
                 need_certificates:
                     metadata:
                         completion: 50
+                        label: Need training certificates
                 certificates_submitted:
                     metadata:
                         completion: 75
                         approvalStrategy: App\Workflow\Approval\ReceptionApproval
                         approval_route: membership_approveCertificates
+                        label: Training certificates submitted
                 active:
+                    metadata:
+                        bg_color: "#afa"
+                        label: Active
                 exit_form_submitted:
                     metadata:
                         completion: 50
                         approval_route: membership_approveExitForm
+                        label: Exit form submitted
                 inactive:
+                    metadata:
+                        bg_color: "#faa"
+                        label: Inactive
             transitions:
                 submit_entry_form:
                     from: need_entry_form
                     to: entry_form_submitted
+                    metadata:
+                        label: Submit entry form
                 approve_entry_form:
                     from: entry_form_submitted
                     to: need_certificates
                     metadata:
                         # todo we could eventually move the ApprovalGuard to use the Place metadata and remove these
                         approvalStrategy: App\Workflow\Approval\ThemeApproval
+                        label: Approve entry form
                 return_entry_form:
                     from: entry_form_submitted
                     to: need_entry_form
                     metadata:
                         approvalStrategy: App\Workflow\Approval\ThemeApproval
+                        label: Return entry form
                 activate_without_certificates:
                     from: entry_form_submitted
                     to: active
                     metadata:
                         approvalStrategy: App\Workflow\Approval\ThemeApproval
+                        label: Activate w/o certificates
                 upload_certificates:
                     from: need_certificates
                     to: certificates_submitted
+                    metadata:
+                        label: Upload certificates
                 approve_certificates:
                     from: certificates_submitted
                     to: active
                     metadata:
                         approvalStrategy: App\Workflow\Approval\ReceptionApproval
+                        label: Approve certificates
                 return_certificates:
                     from: certificates_submitted
                     to: need_certificates
                     metadata:
                         approvalStrategy: App\Workflow\Approval\ReceptionApproval
+                        label: Return certificates
                 force_entry_form:
                     from: need_entry_form
                     to: active
                     guard: "is_granted('ROLE_APPROVER')" # can't check for theme approval before the user has a theme
+                    metadata:
+                        label: Process entry silently
                 # the rest of this may be naive for now, until we better define the exit workflow
                 submit_exit_form:
                     from: active
                     to: exit_form_submitted
+                    metadata:
+                        label: Submit exit form
                 force_exit_form:
                     from: active
                     to: inactive
                     metadata:
                         approvalStrategy: App\Workflow\Approval\ThemeApproval
+                        label: Process exit silently
                 deactivate:
                     from: exit_form_submitted
                     to: inactive
                     metadata:
                         approvalStrategy: App\Workflow\Approval\ThemeApproval
+                        label: Approve exit form
                 reenter:
                     from: inactive
                     to: need_entry_form
+
                 reactivate: # does a member need to go through the entry process again? will they need new certificates?
                     from: inactive
                     to: active
