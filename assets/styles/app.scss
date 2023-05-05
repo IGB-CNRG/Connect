@@ -210,3 +210,9 @@ label.required:after {
   background-color: $gray-200;
   padding: 1rem;
 }
+
+@media print {
+  main .container {
+    margin-top: 2rem;
+  }
+}
