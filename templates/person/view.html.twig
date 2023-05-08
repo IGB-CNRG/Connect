@@ -26,30 +26,44 @@
                     <tr>
                         <th>{{ 'person.firstName'|trans }}</th>
                         <td>{{ person.firstName }}</td>
+                        {% if is_granted('PERSON_EDIT', person) %}
+                            <td></td>{% endif %}
                     </tr>
                     <tr>
                         <th>{{ 'person.lastName'|trans }}</th>
                         <td>{{ person.lastName }}</td>
+                        {% if is_granted('PERSON_EDIT', person) %}
+                            <td></td>{% endif %}
                     </tr>
                     <tr>
                         <th>Middle Initial</th>
                         <td>{{ person.middleInitial }}</td>
+                        {% if is_granted('PERSON_EDIT', person) %}
+                            <td></td>{% endif %}
                     </tr>
                     <tr>
                         <th>Preferred First Name</th>
                         <td>{{ person.preferredFirstName }}</td>
+                        {% if is_granted('PERSON_EDIT', person) %}
+                            <td></td>{% endif %}
                     </tr>
                     <tr>
                         <th>IGB Username</th>
                         <td>{{ person.username }}</td>
+                        {% if is_granted('PERSON_EDIT', person) %}
+                            <td></td>{% endif %}
                     </tr>
                     <tr>
                         <th>{{ 'person.netid'|trans }}</th>
                         <td>{{ person.netid }}</td>
+                        {% if is_granted('PERSON_EDIT', person) %}
+                            <td></td>{% endif %}
                     </tr>
                     <tr>
                         <th>{{ 'person.uin'|trans }}</th>
                         <td>{{ person.uin }}</td>
+                        {% if is_granted('PERSON_EDIT', person) %}
+                            <td></td>{% endif %}
                     </tr>
                     {% for themeAffiliation in person.themeAffiliations|current %}
                         <tr>
@@ -67,16 +81,54 @@
                                     <br/>{{ themeAffiliation.memberCategory.name }}
                                 {% endif %}
                             </td>
+                            {% if is_granted('PERSON_EDIT', person) %}
+                                <td class="shrink pe-3">
+                                    <a href="{{ path('person_add_theme_affiliation', {'slug': person.slug}) }}">
+                                        <span class="fas fa-plus-square"></span>
+                                    </a>
+                                </td>
+                            {% endif %}
                         </tr>
+                    {% else %}
+                        {% if is_granted('PERSON_EDIT', person) %}
+                            <tr>
+                                <th>Theme</th>
+                                <td>None</td>
+                                <td class="shrink pe-3">
+                                    <a href="{{ path('person_add_theme_affiliation', {'slug': person.slug}) }}">
+                                        <span class="fas fa-plus-square"></span>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endif %}
                     {% endfor %}
                     {% for unitAffiliation in person.unitAffiliations|current %}
                         <tr>
                             <th>Unit</th>
                             <td>{{ unitAffiliation.unit??unitAffiliation.otherUnit }}</td>
+                            {% if is_granted('PERSON_EDIT', person) %}
+                                <td class="shrink pe-3">
+                                    <a href="{{ path('person_add_unit', {'slug': person.slug}) }}">
+                                        <span class="fas fa-plus-square"></span>
+                                    </a>
+                                </td>
+                            {% endif %}
                         </tr>
+                    {% else %}
+                        {% if is_granted('PERSON_EDIT', person) %}
+                            <tr>
+                                <th>Unit</th>
+                                <td>None</td>
+                                <td class="shrink pe-3">
+                                    <a href="{{ path('person_add_unit', {'slug': person.slug}) }}">
+                                        <span class="fas fa-plus-square"></span>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endif %}
                     {% endfor %}
 
-                    {% if person.supervisorAffiliations|current is not empty %}
+                    {% if person.supervisorAffiliations|current is not empty or is_granted('PERSON_EDIT', person) %}
                         <tr>
                             <th>Supervisor</th>
                             <td>
@@ -84,11 +136,22 @@
                                 <a href="{{ path('person_view', {'slug': supervisorAffiliation.supervisor.slug}) }}">
                                     {{ supervisorAffiliation.supervisor }}
                                     </a>{% if not loop.last %}, {% endif %}
+                                {% else %}
+                                    {% if is_granted('PERSON_EDIT', person) %}
+                                        None
+                                    {% endif %}
                                 {% endfor %}
                             </td>
+                            {% if is_granted('PERSON_EDIT', person) %}
+                                <td class="shrink pe-3">
+                                    <a href="{{ path('person_add_supervisor', {'slug': person.slug}) }}">
+                                        <span class="fas fa-plus-square"></span>
+                                    </a>
+                                </td>
+                            {% endif %}
                         </tr>
                     {% endif %}
-                    {% if person.superviseeAffiliations|current is not empty %}
+                    {% if person.superviseeAffiliations|current is not empty or is_granted('PERSON_EDIT', person) %}
                         <tr>
                             <th>Supervisee(s)</th>
                             <td>
@@ -96,8 +159,19 @@
                                 <a href="{{ path('person_view', {'slug': superviseeAffiliation.supervisee.slug}) }}">
                                     {{ superviseeAffiliation.supervisee }}
                                     </a>{% if not loop.last %}, {% endif %}
+                                {% else %}
+                                    {% if is_granted('PERSON_EDIT', person) %}
+                                        None
+                                    {% endif %}
                                 {% endfor %}
                             </td>
+                            {% if is_granted('PERSON_EDIT', person) %}
+                                <td class="shrink pe-3">
+                                    <a href="{{ path('person_add_supervisee', {'slug': person.slug}) }}">
+                                        <span class="fas fa-plus-square"></span>
+                                    </a>
+                                </td>
+                            {% endif %}
                         </tr>
                     {% endif %}
                 </table>
@@ -113,6 +187,8 @@
                     <tr>
                         <th>Email</th>
                         <td>{{ person.email }}</td>
+                        {% if is_granted('PERSON_EDIT', person) %}
+                            <td></td>{% endif %}
                     </tr>
                     <tr>
                         <th>Room</th>
@@ -121,10 +197,19 @@
                                 {{ roomAffiliation.room.number }}{% if not loop.last %}, {% endif %}
                             {% endfor %}
                         </td>
+                        {% if is_granted('PERSON_EDIT', person) %}
+                            <td class="shrink pe-3">
+                                <a href="{{ path('person_add_room', {'slug': person.slug}) }}">
+                                    <span class="fas fa-plus-square"></span>
+                                </a>
+                            </td>
+                        {% endif %}
                     </tr>
                     <tr>
                         <th>Office Phone</th>
                         <td>{{ person.officePhone }}</td>
+                        {% if is_granted('PERSON_EDIT', person) %}
+                            <td></td>{% endif %}
                     </tr>
                     {% if person.officeBuilding or person.otherAddress %}
                         <tr>
@@ -133,6 +218,8 @@
                                 {{ (person.otherAddress ?? person.officeBuilding.address)|nl2br }}
                                 {{ person.officeNumber }}
                             </td>
+                            {% if is_granted('PERSON_EDIT', person) %}
+                                <td></td>{% endif %}
                         </tr>
                     {% endif %}
                 </table>
@@ -231,7 +318,8 @@
                         <tr>
                             <th>Membership status</th>
                             <td>
-                                {{ workflow_place_label(person)|trans }} since {{ person.membershipUpdatedAt|date('n/j/y') }}
+                                {{ workflow_place_label(person)|trans }}
+                                since {{ person.membershipUpdatedAt|date('n/j/y') }}
                             </td>
                         </tr>
                     </table>
