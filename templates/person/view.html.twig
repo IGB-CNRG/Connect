@@ -293,28 +293,30 @@
                 </div>
             {% endif %}
 
-            {% if is_granted('ROLE_ADMIN') %}
+            {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_APPROVER') %}
                 <div class="card mb-3">
                     <div class="card-header">
                         <span class="fas fa-gears float-end text-muted mt-1"></span>
                         Admin Info
                     </div>
                     <table class="table">
-                        <tr>
-                            <th>CONNECT Roles</th>
-                            <td>{% for role in person.displayRoles %}
-                                    {{ role|role }}
-                                    {%- if not loop.last -%}
-                                        ,
-                                    {% endif %}
-                                {% else %}
-                                    None
-                                {% endfor %}</td>
-                        </tr>
-                        <tr>
-                            <th>CONNECT ID</th>
-                            <td>{{ person.id }}</td>
-                        </tr>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <tr>
+                                <th>CONNECT Roles</th>
+                                <td>{% for role in person.displayRoles %}
+                                        {{ role|role }}
+                                        {%- if not loop.last -%}
+                                            ,
+                                        {% endif %}
+                                    {% else %}
+                                        None
+                                    {% endfor %}</td>
+                            </tr>
+                            <tr>
+                                <th>CONNECT ID</th>
+                                <td>{{ person.id }}</td>
+                            </tr>
+                        {% endif %}
                         <tr>
                             <th>Membership status</th>
                             <td>
