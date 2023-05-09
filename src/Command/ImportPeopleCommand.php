@@ -297,6 +297,12 @@ class ImportPeopleCommand extends Command
                             ['start_date' => $user_theme['user_start'], 'end_date' => $user_theme['user_end']],
                             $themeAffiliation
                         );
+                    } elseif($user_theme['end_date'] === null && ($user_theme['user_end']!=null && $user_theme['user_end']!='0000-00-00')){
+                        // Default to the user's end date if the user_theme doesn't specifically have one
+                        $this->setDatesFromResult(
+                            ['start_date' => $user_theme['start_date'], 'end_date' => $user_theme['user_end']],
+                            $themeAffiliation
+                        );
                     } else {
                         $this->setDatesFromResult($user_theme, $themeAffiliation);
                     }

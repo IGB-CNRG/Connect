@@ -32,15 +32,18 @@ class HistoricityManager
      * @param string $exitReason
      * @return void
      */
-    public function endAffiliations(array $affiliations, DateTimeInterface $endDate, string $exitReason): void
+    public function endAffiliations(array $affiliations, DateTimeInterface $endDate, ?string $exitReason=null): bool
     {
+        $updated = false;
         foreach ($affiliations as $affiliation) {
             if ($affiliation->wasCurrentAtDate($endDate)) {
+                $updated = true;
                 $affiliation->setEndedAt($endDate);
                 if (method_exists($affiliation, 'setExitReason')) {
                     $affiliation->setExitReason($exitReason);
                 }
             }
         }
+        return $updated;
     }
 }
