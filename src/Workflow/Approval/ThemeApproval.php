@@ -9,7 +9,6 @@ namespace App\Workflow\Approval;
 use App\Entity\Person;
 use App\Entity\Theme;
 use App\Entity\ThemeAffiliation;
-use App\Enum\ThemeRole;
 use App\Repository\PersonRepository;
 use App\Service\HistoricityManager;
 
@@ -28,8 +27,7 @@ class ThemeApproval implements ApprovalStrategy
         $themes = $this->currentThemes($person);
         $approvers = [];
         foreach ($themes as $theme) {
-            array_merge($approvers, $this->personRepository->findByRoleInTheme($theme, ThemeRole::ThemeAdmin));
-            array_merge($approvers, $this->personRepository->findByRoleInTheme($theme, ThemeRole::LabManager));
+            $approvers = array_merge($approvers, $theme->getThemeAdmins(), $theme->getLabManagers());
         }
 
 

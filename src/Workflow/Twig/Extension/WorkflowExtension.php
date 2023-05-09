@@ -1,12 +1,13 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
 namespace App\Workflow\Twig\Extension;
 
 use App\Entity\Person;
+use App\Workflow\Twig\Runtime\WorkflowRuntime;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -32,6 +33,7 @@ class WorkflowExtension extends AbstractExtension
         return [
             new TwigFunction('workflow_place_label', [$this, 'label']),
             new TwigFunction('workflow_place_completion_message', [$this, 'message']),
+            new TwigFunction('workflow_approvers', [WorkflowRuntime::class, 'getMembershipApprovers']),
         ];
     }
 

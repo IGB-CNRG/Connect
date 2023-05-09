@@ -12,6 +12,7 @@ use App\Entity\WorkflowNotification;
 use App\Service\HistoricityManagerAware;
 use App\Settings\SettingManager;
 use App\Workflow\Approval\ApprovalStrategy;
+use App\Workflow\Membership;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\Attribute\TaggedLocator;
 use Symfony\Component\DependencyInjection\ServiceLocator;
@@ -95,39 +96,27 @@ class NotificationDispatcher implements ServiceSubscriberInterface
      */
     protected function getApprovalEmails(WorkflowNotification $notification, Person $subject): string
     {
-        // get the workflow transition, get the metadata, hydrate the ApprovalStrategy, get the approvers, make a list of their emails
-        $approvalEmails = '';
-        $membershipStateMachine = $this->membershipStateMachine();
         /** @var Transition $transition */
         $transition = current(
             array_filter(
-                $membershipStateMachine->getDefinition()->getTransitions(),
+                $this->membershipStateMachine()->getDefinition()->getTransitions(),
                 function (Transition $transition) use ($notification) {
                     return $transition->getName() === $notification->getTransitionName();
                 }
             )
         );
-        // We can trust that this is a state machine, and thus only has one "to"
-        $approvalStrategyClass = $membershipStateMachine->getMetadataStore()->getMetadata(
-            'approvalStrategy',
-            $transition->getTos()[0]
+        
+        $approvalEmails = $this->membership()->getApprovalEmails($subject, $transition);
+        $approvalEmailString = join(
+            ",",
+            $approvalEmails
         );
-        if ($approvalStrategyClass
-            && class_exists($approvalStrategyClass)
-            && in_array(ApprovalStrategy::class, class_implements($approvalStrategyClass))) {
-            /** @var ApprovalStrategy $approvalStrategy */
-            $approvalStrategy = $this->approvalLocator->get($approvalStrategyClass);
-            $approvalEmails = join(
-                ",",
-                $approvalStrategy->getApprovalEmails($subject)
-            );
+
+        if(strlen($approvalEmailString) === 0){
+            $approvalEmailString = $this->settingManager()->get('fallback_approver_email');
         }
 
-        if(strlen($approvalEmails) === 0){
-            $approvalEmails = $this->settingManager()->get('fallback_approver_email');
-        }
-
-        return $approvalEmails;
+        return $approvalEmailString;
     }
 
     //MARK: - Service Subscribers
@@ -146,6 +135,12 @@ class NotificationDispatcher implements ServiceSubscriberInterface
 
     #[SubscribedService(attributes: new Autowire(service: 'state_machine.membership'))]
     private function membershipStateMachine(): WorkflowInterface
+    {
+        return $this->container->get(__CLASS__.'::'.__FUNCTION__);
+    }
+
+    #[SubscribedService]
+    private function membership(): Membership
     {
         return $this->container->get(__CLASS__.'::'.__FUNCTION__);
     }

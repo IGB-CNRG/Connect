@@ -203,15 +203,16 @@ class MembershipController extends AbstractController
         CertificateHelper $certificateHelper,
         EntityManagerInterface $em,
         WorkflowInterface $membershipStateMachine,
+        Membership $membership,
         ActivityLogger $logger
     ): RedirectResponse|Response {
-        // todo should we lock this down explicitly, or should we add an approvalstrategy for this step?
-        if (array_keys($membershipStateMachine->getMarking($this->getUser())->getPlaces())[0]
-            != Membership::PLACE_NEED_CERTIFICATES) {
-            throw $this->createAccessDeniedException();
-        }
         /** @var Person $person */
         $person = $this->getUser();
+        // todo should we lock this down explicitly, or should we add an approvalstrategy for this step?
+        if ($membership->getPlace($person) != Membership::PLACE_NEED_CERTIFICATES) {
+            throw $this->createAccessDeniedException();
+        }
+
         if (!$membershipStateMachine->can($person, Membership::TRANS_UPLOAD_CERTIFICATES)) {
             throw $this->createAccessDeniedException();
         }
@@ -226,7 +227,7 @@ class MembershipController extends AbstractController
                 $certificate = (new Document())
                     ->setType(DocumentCategory::Certificate)
                     ->setDisplayName($certificateName)
-                    ->setUploadedBy($this->getUser());
+                    ->setUploadedBy($person);
                 $person->addDocument($certificate);
             }
         }

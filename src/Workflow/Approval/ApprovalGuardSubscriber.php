@@ -6,9 +6,9 @@
 
 namespace App\Workflow\Approval;
 
-use App\Repository\PersonRepository;
 use App\Service\HistoricityManagerAware;
 use App\Service\SecurityAware;
+use App\Workflow\Membership;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\GuardEvent;
 use Symfony\Component\Workflow\WorkflowEvents;
@@ -24,21 +24,13 @@ class ApprovalGuardSubscriber implements EventSubscriberInterface, ServiceSubscr
 
     public function approvalGuard(GuardEvent $event): void
     {
-        if($this->security()->isGranted('ROLE_ADMIN')){
+        if ($this->security()->isGranted('ROLE_ADMIN')) {
             // an admin should always be able to approve
             return;
         }
-        $approvalStrategyClass = $event->getMetadata('approvalStrategy', $event->getTransition());
-        if ($approvalStrategyClass
-            && class_exists($approvalStrategyClass)
-            && in_array(ApprovalStrategy::class, class_implements($approvalStrategyClass))) {
-            /** @var ApprovalStrategy $approvalStrategy */
-            $approvalStrategy = new $approvalStrategyClass($this->personRepository(), $this->historicityManager());
-
-            $approvers = $approvalStrategy->getApprovers($event->getSubject());
-            if(!in_array($this->security()->getUser(), $approvers)){
-                $event->setBlocked(true, "You are not authorized to approve this form.");
-            }
+        $approvers = $this->membership()->getApprovers($event->getSubject(), $event->getTransition());
+        if (!in_array($this->security()->getUser(), $approvers)) {
+            $event->setBlocked(true, "You are not authorized to approve this form.");
         }
     }
 
@@ -48,13 +40,13 @@ class ApprovalGuardSubscriber implements EventSubscriberInterface, ServiceSubscr
     public static function getSubscribedEvents(): array
     {
         return [
-            WorkflowEvents::GUARD => "approvalGuard"
+            WorkflowEvents::GUARD => "approvalGuard",
         ];
     }
 
     #[SubscribedService]
-    private function personRepository(): PersonRepository
+    private function membership(): Membership
     {
-        return $this->container->get(__CLASS__ . '::' . __FUNCTION__);
+        return $this->container->get(__CLASS__.'::'.__FUNCTION__);
     }
 }

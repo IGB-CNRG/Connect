@@ -9,6 +9,7 @@
                 <th>Theme</th>
                 <th>Approval</th>
                 <th>Submitted Date</th>
+                <th>Approvers</th>
             </tr>
             {% for person in approvals %}
                 <tr>
@@ -35,6 +36,14 @@
                         <a href="{{ path(workflow_metadata(person, 'approval_route', person.membershipStatus), {'slug': person.slug}) }}">{{ ('membership.'~person.membershipStatus~'.approval_title')|trans }}</a>
                     </td>
                     <td>{{ person.membershipUpdatedAt|date('n/j/Y') }}</td>
+                    <td>
+                        {% for approver in workflow_approvers(person) %}
+                            <a href="{{ path('person_view', {'slug': approver.slug}) }}">{{ approver }}</a>
+                            {%- if not loop.last -%}, {% endif %}
+                        {% else %}
+                            <span class="fas fa-exclamation-triangle text-warning"></span> None
+                        {% endfor %}
+                    </td>
                 </tr>
             {% else %}
                 <tr>

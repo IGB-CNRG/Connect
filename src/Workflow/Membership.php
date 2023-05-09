@@ -7,6 +7,10 @@
 namespace App\Workflow;
 
 use App\Entity\Person;
+use App\Workflow\Approval\ApprovalStrategy;
+use Symfony\Component\DependencyInjection\Attribute\TaggedLocator;
+use Symfony\Component\DependencyInjection\ServiceLocator;
+use Symfony\Component\Workflow\Transition;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 class Membership
@@ -46,17 +50,96 @@ class Membership
         self::TRANS_APPROVE_CERTIFICATES,
         self::TRANS_RETURN_CERTIFICATES,
         self::TRANS_DEACTIVATE,
+        self::TRANS_FORCE_ENTRY_FORM,
+        self::TRANS_ACTIVATE_WITHOUT_CERTIFICATES,
     ];
 
-    public function __construct(private readonly WorkflowInterface $membershipStateMachine){}
+    private readonly ServiceLocator $approvalLocator;
 
+    public function __construct(
+        private readonly WorkflowInterface $membershipStateMachine,
+        #[TaggedLocator(ApprovalStrategy::class)] ServiceLocator $approvalLocator
+    ) {
+        $this->approvalLocator = $approvalLocator;
+    }
+
+    /**
+     * Returns true if the given Person can be approved by the currently logged-in user.
+     * @param Person $person
+     * @return bool
+     */
     public function canApprove(Person $person): bool
     {
-        foreach (self::TRANSITIONS_NEEDING_APPROVAL as $transitionName){
-            if($this->membershipStateMachine->can($person, $transitionName)){
+        foreach (self::TRANSITIONS_NEEDING_APPROVAL as $transitionName) {
+            if ($this->membershipStateMachine->can($person, $transitionName)) {
                 return true;
             }
         }
+
         return false;
+    }
+
+    /**
+     * Returns the approvers for the given Person and workflow transition. If no transition is given, returns the
+     * approvers for the Person's current workflow place.
+     * @param Person $person
+     * @param Transition|null $transition
+     * @return Person[]
+     */
+    public function getApprovers(Person $person, ?Transition $transition = null): array
+    {
+        if ($approvalStrategy = $this->getApprovalStrategy($person, $transition)) {
+            return $approvalStrategy->getApprovers($person);
+        }
+
+        return [];
+    }
+
+    /**
+     * Returns the approval emails for the given Person and workflow transition. If no transition is given, returns the
+     * approvers for the Person's current workflow place.
+     * @param Person $person
+     * @param Transition|null $transition
+     * @return string[]
+     */
+    public function getApprovalEmails(Person $person, ?Transition $transition = null): array
+    {
+        if($approvalStrategy = $this->getApprovalStrategy($person, $transition)){
+            return $approvalStrategy->getApprovalEmails($person);
+        }
+        return [];
+    }
+
+    /**
+     * Returns the ApprovalStrategy for the given Person and workflow transition. If no transition is given, returns the
+     * ApprovalStrategy for the Person's current workflow place.
+     * @param Person $person
+     * @param Transition|null $transition
+     * @return ApprovalStrategy|null
+     */
+    public function getApprovalStrategy(Person $person, ?Transition $transition = null): ?ApprovalStrategy
+    {
+        $approvalStrategyClass = $this->membershipStateMachine->getMetadataStore()->getMetadata(
+            'approvalStrategy',
+            $transition ?? $this->getPlace($person)
+        );
+        if ($approvalStrategyClass
+            && class_exists($approvalStrategyClass)
+            && in_array(ApprovalStrategy::class, class_implements($approvalStrategyClass))) {
+            /** @var ApprovalStrategy $approvalStrategy */
+            return $this->approvalLocator->get($approvalStrategyClass);
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the current workflow place for the given Person.
+     * @param Person $person
+     * @return string
+     */
+    public function getPlace(Person $person): string
+    {
+        return array_keys($this->membershipStateMachine->getMarking($person)->getPlaces())[0];
     }
 }
