@@ -6,7 +6,8 @@
 
 namespace App\Controller;
 
-use App\Repository\UnitRepository;
+use App\Entity\ThemeAffiliation;
+use App\Repository\PersonRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,25 +15,68 @@ use Symfony\Component\Routing\Annotation\Route;
 class ReportController extends AbstractController
 {
     #[Route('/report/unit-partners', name: 'report_unit_partners')]
-    public function unitPartners(UnitRepository $unitRepository): Response
+    public function unitPartners(PersonRepository $personRepository): Response
     {
-        $units = $unitRepository->getFacultyAffiliatesDigest();
+        $people = $personRepository->findCurrentForMembersOnlyIndex();
         $colleges = [];
-        foreach($units as $unit){
-            $college = $unit['college'] ?? 'Other';
-            if(!key_exists($college, $colleges)){
-                $colleges[$college] = [
-                    'name' => $college,
-                    'units' => [],
-                    'faculty' => 0,
-                    'affiliates' => 0,
-                ];
+        foreach ($people as $person) {
+            // todo reduce the themeaffiliations (do we need to check if they're current?)
+            $type = array_reduce(
+                $person->getThemeAffiliations()->toArray(),
+                function ($carry, ThemeAffiliation $affiliation) {
+                    if ($affiliation->getTheme()->getShortName() === 'CABBI') { // todo bad
+                        return $carry;
+                    }
+                    if ($carry === 'faculty'
+                        || $affiliation->getMemberCategory()->getName() === 'Faculty') { // todo bad
+                        return 'faculty';
+                    }
+                    if ($carry === 'affiliate'
+                        || $affiliation->getMemberCategory()->getName() === 'Affiliate') { // todo bad
+                        return 'affiliate';
+                    }
+
+                    return null;
+                }
+            );
+            if ($type !== null) {
+                // todo what do we do when someone is in multiple departments? is that ever the case?
+                $unit = null;
+                if ($person->getUnitAffiliations()->count() > 0) {
+                    $unit = $person->getUnitAffiliations()[0]->getUnit();
+                    $unitName = $unit->getName();
+                    $college = $unit->getParentUnit();
+                    $collegeName = $college ? $college->getName() : 'Other';
+                } else {
+                    $unitName = "Other";
+                    $collegeName = 'Other';
+                }
+                if (!key_exists($collegeName, $colleges)) {
+                    $colleges[$collegeName] = [
+                        'name' => $collegeName,
+                        'units' => [],
+                        'faculty' => 0,
+                        'affiliates' => 0,
+                    ];
+                }
+
+                if (!key_exists($unitName, $colleges[$collegeName]['units'])) {
+                    $colleges[$collegeName]['units'][$unitName] = [
+                        'unit' => $unitName,
+                        'faculty' => 0,
+                        'affiliates' => 0,
+                    ];
+                }
+                if ($type === 'faculty') {
+                    $colleges[$collegeName]['faculty']++;
+                    $colleges[$collegeName]['units'][$unitName]['faculty']++;
+                } elseif ($type === 'affiliate') {
+                    $colleges[$collegeName]['affiliates']++;
+                    $colleges[$collegeName]['units'][$unitName]['affiliates']++;
+                }
             }
-            $colleges[$college]['units'][] = $unit;
-            $colleges[$college]['faculty'] += $unit['faculty'];
-            $colleges[$college]['affiliates'] += $unit['affiliates'];
         }
-        sort($colleges);
+
         return $this->render('report/unit_partners.html.twig', [
             'colleges' => $colleges,
         ]);

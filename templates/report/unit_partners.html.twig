@@ -4,12 +4,12 @@
 
 {% block content %}
     <h2>Unit Partners</h2>
-    {% for college in colleges %}
+    {% for college in colleges|sort %}
         {% if college.faculty > 0 or college.affiliates > 0 %}
             <h3>{{ college.name }}
                 <small>{{ college.faculty }} faculty, {{ college.affiliates }} affiliates</small>
             </h3>
-            {% for unit in college.units %}
+            {% for unit in college.units|sort %}
                 {% if unit.faculty > 0 or unit.affiliates > 0 %}
                     <p>{{ unit.unit }}
                         <small>{{ unit.faculty }} faculty, {{ unit.affiliates }} affiliates</small></p>

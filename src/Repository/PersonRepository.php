@@ -52,7 +52,9 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
             ->andWhere('t.isOutsideGroup = false');
     }
 
-
+    /**
+     * @return Person[]
+     */
     public function findCurrentForMembersOnlyIndex()
     {
         $qb = $this->createMembersOnlyIndexQueryBuilder();
@@ -62,6 +64,9 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
             ->getResult();
     }
 
+    /**
+     * @return Person[]
+     */
     public function findAllForMembersOnlyIndex()
     {
         return $this->createMembersOnlyIndexQueryBuilder()
@@ -69,6 +74,9 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
             ->getResult();
     }
 
+    /**
+     * @return Person[]
+     */
     public function findCurrentForIndex()
     {
         $qb = $this->createIndexQueryBuilder();
@@ -78,6 +86,9 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
             ->getResult();
     }
 
+    /**
+     * @return Person[]
+     */
     public function findAllForIndex()
     {
         return $this->createIndexQueryBuilder()
