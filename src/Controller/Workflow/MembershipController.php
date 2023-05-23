@@ -406,7 +406,7 @@ class MembershipController extends AbstractController
         Person $person,
         DateTimeInterface $endedAt,
         string $exitReason,
-        string $forwardingEmail
+        ?string $forwardingEmail
     ): void {
         $historicityManager->endAffiliations(
             array_merge(
@@ -419,7 +419,9 @@ class MembershipController extends AbstractController
             $endedAt,
             $exitReason
         );
-        $person->setEmail($forwardingEmail);
+        if($forwardingEmail) {
+            $person->setEmail($forwardingEmail);
+        }
     }
 
     protected function processEntryForm(
