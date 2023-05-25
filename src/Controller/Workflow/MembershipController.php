@@ -12,7 +12,6 @@ use App\Entity\Person;
 use App\Entity\RoomAffiliation;
 use App\Entity\SupervisorAffiliation;
 use App\Entity\ThemeAffiliation;
-use App\Entity\UnitAffiliation;
 use App\Enum\DocumentCategory;
 use App\Form\Workflow\ApproveType;
 use App\Form\Workflow\Membership\Certificate\CertificateUploadType;
@@ -55,16 +54,15 @@ class MembershipController extends AbstractController
         WorkflowInterface $membershipStateMachine
     ): Response {
         $roomAffiliation = new RoomAffiliation();
-        $unitAffiliation = new UnitAffiliation();
         $themeAffiliation = new ThemeAffiliation();
         $supervisorAffiliation = new SupervisorAffiliation();
         $person = (new Person())
             ->addRoomAffiliation($roomAffiliation)
-            ->addUnitAffiliation($unitAffiliation)
             ->addThemeAffiliation($themeAffiliation)
             ->addSupervisorAffiliation($supervisorAffiliation);
         $form = $this->createForm(EntryFormType::class, $person, [
             'allow_silent' => $membershipStateMachine->can($person, Membership::TRANS_FORCE_ENTRY_FORM),
+            'show_position_when_joined' => $this->isGranted('ROLE_ADMIN'),
             'use_captcha' => !$this->isGranted('IS_AUTHENTICATED_FULLY'),
         ])
             ->add('submit', SubmitType::class);
@@ -100,10 +98,6 @@ class MembershipController extends AbstractController
             $roomAffiliation = new RoomAffiliation();
             $person->addRoomAffiliation($roomAffiliation);
         }
-        if ($person->getUnitAffiliations()->count() === 0) {
-            $unitAffiliation = new UnitAffiliation();
-            $person->addUnitAffiliation($unitAffiliation);
-        }
         if ($person->getSupervisorAffiliations()->count() === 0) {
             $supervisorAffiliation = new SupervisorAffiliation();
             $person->addSupervisorAffiliation($supervisorAffiliation);
@@ -111,6 +105,7 @@ class MembershipController extends AbstractController
 
         $form = $this->createForm(EntryFormType::class, $person, [
             'allow_silent' => $this->isGranted('ROLE_APPROVER'),
+            'show_position_when_joined' => $this->isGranted('ROLE_ADMIN'),
             'use_captcha' => !$this->isGranted('IS_AUTHENTICATED_FULLY'),
         ])
             ->add('submit', SubmitType::class);
@@ -413,7 +408,6 @@ class MembershipController extends AbstractController
                 $person->getSupervisorAffiliations()->toArray(),
                 $person->getRoomAffiliations()->toArray(),
                 $person->getThemeAffiliations()->toArray(),
-                $person->getUnitAffiliations()->toArray(),
                 $person->getSuperviseeAffiliations()->toArray()
             ),
             $endedAt,
@@ -434,16 +428,11 @@ class MembershipController extends AbstractController
     ): void {
         $roomAffiliation = $person->getRoomAffiliations()[0];
         $supervisorAffiliation = $person->getSupervisorAffiliations()[0];
-        $unitAffiliation = $person->getUnitAffiliations()[0];
 
         $roomAffiliation->setStartedAt($startDate);
         $supervisorAffiliation->setStartedAt($startDate);
-        $unitAffiliation->setStartedAt($startDate);
         if (!$roomAffiliation->getRoom()) {
             $person->removeRoomAffiliation($roomAffiliation);
-        }
-        if (!$unitAffiliation->getUnit() && !$unitAffiliation->getOtherUnit()) {
-            $person->removeUnitAffiliation($unitAffiliation);
         }
         if (!$supervisorAffiliation->getSupervisor()) {
             $person->removeSupervisorAffiliation($supervisorAffiliation);

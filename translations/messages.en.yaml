@@ -13,6 +13,7 @@ person:
   lastName: Last name
   uin: UIN
   email: Email
+  positionWhenJoined: Position when joined
 # todo these workflow messages will need work
 membership:
   # Places

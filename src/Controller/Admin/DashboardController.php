@@ -15,7 +15,6 @@ use App\Entity\Room;
 use App\Entity\Setting;
 use App\Entity\Theme;
 use App\Entity\Unit;
-use App\Entity\UnitAffiliation;
 use App\Entity\WorkflowNotification;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -82,8 +81,8 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToRoute('Back to CONNECT', 'fa fa-rotate-left', 'default');
         yield MenuItem::linkToCrud('Settings', 'fa fa-gear', Setting::class);
         yield MenuItem::section('IGB');
-        yield MenuItem::linkToCrud('All People', 'fas fa-list', Person::class);
-        yield MenuItem::linkToCrud('New Units', 'fas fa-list', UnitAffiliation::class);
+        yield MenuItem::linkToCrud('All People', 'fas fa-list', Person::class)->setController(PersonCrudController::class);
+        yield MenuItem::linkToCrud('New Units', 'fas fa-list', Person::class)->setController(OtherUnitCrudController::class);
         yield MenuItem::linkToCrud('Member Categories', 'fas fa-list', MemberCategory::class);
         yield MenuItem::linkToCrud('Keys', 'fas fa-list', Key::class);
         yield MenuItem::linkToCrud('Key Assignments', 'fas fa-list', KeyAffiliation::class);

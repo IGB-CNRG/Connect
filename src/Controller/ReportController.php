@@ -40,10 +40,8 @@ class ReportController extends AbstractController
                 }
             );
             if ($type !== null) {
-                // todo what do we do when someone is in multiple departments? is that ever the case?
-                $unit = null;
-                if ($person->getUnitAffiliations()->count() > 0) {
-                    $unit = $person->getUnitAffiliations()[0]->getUnit();
+                if ($person->getUnit()) {
+                    $unit = $person->getUnit();
                     $unitName = $unit->getName();
                     $college = $unit->getParentUnit();
                     $collegeName = $college ? $college->getName() : 'Other';

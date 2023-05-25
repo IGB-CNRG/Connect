@@ -40,9 +40,8 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
             ->leftJoin('ta.theme', 't')
             ->leftJoin('p.roomAffiliations', 'ra')
             ->leftJoin('ra.room', 'r')
-            ->leftJoin('p.unitAffiliations', 'ua')
-            ->leftJoin('ua.unit', 'u')
-            ->select('p,ta,t,ra,r,ua,u');
+            ->leftJoin('p.unit', 'u')
+            ->select('p,ta,t,ra,r,u');
     }
 
     public function createMembersOnlyIndexQueryBuilder(): QueryBuilder

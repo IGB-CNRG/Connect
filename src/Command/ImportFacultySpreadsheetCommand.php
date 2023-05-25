@@ -9,7 +9,7 @@ namespace App\Command;
 use App\Entity\MemberCategory;
 use App\Entity\Person;
 use App\Entity\ThemeAffiliation;
-use App\Entity\UnitAffiliation;
+use App\Entity\Unit;
 use App\Repository\MemberCategoryRepository;
 use App\Repository\PersonRepository;
 use App\Repository\ThemeRepository;
@@ -134,8 +134,12 @@ class ImportFacultySpreadsheetCommand extends Command
                     ->setNetid($netid)
                 ->setMembershipUpdatedAt(new DateTimeImmutable());
                 if ($isUofI) {
-                    $unitAffiliation = $this->getUnitAffiliation($unitName);
-                    $person->addUnitAffiliation($unitAffiliation);
+                    $unit = $this->getUnit($unitName);
+                    if($unit){
+                        $person->setUnit($unit);
+                    } else {
+                        $person->setOtherUnit($unitName);
+                    }
                 }
                 foreach ($themes as $themeInfo) {
                     $themeAffiliation = $this->getThemeAffiliation($themeInfo);
@@ -156,23 +160,13 @@ class ImportFacultySpreadsheetCommand extends Command
                     $person->setNetid($netid); // Update the netid if we have one to update
                 }
 
-                // Add unit affiliation only if a similar one does not already exist
-                if ($isUofI) {
-                    $newUnitAffiliation = $this->getUnitAffiliation($unitName);
-                    $foundOverlap = false;
-                    foreach ($person->getUnitAffiliations() as $unitAffiliation) {
-                        if ((($newUnitAffiliation->getUnit() !== null
-                              && $newUnitAffiliation->getUnit() === $unitAffiliation->getUnit())
-                             || ($newUnitAffiliation->getUnit() === null
-                                 && $newUnitAffiliation->getOtherUnit()
-                                    === $unitAffiliation->getOtherUnit()))
-                            && $newUnitAffiliation->overlaps($unitAffiliation)) {
-                            $foundOverlap = true;
-                            break;
-                        }
-                    }
-                    if (!$foundOverlap) {
-                        $person->addUnitAffiliation($newUnitAffiliation);
+                // Overwrite unit affiliation
+                if ($isUofI && $unitName) {
+                    $unit = $this->getUnit($unitName);
+                    if($unit){
+                        $person->setUnit($unit);
+                    } else {
+                        $person->setOtherUnit($unitName);
                     }
                 }
 
@@ -267,18 +261,11 @@ class ImportFacultySpreadsheetCommand extends Command
 
     /**
      * @param mixed $unitName
-     * @return UnitAffiliation
+     * @return Unit|null
      */
-    protected function getUnitAffiliation(mixed $unitName): UnitAffiliation
+    protected function getUnit(mixed $unitName): ?Unit
     {
-        $unit = $this->unitRepository->findOneBy(['name' => $this->translateUnit($unitName)]);
-        $unitAffiliation = new UnitAffiliation();
-        if ($unit === null) {
-            $unitAffiliation->setOtherUnit($unitName);
-        } else {
-            $unitAffiliation->setUnit($unit);
-        }
-        return $unitAffiliation;
+        return $this->unitRepository->findOneBy(['name' => $this->translateUnit($unitName)]);
     }
 
     /**

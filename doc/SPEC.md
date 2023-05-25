@@ -420,7 +420,7 @@ in other projects in CNRG, and is the built-in template engine in Symfony.
 - officeBuilding (OneToMany, Building)
 - otherAddress (text)
 - keyDeposit (Boolean)
-- unitAffiliations (OneToMany, UnitAffiliation)
+- unit (ManyToOne, Unit)
 - themeAffiliations (OneToMany, ThemeAffiliation)
 - supervisorAffiliations (OneToMany, SupervisorAffiliation)
 - superviseeAffiliations (OneToMany, SupervisorAffiliation)
@@ -511,13 +511,6 @@ Uses HistoricalEntityTrait
 
 - supervisor (ManyToOne, Person)
 - supervisee (ManyToOne, Person)
-
-#### UnitAffiliation
-
-Uses HistoricalEntityTrait
-
-- person (ManyToOne, Person)
-- unit (ManyToOne, Unit)
 
 #### HistoricalEntityTrait
 

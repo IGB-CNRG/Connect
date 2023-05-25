@@ -19,7 +19,8 @@
         <div class="col-lg">{{ form_row(form.firstName) }}</div>
         <div class="col-lg">{{ form_row(form.lastName) }}</div>
     </div>
-    <div class="row" data-controller="username-check netid-autofill" data-username-check-url-value="{{ path('_api_/people{._format}_get_collection') }}">
+    <div class="row" data-controller="username-check netid-autofill"
+         data-username-check-url-value="{{ path('_api_/people{._format}_get_collection') }}">
         <div class="col-lg">{{ form_row(form.netid, {'attr':{'data-action':'netid-autofill#updateFields change->username-check#checkIfUsernameUnique', 'data-username-check-target':'username'}}) }}</div>
         <div class="col-lg">{{ form_row(form.uin) }}</div>
         <div class="col-lg">{{ form_row(form.email, {'attr':{'data-netid-autofill-target':'email'}}) }}</div>
@@ -44,13 +45,19 @@
     </div>
     <hr/>
     <div class="row">
-        <div class="col-lg">{{ form_row(form.unitAffiliations) }}</div>
+        <div class="col-lg">
+            {{ form_row(form.unit) }}
+            {{ form_row(form.otherUnit) }}
+        </div>
     </div>
     <hr/>
     <div class="row">
         <div class="col-lg">{{ form_row(form.supervisorAffiliations) }}</div>
     </div>
     {{ form_row(form.themeAffiliations) }}
+    {% if form.positionWhenJoined is defined %}
+        {{ form_row(form.positionWhenJoined) }}
+    {% endif %}
     {% if form.captcha is defined %}
         <hr/>
         {{ form_row(form.captcha) }}
@@ -94,7 +101,8 @@
 
 {% block captcha_widget %}
     <div>
-        <img src="{{ captcha_code }}" title="captcha" width="{{ captcha_width }}" height="{{ captcha_height }}" style="margin-bottom: 0.5rem;"/>
+        <img src="{{ captcha_code }}" title="captcha" width="{{ captcha_width }}" height="{{ captcha_height }}"
+             style="margin-bottom: 0.5rem;"/>
         {{ form_widget(form) }}
     </div>
 {% endblock %}

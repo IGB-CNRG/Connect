@@ -9,6 +9,8 @@ namespace App\Form\Person;
 use App\Entity\Building;
 use App\Entity\Person;
 use App\Form\Fields\HistoricalCollectionType;
+use App\Form\Fields\PositionWhenJoinedType;
+use App\Form\Fields\UnitType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
@@ -81,8 +83,13 @@ class PersonType extends AbstractType
             ->add('roomAffiliations', HistoricalCollectionType::class, [
                 'entry_type' => RoomAffiliationType::class,
             ])
-            ->add('unitAffiliations', HistoricalCollectionType::class, [
-                'entry_type' => UnitAffiliationType::class,
+            ->add('unit', UnitType::class)
+            ->add('otherUnit', TextType::class, [
+                'label' => 'Other department',
+                'required' => false,
+                'attr' => [
+                    'data-other-entry-target' => 'other',
+                ],
             ]);
         // show/hide fields based on user roles
         if ($this->security->isGranted('ROLE_ADMIN')) {
@@ -94,7 +101,8 @@ class PersonType extends AbstractType
                         'data-controller' => 'tom-select',
                     ],
                     'required' => false,
-                ]);
+                ])
+            ->add('positionWhenJoined', PositionWhenJoinedType::class);
         }
         if ($this->security->isGranted('ROLE_KEY_MANAGER')) {
             $builder

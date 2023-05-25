@@ -9,16 +9,13 @@ namespace App\Controller;
 use App\Entity\Person;
 use App\Entity\RoomAffiliation;
 use App\Entity\ThemeAffiliation;
-use App\Entity\UnitAffiliation;
 use App\Form\AdvancedSearchType;
 use App\Form\EndRoomAffiliationType;
 use App\Form\EndThemeAffiliationType;
-use App\Form\EndUnitAffiliationType;
 use App\Form\KeysType;
 use App\Form\Person\PersonType;
 use App\Form\Person\RoomAffiliationType;
 use App\Form\Person\ThemeAffiliationType;
-use App\Form\Person\UnitAffiliationType;
 use App\Log\ActivityLogger;
 use App\Repository\PersonRepository;
 use App\Service\HistoricityManager;
@@ -238,62 +235,6 @@ class PersonController extends AbstractController
 
         return $this->render('person/room/add.html.twig', [
             'person' => $person,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    #[Route('/person/{slug}/add-unit', name: 'person_add_unit')]
-    #[IsGranted("PERSON_EDIT", 'person')]
-    public function addUnit(
-        Person $person,
-        Request $request,
-        EntityManagerInterface $em,
-        ActivityLogger $logger
-    ): Response {
-        $unitAffiliation = (new UnitAffiliation())
-            ->setPerson($person);
-        $form = $this->createForm(UnitAffiliationType::class, $unitAffiliation);
-        $form->add('save', SubmitType::class);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($unitAffiliation);
-            $logger->logNewAffiliation($unitAffiliation);
-            $em->flush();
-
-            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
-        }
-
-        return $this->render('person/unit/add.html.twig', [
-            'person' => $person,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    #[Route('/person/{slug}/unit/{id}/end', name: 'person_end_unit_affiliation')]
-    public function endUnitAffiliation(
-        #[MapEntity(mapping: ['slug' => 'slug'])] Person $person,
-        UnitAffiliation $unitAffiliation,
-        Request $request,
-        EntityManagerInterface $em,
-        ActivityLogger $logger
-    ): Response {
-        $this->denyAccessUnlessGranted('PERSON_EDIT', $person);
-        $form = $this->createForm(EndUnitAffiliationType::class, $unitAffiliation);
-        $form->add('save', SubmitType::class);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($unitAffiliation);
-            $logger->logUpdatedAffiliation($unitAffiliation);
-            $em->flush();
-
-            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
-        }
-
-        return $this->render('person/unit/end.html.twig', [
-            'person' => $person,
-            'unitAffiliation' => $unitAffiliation,
             'form' => $form->createView(),
         ]);
     }

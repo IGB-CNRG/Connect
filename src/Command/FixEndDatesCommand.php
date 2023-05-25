@@ -62,8 +62,7 @@ class FixEndDatesCommand extends Command
                 if ($endDate !== null) {
                     if($this->historicityManager->endAffiliations($person->getSuperviseeAffiliations()->toArray(), $endDate) ||
                     $this->historicityManager->endAffiliations($person->getSupervisorAffiliations()->toArray(), $endDate) ||
-                    $this->historicityManager->endAffiliations($person->getRoomAffiliations()->toArray(), $endDate) ||
-                       $this->historicityManager->endAffiliations($person->getUnitAffiliations()->toArray(), $endDate)){
+                    $this->historicityManager->endAffiliations($person->getRoomAffiliations()->toArray(), $endDate)){
                         $io->text("$person, ended at {$endDate->format('n/j/Y')}");
                         $updated++;
                     }

@@ -55,7 +55,7 @@
     <div class="row">
         <div class="col-lg">
             <p class="approval-label">{{ 'entry_form.unit'|trans }}</p>
-            <p class="approval-field">{{ person.unitAffiliations|length>0 ? (person.unitAffiliations[0].unit??person.unitAffiliations[0].otherUnit) : '' }}</p>
+            <p class="approval-field">{{ person.unit??person.otherUnit??'' }}</p>
         </div>
     </div>
     <div class="row">

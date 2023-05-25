@@ -14,7 +14,6 @@ use App\Entity\SupervisorAffiliation;
 use App\Entity\Theme;
 use App\Entity\ThemeAffiliation;
 use App\Entity\Unit;
-use App\Entity\UnitAffiliation;
 use App\Enum\ThemeRole;
 use App\Log\ActivityLogger;
 use App\Repository\MemberCategoryRepository;
@@ -159,16 +158,14 @@ class ImportPeopleCommand extends Command
                         }
 
                         if ($user['dept_id']) {
-                            $unitAffiliation = new UnitAffiliation();
                             if (isset($unitsById[$user['dept_id']])) {
-                                $unitAffiliation
+                                $person
                                     ->setUnit($unitsById[$user['dept_id']]);
                             } else {
-                                $unitAffiliation->setOtherUnit(
+                                $person->setOtherUnit(
                                     $otherDepartmentsById[$user['dept_id']]['name']
                                 );
                             }
-                            $person->addUnitAffiliation($unitAffiliation);
                         }
 
                         if (preg_match('/^\\(217\\) (300|333|265|244)/u', $user['igb'])) {

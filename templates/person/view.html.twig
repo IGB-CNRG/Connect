@@ -102,31 +102,13 @@
                             </tr>
                         {% endif %}
                     {% endfor %}
-                    {% for unitAffiliation in person.unitAffiliations|current %}
-                        <tr>
-                            <th>Unit</th>
-                            <td>{{ unitAffiliation.unit??unitAffiliation.otherUnit }}</td>
-                            {% if is_granted('PERSON_EDIT', person) %}
-                                <td class="shrink pe-3">
-                                    <a href="{{ path('person_add_unit', {'slug': person.slug}) }}">
-                                        <span class="fas fa-plus-square"></span>
-                                    </a>
-                                </td>
-                            {% endif %}
-                        </tr>
-                    {% else %}
+                    <tr>
+                        <th>Unit</th>
+                        <td>{{ person.unit??person.otherUnit??'None' }}</td>
                         {% if is_granted('PERSON_EDIT', person) %}
-                            <tr>
-                                <th>Unit</th>
-                                <td>None</td>
-                                <td class="shrink pe-3">
-                                    <a href="{{ path('person_add_unit', {'slug': person.slug}) }}">
-                                        <span class="fas fa-plus-square"></span>
-                                    </a>
-                                </td>
-                            </tr>
+                            <td class="shrink"></td>
                         {% endif %}
-                    {% endfor %}
+                    </tr>
 
                     {% if person.supervisorAffiliations|current is not empty or is_granted('PERSON_EDIT', person) %}
                         <tr>
@@ -316,12 +298,19 @@
                                 <th>CONNECT ID</th>
                                 <td>{{ person.id }}</td>
                             </tr>
+
                         {% endif %}
                         <tr>
                             <th>Membership status</th>
                             <td>
                                 {{ workflow_place_label(person)|trans }}
                                 since {{ person.membershipUpdatedAt|date('n/j/y') }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Position when joined</th>
+                            <td>
+                                {{ person.positionWhenJoined }}
                             </td>
                         </tr>
                     </table>
@@ -434,43 +423,6 @@
                         <td class="shrink">
                             {% if themeAffiliation.endedAt is null and is_granted("PERSON_EDIT", person) %}
                                 <a href="{{ path('person_end_theme_affiliation', {'id': themeAffiliation.id, 'slug': person.slug}) }}">
-                                    End
-                                </a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
-        </div>
-    </div>
-    <div class="card mb-3">
-        <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#unit_table"
-             aria-expanded="false" role="button">
-            Units
-        </div>
-        <div class="collapse" id="unit_table">
-            {% if is_granted("PERSON_EDIT", person) %}
-                <div class="card-body">
-                    <a href="{{ path('person_add_unit', {'slug': person.slug}) }}"
-                       class="btn btn-primary"><span
-                                class="fa fa-plus"></span> Add</a>
-                </div>
-            {% endif %}
-            <table class="table">
-                <tr>
-                    <th>Unit</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th class="shrink"></th>
-                </tr>
-                {% for unitAffiliation in person.unitAffiliations %}
-                    <tr>
-                        <td>{{ unitAffiliation.unit??unitAffiliation.otherUnit }}</td>
-                        <td>{% if unitAffiliation.startedAt is not null %}{{ unitAffiliation.startedAt|date('n/j/Y') }}{% endif %}</td>
-                        <td>{% if unitAffiliation.endedAt is not null %}{{ unitAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
-                        <td class="shrink">
-                            {% if unitAffiliation.endedAt is null and is_granted("PERSON_EDIT", person) %}
-                                <a href="{{ path('person_end_unit_affiliation', {'id': unitAffiliation.id, 'slug': person.slug}) }}">
                                     End
                                 </a>
                             {% endif %}

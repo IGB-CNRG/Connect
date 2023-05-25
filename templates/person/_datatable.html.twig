@@ -50,11 +50,7 @@
         </td>
 
         <td>
-            {% for unitAffiliation in person.unitAffiliations|current %}
-                <div class="theme-row">
-                    {{ unitAffiliation.unit }}
-                </div>
-            {% endfor %}
+            {{ person.unit??person.otherUnit??'None' }}
         </td>
 
         {# Rooms Column #}

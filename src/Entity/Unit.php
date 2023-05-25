@@ -28,9 +28,6 @@ class Unit implements LogSubjectInterface
     #[Groups(['log:person'])]
     private ?string $name;
 
-    #[ORM\OneToMany(mappedBy: 'unit', targetEntity: UnitAffiliation::class, orphanRemoval: true)]
-    private Collection $unitAffiliations;
-
     #[ORM\OneToMany(mappedBy: 'unit', targetEntity: Log::class)]
     private Collection $logs;
 
@@ -43,11 +40,14 @@ class Unit implements LogSubjectInterface
     #[ORM\OneToMany(mappedBy: 'parentUnit', targetEntity: self::class)]
     private Collection $childUnits;
 
+    #[ORM\OneToMany(mappedBy: 'unit', targetEntity: Person::class)]
+    private Collection $people;
+
     public function __construct()
     {
-        $this->unitAffiliations = new ArrayCollection();
         $this->logs = new ArrayCollection();
         $this->childUnits = new ArrayCollection();
+        $this->people = new ArrayCollection();
     }
 
     public function __toString()
@@ -72,36 +72,6 @@ class Unit implements LogSubjectInterface
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, UnitAffiliation>
-     */
-    public function getUnitAffiliations(): Collection
-    {
-        return $this->unitAffiliations;
-    }
-
-    public function addUnitAffiliation(UnitAffiliation $unitAffiliation): self
-    {
-        if (!$this->unitAffiliations->contains($unitAffiliation)) {
-            $this->unitAffiliations[] = $unitAffiliation;
-            $unitAffiliation->setUnit($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUnitAffiliation(UnitAffiliation $unitAffiliation): self
-    {
-        if ($this->unitAffiliations->removeElement($unitAffiliation)) {
-            // set the owning side to null (unless already changed)
-            if ($unitAffiliation->getUnit() === $this) {
-                $unitAffiliation->setUnit(null);
-            }
-        }
 
         return $this;
     }
@@ -184,6 +154,36 @@ class Unit implements LogSubjectInterface
             // set the owning side to null (unless already changed)
             if ($childUnit->getParentUnit() === $this) {
                 $childUnit->setParentUnit(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Person>
+     */
+    public function getPeople(): Collection
+    {
+        return $this->people;
+    }
+
+    public function addPerson(Person $person): self
+    {
+        if (!$this->people->contains($person)) {
+            $this->people->add($person);
+            $person->setUnit($this);
+        }
+
+        return $this;
+    }
+
+    public function removePerson(Person $person): self
+    {
+        if ($this->people->removeElement($person)) {
+            // set the owning side to null (unless already changed)
+            if ($person->getUnit() === $this) {
+                $person->setUnit(null);
             }
         }
 

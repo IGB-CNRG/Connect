@@ -40,9 +40,9 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
         new Get(),
         new GetCollection(),
     ],
-    normalizationContext: ['groups'=>'person:read']
+    normalizationContext: ['groups' => 'person:read']
 )]
-#[ApiFilter(SearchFilter::class, properties: ['id'=>'exact','username'=>'exact'])]
+#[ApiFilter(SearchFilter::class, properties: ['id' => 'exact', 'username' => 'exact'])]
 class Person implements UserInterface, PasswordAuthenticatedUserInterface, Serializable, LogSubjectInterface
     // TODO Is it a bug that we have to implement PasswordAuthenticatedUserInterface even though this entity doesn't handle authentication?
 {
@@ -137,11 +137,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[Groups(['log:person'])]
     private Collection $superviseeAffiliations;
 
-    #[ORM\OneToMany(mappedBy: 'person', targetEntity: UnitAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
-    #[LoggableManyRelation]
-    #[Groups(['log:person'])]
-    private Collection $unitAffiliations;
-
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Log::class, orphanRemoval: true)]
     private Collection $ownedLogs;
 
@@ -207,6 +202,15 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?ExitForm $exitForm = null;
 
+    #[ORM\ManyToOne(inversedBy: 'people')]
+    private ?Unit $unit = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $otherUnit = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $positionWhenJoined = null;
+
     public function __construct()
     {
         $this->roomAffiliations = new ArrayCollection();
@@ -214,7 +218,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         $this->themeAffiliations = new ArrayCollection();
         $this->supervisorAffiliations = new ArrayCollection();
         $this->superviseeAffiliations = new ArrayCollection();
-        $this->unitAffiliations = new ArrayCollection();
         $this->ownedLogs = new ArrayCollection();
         $this->logs = new ArrayCollection();
         $this->documents = new ArrayCollection();
@@ -525,31 +528,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     public function removeSuperviseeAffiliation(SupervisorAffiliation $superviseeAffiliation): self
     {
         $this->superviseeAffiliations->removeElement($superviseeAffiliation);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, UnitAffiliation>|UnitAffiliation[]
-     */
-    public function getUnitAffiliations(): Collection
-    {
-        return $this->unitAffiliations;
-    }
-
-    public function addUnitAffiliation(UnitAffiliation $unitAffiliation): self
-    {
-        if (!$this->unitAffiliations->contains($unitAffiliation)) {
-            $this->unitAffiliations[] = $unitAffiliation;
-            $unitAffiliation->setPerson($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUnitAffiliation(UnitAffiliation $unitAffiliation): self
-    {
-        $this->unitAffiliations->removeElement($unitAffiliation);
 
         return $this;
     }
@@ -871,6 +849,42 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     public function setExitForm(?ExitForm $exitForm): self
     {
         $this->exitForm = $exitForm;
+
+        return $this;
+    }
+
+    public function getUnit(): ?Unit
+    {
+        return $this->unit;
+    }
+
+    public function setUnit(?Unit $unit): self
+    {
+        $this->unit = $unit;
+
+        return $this;
+    }
+
+    public function getOtherUnit(): ?string
+    {
+        return $this->otherUnit;
+    }
+
+    public function setOtherUnit(?string $otherUnit): self
+    {
+        $this->otherUnit = $otherUnit;
+
+        return $this;
+    }
+
+    public function getPositionWhenJoined(): ?string
+    {
+        return $this->positionWhenJoined;
+    }
+
+    public function setPositionWhenJoined(?string $positionWhenJoined): self
+    {
+        $this->positionWhenJoined = $positionWhenJoined;
 
         return $this;
     }

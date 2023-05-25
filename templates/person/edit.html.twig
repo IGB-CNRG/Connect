@@ -20,6 +20,7 @@
                     {{ form_row(form.netid, {'attr':{'data-action':'netid-autofill#updateFields change->username-check#checkIfUsernameUnique'}}) }}
                     {{ form_row(form.username, {'attr':{'data-netid-autofill-target':'username', 'data-username-check-target':'username', 'data-action':'change->username-check#checkIfUsernameUnique'}}) }}
                     {{ form_row(form.uin) }}
+                    {{ form_row(form.positionWhenJoined) }}
                 </div>
             </div>
         </div>
@@ -31,6 +32,8 @@
                     {{ form_row(form.officePhone) }}
                     {{ form_row(form.officeNumber) }}
                     {{ form_row(form.officeBuilding) }}
+                    {{ form_row(form.unit) }}
+                    {{ form_row(form.otherUnit) }}
                 </div>
             </div>
         </div>
@@ -64,17 +67,6 @@
                 <div class="card-footer">
                     <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd"
                             id="roomAffiliation-add">Add Room
-                    </button>
-                </div>
-            </div>
-            <div class="card mb-3" data-controller="form-collection">
-                <div class="card-header">Units</div>
-                <div class="card-body">
-                    {{ form_row(form.unitAffiliations) }}
-                </div>
-                <div class="card-footer">
-                    <button type="button" class="btn btn-primary" data-form-collection-target="otherAdd"
-                            id="unitAffiliation-add">Add Unit
                     </button>
                 </div>
             </div>
@@ -198,47 +190,6 @@
             </div>
             {% if form.room is defined %}
                 {{ form_row(form.room) }}
-            {% endif %}
-            <div class="row">
-                <div class="col">
-                    {% if form.startedAt is defined %}
-                        {{ form_row(form.startedAt) }}
-                    {% elseif data is not null %}
-                        <p class="mb-2">Start date</p>
-                        {{ data.startedAt|date('n/j/Y') }}
-                    {% endif %}
-                </div>
-                <div class="col">
-                    {{ form_row(form.endedAt) }}
-                </div>
-            </div>
-            {% if data is not null %}
-        </div>
-        {% endif %}
-    </div>
-{% endblock %}
-
-{% block UnitAffiliation_row %}
-    <div class="collection-row"{% if form.unit is defined %} data-controller="other-entry"{% endif %}>
-        {% if data is not null %}
-        <div class="collection-label">
-            {{ data.unit??data.otherUnit }}
-            <span class="float-end">
-                <a href="#unit-affiliation-collapse-{{ data.id }}" data-bs-toggle="collapse" data-controller="edit-warning" data-action="edit-warning#warn:once">
-                    <span class="fas fa-pencil"></span>
-                </a>
-            </span>
-        </div>
-        <div id="unit-affiliation-collapse-{{ data.id }}" class="collapse">
-            {% endif %}
-            <div class="float-end">
-                <a href="#" data-action="form-collection#deleteRow">
-                    <span class="fa fa-trash"></span>
-                </a>
-            </div>
-            {% if form.unit is defined %}
-                {{ form_row(form.unit) }}
-                {{ form_row(form.otherUnit) }}
             {% endif %}
             <div class="row">
                 <div class="col">

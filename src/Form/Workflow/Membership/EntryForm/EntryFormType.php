@@ -8,6 +8,8 @@ namespace App\Form\Workflow\Membership\EntryForm;
 
 use App\Entity\Building;
 use App\Entity\Person;
+use App\Form\Fields\PositionWhenJoinedType;
+use App\Form\Fields\UnitType;
 use App\Repository\BuildingRepository;
 use Gregwar\CaptchaBundle\Type\CaptchaType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -59,14 +61,15 @@ class EntryFormType extends AbstractType
                 'required' => false,
                 'label' => 'entry_form.phone',
             ])
-            ->add('unitAffiliations', CollectionType::class, [
-                'entry_type' => UnitAffiliationType::class,
-                'label' => false,
-                'entry_options' => [
-                    'label' => false,
+            ->add('unit', UnitType::class, [
+                'label' => 'entry_form.unit',
+            ])
+            ->add('otherUnit', TextType::class, [
+                'label' => 'Other department',
+                'required' => false,
+                'attr' => [
+                    'data-other-entry-target' => 'other',
                 ],
-                'allow_add' => false,
-                'allow_delete' => false,
             ])
             ->add('supervisorAffiliations', CollectionType::class, [
                 'entry_type' => SupervisorAffiliationType::class,
@@ -115,6 +118,9 @@ class EntryFormType extends AbstractType
                 'help' => 'Check this box to bypass the rest of the new member workflow without sending any further notifications',
             ]);
         }
+        if($options['show_position_when_joined']){
+            $builder->add('positionWhenJoined', PositionWhenJoinedType::class);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -124,6 +130,7 @@ class EntryFormType extends AbstractType
         ])
             ->setRequired([
                 'allow_silent',
+                'show_position_when_joined',
                 'use_captcha',
             ]);
     }
