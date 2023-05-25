@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -25,5 +25,11 @@ class DefaultController extends AbstractController
     public function copyright()
     {
         return $this->render('default/copyright.html.twig');
+    }
+
+    #[Route('/faqs', name: 'faqs')]
+    public function faqs()
+    {
+        return $this->render('default/faqs.html.twig');
     }
 }
