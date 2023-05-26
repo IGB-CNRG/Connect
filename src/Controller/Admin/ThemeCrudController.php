@@ -7,10 +7,12 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Theme;
+use App\Repository\ThemeRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
@@ -50,6 +52,11 @@ class ThemeCrudController extends AbstractCrudController
             TextField::new('fullName'),
             BooleanField::new('isNonResearch')->onlyOnForms(),
             BooleanField::new('isOutsideGroup')->onlyOnForms(),
+            AssociationField::new('parentTheme')->onlyOnForms()->setFormTypeOptions([
+                'query_builder' => function (ThemeRepository $themeRepository) {
+                    return $themeRepository->createFormSortedQueryBuilder()->andWhere('t.parentTheme is null');
+                },
+            ])->setRequired(false),
             DateField::new('startedAt')->onlyOnForms(),
             DateField::new('endedAt'),
             EmailField::new('adminEmail'),

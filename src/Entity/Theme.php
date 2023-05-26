@@ -17,7 +17,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: ThemeRepository::class)]
 class Theme implements LogSubjectInterface, HistoricalEntityInterface
 {
-    use TimestampableEntity, HistoricalEntityTrait;
+    use HistoricalEntityTrait;
+    use TimestampableEntity;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -50,14 +51,24 @@ class Theme implements LogSubjectInterface, HistoricalEntityInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $labManagerEmail = null;
 
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'subgroups')]
+    private ?self $parentTheme = null;
+
+    #[ORM\OneToMany(mappedBy: 'parentTheme', targetEntity: self::class)]
+    private Collection $subgroups;
+
     public function __construct()
     {
         $this->themeAffiliations = new ArrayCollection();
         $this->logs = new ArrayCollection();
+        $this->subgroups = new ArrayCollection();
     }
 
     public function __toString()
     {
+        if($this->getParentTheme()){
+            return "{$this->getShortName()} ({$this->getParentTheme()})";
+        }
         return $this->getShortName();
     }
 
@@ -225,6 +236,48 @@ class Theme implements LogSubjectInterface, HistoricalEntityInterface
     public function setLabManagerEmail(?string $labManagerEmail): self
     {
         $this->labManagerEmail = $labManagerEmail;
+
+        return $this;
+    }
+
+    public function getParentTheme(): ?self
+    {
+        return $this->parentTheme;
+    }
+
+    public function setParentTheme(?self $parentTheme): self
+    {
+        $this->parentTheme = $parentTheme;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>|Theme[]
+     */
+    public function getSubgroups(): Collection
+    {
+        return $this->subgroups;
+    }
+
+    public function addSubgroup(self $subgroup): self
+    {
+        if (!$this->subgroups->contains($subgroup)) {
+            $this->subgroups->add($subgroup);
+            $subgroup->setParentTheme($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubgroup(self $subgroup): self
+    {
+        if ($this->subgroups->removeElement($subgroup)) {
+            // set the owning side to null (unless already changed)
+            if ($subgroup->getParentTheme() === $this) {
+                $subgroup->setParentTheme(null);
+            }
+        }
 
         return $this;
     }

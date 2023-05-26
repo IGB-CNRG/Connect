@@ -96,10 +96,8 @@
             {{ block('person_datatable_thead') }}
             </thead>
             <tbody>
-            {% for themeAffiliation in theme.themeAffiliations|current %}
-                {% with {person: themeAffiliation.person} %}
-                    {{ block('person_datatable_tr') }}
-                {% endwith %}
+            {% for person in people %}
+                {{ block('person_datatable_tr') }}
             {% endfor %}
             </tbody>
         </table>

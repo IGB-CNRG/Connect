@@ -37,11 +37,13 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
     {
         return $this->createQueryBuilder('p')
             ->leftJoin('p.themeAffiliations', 'ta')
+            ->leftJoin('ta.memberCategory', 'mc')
             ->leftJoin('ta.theme', 't')
+            ->leftJoin('t.parentTheme', 'pt')
             ->leftJoin('p.roomAffiliations', 'ra')
             ->leftJoin('ra.room', 'r')
             ->leftJoin('p.unit', 'u')
-            ->select('p,ta,t,ra,r,u');
+            ->select('p,ta,t,pt,ra,r,u,mc');
     }
 
     public function createMembersOnlyIndexQueryBuilder(): QueryBuilder
@@ -92,6 +94,20 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
     {
         return $this->createIndexQueryBuilder()
             ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param Theme $theme
+     * @return Person[]
+     */
+    public function findCurrentForTheme(Theme $theme): array
+    {
+        $qb = $this->createIndexQueryBuilder()
+            ->andWhere('(ta.theme = :theme or t.parentTheme = :theme)')
+            ->setParameter('theme', $theme);
+        $this->historicityManager()->addCurrentConstraint($qb, 'ta');
+        return $qb->getQuery()
             ->getResult();
     }
 

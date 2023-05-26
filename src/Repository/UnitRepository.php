@@ -27,9 +27,11 @@ class UnitRepository extends ServiceEntityRepository
 
     public function createFormSortedQueryBuilder()
     {
-        return $this->createQueryBuilder('d')
-            ->leftJoin('d.parentUnit', 'c')
-            ->addOrderBy('c.name')
-            ->addOrderBy('d.name');
+        return $this->createQueryBuilder('u')
+            ->leftJoin('u.parentUnit', 'p')
+            ->leftJoin('u.childUnits', 'c')
+            ->select('u,p,c')
+            ->addOrderBy('p.name')
+            ->addOrderBy('u.name');
     }
 }

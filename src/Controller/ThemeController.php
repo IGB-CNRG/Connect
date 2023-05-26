@@ -31,8 +31,10 @@ class ThemeController extends AbstractController
     #[Route('/theme/{shortName}', name: 'theme_view')]
     public function view(Theme $theme, PersonRepository $personRepository): Response
     {
+        $people = $personRepository->findCurrentForTheme($theme);
         return $this->render('theme/view.html.twig', [
             'theme' => $theme,
+            'people' => $people,
         ]);
     }
 }

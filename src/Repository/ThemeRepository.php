@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -22,7 +22,8 @@ use Symfony\Contracts\Service\ServiceSubscriberTrait;
  */
 class ThemeRepository extends ServiceEntityRepository implements ServiceSubscriberInterface
 {
-    use ServiceSubscriberTrait, HistoricityManagerAware;
+    use HistoricityManagerAware;
+    use ServiceSubscriberTrait;
 
     public function __construct(ManagerRegistry $registry)
     {

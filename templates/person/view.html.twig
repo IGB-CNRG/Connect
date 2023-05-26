@@ -71,6 +71,9 @@
                             <td>
                                 <strong>
                                     <a href="{{ path('theme_view', {'shortName': themeAffiliation.theme.shortName}) }}">{{ themeAffiliation.theme.shortName }}</a>
+                                    {% if themeAffiliation.theme.parentTheme %}
+                                    (<a href="{{ path('theme_view', {'shortName': themeAffiliation.theme.parentTheme.shortName}) }}">{{ themeAffiliation.theme.parentTheme.shortName }}</a>)
+                                    {% endif %}
                                     {% for role in themeAffiliation.themeRoles %}
                                         {{ role.displayName }}
                                     {% endfor %}
