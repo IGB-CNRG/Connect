@@ -21,9 +21,9 @@ class PositionWhenJoinedType extends ChoiceType
             ],
             'placeholder' => '',
             'choices' => [
-                'Assistant Professor',
-                'Associate Professor',
-                'Professor',
+                'Assistant Professor' => 'Assistant Professor',
+                'Associate Professor' => 'Associate Professor',
+                'Professor' => 'Professor',
             ],
             'required' => false,
         ]);
