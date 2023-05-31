@@ -43,10 +43,12 @@ class ReportController extends AbstractController
                 if ($person->getUnit()) {
                     $unit = $person->getUnit();
                     $unitName = $unit->getName();
+                    $unitId = $unit->getId();
                     $college = $unit->getParentUnit();
                     $collegeName = $college ? $college->getName() : 'Other';
                 } else {
                     $unitName = "Other";
+                    $unitId = 0;
                     $collegeName = 'Other';
                 }
                 if (!key_exists($collegeName, $colleges)) {
@@ -61,10 +63,13 @@ class ReportController extends AbstractController
                 if (!key_exists($unitName, $colleges[$collegeName]['units'])) {
                     $colleges[$collegeName]['units'][$unitName] = [
                         'unit' => $unitName,
+                        'id' => $unitId,
                         'faculty' => 0,
                         'affiliates' => 0,
+                        'people' => [],
                     ];
                 }
+                $colleges[$collegeName]['units'][$unitName]['people'][] = $person;
                 if ($type === 'faculty') {
                     $colleges[$collegeName]['faculty']++;
                     $colleges[$collegeName]['units'][$unitName]['faculty']++;

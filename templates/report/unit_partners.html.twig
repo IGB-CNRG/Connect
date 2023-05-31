@@ -11,8 +11,21 @@
             </h3>
             {% for unit in college.units|sort %}
                 {% if unit.faculty > 0 or unit.affiliates > 0 %}
-                    <p>{{ unit.unit }}
-                        <small>{{ unit.faculty }} faculty, {{ unit.affiliates }} affiliates</small></p>
+                    <div class="mb-2">
+                        <p class="collapse-control" data-bs-toggle="collapse" data-bs-target="#collapse-{{ unit.id }}"
+                           aria-expanded="false">{{ unit.unit }}
+                            <small>{{ unit.faculty }} faculty, {{ unit.affiliates }} affiliates</small>
+                        </p>
+                        <div class="collapse" id="collapse-{{ unit.id }}">
+                            <div class="row row-cols-3 row-cols-sm-4">
+                                {% for person in unit.people|sort((a,b)=>a.lastName==b.lastName?a.firstName<=>b.firstName:a.lastName<=>b.lastName) %}
+                                    <div class="col">
+                                        <a href="{{ path('person_view', {'slug': person.slug}) }}">{{ person }}</a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
                 {% endif %}
             {% endfor %}
         {% endif %}

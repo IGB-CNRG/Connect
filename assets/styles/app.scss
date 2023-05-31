@@ -137,6 +137,28 @@ $callout-background-lighten: 50%;
   }
 }
 
+.collapse-control {
+  cursor: pointer;
+  margin-bottom: 0;
+  &[aria-expanded="false"] {
+    &::after {
+      content: "\f107"; // angle-down
+      font: var(--fa-font-solid);
+    }
+  }
+
+  &[aria-expanded="true"] {
+    &::after {
+      content: "\f106"; // angle-up
+      font: var(--fa-font-solid);
+    }
+  }
+}
+
+.report-collapse {
+  margin-bottom: 1rem;
+}
+
 /* Portraits */
 .portrait-lg {
   width: 100px;
