@@ -34,3 +34,4 @@ yarn-error.log
 
 docker-compose.local.yml
 install-config.local.yml
+deploy-hosts.yml
