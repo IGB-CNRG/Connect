@@ -19,7 +19,47 @@ CONNECT requires PHP 8.1+, as well as the following extensions:
 
 CONNECT also requires `npm` and `yarn`.
 
-## Symfony setup
+## Deployer
+
+CONNECT comes with an optional [Deployer.php](https://deployer.org/) recipe for atomic deployment. 
+
+### First-run setup
+
+For first-run installation, create a host file called `deploy-hosts.yml`. An example is provided below:
+
+```yaml
+hosts:
+    connect:
+        hostname: example.org
+        remote_user: username
+        deploy_path: /path/to/deployment
+        labels:
+            stage: production
+        symfony_env: prod
+```
+
+Replace the `hostname`, `remote_user`, and `deploy_path` as necessary.
+
+In MySQL, create a new database and a user with full permissions on that database.
+
+Run `dep deploy:setup` to create the basic file structure, then create the `.env.local` config file in the `shared` directory. 
+
+Edit this file to set server-specific variables. Make sure to set the `DATABASE_URL` string appropriately for the
+database you just created. Set `LDAP_HOST`, `LDAP_PORT`, and `LDAP_DN` for your LDAP authentication server. If CONNECT
+will be deployed under a subdirectory on the web server, set `WEBPACK_PREFIX` to the subdirectory path. Finally, if this
+is a production server, set `APP_ENV=prod`.
+
+With the config finished, you can run `dep deploy` to deploy the latest release. Continue to the [Data import](#data-import) section below to complete first-run setup.
+
+### Updating
+
+To update with deployer, simply run `dep deploy` to deploy the latest commit from the Github repo.
+
+In the case that a release needs to be rolled back, run `dep rollback`. Optionally, you can specify `-o rollback_candidate=<number>` to roll back to a specific release.
+
+## Manual install
+
+### Symfony setup
 
 In MySQL, create a new database and a user with full permissions on that database.
 
@@ -32,7 +72,7 @@ cp .env .env.local
 Edit this file to set server-specific variables. Make sure to set the `DATABASE_URL` string appropriately for the
 database you just created. Set `LDAP_HOST`, `LDAP_PORT`, and `LDAP_DN` for your LDAP authentication server. If CONNECT
 will be deployed under a subdirectory on the web server, set `WEBPACK_PREFIX` to the subdirectory path. Finally, if this
-is a production server, set `APP_ENV=prod`
+is a production server, set `APP_ENV=prod`.
 
 Next, make sure permissions are set up properly for file uploads and the image cache:
 
@@ -57,7 +97,7 @@ symfony check:requirements
 
 If any requirements are not met, install them before proceeding.
 
-## Frontend dependencies
+### Frontend dependencies
 
 The frontend (javascript/CSS) dependencies are managed and built with yarn. To install and build the frontend
 dependencies:
