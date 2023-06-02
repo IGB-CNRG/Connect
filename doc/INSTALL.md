@@ -1,11 +1,11 @@
 # Installation
 
-This document covers the installation of CONNECT, as well as the initial import of data. Before you begin, make sure you
+This document covers the installation of Connect, as well as the initial import of data. Before you begin, make sure you
 have installed the Symfony CLI and are using an Apache webserver.
 
 ## Prerequisites
 
-CONNECT requires PHP 8.1+, as well as the following extensions:
+Connect requires PHP 8.1+, as well as the following extensions:
 
 - ctype
 - gd
@@ -17,11 +17,11 @@ CONNECT requires PHP 8.1+, as well as the following extensions:
 - yaml
 - zip
 
-CONNECT also requires `npm` and `yarn`.
+Connect also requires `npm` and `yarn`.
 
 ## Deployer
 
-CONNECT comes with an optional [Deployer.php](https://deployer.org/) recipe for atomic deployment. 
+Connect comes with an optional [Deployer.php](https://deployer.org/) recipe for atomic deployment. 
 
 ### First-run setup
 
@@ -45,7 +45,7 @@ In MySQL, create a new database and a user with full permissions on that databas
 Run `dep deploy:setup` to create the basic file structure, then create the `.env.local` config file in the `shared` directory. 
 
 Edit this file to set server-specific variables. Make sure to set the `DATABASE_URL` string appropriately for the
-database you just created. Set `LDAP_HOST`, `LDAP_PORT`, and `LDAP_DN` for your LDAP authentication server. If CONNECT
+database you just created. Set `LDAP_HOST`, `LDAP_PORT`, and `LDAP_DN` for your LDAP authentication server. If Connect
 will be deployed under a subdirectory on the web server, set `WEBPACK_PREFIX` to the subdirectory path. Finally, if this
 is a production server, set `APP_ENV=prod`.
 
@@ -70,7 +70,7 @@ cp .env .env.local
 ```
 
 Edit this file to set server-specific variables. Make sure to set the `DATABASE_URL` string appropriately for the
-database you just created. Set `LDAP_HOST`, `LDAP_PORT`, and `LDAP_DN` for your LDAP authentication server. If CONNECT
+database you just created. Set `LDAP_HOST`, `LDAP_PORT`, and `LDAP_DN` for your LDAP authentication server. If Connect
 will be deployed under a subdirectory on the web server, set `WEBPACK_PREFIX` to the subdirectory path. Finally, if this
 is a production server, set `APP_ENV=prod`.
 
@@ -169,12 +169,12 @@ Use the following console command to create an initial admin user.
 symfony console app:initialize-admin-user <USERNAME> <FIRSTNAME> <LASTNAME>
 ```
 
-You will use this IGB username and password to log in to CONNECT.
+You will use this IGB username and password to log in to Connect.
 
 #### Intial settings
 
 Units, Keys, Member Categories, Rooms, and Themes are set manually. You can either import these from an existing
-installation of CONNECT or enter them manually in EasyAdmin.
+installation of Connect or enter them manually in EasyAdmin.
 
 #### People database import
 

@@ -38,7 +38,7 @@ class PersonCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $viewConnect = Action::new('viewConnect', 'View in CONNECT', 'fa fa-eye')
+        $viewConnect = Action::new('viewConnect', 'View in Connect', 'fa fa-eye')
             ->linkToRoute('person_view', function (Person $person) {
                 return ['slug' => $person->getSlug()];
             });

@@ -49,7 +49,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     use TimestampableEntity;
 
     public const USER_ROLES = [
-        'CONNECT Admin' => 'ROLE_ADMIN',
+        'Connect Admin' => 'ROLE_ADMIN',
         //        'Key Manager' => 'ROLE_KEY_MANAGER',
         'Certificate Manager' => 'ROLE_CERTIFICATE_MANAGER',
     ];
@@ -210,6 +210,12 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $positionWhenJoined = null;
+
+    #[ORM\ManyToOne(targetEntity: self::class)]
+    private ?self $lastReviewedBy = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $lastReviewedAt = null;
 
     public function __construct()
     {
@@ -885,6 +891,30 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     public function setPositionWhenJoined(?string $positionWhenJoined): self
     {
         $this->positionWhenJoined = $positionWhenJoined;
+
+        return $this;
+    }
+
+    public function getLastReviewedBy(): ?self
+    {
+        return $this->lastReviewedBy;
+    }
+
+    public function setLastReviewedBy(?self $lastReviewedBy): self
+    {
+        $this->lastReviewedBy = $lastReviewedBy;
+
+        return $this;
+    }
+
+    public function getLastReviewedAt(): ?\DateTimeImmutable
+    {
+        return $this->lastReviewedAt;
+    }
+
+    public function setLastReviewedAt(?\DateTimeImmutable $lastReviewedAt): self
+    {
+        $this->lastReviewedAt = $lastReviewedAt;
 
         return $this;
     }

@@ -439,7 +439,7 @@ class ImportPeopleCommand extends Command
     }
 
     /**
-     * Translates between some themes that are in the people database and themes that are in CONNECT. This allows for
+     * Translates between some themes that are in the people database and themes that are in Connect. This allows for
      *  extra distinctions the people database makes that we do not, different spellings, and defunct themes.
      * @param string $shortName
      * @return string

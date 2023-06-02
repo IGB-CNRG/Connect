@@ -67,7 +67,7 @@ class InitializeAdminUserCommand extends Command
         $this->em->flush();
 
         $io->success(
-            'Setup complete! Please log in to CONNECT with your username and your IGB password.'
+            'Setup complete! Please log in to Connect with your username and your IGB password.'
         );
 
         return Command::SUCCESS;

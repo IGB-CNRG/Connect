@@ -70,7 +70,7 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('CONNECT')
+            ->setTitle('Connect')
             ->generateRelativeUrls()
             ->setFaviconPath("build/images/favicon.ico")
         ;
@@ -79,7 +79,7 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
-        yield MenuItem::linkToRoute('Back to CONNECT', 'fa fa-rotate-left', 'default');
+        yield MenuItem::linkToRoute('Back to Connect', 'fa fa-rotate-left', 'default');
         yield MenuItem::linkToCrud('Settings', 'fa fa-gear', Setting::class);
         yield MenuItem::linkToCrud('FAQs', 'fa fa-question', Faq::class);
         yield MenuItem::section('IGB');

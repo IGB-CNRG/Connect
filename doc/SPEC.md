@@ -2,7 +2,7 @@
 
 ## Overview
 
-IGB CONNECT (Comprehensive ONline Network of Employees, Centers and Themes) is the central repository for all of IGB\'s
+IGB Connect is the central repository for all of IGB\'s
 personnel information. It will handle on- and off-boarding for all personnel, and tie into several other systems when
 applicable. It will be easy-to-use and display useful, targeted information to encourage everyone to use it as intended.
 It is our goal in this project to *simplify* everyone\'s work, *not* to add to it.
@@ -18,70 +18,70 @@ Database were slow and unresponsive, leading to a current distrust of the system
 In addition, the People Database is not tied into any other systems. It does not capture (or does not currently contain)
 some of the historical personnel data we need to have access to.
 
-For these reasons, the best course of action is to start fresh with a new system for personnel management. CONNECT,
+For these reasons, the best course of action is to start fresh with a new system for personnel management. Connect,
 being a new entity, will hopefully not inherit much of the distrust surrounding the People Database. To further engender
-trust, we will be working closely with our future users to ensure CONNECT works in a way that helps all of them.
+trust, we will be working closely with our future users to ensure Connect works in a way that helps all of them.
 
 ## Terminology
 
-The product outlined in this document may be referred to interchangeably as CONNECT, the CONNECT application, or the
-CONNECT database.
+The product outlined in this document may be referred to interchangeably as Connect, the Connect application, or the
+Connect database.
 
-In this document, we will frequently refer to **users** and **members**. A **user** is anyone who logs in to the CONNECT
-application for any reason. A **member** is someone affiliated with the IGB, whose information is stored within CONNECT.
+In this document, we will frequently refer to **users** and **members**. A **user** is anyone who logs in to the Connect
+application for any reason. A **member** is someone affiliated with the IGB, whose information is stored within Connect.
 All **users** are **members**, but not all **members** are **users**!
 
 We will refer to specific **users** by their **roles**. A **role**
-defines what a certain user can do or see within the CONNECT application. In order to ensure the future relevancy of
+defines what a certain user can do or see within the Connect application. In order to ensure the future relevancy of
 this document, we will avoid referring to any current users by name, instead using their **role** whenever possible. An
 overview of roles is available on page [9](#roles).
 
-Since CONNECT will keep track of **members** both past and present, it will often be necessary to differentiate them. We
+Since Connect will keep track of **members** both past and present, it will often be necessary to differentiate them. We
 will refer to people currently affiliated with the IGB as **active members**, and people no longer affiliated with the
 IGB as **previous members**.
 
-We expect CONNECT to be used primarily by a handful of key staff groups, with whom we will be meeting for input, and
+We expect Connect to be used primarily by a handful of key staff groups, with whom we will be meeting for input, and
 from whom we will be expecting the bulk of our feedback. We will refer to these people as the
 **stakeholders**.
 
 ## Goals
 
-The overarching goal of CONNECT is to act as a central repository for our non-confidential personnel data. It will be an
+The overarching goal of Connect is to act as a central repository for our non-confidential personnel data. It will be an
 important resource for several groups within IGB, including Admin, CNRG, and HR.
 
 ### Design Pillars
 
-There are four main pillars around which CONNECT will be designed. These are the main points which we will focus on when
+There are four main pillars around which Connect will be designed. These are the main points which we will focus on when
 considering what features to implement.
 
 #### Pillar 1: Data
 
-As we design CONNECT, we need to consider what sorts of data we will capture about each IGB member. We also need to
+As we design Connect, we need to consider what sorts of data we will capture about each IGB member. We also need to
 consider how that data will be kept and stored in such a way that it can be easily accessed in the future when
 necessary. Distinctions must be made between member info for which we must keep historical records (appointment
 information, theme affiliation, etc.) and member info for which such detail is unnecessary (home address, NetID, etc.).
 
 #### Pillar 2: Workflows
 
-One of the key aspects of CONNECT will be its many workflows. These workflows will encapsulate the many different ways
+One of the key aspects of Connect will be its many workflows. These workflows will encapsulate the many different ways
 IGB members get on-boarded, off-boarded, and everything in between. The main goal of these workflows should be to
 simplify and reduce the amount of difficult interaction required while still capturing all the needed data. Working with
 the different user groups within IGB will be key in developing useful, simple workflows.
 
 #### Pillar 3: Hooks
 
-CONNECT will be tied into whatever other systems are necessary to improve communication and collaboration about our IGB
+Connect will be tied into whatever other systems are necessary to improve communication and collaboration about our IGB
 members. This includes anything from simple notifications to automation of common tasks, when possible.
 
 #### Pillar 4: Roles
 
-There will be a lot going on in CONNECT. Too much for any one person to handle all at once. Therefore, we must ensure
+There will be a lot going on in Connect. Too much for any one person to handle all at once. Therefore, we must ensure
 that the system is designed to tailor the information displayed to *who* the user is and
 *what* they need to accomplish.
 
 ## Non-Goals
 
-CONNECT is specifically *not* designed to do the following:
+Connect is specifically *not* designed to do the following:
 
 - Store any confidential or protected information, including HR data and demographic information
 
@@ -93,7 +93,7 @@ CONNECT is specifically *not* designed to do the following:
 
 Not all IGB members are currently accounted for. While Faculty/Affiliates are generally well-captured by the current
 onboarding process specific to them, and Staff can be well captured by HR or other staff members, it is assumed that
-many students or other member types are unaccounted for. A major challenge for CONNECT to be beneficial will be to
+many students or other member types are unaccounted for. A major challenge for Connect to be beneficial will be to
 ensure that all IGB members are represented in the system.
 
 The current IGB Entry Form is used by any IGB member (Faculty/Affiliates excluded) who enters the IGB via HR or the Key
@@ -137,10 +137,10 @@ near future, has recently left, or has been gone for an extended period of time.
 #### Engagement
 
 The current People Database has a major issue with engagement. It is used by only a handful of people in the IGB and is
-either entirely unknown or seen as not useful or difficult to use by the rest. A key aspect of the usefulness of CONNECT
+either entirely unknown or seen as not useful or difficult to use by the rest. A key aspect of the usefulness of Connect
 will hinge upon the right staff members engaging with the system. As such, we plan to meet with all affected parties (
 the "stakeholders") before, during, and after development to ensure that we understand and are meeting their needs, that
-they understand CONNECT's purpose and importance, and that we are creating the best possible product for everyone
+they understand Connect's purpose and importance, and that we are creating the best possible product for everyone
 involved.
 
 ## Impact
@@ -149,7 +149,7 @@ TBD
 
 # Proposed Solution
 
-CONNECT will be a web application accessible to some subset of IGB staff. Users will log in with their IGB username and
+Connect will be a web application accessible to some subset of IGB staff. Users will log in with their IGB username and
 password. Some users will be assigned roles which will allow them to add, remove, or edit IGB members. In addition,
 different information in each IGB members' record will be visible to different roles.
 
@@ -164,8 +164,8 @@ of various workflows. These workflows will allow users to quickly and easily per
 Of course, the ability to edit member information will always be available when necessary (as long as a user's role
 allows it).
 
-CONNECT will be connected to a number of other IGB services in order to streamline any common personnel-related tasks in
-existing systems. When systems cannot be easily connected to CONNECT, a simple notification system will fill in those
+Connect will be connected to a number of other IGB services in order to streamline any common personnel-related tasks in
+existing systems. When systems cannot be easily connected to Connect, a simple notification system will fill in those
 gaps either temporarily or permanently.
 
 ## Analysis
@@ -253,8 +253,8 @@ detailed log may be enough, for some we will need to actually have data structur
 
 #### Core
 
-- CONNECT should communicate with the Core billing service when Core users come and go. It is unclear at this time in
-  which direction that communication should go, and what status exactly Core users should have in CONNECT.
+- Connect should communicate with the Core billing service when Core users come and go. It is unclear at this time in
+  which direction that communication should go, and what status exactly Core users should have in Connect.
 
 #### Keys
 
@@ -273,9 +273,9 @@ detailed log may be enough, for some we will need to actually have data structur
 Roles will define which users have access to various segments of the application, to read or write certain user data, or
 to receive various notifications. These roles are not mutually exclusive; any user can have multiple roles (or none).
 
-CONNECT Roles are as follows:
+Connect Roles are as follows:
 
-- CONNECT Admin -- Superusers who can access all aspects of CONNECT. This has no relation to Theme Admins or other Admin
+- Connect Admin -- Superusers who can access all aspects of Connect. This has no relation to Theme Admins or other Admin
   Staff.
 
 - Theme Admin -- Administrative staff for each theme. This role will be tied to a specific theme for each user, i.e.,
@@ -350,7 +350,7 @@ However the workflow was initiated, it continues as follows:
 
 - The new member completes necessary trainings and receives certificates
 
-- The new member uploads their certificates to their CONNECT profile
+- The new member uploads their certificates to their Connect profile
 
 #### Member Exit Workflow
 
@@ -368,7 +368,7 @@ A current listing of all personnel, optionally filtered somehow, e.g., by theme,
 
 ## Technical Requirements
 
-The CONNECT web application and database will both be deployed in a VM on our existing vmfarm system, with a proxy from
+The Connect web application and database will both be deployed in a VM on our existing vmfarm system, with a proxy from
 our existing www-app server. Development will be performed on existing hardware. Development and staging servers will be
 set up on existing hardware. No additional hardware resources should be required for development or deployment.
 
@@ -544,9 +544,9 @@ TBD
 
 ## Data Import
 
-CONNECT will pull its initial data set from a number of different sources, and that data will need to be prepared and
+Connect will pull its initial data set from a number of different sources, and that data will need to be prepared and
 imported into the database. This process will be designed to be simply executed, since the import process will need to
-be repeated several times as different stages of CONNECT come online.
+be repeated several times as different stages of Connect come online.
 
 ### People Database
 
@@ -636,7 +636,7 @@ The member's theme admin or lab manager will approve their exit form.
 
 ## Presentation Layer
 
-In this section, we will describe all the view layouts necessary for CONNECT. Wireframes are available in the CONNECT
+In this section, we will describe all the view layouts necessary for Connect. Wireframes are available in the Connect
 Wireframes Adobe XD file.
 
 ### Basic Member Views
@@ -790,7 +790,7 @@ for correction before approval.
 
 ### Administrative Views
 
-These views will allow CONNECT administrators to view and update various CONNECT settings. The administrative views will
+These views will allow Connect administrators to view and update various Connect settings. The administrative views will
 be facilitated by the EasyAdmin bundle, which will make their setup much faster. Each page will allow administrators to
 create, view, edit, and delete entries of the corresponding type.
 
@@ -841,30 +841,30 @@ considerations, and adaptation time.
 #### Simpler Database Software
 
 Simpler databases (e.g., Microsoft Access, Filemaker) might do very well for storing the data we need to keep track of,
-writing reports, and even processing entry and exit forms. However, a major component of CONNECT is its ability to be
+writing reports, and even processing entry and exit forms. However, a major component of Connect is its ability to be
 tied into other systems at the IGB, either directly or through notifications. While simple email notifications are
 possible in Access and Filemaker, some of the more advanced connections we would like to make would not be possible.
 
 There are also concerns with ease of access; Access is not available for macOS, and neither program is available for
 Linux operating systems; furthermore both would require accessing a database file on a shared drive, which adds another
-layer of complexity to accessing the database. By creating a web application instead, we ensure that CONNECT is easy to
+layer of complexity to accessing the database. By creating a web application instead, we ensure that Connect is easy to
 access for everyone, no matter where they are or what device they're using.
 
 Finally, there are long-term support considerations when using a commercial database program like Access or Filemaker.
 
 ## Future Ideas
 
-The following are a brief list of ideas which we might one day use CONNECT for, which are out of scope for the initial
+The following are a brief list of ideas which we might one day use Connect for, which are out of scope for the initial
 version of the product for various reasons. Nonetheless, we should design the system with some of these ideas in mind to
 ensure that if and when we do want to implement them it is easy to do so.
 
 #### Building Directory
 
-Since all directory information will be housed within CONNECT, it could be used to power directory signage.
+Since all directory information will be housed within Connect, it could be used to power directory signage.
 
 #### Inventory Management
 
-In future, if inventory was tied to its owners within CONNECT in some way, that could be hugely beneficial to both CNRG
+In future, if inventory was tied to its owners within Connect in some way, that could be hugely beneficial to both CNRG
 and Facilities. For CNRG, being able to see at-a-glance what type of equipment someone has when a help request comes in
 would potentially improve the efficiency of the helpdesk. The biennial inventory process could also be potentially
 streamlined by having IGB members' inventory information more readily accessible.
@@ -942,7 +942,7 @@ In progress as of 2/15/22, complete as of 4/1/22.
 
 #### Data import
 
-The procedures for importing data into CONNECT from our existing data sources will be implemented.
+The procedures for importing data into Connect from our existing data sources will be implemented.
 
 Deliverables:
 
