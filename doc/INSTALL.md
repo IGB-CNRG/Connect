@@ -21,41 +21,47 @@ Connect also requires `npm` and `yarn`.
 
 ## Deployer
 
-Connect comes with an optional [Deployer.php](https://deployer.org/) recipe for atomic deployment. 
+Connect comes with an optional [Deployer.php](https://deployer.org/) recipe for atomic deployment.
 
 ### First-run setup
+
+Before using Deployer on a new Apache server, you will need to
+install [mod_realdoc](https://github.com/etsy/mod_realdoc) so the symlinked DocumentRoot functions correctly in Apache.
 
 For first-run installation, create a host file called `deploy-hosts.yml`. An example is provided below:
 
 ```yaml
 hosts:
-    connect:
-        hostname: example.org
-        remote_user: username
-        deploy_path: /path/to/deployment
-        labels:
-            stage: production
-        symfony_env: prod
+  connect:
+    hostname: example.org
+    remote_user: username
+    deploy_path: /path/to/deployment
+    labels:
+      stage: production
+    symfony_env: prod
 ```
 
 Replace the `hostname`, `remote_user`, and `deploy_path` as necessary.
 
 In MySQL, create a new database and a user with full permissions on that database.
 
-Run `dep deploy:setup` to create the basic file structure, then create the `.env.local` config file in the `shared` directory. 
+Run `dep deploy:setup` to create the basic file structure, then create the `.env.local` config file in the `shared`
+directory.
 
 Edit this file to set server-specific variables. Make sure to set the `DATABASE_URL` string appropriately for the
 database you just created. Set `LDAP_HOST`, `LDAP_PORT`, and `LDAP_DN` for your LDAP authentication server. If Connect
 will be deployed under a subdirectory on the web server, set `WEBPACK_PREFIX` to the subdirectory path. Finally, if this
 is a production server, set `APP_ENV=prod`.
 
-With the config finished, you can run `dep deploy` to deploy the latest release. Continue to the [Data import](#data-import) section below to complete first-run setup.
+With the config finished, you can run `dep deploy` to deploy the latest release. Continue to
+the [Data import](#data-import) section below to complete first-run setup.
 
 ### Updating
 
 To update with deployer, simply run `dep deploy` to deploy the latest commit from the Github repo.
 
-In the case that a release needs to be rolled back, run `dep rollback`. Optionally, you can specify `-o rollback_candidate=<number>` to roll back to a specific release.
+In the case that a release needs to be rolled back, run `dep rollback`. Optionally, you can
+specify `-o rollback_candidate=<number>` to roll back to a specific release.
 
 ## Manual install
 
@@ -145,7 +151,8 @@ import-faculty:
 ```
 
 This file defines the parameters that are passed to each install step. Copy this file to `install-config.local.yml` and
-update the fields to suit your installation. Finally, run the following command and follow the prompts to complete installation:
+update the fields to suit your installation. Finally, run the following command and follow the prompts to complete
+installation:
 
 ```shell
 symfony console app:install install-config.local.yml
