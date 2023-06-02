@@ -6,6 +6,7 @@
 
 namespace App\Controller;
 
+use App\Repository\FaqRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -28,8 +29,11 @@ class DefaultController extends AbstractController
     }
 
     #[Route('/faqs', name: 'faqs')]
-    public function faqs()
+    public function faqs(FaqRepository $repository)
     {
-        return $this->render('default/faqs.html.twig');
+        $faqs = $repository->findAllOrdered();
+        return $this->render('default/faqs.html.twig', [
+            'faqs' => $faqs,
+        ]);
     }
 }

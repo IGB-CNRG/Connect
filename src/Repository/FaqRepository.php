@@ -4,11 +4,6 @@
  * All rights reserved.
  */
 
-*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
- * All rights reserved.
- */
-
 namespace App\Repository;
 
 use App\Entity\Faq;
@@ -46,6 +41,25 @@ class FaqRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    /**
+     * @return Faq[]
+     */
+    public function findAllOrdered()
+    {
+        return $this->createQueryBuilder('f')
+            ->addOrderBy('f.position')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getHighestPosition()
+    {
+        return $this->createQueryBuilder('f')
+            ->select('MAX(f.position) as max_position')
+            ->getQuery()
+            ->getResult()[0]['max_position'];
     }
 
 //    /**

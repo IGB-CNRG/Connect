@@ -7,6 +7,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Building;
+use App\Entity\Faq;
 use App\Entity\Key;
 use App\Entity\KeyAffiliation;
 use App\Entity\MemberCategory;
@@ -80,6 +81,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::linkToRoute('Back to CONNECT', 'fa fa-rotate-left', 'default');
         yield MenuItem::linkToCrud('Settings', 'fa fa-gear', Setting::class);
+        yield MenuItem::linkToCrud('FAQs', 'fa fa-question', Faq::class);
         yield MenuItem::section('IGB');
         yield MenuItem::linkToCrud('All People', 'fas fa-list', Person::class)->setController(PersonCrudController::class);
         yield MenuItem::linkToCrud('New Units', 'fas fa-list', Person::class)->setController(OtherUnitCrudController::class);
