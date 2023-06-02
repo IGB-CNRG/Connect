@@ -47,6 +47,7 @@ class MembershipController extends AbstractController
      * @return Response
      */
     #[Route('/membership/entry-form', name: 'membership_entryForm')]
+    #[IsGranted('ROLE_APPROVER')] // todo remove this when we go live with the workflow
     public function entryForm(
         Request $request,
         EntityManagerInterface $em,
@@ -440,12 +441,12 @@ class MembershipController extends AbstractController
         $person->setUsername($person->getNetid());
         $em->persist($person);
 
-        if($form->has('isSilent') && $form->get('isSilent')->getData()) {
+//         if($form->has('isSilent') && $form->get('isSilent')->getData()) {
             $logger->log($person, 'Silently submitted entry form');
             $membershipStateMachine->apply($person, Membership::TRANS_FORCE_ENTRY_FORM);
-        } else {
-            $logger->log($person, 'Submitted entry form');
-            $membershipStateMachine->apply($person, Membership::TRANS_SUBMIT_ENTRY_FORM);
-        }
+//        } else {
+//            $logger->log($person, 'Submitted entry form');
+//            $membershipStateMachine->apply($person, Membership::TRANS_SUBMIT_ENTRY_FORM);
+//        }
     }
 }
