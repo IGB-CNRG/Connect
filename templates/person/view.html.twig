@@ -296,10 +296,12 @@
                                     {% else %}
                                         None
                                     {% endfor %}</td>
+                                <td class="shrink"></td>
                             </tr>
                             <tr>
                                 <th>Connect ID</th>
                                 <td>{{ person.id }}</td>
+                                <td class="shrink"></td>
                             </tr>
 
                         {% endif %}
@@ -309,11 +311,28 @@
                                 {{ workflow_place_label(person)|trans }}
                                 since {{ person.membershipUpdatedAt|date('n/j/y') }}
                             </td>
+                            <td class="shrink"></td>
                         </tr>
                         <tr>
                             <th>Position when joined</th>
                             <td>
                                 {{ person.positionWhenJoined }}
+                            </td>
+                            <td class="shrink"></td>
+                        </tr>
+                        <tr>
+                            <th>Last reviewed</th>
+                            <td>
+                                {% if person.lastReviewedBy is not null %}
+                                    {{ person.lastReviewedAt|date('n/j/Y g:i a') }} by {{ person.lastReviewedBy }}
+                                {% else %}
+                                    Never
+                                {% endif %}
+                            </td>
+                            <td class="shrink">
+                                <a href="{{ path('person_update_last_review', {'slug': person.slug}) }}" title="Update last reviewed date">
+                                    <span class="fas fa-square-check"></span>
+                                </a>
                             </td>
                         </tr>
                     </table>

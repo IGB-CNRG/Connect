@@ -24,6 +24,7 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -111,6 +112,21 @@ class PersonController extends AbstractController
             'person' => $person,
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route('/person/{slug}/update-last-review', name: 'person_update_last_review')]
+    #[IsGranted('PERSON_EDIT', subject: 'person')]
+    public function updateLastReviewed(Person $person, EntityManagerInterface $em, ActivityLogger $logger): RedirectResponse
+    {
+        $person->setLastReviewedAt(new \DateTimeImmutable())
+            ->setLastReviewedBy($this->getUser());
+        $em->persist($person);
+
+        $logger->log($person, 'Updated last review');
+
+        $em->flush();
+
+        return $this->redirectToRoute('person_view', ['slug'=>$person->getSlug()]);
     }
 
     #[Route('/person/{slug}/add-theme-affiliation', name: 'person_add_theme_affiliation')]
