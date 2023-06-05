@@ -2,9 +2,9 @@
 
 {% block content %}
     <h2>Edit '{{ person.name }}'</h2>
-{#    <div class="callout callout-info">#}
-{#        All fields are optional. #}{# todo better help text here #}
-{#    </div>#}
+    {#    <div class="callout callout-info"> #}
+    {#        All fields are optional. #}{# todo better help text here #}
+    {#    </div> #}
     {% form_theme form _self 'form_themes/_keys.html.twig' %}
     {{ form_start(form) }}
     {# todo these columns need to be rearranged a bit #}
@@ -20,7 +20,9 @@
                     {{ form_row(form.netid, {'attr':{'data-action':'netid-autofill#updateFields change->username-check#checkIfUsernameUnique'}}) }}
                     {{ form_row(form.username, {'attr':{'data-netid-autofill-target':'username', 'data-username-check-target':'username', 'data-action':'change->username-check#checkIfUsernameUnique'}}) }}
                     {{ form_row(form.uin) }}
-                    {{ form_row(form.positionWhenJoined) }}
+                    {% if form.positionWhenJoined is defined %}
+                        {{ form_row(form.positionWhenJoined) }}
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -127,7 +129,8 @@
         <div class="collection-label">
             {{ data }}
             <span class="float-end">
-                <a href="#theme-affiliation-collapse-{{ data.id }}" data-bs-toggle="collapse" data-controller="edit-warning" data-action="edit-warning#warn:once">
+                <a href="#theme-affiliation-collapse-{{ data.id }}" data-bs-toggle="collapse"
+                   data-controller="edit-warning" data-action="edit-warning#warn:once">
                     <span class="fas fa-pencil"></span>
                 </a>
             </span>
@@ -176,7 +179,8 @@
         <div class="collection-label">
             {{ data.room }}
             <span class="float-end">
-                <a href="#room-affiliation-collapse-{{ data.id }}" data-bs-toggle="collapse" data-controller="edit-warning" data-action="edit-warning#warn:once">
+                <a href="#room-affiliation-collapse-{{ data.id }}" data-bs-toggle="collapse"
+                   data-controller="edit-warning" data-action="edit-warning#warn:once">
                     <span class="fas fa-pencil"></span>
                 </a>
             </span>
@@ -216,7 +220,8 @@
         <div class="collection-label">
             {{ data.supervisor.name }}
             <span class="float-end">
-                <a href="#supervisor-affiliation-collapse-{{ data.id }}" data-bs-toggle="collapse" data-controller="edit-warning" data-action="edit-warning#warn:once">
+                <a href="#supervisor-affiliation-collapse-{{ data.id }}" data-bs-toggle="collapse"
+                   data-controller="edit-warning" data-action="edit-warning#warn:once">
                     <span class="fas fa-pencil"></span>
                 </a>
             </span>
@@ -256,7 +261,8 @@
         <div class="collection-label">
             {{ data.supervisee.name }}
             <span class="float-end">
-                <a href="#supervisee-affiliation-collapse-{{ data.id }}" data-bs-toggle="collapse" data-controller="edit-warning" data-action="edit-warning#warn:once">
+                <a href="#supervisee-affiliation-collapse-{{ data.id }}" data-bs-toggle="collapse"
+                   data-controller="edit-warning" data-action="edit-warning#warn:once">
                     <span class="fas fa-pencil"></span>
                 </a>
             </span>
