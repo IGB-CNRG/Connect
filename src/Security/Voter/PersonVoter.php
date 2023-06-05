@@ -56,7 +56,7 @@ class PersonVoter extends Voter
         return match ($attribute) {
             // anyone who can edit can also edit history, for now
             // todo who else can edit?
-            self::EDIT, self::EDIT_HISTORY => $this->isEditorForPersonsTheme($user, $subject),
+            self::EDIT, self::EDIT_HISTORY => $this->security->isGranted('ROLE_CERTIFICATE_MANAGER') || $this->isEditorForPersonsTheme($user, $subject),
             self::VIEW => true,
             self::ADD, self::VIEW_DOCUMENTS, self::VIEW_EXIT_REASON => $this->security->isGranted('ROLE_APPROVER'),
             self::REMOVE => $user === $subject || $this->isEditorForPersonsTheme($user, $subject),
