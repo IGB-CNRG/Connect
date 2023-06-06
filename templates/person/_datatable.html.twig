@@ -2,7 +2,7 @@
     {# @var person \App\Entity\Person #}
     <tr>
         {# Name/Portrait Column #}
-        <td {% if person.imageName is null %}class="td-no-portrait"{% endif %}
+        <td class="{{ html_classes('align-middle', {'td-no-portrait':person.imageName is null}) }}"
             data-order="{{ person.lastName }}"
             data-search="{% block person_name %}{% if person.lastName is not empty %}{{ person.name }}{% else %}No name{% endif %}{% endblock %}">
             {% if person.imageName is not null %}
@@ -20,10 +20,11 @@
         </td>
 
         {# Email Column #}
-        <td>{{ person.email }}</td>
+        <td class="align-middle">{{ person.email }}</td>
 
         {# Theme Affiliations Column #}
-        <td data-search="{%- for themeAffiliation in person.themeAffiliations -%}
+        <td class="align-middle"
+            data-search="{%- for themeAffiliation in person.themeAffiliations -%}
                         {{- themeAffiliation.theme.shortName -}},
                         {{- themeAffiliation.memberCategory.shortName??themeAffiliation.memberCategory.name -}},
                         {%- for role in themeAffiliation.themeRoles -%}
@@ -57,12 +58,12 @@
             {% endfor %}
         </td>
 
-        <td>
+        <td class="align-middle">
             {{ person.unit??person.otherUnit??'None' }}
         </td>
 
         {# Rooms Column #}
-        <td>
+        <td class="align-middle">
             {% for roomAffiliation in person.roomAffiliations|current %}
                 {{ roomAffiliation.room.number }}{% if not loop.last %}, {% endif %}
             {% endfor %}
