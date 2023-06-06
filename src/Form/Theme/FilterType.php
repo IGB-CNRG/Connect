@@ -4,34 +4,22 @@
  * All rights reserved.
  */
 
-namespace App\Form;
+namespace App\Form\Theme;
 
 use App\Entity\MemberCategory;
 use App\Entity\Unit;
-use App\Form\Fields\ThemeType;
 use App\Repository\MemberCategoryRepository;
 use App\Repository\UnitRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AdvancedSearchType extends AbstractType
+class FilterType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('theme', ThemeType::class, [
-                'multiple' => true,
-                'attr' => [
-                    'data-controller' => 'tom-select',
-                    'data-placeholder' => 'Filter by theme',
-                    'data-action' => 'datatables#columnSearch',
-                    'style' => 'width:100%',
-                ],
-                'choice_value' => 'shortName',
-            ])
             ->add('employeeType', EntityType::class, [
                 'class' => MemberCategory::class,
                 'multiple' => true,
@@ -47,20 +35,7 @@ class AdvancedSearchType extends AbstractType
                 'query_builder' => function (MemberCategoryRepository $repository) {
                     return $repository->createFormSortedQueryBuilder();
                 },
-            ])
-            ->add('role', ChoiceType::class, [
-                'multiple' => true,
-                'attr' => [
-                    'data-controller' => 'tom-select',
-                    'data-placeholder' => 'Filter by employee type',
-                    'data-action' => 'datatables#columnSearch',
-                    'style' => 'width:100%',
-                ],
-                'choices' => [
-                    'Theme Leader' => 'Theme Leader',
-                    'Theme Admin' => 'Theme Admin',
-                    'Lab Manager' => 'Lab Manager'
-                ],
+                'required' => false,
             ])
             ->add('unit', EntityType::class, [
                 'class' => Unit::class,
@@ -82,6 +57,7 @@ class AdvancedSearchType extends AbstractType
                         return null;
                     }
                 },
+                'required' => false,
             ]);
     }
 

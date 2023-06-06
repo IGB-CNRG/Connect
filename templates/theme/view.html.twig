@@ -90,7 +90,8 @@
     </div>
 
     {# user list #}
-    <div data-controller="datatables" class="mb-3">
+    <div data-controller="datatables" class="mb-3" data-datatables-combo-column-value="2"
+         data-datatables-combo-pattern-value='["filter_theme","filter_employeeType","filter_role"]'>
         <table id="people" class="table" data-datatables-target="table">
             <thead>
             {{ block('person_datatable_thead') }}
@@ -101,6 +102,28 @@
             {% endfor %}
             </tbody>
         </table>
+
+        <div class="card mt-3">
+            <div class="card-header collapse-header">
+                Filter
+            </div>
+            <div class="card-body">
+                {{ form_start(filterForm) }}
+                <div class="row">
+                    <div class="col-lg-6 col-xl">{{ form_row(filterForm.employeeType) }}</div>
+                    <div class="col-lg-6 col-xl">{{ form_row(filterForm.unit) }}</div>
+                </div>
+                {{ form_end(filterForm) }}
+
+                <div class="callout callout-info">
+                    {# todo this copy needs a second look #}
+                    Selecting an option from each dropdown will search for members who match <strong>all</strong>
+                    options. Selecting multiple options from a single dropdown will search for members who match
+                    <strong>any</strong> of those options. For example, if you select MME, MMG, and Faculty, both MME
+                    Faculty and MMG Faculty will be displayed.
+                </div>
+            </div>
+        </div>
     </div>
 
     {% if is_granted("ROLE_ADMIN") %}

@@ -7,6 +7,7 @@
 namespace App\Controller;
 
 use App\Entity\Theme;
+use App\Form\Theme\FilterType;
 use App\Repository\PersonRepository;
 use App\Repository\ThemeRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -32,9 +33,11 @@ class ThemeController extends AbstractController
     public function view(Theme $theme, PersonRepository $personRepository): Response
     {
         $people = $personRepository->findCurrentForTheme($theme);
+        $filterForm = $this->createForm(FilterType::class);
         return $this->render('theme/view.html.twig', [
             'theme' => $theme,
             'people' => $people,
+            'filterForm' => $filterForm->createView(),
         ]);
     }
 }

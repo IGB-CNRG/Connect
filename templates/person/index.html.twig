@@ -9,7 +9,7 @@
 
 {% block content %}
     <div data-controller="datatables" data-datatables-combo-column-value="2"
-         data-datatables-combo-pattern-value='["advanced_search_theme","advanced_search_employeeType","advanced_search_role"]'>
+         data-datatables-combo-pattern-value='["filter_theme","filter_employeeType","filter_role"]'>
         <table id="people" class="table" data-datatables-target="table" style="width: 100%">
             <thead>
             {{ block('person_datatable_thead') }}
@@ -23,17 +23,17 @@
 
         <div class="card mt-3">
             <div class="card-header collapse-header">
-                Advanced Search
+                Filter
             </div>
             <div class="card-body">
-                {{ form_start(advancedSearchForm) }}
+                {{ form_start(filterForm) }}
                 <div class="row">
-                    <div class="col-lg-6 col-xl">{{ form_row(advancedSearchForm.theme) }}</div>
-                    <div class="col-lg-6 col-xl">{{ form_row(advancedSearchForm.employeeType) }}</div>
-                    <div class="col-lg-6 col-xl">{{ form_row(advancedSearchForm.role) }}</div>
-                    <div class="col-lg-6 col-xl">{{ form_row(advancedSearchForm.unit) }}</div>
+                    <div class="col-lg-6 col-xl">{{ form_row(filterForm.theme) }}</div>
+                    <div class="col-lg-6 col-xl">{{ form_row(filterForm.employeeType) }}</div>
+                    <div class="col-lg-6 col-xl">{{ form_row(filterForm.role) }}</div>
+                    <div class="col-lg-6 col-xl">{{ form_row(filterForm.unit) }}</div>
                 </div>
-                {{ form_end(advancedSearchForm) }}
+                {{ form_end(filterForm) }}
 
                 <div class="callout callout-info">
                     {# todo this copy needs a second look #}
@@ -42,26 +42,6 @@
                     <strong>any</strong> of those options. For example, if you select MME, MMG, and Faculty, both MME
                     Faculty and MMG Faculty will be displayed.
                 </div>
-
-{#                {% if app.request.get('_route') != 'person_allmembers' %}#}
-{#                    <div class="row mt-3">#}
-{#                        <div class="col">#}
-{#                            <a class="btn btn-secondary" href="{{ path('person_allmembers') }}">#}
-{#                                <span class="fas fa-eye"></span>#}
-{#                                See all members past and present#}
-{#                            </a>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                {% else %}#}
-{#                    <div class="row mt-3">#}
-{#                        <div class="col">#}
-{#                            <a class="btn btn-secondary" href="{{ path('person_currentmembers') }}">#}
-{#                                <span class="fas fa-eye-slash"></span>#}
-{#                                See only current members#}
-{#                            </a>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                {% endif %}#}
             </div>
         </div>
     </div>

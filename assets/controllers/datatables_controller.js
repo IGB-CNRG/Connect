@@ -64,7 +64,7 @@ export default class extends Controller {
             if (regexes.length === 0) {
                 regexes = [''];
             }
-            if (values.length === 0) {
+            if (values === undefined || values.length === 0) {
                 regexes.forEach(regex => newRegexes.push(`${regex}[^,]*${separator}`));
                 regexes = newRegexes;
             } else {

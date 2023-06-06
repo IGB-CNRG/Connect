@@ -9,10 +9,10 @@ namespace App\Controller;
 use App\Entity\Person;
 use App\Entity\RoomAffiliation;
 use App\Entity\ThemeAffiliation;
-use App\Form\AdvancedSearchType;
 use App\Form\EndRoomAffiliationType;
 use App\Form\EndThemeAffiliationType;
 use App\Form\KeysType;
+use App\Form\Person\FilterType;
 use App\Form\Person\PersonType;
 use App\Form\Person\RoomAffiliationType;
 use App\Form\Person\ThemeAffiliationType;
@@ -71,11 +71,11 @@ class PersonController extends AbstractController
      */
     protected function index(mixed $people): Response
     {
-        $advancedSearchForm = $this->createForm(AdvancedSearchType::class);
+        $filterForm = $this->createForm(FilterType::class);
 
         return $this->render('person/index.html.twig', [
             'people' => $people,
-            'advancedSearchForm' => $advancedSearchForm->createView(),
+            'filterForm' => $filterForm->createView(),
         ]);
     }
 
