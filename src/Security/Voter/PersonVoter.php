@@ -27,7 +27,8 @@ class PersonVoter extends Voter
     public function __construct(
         private readonly Security $security,
         private readonly HistoricityManager $historicityManager
-    ) {}
+    ) {
+    }
 
     protected function supports(string $attribute, $subject): bool
     {
@@ -35,7 +36,7 @@ class PersonVoter extends Voter
         // https://symfony.com/doc/current/security/voters.html
         return (in_array($attribute, [self::EDIT, self::VIEW, self::REMOVE])
                 && $subject instanceof Person)
-               || in_array($attribute, [self::ADD, self::EDIT_HISTORY, self::VIEW_DOCUMENTS, self::VIEW_EXIT_REASON]);
+            || in_array($attribute, [self::ADD, self::EDIT_HISTORY, self::VIEW_DOCUMENTS, self::VIEW_EXIT_REASON]);
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
@@ -56,7 +57,8 @@ class PersonVoter extends Voter
         return match ($attribute) {
             // anyone who can edit can also edit history, for now
             // todo who else can edit?
-            self::EDIT, self::EDIT_HISTORY => $this->security->isGranted('ROLE_CERTIFICATE_MANAGER') || $this->isEditorForPersonsTheme($user, $subject),
+            self::EDIT, self::EDIT_HISTORY => $this->security->isGranted('ROLE_CERTIFICATE_MANAGER')
+                || $this->security->isGranted('ROLE_APPROVER'),
             self::VIEW => true,
             self::ADD, self::VIEW_DOCUMENTS, self::VIEW_EXIT_REASON => $this->security->isGranted('ROLE_APPROVER'),
             self::REMOVE => $user === $subject || $this->isEditorForPersonsTheme($user, $subject),
