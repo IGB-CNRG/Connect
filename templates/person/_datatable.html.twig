@@ -5,18 +5,20 @@
         <td class="{{ html_classes('align-middle', {'td-no-portrait':person.imageName is null}) }}"
             data-order="{{ person.lastName }}, {{ person.firstName }}"
             data-search="{% block person_name %}{% if person.lastName is not empty %}{{ person.name }}{% else %}No name{% endif %}{% endblock %}">
-            {% if person.imageName is not null %}
-                {# We might want to look into lazy-loading these images, but for now they're so small (~2k each) that it's not worth it #}
-                <img class="portrait-sm me-2"
-                     data-src="{{ vich_uploader_asset(person, 'imageFile') | imagine_filter('small_thumb') }}"
-                     alt="Portrait"/>
-                <noscript>
+            {% apply spaceless %}
+                {% if person.imageName is not null %}
+                    {# We might want to look into lazy-loading these images, but for now they're so small (~2k each) that it's not worth it #}
                     <img class="portrait-sm me-2"
-                         src="{{ vich_uploader_asset(person, 'imageFile') | imagine_filter('small_thumb') }}"
+                         data-src="{{ vich_uploader_asset(person, 'imageFile') | imagine_filter('small_thumb') }}"
                          alt="Portrait"/>
-                </noscript>
-            {% endif %}
-            <a href="{{ path('person_view', {'slug': person.slug}) }}">{{ block('person_name') }}</a>
+                    <noscript>
+                        <img class="portrait-sm me-2"
+                             src="{{ vich_uploader_asset(person, 'imageFile') | imagine_filter('small_thumb') }}"
+                             alt="Portrait"/>
+                    </noscript>
+                {% endif %}
+                <a href="{{ path('person_view', {'slug': person.slug}) }}">{{ block('person_name') }}</a>
+            {% endapply %}
         </td>
 
         {# Email Column #}
