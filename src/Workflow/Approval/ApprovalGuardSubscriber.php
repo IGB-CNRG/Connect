@@ -29,7 +29,7 @@ class ApprovalGuardSubscriber implements EventSubscriberInterface, ServiceSubscr
             return;
         }
         $approvers = $this->membership()->getApprovers($event->getSubject(), $event->getTransition());
-        if (!in_array($this->security()->getUser(), $approvers)) {
+        if ($approvers !== null && !in_array($this->security()->getUser(), $approvers)) {
             $event->setBlocked(true, "You are not authorized to approve this form.");
         }
     }

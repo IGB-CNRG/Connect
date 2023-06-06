@@ -84,15 +84,15 @@ class Membership
      * approvers for the Person's current workflow place.
      * @param Person $person
      * @param Transition|null $transition
-     * @return Person[]
+     * @return Person[]|null
      */
-    public function getApprovers(Person $person, ?Transition $transition = null): array
+    public function getApprovers(Person $person, ?Transition $transition = null): ?array
     {
         if ($approvalStrategy = $this->getApprovalStrategy($person, $transition)) {
             return $approvalStrategy->getApprovers($person);
         }
 
-        return [];
+        return null;
     }
 
     /**

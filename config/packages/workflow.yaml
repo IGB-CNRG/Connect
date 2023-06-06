@@ -101,14 +101,14 @@ framework:
                 force_exit_form:
                     from: active
                     to: inactive
+                    guard: "is_granted('ROLE_APPROVER')"
                     metadata:
-                        approvalStrategy: App\Workflow\Approval\ThemeApproval
                         label: Process exit silently
                 deactivate:
                     from: exit_form_submitted
                     to: inactive
+                    guard: "is_granted('ROLE_APPROVER')"
                     metadata:
-                        approvalStrategy: App\Workflow\Approval\ThemeApproval
                         label: Approve exit form
                 reenter:
                     from: inactive
