@@ -24,6 +24,7 @@ use App\Repository\PersonRepository;
 use App\Service\CertificateHelper;
 use App\Service\HistoricityManager;
 use App\Workflow\Membership;
+use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -70,9 +71,14 @@ class MembershipController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->processEntryForm($form, $person, $themeAffiliation->getStartedAt(), $em, $logger, $membershipStateMachine);
-
-            $em->flush();
+            $this->processEntryForm(
+                $form,
+                $person,
+                $themeAffiliation->getStartedAt(),
+                $em,
+                $logger,
+                $membershipStateMachine
+            );
 
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
@@ -117,8 +123,6 @@ class MembershipController extends AbstractController
             $startDate = $person->getThemeAffiliations()[0]->getStartedAt();
 
             $this->processEntryForm($form, $person, $startDate, $em, $logger, $membershipStateMachine);
-
-            $em->flush();
 
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
@@ -217,7 +221,7 @@ class MembershipController extends AbstractController
             $certificateName = "$neededCertificate Training Certificate";
             if (!$person->getDocuments()->exists(
                 fn($i, Document $document) => $document->getType() === DocumentCategory::Certificate
-                                              && $document->getDisplayName() === $certificateName
+                    && $document->getDisplayName() === $certificateName
             )) {
                 // Look for an existing certificate, create if needed
                 $certificate = (new Document())
@@ -303,7 +307,7 @@ class MembershipController extends AbstractController
         WorkflowInterface $membershipStateMachine
     ): Response {
         if (!($person === $this->getUser()
-              || $membershipStateMachine->can($person, Membership::TRANS_FORCE_EXIT_FORM))) {
+            || $membershipStateMachine->can($person, Membership::TRANS_FORCE_EXIT_FORM))) {
             throw $this->createAccessDeniedException();
         }
 
@@ -414,11 +418,22 @@ class MembershipController extends AbstractController
             $endedAt,
             $exitReason
         );
-        if($forwardingEmail) {
+        if ($forwardingEmail) {
             $person->setEmail($forwardingEmail);
         }
     }
 
+    /**
+     * Processes a submitted entry form. This function flushes the Entity Manager!
+     *
+     * @param FormInterface $form
+     * @param Person $person
+     * @param DateTimeInterface $startDate
+     * @param EntityManagerInterface $em
+     * @param ActivityLogger $logger
+     * @param WorkflowInterface $membershipStateMachine
+     * @return void
+     */
     protected function processEntryForm(
         FormInterface $form,
         Person $person,
@@ -439,14 +454,22 @@ class MembershipController extends AbstractController
             $person->removeSupervisorAffiliation($supervisorAffiliation);
         }
         $person->setUsername($person->getNetid());
+        $person->setMembershipUpdatedAt(new DateTimeImmutable());
         $em->persist($person);
 
+        $em->flush();
+
+        // Logging has to happen after the entity has been persisted, so we don't get an error.
+        //  The API Platform serializer takes over and serializes even in non-API contexts, and the config option to
+        //  turn off IRI generation doesn't seem to work some fraction of the time (cannot consistently replicate).
+        //  https://github.com/api-platform/api-platform/issues/1527
 //         if($form->has('isSilent') && $form->get('isSilent')->getData()) {
-            $logger->log($person, 'Silently submitted entry form');
-            $membershipStateMachine->apply($person, Membership::TRANS_FORCE_ENTRY_FORM);
+        $logger->log($person, 'Silently submitted entry form');
+        $membershipStateMachine->apply($person, Membership::TRANS_FORCE_ENTRY_FORM);
 //        } else {
 //            $logger->log($person, 'Submitted entry form');
 //            $membershipStateMachine->apply($person, Membership::TRANS_SUBMIT_ENTRY_FORM);
 //        }
+        $em->flush();
     }
 }
