@@ -104,9 +104,12 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
     public function findCurrentForTheme(Theme $theme): array
     {
         $qb = $this->createIndexQueryBuilder()
-            ->andWhere('(ta.theme = :theme or t.parentTheme = :theme)')
+            ->leftJoin('p.themeAffiliations', 'ta2')
+            ->leftJoin('ta2.theme', 't2')
+            ->andWhere('(ta2.theme = :theme or t2.parentTheme = :theme)')
             ->setParameter('theme', $theme);
         $this->historicityManager()->addCurrentConstraint($qb, 'ta');
+        $this->historicityManager()->addCurrentConstraint($qb, 'ta2');
         return $qb->getQuery()
             ->getResult();
     }
