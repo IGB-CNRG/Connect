@@ -30,11 +30,11 @@ class ActivityLogger implements ServiceSubscriberInterface
 
     private const DATE_FORMAT = 'n/j/Y';
 
-    public function log(LogSubjectInterface $subject, ?string $message): void
+    public function log(LogSubjectInterface $subject, ?string $message, bool $addContext = true): void
     {
         if ($message) {
             $context = null;
-            if ($subject instanceof Person) {
+            if ($addContext && $subject instanceof Person) {
                 $context = $this->normalizePersonContext(
                     $subject
                 ); // todo later add a method to LogSubjectInterface that returns the context group
@@ -153,7 +153,7 @@ class ActivityLogger implements ServiceSubscriberInterface
                                     && $loggableArguments['type'] == 'date') {
                                     $new = $change[1]->format(self::DATE_FORMAT);
                                 } elseif (array_key_exists('type', $loggableArguments)
-                                          && $loggableArguments['type'] == 'array') {
+                                    && $loggableArguments['type'] == 'array') {
                                     $new = '['.join(', ', $change[1]).']';
                                 } else {
                                     $new = $change[1];
@@ -167,13 +167,13 @@ class ActivityLogger implements ServiceSubscriberInterface
                         // Removed
                         $changes[] = sprintf("removed %s", $fieldName);
                     } elseif (!array_key_exists('details', $loggableArguments)
-                              || $loggableArguments['details'] === true) {
+                        || $loggableArguments['details'] === true) {
                         // Changed
                         if (array_key_exists('type', $loggableArguments) && $loggableArguments['type'] == 'date') {
                             $old = $change[0]->format(self::DATE_FORMAT);
                             $new = $change[1]->format(self::DATE_FORMAT);
                         } elseif (array_key_exists('type', $loggableArguments)
-                                  && $loggableArguments['type'] == 'array') {
+                            && $loggableArguments['type'] == 'array') {
                             $old = '['.join(', ', $change[0]).']';
                             $new = '['.join(', ', $change[1]).']';
                         } else {

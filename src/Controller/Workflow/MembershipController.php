@@ -79,6 +79,7 @@ class MembershipController extends AbstractController
                 $logger,
                 $membershipStateMachine
             );
+            $em->flush();
 
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
@@ -123,6 +124,8 @@ class MembershipController extends AbstractController
             $startDate = $person->getThemeAffiliations()[0]->getStartedAt();
 
             $this->processEntryForm($form, $person, $startDate, $em, $logger, $membershipStateMachine);
+
+            $em->flush();
 
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
@@ -457,19 +460,16 @@ class MembershipController extends AbstractController
         $person->setMembershipUpdatedAt(new DateTimeImmutable());
         $em->persist($person);
 
-        $em->flush();
-
         // Logging has to happen after the entity has been persisted, so we don't get an error.
         //  The API Platform serializer takes over and serializes even in non-API contexts, and the config option to
         //  turn off IRI generation doesn't seem to work some fraction of the time (cannot consistently replicate).
         //  https://github.com/api-platform/api-platform/issues/1527
 //         if($form->has('isSilent') && $form->get('isSilent')->getData()) {
-        $logger->log($person, 'Silently submitted entry form');
+        $logger->log($person, 'Silently submitted entry form', false);
         $membershipStateMachine->apply($person, Membership::TRANS_FORCE_ENTRY_FORM);
 //        } else {
 //            $logger->log($person, 'Submitted entry form');
 //            $membershipStateMachine->apply($person, Membership::TRANS_SUBMIT_ENTRY_FORM);
 //        }
-        $em->flush();
     }
 }
