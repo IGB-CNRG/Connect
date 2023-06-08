@@ -10,6 +10,7 @@ use App\Entity\Building;
 use App\Entity\Faq;
 use App\Entity\Key;
 use App\Entity\KeyAffiliation;
+use App\Entity\Log;
 use App\Entity\MemberCategory;
 use App\Entity\Person;
 use App\Entity\Room;
@@ -82,6 +83,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToRoute('Back to Connect', 'fa fa-rotate-left', 'default');
         yield MenuItem::linkToCrud('Settings', 'fa fa-gear', Setting::class);
         yield MenuItem::linkToCrud('FAQs', 'fa fa-question', Faq::class);
+        yield MenuItem::linkToCrud('Log', 'fa fa-book', Log::class);
         yield MenuItem::section('IGB');
         yield MenuItem::linkToCrud('All People', 'fas fa-list', Person::class)->setController(PersonCrudController::class);
         yield MenuItem::linkToCrud('New Units', 'fas fa-list', Person::class)->setController(OtherUnitCrudController::class);
