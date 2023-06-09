@@ -208,6 +208,17 @@ label.required:after {
   padding-left: 0.25rem;
 }
 
+/* Quick Search Form */
+.quick-search {
+  min-width: 230px;
+}
+
+@include media-breakpoint-between(md,lg){
+  .quick-search {
+    min-width: auto;
+  }
+}
+
 /* DataTables Restyles */
 .dataTables_filter {
   display: inline-block;

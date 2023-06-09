@@ -102,6 +102,15 @@
 
                     </ul>
 
+                    <form class="d-flex quick-search" role="search">
+                        <input class="form-control me-2"
+                               type="search"
+                               placeholder="Quick Search"
+                               aria-label="Search"
+                               data-controller="quick-search"
+                               data-quick-search-api-url-value="{{ path('_api_/people{._format}_get_collection') }}"
+                        />
+                    </form>
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
