@@ -19,10 +19,11 @@
         <div class="col-lg">{{ form_row(form.firstName) }}</div>
         <div class="col-lg">{{ form_row(form.lastName) }}</div>
     </div>
-    <div class="row" data-controller="username-check netid-autofill"
-         data-username-check-url-value="{{ path('_api_/people{._format}_get_collection') }}">
+    <div class="row" {{ stimulus_controller('username-check', {'url': path('_api_/people{._format}_get_collection')})
+    |stimulus_controller('uin-check', {'url':path('_api_/people{._format}_get_collection')})
+    |stimulus_controller('netid-autofill') }}>
         <div class="col-lg">{{ form_row(form.netid, {'attr':{'data-action':'netid-autofill#updateFields change->username-check#checkIfUsernameUnique', 'data-username-check-target':'username'}}) }}</div>
-        <div class="col-lg">{{ form_row(form.uin) }}</div>
+        <div class="col-lg">{{ form_row(form.uin, {'attr':{'data-action':'change->uin-check#checkIfUinUnique', 'data-uin-check-target':'uin'}}) }}</div>
         <div class="col-lg">{{ form_row(form.email, {'attr':{'data-netid-autofill-target':'email'}}) }}</div>
     </div>
     <div class="row">

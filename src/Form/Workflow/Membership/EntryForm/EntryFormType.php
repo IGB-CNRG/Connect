@@ -38,7 +38,7 @@ class EntryFormType extends AbstractType
                 'label' => 'person.netid',
             ])
             ->add('uin', TextType::class, [
-                'required' => false,
+                'required' => true,
                 'label' => 'UIN',
             ])
             ->add('email', EmailType::class, [

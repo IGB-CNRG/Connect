@@ -46,7 +46,7 @@ class PersonType extends AbstractType
                 'label' => 'IGB Username',
             ])
             ->add('uin', TextType::class, [
-                'required' => false,
+                'required' => true,
                 'label' => 'UIN',
             ])
             ->add('email', EmailType::class, [
