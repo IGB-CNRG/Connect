@@ -44,6 +44,9 @@ class WorkflowNotification
     #[ORM\Column]
     private ?bool $isEnabled = null;
 
+    #[ORM\Column]
+    private ?bool $isAllMemberCategories = false;
+
 
     public function __construct()
     {
@@ -161,6 +164,18 @@ class WorkflowNotification
     public function setIsEnabled(bool $isEnabled): self
     {
         $this->isEnabled = $isEnabled;
+
+        return $this;
+    }
+
+    public function isIsAllMemberCategories(): ?bool
+    {
+        return $this->isAllMemberCategories;
+    }
+
+    public function setIsAllMemberCategories(bool $isAllMemberCategories): self
+    {
+        $this->isAllMemberCategories = $isAllMemberCategories;
 
         return $this;
     }

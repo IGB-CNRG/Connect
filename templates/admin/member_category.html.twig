@@ -1,4 +1,4 @@
-{% if field.value|length == 13 %}All{% else %}{# todo this shouldn't be a hard-coded number #}
+{% if entity.instance.isAllMemberCategories %}All{% else %}
 {% if ea.crud.currentAction == 'index' %}
     {% set max = 5 %}
     {% for associated_entity in field.value|slice(0,max) %}

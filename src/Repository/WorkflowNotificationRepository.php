@@ -28,8 +28,8 @@ class WorkflowNotificationRepository extends ServiceEntityRepository
     public function findForTransition(string $workflow, string $transition, array $categories)
     {
         return $this->createQueryBuilder('w')
-            ->join('w.memberCategories', 'm')
-            ->andWhere('m in (:categories)')
+            ->leftJoin('w.memberCategories', 'm')
+            ->andWhere('(w.isAllMemberCategories=true or m in (:categories))')
             ->andWhere('w.transitionName = :transition')
             ->andWhere('w.workflowName = :workflow')
             ->andWhere('w.isEnabled = true')

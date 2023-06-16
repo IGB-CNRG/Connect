@@ -54,8 +54,7 @@ class WorkflowNotificationRepositoryTest extends DatabaseTestCase
         $this->entityManager->persist($this->mc2);
 
         $n1 = (new WorkflowNotification())
-            ->addMemberCategory($this->mc1)
-            ->addMemberCategory($this->mc2)
+            ->setIsAllMemberCategories(true)
             ->setName('n1')
             ->setTemplate('')
             ->setRecipients('')

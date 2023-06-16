@@ -35,10 +35,10 @@ class MemberCategory
     private ?string $shortName = null;
 
     #[ORM\Column]
-    private ?bool $canSupervise = null;
+    private ?bool $canSupervise = false;
 
     #[ORM\Column]
-    private ?bool $needsCertificates = null;
+    private ?bool $needsCertificates = true;
 
     public function __construct()
     {

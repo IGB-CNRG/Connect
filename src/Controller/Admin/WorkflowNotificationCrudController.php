@@ -32,7 +32,8 @@ class WorkflowNotificationCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         $sendTestEmail = Action::new('sendTest', 'Send test email', 'fas fa-envelope')
-        ->linkToCrudAction('sendTest');
+            ->linkToCrudAction('sendTest');
+
         return $actions
             ->add(Crud::PAGE_INDEX, $sendTestEmail)
             ->add(Crud::PAGE_DETAIL, $sendTestEmail)
@@ -55,7 +56,7 @@ class WorkflowNotificationCrudController extends AbstractCrudController
 
         $choices = [];
         foreach ($transitions as $transition) {
-            $label = 'membership.' . $transition->getName() . '.label';
+            $label = 'membership.'.$transition->getName().'.label';
             $choices[$label] = $transition->getName();
         }
 
@@ -92,7 +93,10 @@ class WorkflowNotificationCrudController extends AbstractCrudController
                 )
                 ->setFormTypeOption('help_html', true),
             AssociationField::new('memberCategories')
-            ->setTemplatePath('admin/member_category.html.twig'),
+                ->setTemplatePath('admin/member_category.html.twig'),
+            BooleanField::new('isAllMemberCategories')
+                ->setLabel('All Member Categories')
+                ->onlyOnForms(),
             ChoiceField::new('transitionName')
                 ->setLabel('Workflow event')
                 ->setChoices($choices)
