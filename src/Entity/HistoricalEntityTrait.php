@@ -15,11 +15,11 @@ trait HistoricalEntityTrait
 {
     #[ORM\Column(type: 'date', nullable: true)]
     #[Loggable(displayName: 'start date', type: 'date')]
-    private $startedAt;
+    private ?DateTimeInterface $startedAt = null;
 
     #[ORM\Column(type: 'date', nullable: true)]
     #[Loggable(displayName: 'end date', type: 'date')]
-    private $endedAt;
+    private ?DateTimeInterface $endedAt = null;
 
     public function getStartedAt(): ?DateTimeInterface
     {

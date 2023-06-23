@@ -27,19 +27,19 @@ class ThemeAffiliation implements HistoricalEntityInterface, LoggableAffiliation
 
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'themeAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
-    private Person $person;
+    private ?Person $person = null;
 
     #[ORM\ManyToOne(targetEntity: Theme::class, inversedBy: 'themeAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
     #[Loggable]
     #[Groups(['log:person'])]
-    private Theme $theme;
+    private ?Theme $theme = null;
 
     #[ORM\ManyToOne(targetEntity: MemberCategory::class, inversedBy: 'themeAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
     #[Loggable]
     #[Groups(['log:person'])]
-    private MemberCategory $memberCategory;
+    private ?MemberCategory $memberCategory = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable]

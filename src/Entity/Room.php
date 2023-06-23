@@ -29,10 +29,10 @@ class Room implements LogSubjectInterface, HistoricalEntityInterface
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(['log:person'])]
-    private ?string $number;
+    private ?string $number = null;
 
     #[ORM\Column(type: 'string', length: 255, unique: true, nullable: true)]
-    private ?string $name;
+    private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'room', targetEntity: RoomAffiliation::class, orphanRemoval: true)]
     private Collection $roomAffiliations;

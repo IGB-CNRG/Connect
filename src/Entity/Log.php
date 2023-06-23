@@ -19,28 +19,28 @@ class Log
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private ?int $id;
+    private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'ownedLogs')]
-    private ?Person $user;
+    private ?Person $user = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private ?string $text;
+    private ?string $text = null;
 
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'logs')]
-    private ?Person $person;
+    private ?Person $person = null;
 
     #[ORM\ManyToOne(targetEntity: Theme::class, inversedBy: 'logs')]
-    private ?Theme $theme;
+    private ?Theme $theme = null;
 
     #[ORM\ManyToOne(targetEntity: Room::class, inversedBy: 'logs')]
-    private ?Room $room;
+    private ?Room $room = null;
 
     #[ORM\ManyToOne(targetEntity: Key::class, inversedBy: 'logs')]
-    private ?Key $cylinderKey;
+    private ?Key $cylinderKey = null;
 
     #[ORM\ManyToOne(targetEntity: Unit::class, inversedBy: 'logs')]
-    private ?Unit $unit;
+    private ?Unit $unit = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $context = null;

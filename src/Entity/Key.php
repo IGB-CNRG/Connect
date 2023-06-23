@@ -25,14 +25,14 @@ class Key implements LogSubjectInterface, HistoricalEntityInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private ?int $id;
+    private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(['log:person'])]
-    private ?string $name;
+    private ?string $name = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $description;
+    private ?string $description = null;
 
     #[ORM\OneToMany(mappedBy: 'cylinderKey', targetEntity: KeyAffiliation::class, orphanRemoval: true)]
     private Collection $keyAffiliations;

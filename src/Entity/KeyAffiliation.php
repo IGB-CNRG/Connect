@@ -22,17 +22,17 @@ class KeyAffiliation implements HistoricalEntityInterface, LoggableAffiliationIn
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'keyAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
-    private $person;
+    private ?Person $person = null;
 
     #[ORM\ManyToOne(targetEntity: Key::class, inversedBy: 'keyAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
     #[Loggable]
     #[Groups(['log:person'])]
-    private $cylinderKey;
+    private ?Key $cylinderKey = null;
 
     public function __toString()
     {

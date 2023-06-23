@@ -20,19 +20,19 @@ class Building implements HistoricalEntityInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private ?int $id;
+    private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private ?string $name;
+    private ?string $name = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $shortName;
+    private ?string $shortName = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $address;
+    private ?string $address = null;
 
     #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $buildingNumber;
+    private ?int $buildingNumber = null;
 
     #[ORM\OneToMany(mappedBy: 'officeBuilding', targetEntity: Person::class)]
     private Collection $people;

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -23,33 +23,33 @@ class Document
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private ?int $id;
+    private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $fileName;
+    private ?string $fileName = null;
 
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'documents')]
     #[ORM\JoinColumn(nullable: false)]
-    private Person $person;
+    private ?Person $person = null;
 
     #[Vich\UploadableField(mapping: 'person_document', fileNameProperty: 'fileName', mimeType: 'mimeType', originalName: 'originalName')]
-    private ?File $file;
+    private ?File $file = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $mimeType;
+    private ?string $mimeType = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $originalName;
+    private ?string $originalName = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $displayName;
+    private ?string $displayName = null;
 
     #[ORM\Column(type: 'string', length: 255, enumType: DocumentCategory::class)]
     private DocumentCategory $type = DocumentCategory::Other;
 
     #[ORM\ManyToOne(targetEntity: Person::class)]
     #[ORM\JoinColumn(nullable: false)]
-    private Person $uploadedBy;
+    private ?Person $uploadedBy = null;
 
     #[Pure] public function __toString()
     {

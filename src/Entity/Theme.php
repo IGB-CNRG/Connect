@@ -24,7 +24,7 @@ class Theme implements LogSubjectInterface, HistoricalEntityInterface
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     #[Groups(['log:person'])]
-    private ?int $id;
+    private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(['log:person'])]

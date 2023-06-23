@@ -22,11 +22,11 @@ class Unit implements LogSubjectInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private ?int $id;
+    private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(['log:person'])]
-    private ?string $name;
+    private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'unit', targetEntity: Log::class)]
     private Collection $logs;
