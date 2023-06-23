@@ -24,9 +24,9 @@ class ReportController extends AbstractController
             $type = array_reduce(
                 $person->getThemeAffiliations()->toArray(),
                 function ($carry, ThemeAffiliation $affiliation) {
-                    if ($affiliation->getTheme()->getShortName() === 'CABBI') { // todo bad
-                        return $carry;
-                    }
+//                    if ($affiliation->getTheme()->getShortName() === 'CABBI') { // todo bad
+//                        return $carry;
+//                    }
                     if ($carry === 'faculty'
                         || $affiliation->getMemberCategory()->getName() === 'Faculty') { // todo bad
                         return 'faculty';

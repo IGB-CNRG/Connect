@@ -84,21 +84,19 @@
                             </ul>
                         </li>
 
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <li class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" id="navbarReportsMenuLink" role="button"
-                                   data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span class="fa fa-file-lines"></span> Reports
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarReportsMenuLink">
-                                    <li>
-                                        <a class="dropdown-item" href="{{ path('report_unit_partners') }}">
-                                            Unit Partners
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                        {% endif %}
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" id="navbarReportsMenuLink" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="fa fa-file-lines"></span> Reports
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarReportsMenuLink">
+                                <li>
+                                    <a class="dropdown-item" href="{{ path('report_unit_partners') }}">
+                                        Unit Partners
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
 
                     </ul>
 
