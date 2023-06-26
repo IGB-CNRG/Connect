@@ -91,7 +91,7 @@ class Document
         return $this;
     }
 
-    public function getPerson(): Person
+    public function getPerson(): ?Person
     {
         return $this->person;
     }
@@ -151,7 +151,7 @@ class Document
         return $this;
     }
 
-    public function getUploadedBy(): Person
+    public function getUploadedBy(): ?Person
     {
         return $this->uploadedBy;
     }

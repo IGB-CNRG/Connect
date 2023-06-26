@@ -92,7 +92,7 @@ class ThemeAffiliation implements HistoricalEntityInterface, LoggableAffiliation
     }
 
 
-    public function getPerson(): Person
+    public function getPerson(): ?Person
     {
         return $this->person;
     }
@@ -104,7 +104,7 @@ class ThemeAffiliation implements HistoricalEntityInterface, LoggableAffiliation
         return $this;
     }
 
-    public function getTheme(): Theme
+    public function getTheme(): ?Theme
     {
         return $this->theme;
     }
@@ -116,7 +116,7 @@ class ThemeAffiliation implements HistoricalEntityInterface, LoggableAffiliation
         return $this;
     }
 
-    public function getMemberCategory(): MemberCategory
+    public function getMemberCategory(): ?MemberCategory
     {
         return $this->memberCategory;
     }
