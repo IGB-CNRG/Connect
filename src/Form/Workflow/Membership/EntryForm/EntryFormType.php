@@ -102,7 +102,6 @@ class EntryFormType extends AbstractType
                 'help' => 'Non-IGB campus address building',
                 'attr' => [
                     'data-controller' => 'tom-select',
-                    'data-tom-select-open-on-focus-value' => 'false',
                 ],
                 'query_builder' => fn(BuildingRepository $repository) => $repository->createQueryBuilderForDropdown(),
             ]);
