@@ -38,7 +38,7 @@ class EntryFormType extends AbstractType
                 'label' => 'person.netid',
             ])
             ->add('uin', TextType::class, [
-                'required' => true,
+                'required' => !$options['allow_skip_uin'],
                 'label' => 'UIN',
             ])
             ->add('email', EmailType::class, [
@@ -130,6 +130,7 @@ class EntryFormType extends AbstractType
             ->setRequired([
                 'allow_silent',
                 'show_position_when_joined',
+                'allow_skip_uin',
                 'use_captcha',
             ]);
     }

@@ -65,6 +65,7 @@ class MembershipController extends AbstractController
         $form = $this->createForm(EntryFormType::class, $person, [
             'allow_silent' => $membershipStateMachine->can($person, Membership::TRANS_FORCE_ENTRY_FORM),
             'show_position_when_joined' => $this->isGranted('ROLE_ADMIN'),
+            'allow_skip_uin' => $this->isGranted('ROLE_ADMIN'),
             'use_captcha' => !$this->isGranted('IS_AUTHENTICATED_FULLY'),
         ])
             ->add('submit', SubmitType::class);
