@@ -16,9 +16,6 @@ class PositionWhenJoinedType extends ChoiceType
         parent::configureOptions($resolver);
         $resolver->setDefaults([
             'label' => 'person.positionWhenJoined',
-            'attr' => [
-                'data-controller' => 'tom-select',
-            ],
             'placeholder' => '',
             'choices' => [
                 'Assistant Professor' => 'Assistant Professor',

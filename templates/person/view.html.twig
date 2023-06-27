@@ -72,7 +72,9 @@
                                 <strong>
                                     <a href="{{ path('theme_view', {'shortName': themeAffiliation.theme.shortName}) }}">{{ themeAffiliation.theme.shortName }}</a>
                                     {% if themeAffiliation.theme.parentTheme %}
-                                    (<a href="{{ path('theme_view', {'shortName': themeAffiliation.theme.parentTheme.shortName}) }}">{{ themeAffiliation.theme.parentTheme.shortName }}</a>)
+                                        (<a href="{{ path('theme_view', {'shortName': themeAffiliation.theme.parentTheme.shortName}) }}">
+                                            {{ themeAffiliation.theme.parentTheme.shortName }}
+                                        </a>)
                                     {% endif %}
                                     {% for role in themeAffiliation.themeRoles %}
                                         {{ role.displayName }}
@@ -320,13 +322,6 @@
                             <td class="shrink"></td>
                         </tr>
                         <tr>
-                            <th>Position when joined</th>
-                            <td>
-                                {{ person.positionWhenJoined }}
-                            </td>
-                            <td class="shrink"></td>
-                        </tr>
-                        <tr>
                             <th>Last reviewed</th>
                             <td>
                                 {% if person.lastReviewedBy is not null %}
@@ -434,6 +429,9 @@
                     {% if is_granted('PERSON_VIEW_EXIT_REASON') %}
                         <th>Exit Reason</th>
                     {% endif %}
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <th>Position when joined</th>
+                    {% endif %}
                     <th class="shrink"></th>
                 </tr>
                 {% for themeAffiliation in person.themeAffiliations %}
@@ -450,6 +448,9 @@
                         <td>{% if themeAffiliation.endedAt is not null %}{{ themeAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
                         {% if is_granted('PERSON_VIEW_EXIT_REASON') %}
                             <td>{{ themeAffiliation.exitReason }}</td>
+                        {% endif %}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <td>{{ themeAffiliation.positionWhenJoined }}</td>
                         {% endif %}
                         <td class="shrink">
                             {% if themeAffiliation.endedAt is null and is_granted("PERSON_EDIT", person) %}

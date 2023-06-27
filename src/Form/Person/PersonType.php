@@ -9,7 +9,6 @@ namespace App\Form\Person;
 use App\Entity\Building;
 use App\Entity\Person;
 use App\Form\Fields\HistoricalCollectionType;
-use App\Form\Fields\PositionWhenJoinedType;
 use App\Form\Fields\UnitType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -24,7 +23,9 @@ use Vich\UploaderBundle\Form\Type\VichFileType;
 
 class PersonType extends AbstractType
 {
-    public function __construct(private Security $security) {}
+    public function __construct(private Security $security)
+    {
+    }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -73,6 +74,9 @@ class PersonType extends AbstractType
             ])
             ->add('themeAffiliations', HistoricalCollectionType::class, [
                 'entry_type' => ThemeAffiliationType::class,
+                'entry_options' => [
+                    'show_position_when_joined' => $options['show_position_when_joined'],
+                ],
             ])
             ->add('supervisorAffiliations', HistoricalCollectionType::class, [
                 'entry_type' => SupervisorType::class,
@@ -101,8 +105,7 @@ class PersonType extends AbstractType
                         'data-controller' => 'tom-select',
                     ],
                     'required' => false,
-                ])
-            ->add('positionWhenJoined', PositionWhenJoinedType::class);
+                ]);
         }
         if ($this->security->isGranted('ROLE_KEY_MANAGER')) {
             $builder
@@ -120,6 +123,8 @@ class PersonType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Person::class,
+        ])->setRequired([
+            'show_position_when_joined',
         ]);
     }
 }

@@ -55,6 +55,9 @@ class ThemeAffiliation implements HistoricalEntityInterface, LoggableAffiliation
     #[Groups(['log:person'])]
     private ?string $exitReason = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $positionWhenJoined = null;
+
     public function __toString()
     {
         $themeName = $this->getTheme()->getShortName();
@@ -209,5 +212,17 @@ class ThemeAffiliation implements HistoricalEntityInterface, LoggableAffiliation
     public function getRemoveLogMessageB(): string
     {
         return "Removed member affiliation with {$this->getPerson()} ({$this->getMemberCategory()})";
+    }
+
+    public function getPositionWhenJoined(): ?string
+    {
+        return $this->positionWhenJoined;
+    }
+
+    public function setPositionWhenJoined(?string $positionWhenJoined): self
+    {
+        $this->positionWhenJoined = $positionWhenJoined;
+
+        return $this;
     }
 }

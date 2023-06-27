@@ -20,9 +20,6 @@
                     {{ form_row(form.netid, {'attr':{'data-action':'netid-autofill#updateFields change->username-check#checkIfUsernameUnique'}}) }}
                     {{ form_row(form.username, {'attr':{'data-netid-autofill-target':'username', 'data-username-check-target':'username', 'data-action':'change->username-check#checkIfUsernameUnique'}}) }}
                     {{ form_row(form.uin, {'attr':{'data-uin-check-target':'uin', 'data-action':'change->uin-check#checkIfUinUnique'}}) }}
-                    {% if form.positionWhenJoined is defined %}
-                        {{ form_row(form.positionWhenJoined) }}
-                    {% endif %}
                 </div>
             </div>
         </div>
@@ -153,6 +150,13 @@
                     <div class="col-lg">{{ form_row(form.title) }}</div>
                     <div class="col-lg">{{ form_row(form.themeRoles) }}</div>
                 </div>
+                {% if form.positionWhenJoined is defined %}
+                    <div class="row">
+                        <div class="col">
+                            {{ form_row(form.positionWhenJoined) }}
+                        </div>
+                    </div>
+                {% endif %}
             {% endif %}
             <div class="row">
                 <div class="col">

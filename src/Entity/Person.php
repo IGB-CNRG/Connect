@@ -213,9 +213,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $otherUnit = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $positionWhenJoined = null;
-
     #[ORM\ManyToOne(targetEntity: self::class)]
     private ?self $lastReviewedBy = null;
 
@@ -884,18 +881,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     public function setOtherUnit(?string $otherUnit): self
     {
         $this->otherUnit = $otherUnit;
-
-        return $this;
-    }
-
-    public function getPositionWhenJoined(): ?string
-    {
-        return $this->positionWhenJoined;
-    }
-
-    public function setPositionWhenJoined(?string $positionWhenJoined): self
-    {
-        $this->positionWhenJoined = $positionWhenJoined;
 
         return $this;
     }

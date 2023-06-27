@@ -9,7 +9,6 @@ namespace App\Form\Workflow\Membership\EntryForm;
 use App\Entity\Building;
 use App\Entity\Person;
 use App\Form\Fields\HistoricalCollectionType;
-use App\Form\Fields\PositionWhenJoinedType;
 use App\Form\Fields\UnitType;
 use App\Repository\BuildingRepository;
 use Gregwar\CaptchaBundle\Type\CaptchaType;
@@ -85,6 +84,9 @@ class EntryFormType extends AbstractType
             //  or cell phones (as we no longer collect home address, etc.)
             ->add('themeAffiliations', HistoricalCollectionType::class, [
                 'entry_type' => ThemeAffiliationType::class,
+                'entry_options' => [
+                    'show_position_when_joined' => $options['show_position_when_joined'],
+                ],
             ])
             ->add('officeNumber', TextType::class, [
                 'required' => false,
@@ -111,9 +113,6 @@ class EntryFormType extends AbstractType
 //                'label' => 'Create member silently',
 //                'help' => 'Check this box to bypass the rest of the new member workflow without sending any further notifications',
 //            ]);
-        }
-        if($options['show_position_when_joined']){
-            $builder->add('positionWhenJoined', PositionWhenJoinedType::class);
         }
     }
 
