@@ -26,4 +26,9 @@ export default class extends Controller {
         if(confirm("Only delete entries if they were created by mistake. Otherwise, please set the end date appropriately.\n\nAre you sure you want to delete this entry? This cannot be undone."))
         $(event.target).closest('.collection-row').remove();
     }
+
+    add(event){
+        event.preventDefault();
+        $(this.collectionTarget).formCollection('add');
+    }
 }

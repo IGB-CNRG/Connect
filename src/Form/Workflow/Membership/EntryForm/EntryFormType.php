@@ -8,6 +8,7 @@ namespace App\Form\Workflow\Membership\EntryForm;
 
 use App\Entity\Building;
 use App\Entity\Person;
+use App\Form\Fields\HistoricalCollectionType;
 use App\Form\Fields\PositionWhenJoinedType;
 use App\Form\Fields\UnitType;
 use App\Repository\BuildingRepository;
@@ -82,14 +83,8 @@ class EntryFormType extends AbstractType
             ])
             // note we no longer collect dept phone (which should be the same as igb phone anyway)
             //  or cell phones (as we no longer collect home address, etc.)
-            ->add('themeAffiliations', CollectionType::class, [
+            ->add('themeAffiliations', HistoricalCollectionType::class, [
                 'entry_type' => ThemeAffiliationType::class,
-                'label' => false,
-                'entry_options' => [
-                    'label' => false,
-                ],
-                'allow_add' => false,
-                'allow_delete' => false,
             ])
             ->add('officeNumber', TextType::class, [
                 'required' => false,
