@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -21,7 +21,7 @@ class DocumentType extends AbstractType
     {
         $builder
             ->add('file', VichFileType::class, [
-                'required' => false,
+                'required' => true,
                 'download_uri' => false,
                 'allow_delete' => false,
             ])
