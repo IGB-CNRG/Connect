@@ -447,16 +447,18 @@ class MembershipController extends AbstractController
         WorkflowInterface $membershipStateMachine
     ): void {
         $roomAffiliation = $person->getRoomAffiliations()[0];
-        $supervisorAffiliation = $person->getSupervisorAffiliations()[0];
-
         $roomAffiliation->setStartedAt($startDate);
-        $supervisorAffiliation->setStartedAt($startDate);
         if (!$roomAffiliation->getRoom()) {
             $person->removeRoomAffiliation($roomAffiliation);
         }
-        if (!$supervisorAffiliation->getSupervisor()) {
-            $person->removeSupervisorAffiliation($supervisorAffiliation);
+
+        foreach ($person->getSupervisorAffiliations() as $supervisorAffiliation){
+            $supervisorAffiliation->setStartedAt($startDate);
+            if (!$supervisorAffiliation->getSupervisor()) {
+                $person->removeSupervisorAffiliation($supervisorAffiliation);
+            }
         }
+
         $person->setUsername($person->getNetid());
         $person->setMembershipUpdatedAt(new DateTimeImmutable());
         $em->persist($person);

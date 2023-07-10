@@ -219,6 +219,12 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $lastReviewedAt = null;
 
+    #[ORM\ManyToMany(targetEntity: self::class, inversedBy: 'sponsees')]
+    private Collection $facultySponsors;
+
+    #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'facultySponsors')]
+    private Collection $sponsees;
+
     public function __construct()
     {
         $this->roomAffiliations = new ArrayCollection();
@@ -229,6 +235,8 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         $this->ownedLogs = new ArrayCollection();
         $this->logs = new ArrayCollection();
         $this->documents = new ArrayCollection();
+        $this->facultySponsors = new ArrayCollection();
+        $this->sponsees = new ArrayCollection();
     }
 
     public function __toString()
@@ -905,6 +913,57 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     public function setLastReviewedAt(?\DateTimeImmutable $lastReviewedAt): self
     {
         $this->lastReviewedAt = $lastReviewedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getFacultySponsors(): Collection
+    {
+        return $this->facultySponsors;
+    }
+
+    public function addFacultySponsor(self $facultySponsor): self
+    {
+        if (!$this->facultySponsors->contains($facultySponsor)) {
+            $this->facultySponsors->add($facultySponsor);
+        }
+
+        return $this;
+    }
+
+    public function removeFacultySponsor(self $facultySponsor): self
+    {
+        $this->facultySponsors->removeElement($facultySponsor);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getSponsees(): Collection
+    {
+        return $this->sponsees;
+    }
+
+    public function addSponsee(self $sponsee): self
+    {
+        if (!$this->sponsees->contains($sponsee)) {
+            $this->sponsees->add($sponsee);
+            $sponsee->addFacultySponsor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSponsee(self $sponsee): self
+    {
+        if ($this->sponsees->removeElement($sponsee)) {
+            $sponsee->removeFacultySponsor($this);
+        }
 
         return $this;
     }

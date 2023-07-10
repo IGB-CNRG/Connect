@@ -2,7 +2,8 @@ entry_form:
   unit: UIUC home department
   room: "IGB Office/Lab/Cubicle #"
   phone: "Office phone #"
-  supervisor: Faculty sponsor/supervisor
+  supervisor: Supervisor
+  faculty_sponsors: Faculty Sponsor(s)
   member_category: Position type
 person:
   theme: Theme

@@ -15,7 +15,6 @@
     <div class="card mb-3">
         <div class="card-header">Personal Info</div>
         <div class="card-body">
-            {# todo add info about how to fill out this part of the form #}
             <div class="row">
                 <div class="col-lg">{{ form_row(form.firstName) }}</div>
                 <div class="col-lg">{{ form_row(form.lastName) }}</div>
@@ -26,13 +25,6 @@
                 <div class="col-lg">{{ form_row(form.netid, {'attr':{'data-action':'netid-autofill#updateFields change->username-check#checkIfUsernameUnique', 'data-username-check-target':'username'}}) }}</div>
                 <div class="col-lg">{{ form_row(form.uin, {'attr':{'data-action':'change->uin-check#checkIfUinUnique', 'data-uin-check-target':'uin'}}) }}</div>
                 <div class="col-lg">{{ form_row(form.email, {'attr':{'data-netid-autofill-target':'email'}}) }}</div>
-            </div>
-            <div class="row">
-                <div class="col-lg">{{ form_row(form.roomAffiliations) }}</div>
-                <div class="col-lg">{{ form_row(form.officePhone) }}</div>
-            </div>
-            <div class="row">
-                <div class="col-lg">{{ form_row(form.officeWorkOnly) }}</div>
             </div>
         </div>
     </div>
@@ -63,9 +55,25 @@
         <div class="card-header">IGB Appointment Info</div>
         <div class="card-body">
             {# todo add info about how to fill out this part of the form #}
+            {# todo should these three fields go into the IGB section? #}
             <div class="row">
-                <div class="col-lg">{{ form_row(form.supervisorAffiliations) }}</div>
+                <div class="col-lg">{{ form_row(form.roomAffiliations) }}</div>
+                <div class="col-lg">{{ form_row(form.officePhone) }}</div>
             </div>
+            <div class="row">
+                <div class="col-lg">{{ form_row(form.officeWorkOnly) }}</div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col">{{ form_row(form.facultySponsors) }}</div>
+            </div>
+            <div {{ stimulus_controller('form-collection') }}>
+                {{ form_row(form.supervisorAffiliations) }}
+                <button type="button" class="btn btn-sm btn-success" data-action="form-collection#add">
+                    <span class="fa fa-plus"></span> Add supervisor
+                </button>
+            </div>
+            <hr/>
             <div {{ stimulus_controller('form-collection') }}>
                 {{ form_row(form.themeAffiliations) }}
                 <button type="button" class="btn btn-sm btn-success" data-action="form-collection#add">
@@ -76,7 +84,6 @@
     </div>
     <div class="card mb-3">
         <div class="card-body">
-            {# todo add some info about the next workflow steps #}
             {% if form.captcha is defined %}
                 <hr/>
                 {{ form_row(form.captcha) }}
@@ -85,6 +92,11 @@
                 <hr/>
                 {{ form_row(form.isSilent) }}
             {% endif %}
+            <div class="callout callout-info mb-0">
+                When you click submit, your entry form will be sent to staff members in your theme for approval.
+                Once your entry form is approved, you will receive a welcome email with helpful information and next
+                steps.
+            </div>
         </div>
         <div class="card-footer">
             {{ form_row(form.submit) }}
@@ -119,6 +131,13 @@
         </div>
     </div>
 {% endblock %}
+
+{% block supervisor_affiliation_row %}
+    <div class="collection-row">
+        {{ form_row(form.supervisor) }}
+    </div>
+{% endblock %}
+
 
 {% block room_affiliation_row %}
     {{ form_row(form.room, {'row_attr':{'class':'mb-0'}}) }}

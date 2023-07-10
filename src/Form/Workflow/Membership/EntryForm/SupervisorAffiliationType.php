@@ -24,7 +24,6 @@ class SupervisorAffiliationType extends AbstractType
                 'class' => Person::class,
                 'attr' => [
                     'data-controller' => 'tom-select',
-                    'data-tom-select-open-on-focus-value' => 'false',
                 ],
                 'required' => false,
                 'label' => 'entry_form.supervisor',

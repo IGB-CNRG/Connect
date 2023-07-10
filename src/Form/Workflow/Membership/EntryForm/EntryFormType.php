@@ -11,6 +11,7 @@ use App\Entity\Person;
 use App\Form\Fields\HistoricalCollectionType;
 use App\Form\Fields\UnitType;
 use App\Repository\BuildingRepository;
+use App\Repository\PersonRepository;
 use Gregwar\CaptchaBundle\Type\CaptchaType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -36,6 +37,7 @@ class EntryFormType extends AbstractType
             ->add('netid', TextType::class, [
                 'required' => false,
                 'label' => 'person.netid',
+                'help' => 'If you have not yet been assigned a netid, leave blank',
             ])
             ->add('uin', TextType::class, [
                 'required' => !$options['allow_skip_uin'],
@@ -71,14 +73,21 @@ class EntryFormType extends AbstractType
                     'data-other-entry-target' => 'other',
                 ],
             ])
-            ->add('supervisorAffiliations', CollectionType::class, [
-                'entry_type' => SupervisorAffiliationType::class,
-                'label' => false,
-                'entry_options' => [
-                    'label' => false,
+            ->add('facultySponsors', EntityType::class, [
+                'class' => Person::class,
+                'attr' => [
+                    'autocomplete' => false,
+                    'data-controller' => 'tom-select',
                 ],
-                'allow_add' => false,
-                'allow_delete' => false,
+                'required' => false,
+                'multiple' => true,
+                'label' => 'entry_form.faculty_sponsors',
+                'query_builder' => function(PersonRepository $repository){
+                    return $repository->createSupervisorDropdownQueryBuilder();
+                },
+            ])
+            ->add('supervisorAffiliations', HistoricalCollectionType::class, [
+                'entry_type' => SupervisorAffiliationType::class,
             ])
             // note we no longer collect dept phone (which should be the same as igb phone anyway)
             //  or cell phones (as we no longer collect home address, etc.)
