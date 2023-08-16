@@ -145,7 +145,7 @@ class PersonController extends AbstractController
     ): Response {
         $themeAffiliation = (new ThemeAffiliation())
             ->setPerson($person);
-        $form = $this->createForm(ThemeAffiliationType::class, $themeAffiliation)
+        $form = $this->createForm(ThemeAffiliationType::class, $themeAffiliation, ['show_position_when_joined'=>$this->isGranted('ROLE_ADMIN')])
             ->add('endPreviousAffiliations', EntityType::class, [
                 'required' => false,
                 'mapped' => false,

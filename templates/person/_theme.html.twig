@@ -1,0 +1,22 @@
+{% macro info(themeAffiliation, links=true) %}
+    <strong>
+        {% if links %}<a href="{{ path('theme_view', {'shortName': themeAffiliation.theme.shortName}) }}">{% endif %}
+            {{ themeAffiliation.theme.shortName }}
+            {% if links %}</a>{% endif %}
+        {% if themeAffiliation.theme.parentTheme %}
+            (
+            {%- if links -%}<a href="{{ path('theme_view', {'shortName': themeAffiliation.theme.parentTheme.shortName}) }}">{%- endif -%}
+                {{ themeAffiliation.theme.parentTheme.shortName }}
+            {%- if links -%}</a>{%- endif -%}
+            )
+        {% endif %}
+        {% for role in themeAffiliation.themeRoles %}
+            {{ role.displayName }}
+        {% endfor %}
+    </strong>
+    {% if themeAffiliation.title %}
+        <br/>{{ themeAffiliation.title }} ({{ themeAffiliation.memberCategory.name }})
+    {% else %}
+        <br/>{{ themeAffiliation.memberCategory.name }}
+    {% endif %}
+{% endmacro %}

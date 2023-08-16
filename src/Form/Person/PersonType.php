@@ -10,6 +10,7 @@ use App\Entity\Building;
 use App\Entity\Person;
 use App\Form\Fields\HistoricalCollectionType;
 use App\Form\Fields\UnitType;
+use App\Repository\BuildingRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
@@ -64,6 +65,10 @@ class PersonType extends AbstractType
                 'required' => false,
                 'class' => Building::class,
                 'help' => 'Non-IGB campus address building',
+                'attr' => [
+                    'data-controller' => 'tom-select',
+                ],
+                'query_builder' => fn(BuildingRepository $repository) => $repository->createQueryBuilderForDropdown(),
             ])
             ->add('imageFile', VichFileType::class, [
                 'required' => false,
@@ -77,12 +82,6 @@ class PersonType extends AbstractType
                 'entry_options' => [
                     'show_position_when_joined' => $options['show_position_when_joined'],
                 ],
-            ])
-            ->add('supervisorAffiliations', HistoricalCollectionType::class, [
-                'entry_type' => SupervisorType::class,
-            ])
-            ->add('superviseeAffiliations', HistoricalCollectionType::class, [
-                'entry_type' => SuperviseeType::class,
             ])
             ->add('roomAffiliations', HistoricalCollectionType::class, [
                 'entry_type' => RoomAffiliationType::class,

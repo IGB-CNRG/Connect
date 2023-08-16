@@ -44,8 +44,7 @@ class InstallCommand extends Command
         $configPath = $input->getArgument('config');
         $skipTo = $input->getOption('skip-to');
         $skipImportFaculty = false;
-        $skipImportPeople = $skipImportFaculty || $skipTo === 'import-faculty';
-        $skipImportSql = $skipImportPeople || $skipTo === 'import-people';
+        $skipImportSql = $skipImportFaculty || $skipTo === 'import-faculty';
         $skipFirstRun = $skipImportSql || $skipTo === 'import-sql';
         $skipCreateDatabase = $skipFirstRun || $skipTo === 'initialize-admin-user';
         $skipPrecheck = $skipCreateDatabase || $skipTo === 'create-database';
@@ -93,20 +92,6 @@ class InstallCommand extends Command
         if(!$skipImportSql) {
             $io->title('Loading sql file');
             $this->runSqlFile($config['import-sql']);
-        }
-
-        // import people database
-        if(!$skipImportPeople) {
-            $io->title('Importing People Database');
-            $importPeopleCommand = $this->getApplication()->find('app:import-people');
-            $importPeopleInput = new ArrayInput([
-                '--host' => $config['import-people']['host'],
-                '--port' => $config['import-people']['port'],
-                '--database' => $config['import-people']['database'],
-                '--username' => $config['import-people']['username'],
-                '--password' => $config['import-people']['password'],
-            ]);
-            $importPeopleCommand->run($importPeopleInput, $output);
         }
 
         // import faculty spreadsheet

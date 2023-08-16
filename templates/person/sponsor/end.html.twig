@@ -3,30 +3,30 @@
 {% import "person/_theme.html.twig" as theme %}
 
 {% block content %}
-    <h2>End Supervisor Affiliation</h2>
+    <h2>End Faculty Sponsor Affiliation</h2>
     <div class="callout callout-info">
-        Please enter the date upon which the IGB member's affiliation with this supervisor ended (or will end)
+        Please enter the date upon which the IGB member's affiliation with this faculty sponsor ended (or will end)
     </div>
     <div class="row">
         <div class="col">
             <div class="card">
-                <div class="card-header">Supervisor Affiliation</div>
+                <div class="card-header">Faculty Sponsor Affiliation</div>
                 <table class="table">
                     <tr>
                         <th>Theme</th>
-                        <td>{{ theme.info(supervisorAffiliation.superviseeThemeAffiliation, false) }}</td>
+                        <td>{{ theme.info(sponsorAffiliation.sponseeThemeAffiliation, false) }}</td>
                     </tr>
                     <tr>
-                        <th>Supervisor</th>
-                        <td>{{ supervisorAffiliation.supervisor }}</td>
+                        <th>Faculty Sponsor</th>
+                        <td>{{ sponsorAffiliation.sponsor }}</td>
                     </tr>
                     <tr>
-                        <th>Supervisee</th>
-                        <td>{{ supervisorAffiliation.supervisee }}</td>
+                        <th>Sponsee</th>
+                        <td>{{ sponsorAffiliation.sponsee }}</td>
                     </tr>
                     <tr>
                         <th>Start Date</th>
-                        <td>{{ supervisorAffiliation.startedAt|date('n/j/Y') }}</td>
+                        <td>{{ sponsorAffiliation.startedAt|date('n/j/Y') }}</td>
                     </tr>
                 </table>
             </div>
@@ -45,7 +45,7 @@
 {% endblock %}
 
 {% block title %}
-    {{ parent() }} | End Supervisor Affiliation
+    {{ parent() }} | End Faculty Sponsor Affiliation
 {% endblock %}
 
 {% block breadcrumb %}
@@ -56,6 +56,6 @@
         <a href="{{ path('person_view', {'slug': person.slug}) }}">{{ person.name }}</a>
     </li>
     <li class="breadcrumb-item active" aria-current="page">
-        End Supervisor Affiliation
+        End Faculty Sponsor Affiliation
     </li>
 {% endblock %}

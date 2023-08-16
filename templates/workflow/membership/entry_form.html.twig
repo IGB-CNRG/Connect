@@ -64,17 +64,7 @@
                 <div class="col-lg">{{ form_row(form.officeWorkOnly) }}</div>
             </div>
             <hr/>
-            <div class="row">
-                <div class="col">{{ form_row(form.facultySponsors) }}</div>
-            </div>
-            <div {{ stimulus_controller('form-collection') }}>
-                {{ form_row(form.supervisorAffiliations) }}
-                <button type="button" class="btn btn-sm btn-success" data-action="form-collection#add">
-                    <span class="fa fa-plus"></span> Add supervisor
-                </button>
-            </div>
-            <hr/>
-            <div {{ stimulus_controller('form-collection') }}>
+            <div {{ stimulus_controller('form-collection', {'confirmDeletion':false}) }}>
                 {{ form_row(form.themeAffiliations) }}
                 <button type="button" class="btn btn-sm btn-success" data-action="form-collection#add">
                     <span class="fa fa-plus"></span> Add theme
@@ -116,7 +106,30 @@
     <div class="collection-row">
         <div class="row">
             <div class="col-lg">{{ form_row(form.theme) }}</div>
-            <div class="col-lg">{{ form_row(form.memberCategory) }}</div>
+            <div class="col-lg">
+                {% if form.vars.name != "0" %}
+                    <div class="float-end">
+                        <a href="#" data-action="form-collection#deleteRow">
+                            <span class="fa fa-trash"></span>
+                        </a>
+                    </div>
+                {% endif %}
+                {{ form_row(form.memberCategory) }}
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-lg" {{ stimulus_controller('form-collection', {'confirmDeletion':false}) }}>
+                {{ form_row(form.sponsorAffiliations) }}
+                <button type="button" class="btn btn-sm btn-success" data-action="form-collection#add">
+                    <span class="fa fa-plus"></span> Add faculty sponsor
+                </button>
+            </div>
+            <div class="col-lg" {{ stimulus_controller('form-collection', {'confirmDeletion':false}) }}>
+                {{ form_row(form.supervisorAffiliations) }}
+                <button type="button" class="btn btn-sm btn-success" data-action="form-collection#add">
+                    <span class="fa fa-plus"></span> Add supervisor
+                </button>
+            </div>
         </div>
         {% if form.positionWhenJoined is defined %}
             <div class="row">
@@ -132,8 +145,28 @@
     </div>
 {% endblock %}
 
+{% block sponsor_affiliation_row %}
+    <div class="collection-row">
+        {% if form.vars.name != "0" %}
+            <div class="float-end">
+                <a href="#" data-action="form-collection#deleteRow">
+                    <span class="fa fa-trash"></span>
+                </a>
+            </div>
+        {% endif %}
+        {{ form_row(form.sponsor) }}
+    </div>
+{% endblock %}
+
 {% block supervisor_affiliation_row %}
     <div class="collection-row">
+        {% if form.vars.name != "0" %}
+            <div class="float-end">
+                <a href="#" data-action="form-collection#deleteRow">
+                    <span class="fa fa-trash"></span>
+                </a>
+            </div>
+        {% endif %}
         {{ form_row(form.supervisor) }}
     </div>
 {% endblock %}

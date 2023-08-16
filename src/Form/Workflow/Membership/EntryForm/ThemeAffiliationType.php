@@ -8,6 +8,7 @@ namespace App\Form\Workflow\Membership\EntryForm;
 
 use App\Entity\ThemeAffiliation;
 use App\Form\Fields\EndDateType;
+use App\Form\Fields\HistoricalCollectionType;
 use App\Form\Fields\MemberCategoryType;
 use App\Form\Fields\PositionWhenJoinedType;
 use App\Form\Fields\StartDateType;
@@ -24,6 +25,12 @@ class ThemeAffiliationType extends AbstractType
             ->add('theme', ThemeType::class)
             ->add('memberCategory', MemberCategoryType::class, [
                 'label' => 'entry_form.member_category',
+            ])
+            ->add('sponsorAffiliations', HistoricalCollectionType::class, [
+                'entry_type' => SponsorAffiliationType::class,
+            ])
+            ->add('supervisorAffiliations', HistoricalCollectionType::class, [
+                'entry_type' => SupervisorAffiliationType::class,
             ])
             ->add('startedAt', StartDateType::class)
             ->add('endedAt', EndDateType::class);

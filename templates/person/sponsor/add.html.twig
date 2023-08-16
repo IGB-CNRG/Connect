@@ -2,12 +2,12 @@
 {% use 'form.html.twig' %}
 
 {% block content %}
-    <h2>Add Supervisor</h2>
+    <h2>Add Faculty Sponsor</h2>
     <div class="callout callout-info">
         <ul>
-            <li>Please indicate the new supervisor for {{ person.name }}, and their start date.</li>
+            <li>Please indicate the new faculty sponsor for {{ person.name }}, and their start date.</li>
             <li>If no end date is known, leave blank. </li>
-            <li>If any previous supervisory relationships should end when this one begins, select them below.</li>
+            <li>If any previous relationships should end when this one begins, select them below.</li>
         </ul>
     </div>
     {% form_theme form "form_themes/_inline-buttons-theme.html.twig" %}
@@ -15,7 +15,7 @@
 {% endblock %}
 {% block form_card_body %}
     <div class="row">
-        <div class="col-lg">{{ form_row(form.supervisor) }}</div>
+        <div class="col-lg">{{ form_row(form.sponsor) }}</div>
     </div>
     <div class="row">
         <div class="col-lg">{{ form_row(form.startedAt) }}</div>
@@ -33,7 +33,7 @@
 
 
 {% block title %}
-    {{ parent() }} | Add Supervisor
+    {{ parent() }} | Add Faculty Sponsor
 {% endblock %}
 
 {% block breadcrumb %}
@@ -44,7 +44,7 @@
         <a href="{{ path('person_view', {'slug': person.slug}) }}">{{ person.name }}</a>
     </li>
     <li class="breadcrumb-item active" aria-current="page">
-        Add Supervisor
+        Add Faculty Sponsor
     </li>
 {% endblock %}
 

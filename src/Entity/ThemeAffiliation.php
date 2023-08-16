@@ -10,6 +10,8 @@ use App\Enum\ThemeRole;
 use App\Log\Loggable;
 use App\Log\LoggableAffiliationInterface;
 use App\Repository\ThemeAffiliationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -57,6 +59,18 @@ class ThemeAffiliation implements HistoricalEntityInterface, LoggableAffiliation
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $positionWhenJoined = null;
+
+    #[ORM\OneToMany(mappedBy: 'superviseeThemeAffiliation', targetEntity: SupervisorAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
+    private Collection $supervisorAffiliations;
+
+    #[ORM\OneToMany(mappedBy: 'sponseeThemeAffiliation', targetEntity: SponsorAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
+    private Collection $sponsorAffiliations;
+
+    public function __construct()
+    {
+        $this->supervisorAffiliations = new ArrayCollection();
+        $this->sponsorAffiliations = new ArrayCollection();
+    }
 
     public function __toString()
     {
@@ -222,6 +236,66 @@ class ThemeAffiliation implements HistoricalEntityInterface, LoggableAffiliation
     public function setPositionWhenJoined(?string $positionWhenJoined): self
     {
         $this->positionWhenJoined = $positionWhenJoined;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SupervisorAffiliation>
+     */
+    public function getSupervisorAffiliations(): Collection
+    {
+        return $this->supervisorAffiliations;
+    }
+
+    public function addSupervisorAffiliation(SupervisorAffiliation $supervisorAffiliation): self
+    {
+        if (!$this->supervisorAffiliations->contains($supervisorAffiliation)) {
+            $this->supervisorAffiliations->add($supervisorAffiliation);
+            $supervisorAffiliation->setSuperviseeThemeAffiliation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSupervisorAffiliation(SupervisorAffiliation $supervisorAffiliation): self
+    {
+        if ($this->supervisorAffiliations->removeElement($supervisorAffiliation)) {
+            // set the owning side to null (unless already changed)
+            if ($supervisorAffiliation->getSuperviseeThemeAffiliation() === $this) {
+                $supervisorAffiliation->setSuperviseeThemeAffiliation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SponsorAffiliation>
+     */
+    public function getSponsorAffiliations(): Collection
+    {
+        return $this->sponsorAffiliations;
+    }
+
+    public function addSponsorAffiliation(SponsorAffiliation $sponsorAffiliation): self
+    {
+        if (!$this->sponsorAffiliations->contains($sponsorAffiliation)) {
+            $this->sponsorAffiliations->add($sponsorAffiliation);
+            $sponsorAffiliation->setSponseeThemeAffiliation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSponsorAffiliation(SponsorAffiliation $sponsorAffiliation): self
+    {
+        if ($this->sponsorAffiliations->removeElement($sponsorAffiliation)) {
+            // set the owning side to null (unless already changed)
+            if ($sponsorAffiliation->getSponseeThemeAffiliation() === $this) {
+                $sponsorAffiliation->setSponseeThemeAffiliation(null);
+            }
+        }
 
         return $this;
     }

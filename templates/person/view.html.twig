@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import "person/_theme.html.twig" as theme %}
 
 {% block content %}
     <div class="float-end">
@@ -15,7 +16,7 @@
         {% endif %}
         {{ person.name }}
     </h1>
-    <div class="row">
+    <div class="row mb-2">
         <div class="col-lg"> {# todo play with the columns a bit for different sizes #}
             <div class="card mb-3">
                 <div class="card-header">
@@ -35,18 +36,22 @@
                         {% if is_granted('PERSON_EDIT', person) %}
                             <td></td>{% endif %}
                     </tr>
-                    <tr>
-                        <th>Middle Initial</th>
-                        <td>{{ person.middleInitial }}</td>
-                        {% if is_granted('PERSON_EDIT', person) %}
-                            <td></td>{% endif %}
-                    </tr>
-                    <tr>
-                        <th>Preferred First Name</th>
-                        <td>{{ person.preferredFirstName }}</td>
-                        {% if is_granted('PERSON_EDIT', person) %}
-                            <td></td>{% endif %}
-                    </tr>
+                    {% if person.middleInitial %}
+                        <tr>
+                            <th>Middle Initial</th>
+                            <td>{{ person.middleInitial }}</td>
+                            {% if is_granted('PERSON_EDIT', person) %}
+                                <td></td>{% endif %}
+                        </tr>
+                    {% endif %}
+                    {% if person.preferredFirstName %}
+                        <tr>
+                            <th>Preferred First Name</th>
+                            <td>{{ person.preferredFirstName }}</td>
+                            {% if is_granted('PERSON_EDIT', person) %}
+                                <td></td>{% endif %}
+                        </tr>
+                    {% endif %}
                     <tr>
                         <th>IGB Username</th>
                         <td>{{ person.username }}</td>
@@ -65,51 +70,6 @@
                         {% if is_granted('PERSON_EDIT', person) %}
                             <td></td>{% endif %}
                     </tr>
-                    {% for themeAffiliation in person.themeAffiliations|current %}
-                        <tr>
-                            <th>Theme</th>
-                            <td>
-                                <strong>
-                                    <a href="{{ path('theme_view', {'shortName': themeAffiliation.theme.shortName}) }}">{{ themeAffiliation.theme.shortName }}</a>
-                                    {% if themeAffiliation.theme.parentTheme %}
-                                        (<a href="{{ path('theme_view', {'shortName': themeAffiliation.theme.parentTheme.shortName}) }}">
-                                            {{ themeAffiliation.theme.parentTheme.shortName }}
-                                        </a>)
-                                    {% endif %}
-                                    {% for role in themeAffiliation.themeRoles %}
-                                        {{ role.displayName }}
-                                    {% endfor %}
-                                </strong>
-                                {% if themeAffiliation.title %}
-                                    <br/>{{ themeAffiliation.title }} ({{ themeAffiliation.memberCategory.name }})
-                                {% else %}
-                                    <br/>{{ themeAffiliation.memberCategory.name }}
-                                {% endif %}
-                            </td>
-                            {% if is_granted('PERSON_EDIT', person) %}
-                                <td class="shrink pe-3">
-                                    <a class="text-success"
-                                       href="{{ path('person_add_theme_affiliation', {'slug': person.slug}) }}"
-                                    >
-                                        <span class="fas fa-plus-square"></span>
-                                    </a>
-                                </td>
-                            {% endif %}
-                        </tr>
-                    {% else %}
-                        {% if is_granted('PERSON_EDIT', person) %}
-                            <tr>
-                                <th>Theme</th>
-                                <td>None</td>
-                                <td class="shrink pe-3">
-                                    <a class="text-success"
-                                       href="{{ path('person_add_theme_affiliation', {'slug': person.slug}) }}">
-                                        <span class="fas fa-plus-square"></span>
-                                    </a>
-                                </td>
-                            </tr>
-                        {% endif %}
-                    {% endfor %}
                     <tr>
                         <th>Unit</th>
                         <td>{{ person.unit??person.otherUnit??'None' }}</td>
@@ -117,58 +77,116 @@
                             <td class="shrink"></td>
                         {% endif %}
                     </tr>
-
-                    {% if person.supervisorAffiliations|current is not empty or is_granted('PERSON_EDIT', person) %}
-                        <tr>
-                            <th>Supervisor</th>
-                            <td>
-                                {% for supervisorAffiliation in person.supervisorAffiliations|current %}
-                                <a href="{{ path('person_view', {'slug': supervisorAffiliation.supervisor.slug}) }}">
-                                    {{ supervisorAffiliation.supervisor }}
-                                    </a>{% if not loop.last %}, {% endif %}
-                                {% else %}
-                                    {% if is_granted('PERSON_EDIT', person) %}
-                                        None
-                                    {% endif %}
-                                {% endfor %}
-                            </td>
-                            {% if is_granted('PERSON_EDIT', person) %}
-                                <td class="shrink pe-3">
-                                    <a class="text-success"
-                                       href="{{ path('person_add_supervisor', {'slug': person.slug}) }}">
-                                        <span class="fas fa-plus-square"></span>
-                                    </a>
-                                </td>
-                            {% endif %}
-                        </tr>
-                    {% endif %}
-                    {% if person.superviseeAffiliations|current is not empty or is_granted('PERSON_EDIT', person) %}
-                        <tr>
-                            <th>Supervisee(s)</th>
-                            <td>
-                                {% for superviseeAffiliation in person.superviseeAffiliations|current %}
-                                <a href="{{ path('person_view', {'slug': superviseeAffiliation.supervisee.slug}) }}">
-                                    {{ superviseeAffiliation.supervisee }}
-                                    </a>{% if not loop.last %}, {% endif %}
-                                {% else %}
-                                    {% if is_granted('PERSON_EDIT', person) %}
-                                        None
-                                    {% endif %}
-                                {% endfor %}
-                            </td>
-                            {% if is_granted('PERSON_EDIT', person) %}
-                                <td class="shrink pe-3">
-                                    <a class="text-success"
-                                       href="{{ path('person_add_supervisee', {'slug': person.slug}) }}">
-                                        <span class="fas fa-plus-square"></span>
-                                    </a>
-                                </td>
-                            {% endif %}
-                        </tr>
-                    {% endif %}
                 </table>
             </div>
+
+            {% for themeAffiliation in person.themeAffiliations|current %}
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <span class="fas fa-users-between-lines float-end text-muted mt-1"></span>
+                        {{ themeAffiliation.theme }}
+                    </div>
+                    <table class="table">
+                        <th>Theme</th>
+                        <td>{{ theme.info(themeAffiliation) }}</td>
+                        {% if is_granted('PERSON_EDIT', person) %}
+                            <td class="shrink pe-3 text-end">
+                                <a class="text-danger"
+                                   href="{{ path('person_end_theme_affiliation', {'id': themeAffiliation.id, 'slug': person.slug}) }}">
+                                    <span class="fas fa-minus-square"></span>
+                                </a>
+                            </td>
+                        {% endif %}
+                        {% for sponsorAffiliation in themeAffiliation.sponsorAffiliations|current %}
+                            <tr>
+                                <th>Faculty Sponsor</th>
+                                <td>
+                                    <a href="{{ path('person_view', {'slug': sponsorAffiliation.sponsor.slug}) }}">{{ sponsorAffiliation.sponsor }}</a>
+                                </td>
+                                {% if is_granted('PERSON_EDIT', person) %}
+                                    <td class="shrink pe-3 text-end">
+                                        {% if loop.first %}
+                                            <a class="text-success"
+                                               href="{{ path('person_add_sponsor', {'id': themeAffiliation.id, 'slug': person.slug}) }}">
+                                                <span class="fas fa-plus-square"></span></a>
+                                        {% endif %}
+                                        <a class="text-danger"
+                                           href="{{ path('person_end_sponsor_affiliation', {'id': sponsorAffiliation.id, 'slug': person.slug}) }}"><span
+                                                    class="fas fa-minus-square"></span></a>
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <th>Faculty Sponsor</th>
+                                <td>None</td>
+                                {% if is_granted('PERSON_EDIT', person) %}
+                                    <td class="shrink pe-3">
+                                        <a class="text-success"
+                                           href="{{ path('person_add_sponsor', {'id': themeAffiliation.id, 'slug': person.slug}) }}">
+                                            <span class="fas fa-plus-square"></span></a>
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                        {% for supervisorAffiliation in themeAffiliation.supervisorAffiliations|current %}
+                            <tr>
+                                <th>Supervisor</th>
+                                <td>
+                                    <a href="{{ path('person_view', {'slug': supervisorAffiliation.supervisor.slug}) }}">{{ supervisorAffiliation.supervisor }}</a>
+                                </td>
+                                {% if is_granted('PERSON_EDIT', person) %}
+                                    <td class="shrink pe-3 text-end">
+                                        {% if loop.first %}
+                                            <a class="text-success"
+                                               href="{{ path('person_add_supervisor', {'id': themeAffiliation.id, 'slug': person.slug}) }}">
+                                                <span class="fas fa-plus-square"></span></a>
+                                        {% endif %}
+                                        <a class="text-danger"
+                                           href="{{ path('person_end_supervisor_affiliation', {'id': supervisorAffiliation.id, 'slug': person.slug}) }}"><span
+                                                    class="fas fa-minus-square"></span></a>
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <th>Supervisor</th>
+                                <td>None</td>
+                                {% if is_granted('PERSON_EDIT', person) %}
+                                    <td class="shrink pe-3">
+                                        <a class="text-success"
+                                           href="{{ path('person_add_supervisor', {'id': themeAffiliation.id, 'slug': person.slug}) }}">
+                                            <span class="fas fa-plus-square"></span></a>
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                        {% if person.superviseeAffiliations|current|theme(themeAffiliation.theme)|length >0 %}
+                            <tr>
+                                <th>Supervisee(s)</th>
+                                <td>
+                                    {% for superviseeAffiliation in person.superviseeAffiliations|current|theme(themeAffiliation.theme) %}
+                                        <a class="text-nowrap"
+                                           href="{{ path('person_view', {'slug': superviseeAffiliation.supervisee.slug}) }}">{{ superviseeAffiliation.supervisee }}</a>
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                        {% endif %}
+
+
+                    </table>
+                </div>
+            {% endfor %}
+            {% if is_granted('PERSON_EDIT', person) %}
+                <a class="btn btn-sm btn-success mb-3"
+                   href="{{ path('person_add_theme_affiliation', {'slug': person.slug}) }}"
+                >
+                    <span class="fas fa-plus"></span>
+                    Add Theme
+                </a>
+            {% endif %}
         </div>
+
         <div class="col-lg">
             <div class="card mb-3">
                 <div class="card-header">
@@ -306,12 +324,6 @@
                                     {% endfor %}</td>
                                 <td class="shrink"></td>
                             </tr>
-                            <tr>
-                                <th>Connect ID</th>
-                                <td>{{ person.id }}</td>
-                                <td class="shrink"></td>
-                            </tr>
-
                         {% endif %}
                         <tr>
                             <th>Membership status</th>
@@ -412,56 +424,122 @@
             Themes
         </div>
         <div class="collapse" id="theme_table">
-            {% if is_granted("PERSON_EDIT", person) %}
-                <div class="card-body">
+
+            <div class="card-body">
+                {% if is_granted("PERSON_EDIT", person) %}
                     <a href="{{ path('person_add_theme_affiliation', {'slug': person.slug}) }}"
-                       class="btn btn-sm btn-success"><span
-                                class="fa fa-plus"></span> Add</a>
-                </div>
-            {% endif %}
-            <table class="table">
-                <tr>
-                    <th>Theme</th>
-                    <th>Member Type</th>
-                    <th>Title</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    {% if is_granted('PERSON_VIEW_EXIT_REASON') %}
-                        <th>Exit Reason</th>
-                    {% endif %}
-                    {% if is_granted('ROLE_ADMIN') %}
-                        <th>Position when joined</th>
-                    {% endif %}
-                    <th class="shrink"></th>
-                </tr>
+                       class="btn btn-sm btn-success mb-3">
+                        <span class="fa fa-plus"></span> Add
+                    </a>
+                {% endif %}
+
                 {% for themeAffiliation in person.themeAffiliations %}
-                    <tr>
-                        <td>{{ themeAffiliation.theme.shortName }}</td>
-                        <td>
-                            {{ themeAffiliation.memberCategory.name }}
-                            {% for role in themeAffiliation.themeRoles %}
-                                ({{ role.displayName }})
-                            {% endfor %}
-                        </td>
-                        <td>{{ themeAffiliation.title }}</td>
-                        <td>{% if themeAffiliation.startedAt is not null %}{{ themeAffiliation.startedAt|date('n/j/Y') }}{% endif %}</td>
-                        <td>{% if themeAffiliation.endedAt is not null %}{{ themeAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
-                        {% if is_granted('PERSON_VIEW_EXIT_REASON') %}
-                            <td>{{ themeAffiliation.exitReason }}</td>
-                        {% endif %}
+                    <div class="row mb-2">
+                        <div class="col">
+                            <div class="theme-header">Theme</div>
+                            <div class="theme-body">{{ themeAffiliation.theme }}</div>
+                        </div>
+                        <div class="col">
+                            <div class="theme-header">Member Type</div>
+                            <div class="theme-body">{{ themeAffiliation.memberCategory.name }}</div>
+                        </div>
+
+                        <div class="col">
+                            <div class="theme-header">Start Date</div>
+                            <div class="theme-body">
+                                {% if themeAffiliation.startedAt is not null %}
+                                    {{ themeAffiliation.startedAt|date('n/j/Y') }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="theme-header">End Date</div>
+                            <div class="theme-body">
+                                {% if themeAffiliation.endedAt is not null %}
+                                    {{ themeAffiliation.endedAt|date('n/j/Y') }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col">
+                            <div class="theme-header">Title</div>
+                            <div class="theme-body">{{ themeAffiliation.title }}</div>
+                        </div>
+                        <div class="col">
+                            <div class="theme-header">Theme Roles</div>
+                            <div class="theme-body">
+                                {% for role in themeAffiliation.themeRoles %}
+                                    {{ role.displayName }}
+                                {% endfor %}
+                            </div>
+                        </div>
                         {% if is_granted('ROLE_ADMIN') %}
-                            <td>{{ themeAffiliation.positionWhenJoined }}</td>
+                            <div class="col">
+                                <div class="theme-header">Position when Joined</div>
+                                <div class="theme-body">{{ themeAffiliation.positionWhenJoined }}</div>
+                            </div>
                         {% endif %}
-                        <td class="shrink">
-                            {% if themeAffiliation.endedAt is null and is_granted("PERSON_EDIT", person) %}
-                                <a href="{{ path('person_end_theme_affiliation', {'id': themeAffiliation.id, 'slug': person.slug}) }}">
-                                    End
-                                </a>
-                            {% endif %}
-                        </td>
-                    </tr>
+                        {% if is_granted('PERSON_VIEW_EXIT_REASON') %}
+                            <div class="col">
+                                <div class="theme-header">Exit Reason</div>
+                                <div class="theme-body">{{ themeAffiliation.exitReason }}</div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col">
+                            <div class="theme-header">Faculty Sponsor(s)</div>
+                            <div class="theme-body">
+                                {# todo we need to display start and end dates here #}
+                                {% for sponsorAffiliation in themeAffiliation.sponsorAffiliations %}
+                                    <div class="row">
+                                        <div class="col"><a
+                                                    href="{{ path('person_view', {'slug':sponsorAffiliation.sponsor.slug}) }}">{{ sponsorAffiliation.sponsor }}</a>
+                                        </div>
+                                        <div class="col">
+                                            {% if sponsorAffiliation.startedAt is not null %}
+                                                {{ sponsorAffiliation.startedAt|date('n/j/Y') }}
+                                            {% endif %}
+                                            -
+                                            {% if sponsorAffiliation.endedAt is not null %}
+                                                {{ sponsorAffiliation.endedAt|date('n/j/Y') }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="theme-header">Supervisor(s)</div>
+                            <div class="theme-body">
+                                {# todo we need to display start and end dates here #}
+                                {% for supervisorAffiliation in themeAffiliation.supervisorAffiliations %}
+                                    <div class="row">
+                                        <div class="col"><a
+                                                    href="{{ path('person_view', {'slug':supervisorAffiliation.supervisor.slug}) }}">{{ supervisorAffiliation.supervisor }}</a>
+                                        </div>
+                                        <div class="col">
+                                            {% if supervisorAffiliation.startedAt is not null %}
+                                                {{ supervisorAffiliation.startedAt|date('n/j/Y') }}
+                                            {% endif %}
+                                            -
+                                            {% if supervisorAffiliation.endedAt is not null %}
+                                                {{ supervisorAffiliation.endedAt|date('n/j/Y') }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% if not loop.last %}
+                        <hr/>
+                    {% endif %}
                 {% endfor %}
-            </table>
+            </div>
+
+
         </div>
     </div>
     {% if is_granted('ROLE_KEY_MANAGER') %}
@@ -504,82 +582,7 @@
             </div>
         {% endif %}
     {% endif %}
-    {% if person.supervisorAffiliations is not empty %}
-        <div class="card mb-3">
-            <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#supervisor_table"
-                 aria-expanded="false" role="button">
-                Supervisors
-            </div>
-            <div class="collapse" id="supervisor_table">
-                {% if is_granted("PERSON_EDIT", person) %}
-                    <div class="card-body">
-                        <a href="{{ path('person_add_supervisor', {'slug': person.slug}) }}"
-                           class="btn btn-sm btn-success">
-                            <span class="fa fa-plus"></span> Add Supervisor
-                        </a>
-                    </div>
-                {% endif %}
-                <table class="table"> {# todo maybe these tables should be grids so they line up with each other #}
-                    <tr>
-                        <th>Supervisor</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th class="shrink"></th>
-                    </tr>
-                    {% for supervisorAffiliation in person.supervisorAffiliations %}
-                        <tr>
-                            <td>{{ supervisorAffiliation.supervisor }}</td>
-                            <td>{% if supervisorAffiliation.startedAt is not null %}{{ supervisorAffiliation.startedAt|date('n/j/Y') }}{% endif %}</td>
-                            <td>{% if supervisorAffiliation.endedAt is not null %}{{ supervisorAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
-                            <td class="shrink">{% if supervisorAffiliation.endedAt is null %}<a
-                                    href="{{ path('person_end_supervisor_affiliation', {'id': supervisorAffiliation.id, 'slug': person.slug}) }}">
-                                        End</a>{% endif %}</td>
-                        </tr>
-                    {% endfor %}
-                </table>
-            </div>
-        </div>
-    {% endif %}
-    {% if person.superviseeAffiliations is not empty %}
-        <div class="card mb-3">
-            <div class="card-header collapse-header" data-bs-toggle="collapse" data-bs-target="#supervisee_table"
-                 aria-expanded="false" role="button">
-                Supervisees
-            </div>
-            <div class="collapse" id="supervisee_table">
-                {% if is_granted("PERSON_EDIT", person) %}
-                    <div class="card-body">
-                        <a href="{{ path('person_add_supervisee', {'slug': person.slug}) }}"
-                           class="btn btn-sm btn-success">
-                            <span class="fa fa-plus"></span> Add Supervisee
-                        </a>
-                    </div>
-                {% endif %}
-                <table class="table">
-                    <tr>
-                        <th>Supervisee</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th class="shrink"></th>
-                    </tr>
-                    {% for superviseeAffiliation in person.superviseeAffiliations %}
-                        <tr>
-                            <td>{{ superviseeAffiliation.supervisee }}</td>
-                            <td>{% if superviseeAffiliation.startedAt is not null %}{{ superviseeAffiliation.startedAt|date('n/j/Y') }}{% endif %}</td>
-                            <td>{% if superviseeAffiliation.endedAt is not null %}{{ superviseeAffiliation.endedAt|date('n/j/Y') }}{% endif %}</td>
-                            <td class="shrink">
-                                {% if superviseeAffiliation.endedAt is null %}
-                                    <a href="{{ path('person_end_supervisor_affiliation', {'id': superviseeAffiliation.id, 'slug': person.slug}) }}">
-                                        End
-                                    </a>
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </table>
-            </div>
-        </div>
-    {% endif %}
+
     {% if workflow_can(person, constant('App\\Workflow\\Membership::TRANS_FORCE_EXIT_FORM')) %}
         <a class="btn btn-danger" href="{{ path('membership_exitForm', {'slug': person.slug}) }}">
             <span class="fa fa-user-minus"></span> Exit form

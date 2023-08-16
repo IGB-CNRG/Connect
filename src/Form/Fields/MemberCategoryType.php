@@ -22,6 +22,7 @@ class MemberCategoryType extends EntityType
             'query_builder' => function (MemberCategoryRepository $repository) {
                 return $repository->createFormSortedQueryBuilder();
             },
+            'required' => true,
         ]);
     }
 }

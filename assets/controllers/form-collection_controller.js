@@ -9,13 +9,16 @@ import 'symfony-collection-js';
 const $ = require("jquery");
 
 export default class extends Controller {
-    static targets = ['collection','otherAdd'];
+    static targets = ['collection', 'otherAdd'];
+    static values = {
+        confirmDeletion: {type: Boolean, default: true},
+    };
 
     connect() {
         let options = {};
-        if(this.hasOtherAddTarget){
+        if (this.hasOtherAddTarget) {
             options = {
-                other_btn_add: '#'+this.otherAddTarget.id,
+                other_btn_add: '#' + this.otherAddTarget.id,
             };
         }
         $(this.collectionTarget).formCollection(options);
@@ -23,12 +26,14 @@ export default class extends Controller {
 
     deleteRow(event) {
         event.preventDefault();
-        if(confirm("Only delete entries if they were created by mistake. Otherwise, please set the end date appropriately.\n\nAre you sure you want to delete this entry? This cannot be undone."))
-        $(event.target).closest('.collection-row').remove();
+        event.stopPropagation();
+        if (!this.confirmDeletionValue || confirm("Only delete entries if they were created by mistake. Otherwise, please set the end date appropriately.\n\nAre you sure you want to delete this entry? This cannot be undone."))
+            $(event.target).closest('.collection-row').remove();
     }
 
-    add(event){
+    add(event) {
         event.preventDefault();
+        event.stopPropagation();
         $(this.collectionTarget).formCollection('add');
     }
 }
