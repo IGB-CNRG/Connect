@@ -89,13 +89,16 @@ class PersonType extends AbstractType
                 'label' => 'Portrait',
             ])
             ->add('themeAffiliations', HistoricalCollectionType::class, [
+                // todo check out delete_empty
                 'entry_type' => ThemeAffiliationType::class,
                 'entry_options' => [
                     'show_position_when_joined' => $options['show_position_when_joined'],
                 ],
+                'required' => true,
             ])
             ->add('roomAffiliations', HistoricalCollectionType::class, [
                 'entry_type' => RoomAffiliationType::class,
+                'required' => true,
             ])
             ->add('unit', UnitType::class)
             ->add('otherUnit', TextType::class, [
