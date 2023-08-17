@@ -4,11 +4,6 @@
  * All rights reserved.
  */
 
-*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
- * All rights reserved.
- */
-
 namespace App\Repository;
 
 use App\Entity\SponsorAffiliation;

@@ -30,7 +30,10 @@
                     {{ form_row(form.email, {'attr':{'data-netid-autofill-target':'email'}}) }}
                     {{ form_row(form.officePhone) }}
                     {{ form_row(form.officeNumber) }}
-                    {{ form_row(form.officeBuilding) }}
+                    <div data-controller="other-entry">
+                        {{ form_row(form.officeBuilding) }}
+                        {{ form_row(form.otherAddress) }}
+                    </div>
                     {{ form_row(form.unit) }}
                     {{ form_row(form.otherUnit) }}
                 </div>
@@ -128,12 +131,14 @@
                 <div class="row mb-2">
                     <div class="col-lg" data-controller="form-collection">
                         {{ form_row(form.sponsorAffiliations) }}
-                        <button type="button" class="btn btn-sm btn-success" data-action="form-collection#add">Add Sponsor
+                        <button type="button" class="btn btn-sm btn-success" data-action="form-collection#add">Add
+                            Sponsor
                         </button>
                     </div>
                     <div class="col-lg" data-controller="form-collection">
                         {{ form_row(form.supervisorAffiliations) }}
-                        <button type="button" class="btn btn-sm btn-success" data-action="form-collection#add">Add Supervisor
+                        <button type="button" class="btn btn-sm btn-success" data-action="form-collection#add">Add
+                            Supervisor
                         </button>
                     </div>
                 </div>

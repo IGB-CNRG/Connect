@@ -40,11 +40,14 @@
             </div>
             <div class="row">
                 <div class="col-lg">{{ form_row(form.officeNumber) }}</div>
-                <div class="col-lg">{{ form_row(form.officeBuilding) }}</div>
+                <div class="col-lg" data-controller="other-entry">
+                    {{ form_row(form.officeBuilding) }}
+                    {{ form_row(form.otherAddress) }}
+                </div>
             </div>
             <hr/>
             <div class="row">
-                <div class="col-lg">
+                <div class="col-lg" data-controller="other-entry">
                     {{ form_row(form.unit) }}
                     {{ form_row(form.otherUnit) }}
                 </div>
