@@ -95,16 +95,11 @@ Encore
     .addPlugin(new FosRouting())
 
     .configureDevServerOptions(options => {
-        // options.server = {
-        //     type: 'https',
-        //     options: {
-        //         pfx: path.join(process.env.HOME, '.symfony/certs/default.p12'),
-        //         ca: path.join(process.env.HOME, '.symfony/certs/rootCA.pem'),
-        //         key: path.join(process.env.HOME, '.symfony/certs/rootCA-key.pem'),
-        //     }
-        // }
-        options.https = {
-            pfx: path.join(process.env.HOME, '.symfony/certs/default.p12'),
+        options.server = {
+            type: 'https',
+            options: {
+                pfx: path.join(process.env.HOME, '.symfony5/certs/default.p12'),
+            }
         }
     })
 ;
