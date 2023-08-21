@@ -9,8 +9,7 @@ namespace App\Controller;
 use App\Entity\Person;
 use App\Entity\RoomAffiliation;
 use App\Entity\ThemeAffiliation;
-use App\Form\EndRoomAffiliationType;
-use App\Form\EndThemeAffiliationType;
+use App\Form\EndAffiliationType;
 use App\Form\KeysType;
 use App\Form\Person\FilterType;
 use App\Form\Person\PersonType;
@@ -187,7 +186,7 @@ class PersonController extends AbstractController
         EntityManagerInterface $em,
         ActivityLogger $logger
     ): Response {
-        $form = $this->createForm(EndThemeAffiliationType::class, $themeAffiliation);
+        $form = $this->createForm(EndAffiliationType::class, $themeAffiliation, ['data_class'=>ThemeAffiliation::class]);
         $form->add('save', SubmitType::class);
 
         $form->handleRequest($request);
@@ -269,7 +268,7 @@ class PersonController extends AbstractController
         ActivityLogger $logger
     ): Response {
         $this->denyAccessUnlessGranted('PERSON_EDIT', $person);
-        $form = $this->createForm(EndRoomAffiliationType::class, $roomAffiliation);
+        $form = $this->createForm(EndAffiliationType::class, $roomAffiliation, ['data_class'=>RoomAffiliation::class]);
         $form->add('save', SubmitType::class);
 
         $form->handleRequest($request);
