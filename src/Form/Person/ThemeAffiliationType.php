@@ -9,7 +9,9 @@ namespace App\Form\Person;
 use App\Entity\ThemeAffiliation;
 use App\Enum\ThemeRole;
 use App\Form\Fields\EndDateType;
+use App\Form\Fields\HistoricalCollectionType;
 use App\Form\Fields\MemberCategoryType;
+use App\Form\Fields\PositionWhenJoinedType;
 use App\Form\Fields\StartDateType;
 use App\Form\Fields\ThemeType;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -59,15 +61,28 @@ class ThemeAffiliationType extends AbstractType
                                 'data-controller' => 'tom-select',
                             ],
                         ])
+                        ->add('sponsorAffiliations', HistoricalCollectionType::class, [
+                            'entry_type' => SponsorType::class,
+                            'label' => 'Faculty Sponsor(s)'
+                        ])
+                        ->add('supervisorAffiliations', HistoricalCollectionType::class, [
+                            'entry_type' => SupervisorType::class,
+                            'label'=> 'Supervisor(s)'
+                        ])
                         ->add('startedAt', StartDateType::class);
                 }
             });
+        if($options['show_position_when_joined']){
+            $builder->add('positionWhenJoined', PositionWhenJoinedType::class);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => ThemeAffiliation::class,
+        ])->setRequired([
+            'show_position_when_joined',
         ]);
     }
 }

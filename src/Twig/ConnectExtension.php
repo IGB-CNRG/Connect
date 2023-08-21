@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -19,6 +19,7 @@ class ConnectExtension extends AbstractExtension
             // Reference: https://twig.symfony.com/doc/2.x/advanced.html#automatic-escaping
             new TwigFilter('current', [ConnectRuntime::class, 'getCurrent']),
             new TwigFilter('role', [ConnectRuntime::class, 'getRoleName']),
+            new TwigFilter('theme', [ConnectRuntime::class, 'filterByTheme']),
         ];
     }
 

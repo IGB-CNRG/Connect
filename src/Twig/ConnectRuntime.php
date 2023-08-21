@@ -1,14 +1,17 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2023 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
 namespace App\Twig;
 
 use App\Entity\Person;
+use App\Entity\SupervisorAffiliation;
+use App\Entity\Theme;
 use App\Service\HistoricityManager;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ReadableCollection;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class ConnectRuntime implements RuntimeExtensionInterface
@@ -33,5 +36,18 @@ class ConnectRuntime implements RuntimeExtensionInterface
         } else {
             return $rawRole;
         }
+    }
+
+    /**
+     * Filters a collection of SupervisorAffiliations that match the given theme
+     * @param Collection $collection
+     * @param Theme $theme
+     * @return ReadableCollection
+     */
+    public function filterByTheme(Collection $collection, Theme $theme): ReadableCollection
+    {
+        return $collection->filter(function(SupervisorAffiliation $affiliation) use ($theme) {
+            return $affiliation->getSuperviseeThemeAffiliation()->getTheme() === $theme;
+        });
     }
 }

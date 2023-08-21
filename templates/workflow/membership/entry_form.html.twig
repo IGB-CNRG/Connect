@@ -1,5 +1,4 @@
 {% extends 'base.html.twig' %}
-{% use 'form.html.twig' %}
 
 {% block title %}{{ parent() }} | Entry Form{% endblock %}
 
@@ -12,74 +11,91 @@
 {% block content %}
     <h2>IGB Entry Request Form</h2>
     {% form_theme form _self "form_themes/_inline-buttons-theme.html.twig" %}
-    {{ block('form_card') }}
-{% endblock %}
-{% block form_card_body %}
-    <div class="row">
-        <div class="col-lg">{{ form_row(form.firstName) }}</div>
-        <div class="col-lg">{{ form_row(form.lastName) }}</div>
-    </div>
-    <div class="row" {{ stimulus_controller('username-check', {'url': path('_api_/people{._format}_get_collection')})
-    |stimulus_controller('uin-check', {'url':path('_api_/people{._format}_get_collection')})
-    |stimulus_controller('netid-autofill') }}>
-        <div class="col-lg">{{ form_row(form.netid, {'attr':{'data-action':'netid-autofill#updateFields change->username-check#checkIfUsernameUnique', 'data-username-check-target':'username'}}) }}</div>
-        <div class="col-lg">{{ form_row(form.uin, {'attr':{'data-action':'change->uin-check#checkIfUinUnique', 'data-uin-check-target':'uin'}}) }}</div>
-        <div class="col-lg">{{ form_row(form.email, {'attr':{'data-netid-autofill-target':'email'}}) }}</div>
-    </div>
-    <div class="row">
-        <div class="col-lg">{{ form_row(form.roomAffiliations) }}</div>
-        <div class="col-lg">{{ form_row(form.officePhone) }}</div>
-    </div>
-    <div class="row">
-        <div class="col-lg">{{ form_row(form.officeWorkOnly) }}</div>
-    </div>
-    <hr/>
-    <div class="row">
-        <div class="col-lg">
-            <div class="mb-2">Preferred Campus Address</div>
-            <div class="mb-2 form-text">Leave blank if preferred address is IGB</div>
+    {{ form_start(form) }}
+    <div class="card mb-3">
+        <div class="card-header">Personal Info</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg">{{ form_row(form.firstName) }}</div>
+                <div class="col-lg">{{ form_row(form.lastName) }}</div>
+            </div>
+            <div class="row" {{ stimulus_controller('username-check', {'url': path('_api_/people{._format}_get_collection')})
+            |stimulus_controller('uin-check', {'url':path('_api_/people{._format}_get_collection')})
+            |stimulus_controller('netid-autofill') }}>
+                <div class="col-lg">{{ form_row(form.netid, {'attr':{'data-action':'netid-autofill#updateFields change->username-check#checkIfUsernameUnique', 'data-username-check-target':'username'}}) }}</div>
+                <div class="col-lg">{{ form_row(form.uin, {'attr':{'data-action':'change->uin-check#checkIfUinUnique', 'data-uin-check-target':'uin'}}) }}</div>
+                <div class="col-lg">{{ form_row(form.email, {'attr':{'data-netid-autofill-target':'email'}}) }}</div>
+            </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg">{{ form_row(form.officeNumber) }}</div>
-        <div class="col-lg">{{ form_row(form.officeBuilding) }}</div>
-    </div>
-    <hr/>
-    <div class="row">
-        <div class="col-lg">
-            {{ form_row(form.unit) }}
-            {{ form_row(form.otherUnit) }}
+    <div class="card mb-3">
+        <div class="card-header">UIUC Contact Info</div>
+        <div class="card-body">
+            {# todo add info about how to fill out this part of the form #}
+            <div class="row">
+                <div class="col-lg">
+                    <div class="mb-2">Preferred Campus Address</div>
+                    <div class="mb-2 form-text">Leave blank if preferred address is IGB</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg">{{ form_row(form.officeNumber) }}</div>
+                <div class="col-lg" data-controller="other-entry">
+                    {{ form_row(form.officeBuilding) }}
+                    {{ form_row(form.otherAddress) }}
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-lg" data-controller="other-entry">
+                    {{ form_row(form.unit) }}
+                    {{ form_row(form.otherUnit) }}
+                </div>
+            </div>
         </div>
     </div>
-    <hr/>
-    <div class="row">
-        <div class="col-lg">{{ form_row(form.supervisorAffiliations) }}</div>
+    <div class="card mb-3">
+        <div class="card-header">IGB Appointment Info</div>
+        <div class="card-body">
+            {# todo add info about how to fill out this part of the form #}
+            {# todo should these three fields go into the IGB section? #}
+            <div class="row">
+                <div class="col-lg">{{ form_row(form.roomAffiliations) }}</div>
+                <div class="col-lg">{{ form_row(form.officePhone) }}</div>
+            </div>
+            <div class="row">
+                <div class="col-lg">{{ form_row(form.officeWorkOnly) }}</div>
+            </div>
+            <hr/>
+            <div {{ stimulus_controller('form-collection', {'confirmDeletion':false}) }}>
+                {{ form_row(form.themeAffiliations) }}
+                <button type="button" class="btn btn-sm btn-success" data-action="form-collection#add">
+                    <span class="fa fa-plus"></span> Add theme
+                </button>
+            </div>
+        </div>
     </div>
-    {{ form_row(form.themeAffiliations) }}
-    {% if form.positionWhenJoined is defined %}
-        {{ form_row(form.positionWhenJoined) }}
-    {% endif %}
-    {% if form.captcha is defined %}
-        <hr/>
-        {{ form_row(form.captcha) }}
-    {% endif %}
-    {% if form.isSilent is defined %}
-        <hr/>
-        {{ form_row(form.isSilent) }}
-    {% endif %}
-{% endblock %}
-{% block form_card_footer %}
-    {{ form_row(form.submit) }}
-{% endblock %}
-
-
-
-{% block collection_row %}
-    {{ block("form_widget") }}
-{% endblock %}
-
-{% block collection_entry_row %}
-    {{ block("form_widget") }}
+    <div class="card mb-3">
+        <div class="card-body">
+            {% if form.captcha is defined %}
+                <hr/>
+                {{ form_row(form.captcha) }}
+            {% endif %}
+            {% if form.isSilent is defined %}
+                <hr/>
+                {{ form_row(form.isSilent) }}
+            {% endif %}
+            <div class="callout callout-info mb-0">
+                When you click submit, your entry form will be sent to staff members in your theme for approval.
+                Once your entry form is approved, you will receive a welcome email with helpful information and next
+                steps.
+            </div>
+        </div>
+        <div class="card-footer">
+            {{ form_row(form.submit) }}
+        </div>
+    </div>
+    {{ form_end(form) }}
 {% endblock %}
 
 {% block unit_affiliation_row %}
@@ -90,15 +106,79 @@
 {% endblock %}
 
 {% block theme_affiliation_row %}
-    <div class="row">
-        <div class="col-lg">{{ form_row(form.theme) }}</div>
-        <div class="col-lg">{{ form_row(form.memberCategory) }}</div>
-    </div>
-    <div class="row">
-        <div class="col-lg">{{ form_row(form.startedAt) }}</div>
-        <div class="col-lg">{{ form_row(form.endedAt) }}</div>
+    <div class="collection-row">
+        <div class="row">
+            <div class="col-lg">{{ form_row(form.theme) }}</div>
+            <div class="col-lg">
+                {% if form.vars.name != "0" %}
+                    <div class="float-end">
+                        <a href="#" data-action="form-collection#deleteRow">
+                            <span class="fa fa-trash"></span>
+                        </a>
+                    </div>
+                {% endif %}
+                {{ form_row(form.memberCategory) }}
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-lg" {{ stimulus_controller('form-collection', {'confirmDeletion':false}) }}>
+                {{ form_row(form.sponsorAffiliations) }}
+                <button type="button" class="btn btn-sm btn-success" data-action="form-collection#add">
+                    <span class="fa fa-plus"></span> Add faculty sponsor
+                </button>
+            </div>
+            <div class="col-lg" {{ stimulus_controller('form-collection', {'confirmDeletion':false}) }}>
+                {{ form_row(form.supervisorAffiliations) }}
+                <button type="button" class="btn btn-sm btn-success" data-action="form-collection#add">
+                    <span class="fa fa-plus"></span> Add supervisor
+                </button>
+            </div>
+        </div>
+        {% if form.positionWhenJoined is defined %}
+            <div class="row">
+                <div class="col">
+                    {{ form_row(form.positionWhenJoined) }}
+                </div>
+            </div>
+        {% endif %}
+        <div class="row">
+            <div class="col-lg">{{ form_row(form.startedAt) }}</div>
+            <div class="col-lg">{{ form_row(form.endedAt) }}</div>
+        </div>
     </div>
 {% endblock %}
+
+{% block sponsor_affiliation_row %}
+    <div class="collection-row">
+        {% if form.vars.name != "0" %}
+            <div class="float-end">
+                <a href="#" data-action="form-collection#deleteRow">
+                    <span class="fa fa-trash"></span>
+                </a>
+            </div>
+        {% endif %}
+        {{ form_row(form.sponsor) }}
+    </div>
+{% endblock %}
+
+{% block supervisor_affiliation_row %}
+    <div class="collection-row">
+        {% if form.vars.name != "0" %}
+            <div class="float-end">
+                <a href="#" data-action="form-collection#deleteRow">
+                    <span class="fa fa-trash"></span>
+                </a>
+            </div>
+        {% endif %}
+        {{ form_row(form.supervisor) }}
+    </div>
+{% endblock %}
+
+
+{% block room_affiliation_row %}
+    {{ form_row(form.room, {'row_attr':{'class':'mb-0'}}) }}
+{% endblock %}
+
 
 {% block captcha_widget %}
     <div>

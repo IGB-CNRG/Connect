@@ -96,7 +96,9 @@ class PersonController extends AbstractController
         EntityManagerInterface $em,
         ActivityLogger $logger
     ): Response {
-        $form = $this->createForm(PersonType::class, $person);
+        $form = $this->createForm(PersonType::class, $person, [
+            'show_position_when_joined' => $this->isGranted('ROLE_ADMIN'),
+        ]);
         $form->add('save', SubmitType::class);
 
         $form->handleRequest($request);
@@ -116,8 +118,11 @@ class PersonController extends AbstractController
 
     #[Route('/person/{slug}/update-last-review', name: 'person_update_last_review')]
     #[IsGranted('PERSON_EDIT', subject: 'person')]
-    public function updateLastReviewed(Person $person, EntityManagerInterface $em, ActivityLogger $logger): RedirectResponse
-    {
+    public function updateLastReviewed(
+        Person $person,
+        EntityManagerInterface $em,
+        ActivityLogger $logger
+    ): RedirectResponse {
         $person->setLastReviewedAt(new \DateTimeImmutable())
             ->setLastReviewedBy($this->getUser());
         $em->persist($person);
@@ -126,7 +131,7 @@ class PersonController extends AbstractController
 
         $em->flush();
 
-        return $this->redirectToRoute('person_view', ['slug'=>$person->getSlug()]);
+        return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
     }
 
     #[Route('/person/{slug}/add-theme-affiliation', name: 'person_add_theme_affiliation')]
@@ -140,7 +145,7 @@ class PersonController extends AbstractController
     ): Response {
         $themeAffiliation = (new ThemeAffiliation())
             ->setPerson($person);
-        $form = $this->createForm(ThemeAffiliationType::class, $themeAffiliation)
+        $form = $this->createForm(ThemeAffiliationType::class, $themeAffiliation, ['show_position_when_joined'=>$this->isGranted('ROLE_ADMIN')])
             ->add('endPreviousAffiliations', EntityType::class, [
                 'required' => false,
                 'mapped' => false,

@@ -25,6 +25,17 @@
         <div class="col-lg">{{ form_row(form.themeRoles) }}</div>
     </div>
     <div class="row">
+        <div class="col-lg">{{ form_row(form.facultySponsors) }}</div>
+        <div class="col-lg">{{ form_row(form.supervisors) }}</div>
+    </div>
+    {% if form.positionWhenJoined is defined %}
+        <div class="row">
+            <div class="col">
+                {{ form_row(form.positionWhenJoined) }}
+            </div>
+        </div>
+    {% endif %}
+    <div class="row">
         <div class="col">{{ form_row(form.startedAt) }}</div>
         <div class="col">{{ form_row(form.endedAt) }}</div>
     </div>

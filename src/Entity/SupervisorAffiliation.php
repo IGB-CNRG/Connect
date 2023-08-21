@@ -32,12 +32,9 @@ class SupervisorAffiliation implements HistoricalEntityInterface, LoggableAffili
     #[Context(context: ['groups'=>['log:related_person']], groups: ['log:person'])]
     private ?Person $supervisor = null;
 
-    #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'supervisorAffiliations')]
+    #[ORM\ManyToOne(inversedBy: 'supervisorAffiliations')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Loggable]
-    #[Groups(['log:person'])]
-    #[Context(context: ['groups'=>['log:related_person']], groups: ['log:person'])]
-    private ?Person $supervisee = null;
+    private ?ThemeAffiliation $superviseeThemeAffiliation = null;
 
     public function getId(): ?int
     {
@@ -56,18 +53,24 @@ class SupervisorAffiliation implements HistoricalEntityInterface, LoggableAffili
         return $this;
     }
 
-    public function getSupervisee(): ?Person
+    public function getSuperviseeThemeAffiliation(): ?ThemeAffiliation
     {
-        return $this->supervisee;
+        return $this->superviseeThemeAffiliation;
     }
 
-    public function setSupervisee(?Person $supervisee): self
+    public function setSuperviseeThemeAffiliation(?ThemeAffiliation $superviseeThemeAffiliation): self
     {
-        $this->supervisee = $supervisee;
+        $this->superviseeThemeAffiliation = $superviseeThemeAffiliation;
 
         return $this;
     }
 
+    public function getSupervisee(): ?Person
+    {
+        return $this->superviseeThemeAffiliation->getPerson();
+    }
+
+    /* LoggableAffiliationInterface */
     public function getSideA()
     {
         return $this->getSupervisor();

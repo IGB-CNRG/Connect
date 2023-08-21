@@ -132,16 +132,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[Groups(['log:person'])]
     private Collection $themeAffiliations;
 
-    #[ORM\OneToMany(mappedBy: 'supervisee', targetEntity: SupervisorAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
-    #[LoggableManyRelation]
-    #[Groups(['log:person'])]
-    private Collection $supervisorAffiliations;
-
-    #[ORM\OneToMany(mappedBy: 'supervisor', targetEntity: SupervisorAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
-    #[LoggableManyRelation]
-    #[Groups(['log:person'])]
-    private Collection $superviseeAffiliations;
-
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Log::class, orphanRemoval: true)]
     private Collection $ownedLogs;
 
@@ -213,25 +203,28 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $otherUnit = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $positionWhenJoined = null;
-
     #[ORM\ManyToOne(targetEntity: self::class)]
     private ?self $lastReviewedBy = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $lastReviewedAt = null;
 
+    #[ORM\OneToMany(mappedBy: 'supervisor', targetEntity: SupervisorAffiliation::class, orphanRemoval: true)]
+    private Collection $superviseeAffiliations;
+
+    #[ORM\OneToMany(mappedBy: 'sponsor', targetEntity: SponsorAffiliation::class, orphanRemoval: true)]
+    private Collection $sponseeAffiliations;
+
     public function __construct()
     {
         $this->roomAffiliations = new ArrayCollection();
         $this->keyAffiliations = new ArrayCollection();
         $this->themeAffiliations = new ArrayCollection();
-        $this->supervisorAffiliations = new ArrayCollection();
-        $this->superviseeAffiliations = new ArrayCollection();
         $this->ownedLogs = new ArrayCollection();
         $this->logs = new ArrayCollection();
         $this->documents = new ArrayCollection();
+        $this->superviseeAffiliations = new ArrayCollection();
+        $this->sponseeAffiliations = new ArrayCollection();
     }
 
     public function __toString()
@@ -489,56 +482,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     public function removeThemeAffiliation(ThemeAffiliation $themeAffiliation): self
     {
         $this->themeAffiliations->removeElement($themeAffiliation);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, SupervisorAffiliation>|SupervisorAffiliation[]
-     */
-    public function getSupervisorAffiliations(): Collection
-    {
-        return $this->supervisorAffiliations;
-    }
-
-    public function addSupervisorAffiliation(SupervisorAffiliation $supervisorAffiliation): self
-    {
-        if (!$this->supervisorAffiliations->contains($supervisorAffiliation)) {
-            $this->supervisorAffiliations[] = $supervisorAffiliation;
-            $supervisorAffiliation->setSupervisee($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSupervisorAffiliation(SupervisorAffiliation $supervisorAffiliation): self
-    {
-        $this->supervisorAffiliations->removeElement($supervisorAffiliation);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, SupervisorAffiliation>|SupervisorAffiliation[]
-     */
-    public function getSuperviseeAffiliations(): Collection
-    {
-        return $this->superviseeAffiliations;
-    }
-
-    public function addSuperviseeAffiliation(SupervisorAffiliation $superviseeAffiliation): self
-    {
-        if (!$this->superviseeAffiliations->contains($superviseeAffiliation)) {
-            $this->superviseeAffiliations[] = $superviseeAffiliation;
-            $superviseeAffiliation->setSupervisor($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSuperviseeAffiliation(SupervisorAffiliation $superviseeAffiliation): self
-    {
-        $this->superviseeAffiliations->removeElement($superviseeAffiliation);
 
         return $this;
     }
@@ -888,18 +831,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         return $this;
     }
 
-    public function getPositionWhenJoined(): ?string
-    {
-        return $this->positionWhenJoined;
-    }
-
-    public function setPositionWhenJoined(?string $positionWhenJoined): self
-    {
-        $this->positionWhenJoined = $positionWhenJoined;
-
-        return $this;
-    }
-
     public function getLastReviewedBy(): ?self
     {
         return $this->lastReviewedBy;
@@ -922,5 +853,86 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         $this->lastReviewedAt = $lastReviewedAt;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, ThemeAffiliation>
+     */
+    public function getSuperviseeAffiliations(): Collection
+    {
+        return $this->superviseeAffiliations;
+    }
+
+    public function addSuperviseeAffiliation(SupervisorAffiliation $supervisorAffiliation): self
+    {
+        if (!$this->superviseeAffiliations->contains($supervisorAffiliation)) {
+            $this->superviseeAffiliations->add($supervisorAffiliation);
+            $supervisorAffiliation->setSupervisor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSuperviseeAffiliation(SupervisorAffiliation $supervisorAffiliation): self
+    {
+        if ($this->superviseeAffiliations->removeElement($supervisorAffiliation)) {
+            if ($supervisorAffiliation->getSupervisor() === $this) {
+                $supervisorAffiliation->setSupervisor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getSupervisorAffiliations(): array
+    {
+        return array_merge(
+            array_map
+            (
+                fn(ThemeAffiliation $affiliation) => $affiliation->getSupervisorAffiliations()->toArray(),
+                $this->getThemeAffiliations()->toArray()
+            )
+        );
+    }
+
+    /**
+     * @return Collection<int, SponsorAffiliation>
+     */
+    public function getSponseeAffiliations(): Collection
+    {
+        return $this->sponseeAffiliations;
+    }
+
+    public function addSponseeAffiliation(SponsorAffiliation $sponseeAffiliation): self
+    {
+        if (!$this->sponseeAffiliations->contains($sponseeAffiliation)) {
+            $this->sponseeAffiliations->add($sponseeAffiliation);
+            $sponseeAffiliation->setSponsor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSponseeAffiliation(SponsorAffiliation $sponseeAffiliation): self
+    {
+        if ($this->sponseeAffiliations->removeElement($sponseeAffiliation)) {
+            // set the owning side to null (unless already changed)
+            if ($sponseeAffiliation->getSponsor() === $this) {
+                $sponseeAffiliation->setSponsor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getSponsorAffiliations(): array
+    {
+        return array_merge(
+            array_map
+            (
+                fn(ThemeAffiliation $affiliation) => $affiliation->getSponsorAffiliations()->toArray(),
+                $this->getThemeAffiliations()->toArray()
+            )
+        );
     }
 }

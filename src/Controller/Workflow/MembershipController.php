@@ -10,6 +10,7 @@ use App\Entity\Document;
 use App\Entity\ExitForm;
 use App\Entity\Person;
 use App\Entity\RoomAffiliation;
+use App\Entity\SponsorAffiliation;
 use App\Entity\SupervisorAffiliation;
 use App\Entity\ThemeAffiliation;
 use App\Enum\DocumentCategory;
@@ -55,16 +56,16 @@ class MembershipController extends AbstractController
         ActivityLogger $logger,
         WorkflowInterface $membershipStateMachine
     ): Response {
-        $roomAffiliation = new RoomAffiliation();
-        $themeAffiliation = new ThemeAffiliation();
-        $supervisorAffiliation = new SupervisorAffiliation();
+        $themeAffiliation = (new ThemeAffiliation())
+            ->addSponsorAffiliation(new SponsorAffiliation())
+            ->addSupervisorAffiliation(new SupervisorAffiliation());
         $person = (new Person())
-            ->addRoomAffiliation($roomAffiliation)
-            ->addThemeAffiliation($themeAffiliation)
-            ->addSupervisorAffiliation($supervisorAffiliation);
+            ->addRoomAffiliation(new RoomAffiliation())
+            ->addThemeAffiliation($themeAffiliation);
         $form = $this->createForm(EntryFormType::class, $person, [
             'allow_silent' => $membershipStateMachine->can($person, Membership::TRANS_FORCE_ENTRY_FORM),
             'show_position_when_joined' => $this->isGranted('ROLE_ADMIN'),
+            'allow_skip_uin' => $this->isGranted('ROLE_ADMIN'),
             'use_captcha' => !$this->isGranted('IS_AUTHENTICATED_FULLY'),
         ])
             ->add('submit', SubmitType::class);
@@ -105,10 +106,6 @@ class MembershipController extends AbstractController
         if ($person->getRoomAffiliations()->count() === 0) {
             $roomAffiliation = new RoomAffiliation();
             $person->addRoomAffiliation($roomAffiliation);
-        }
-        if ($person->getSupervisorAffiliations()->count() === 0) {
-            $supervisorAffiliation = new SupervisorAffiliation();
-            $person->addSupervisorAffiliation($supervisorAffiliation);
         }
 
         $form = $this->createForm(EntryFormType::class, $person, [
@@ -413,10 +410,12 @@ class MembershipController extends AbstractController
     ): void {
         $historicityManager->endAffiliations(
             array_merge(
-                $person->getSupervisorAffiliations()->toArray(),
                 $person->getRoomAffiliations()->toArray(),
                 $person->getThemeAffiliations()->toArray(),
-                $person->getSuperviseeAffiliations()->toArray()
+                $person->getSponsorAffiliations(),
+                $person->getSponseeAffiliations()->toArray(),
+                $person->getSupervisorAffiliations(),
+                $person->getSuperviseeAffiliations()->toArray(),
             ),
             $endedAt,
             $exitReason
@@ -446,16 +445,13 @@ class MembershipController extends AbstractController
         WorkflowInterface $membershipStateMachine
     ): void {
         $roomAffiliation = $person->getRoomAffiliations()[0];
-        $supervisorAffiliation = $person->getSupervisorAffiliations()[0];
-
         $roomAffiliation->setStartedAt($startDate);
-        $supervisorAffiliation->setStartedAt($startDate);
         if (!$roomAffiliation->getRoom()) {
             $person->removeRoomAffiliation($roomAffiliation);
         }
-        if (!$supervisorAffiliation->getSupervisor()) {
-            $person->removeSupervisorAffiliation($supervisorAffiliation);
-        }
+
+        // todo handle supervisor/sponsor affiliations
+
         $person->setUsername($person->getNetid());
         $person->setMembershipUpdatedAt(new DateTimeImmutable());
         $em->persist($person);

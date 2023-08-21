@@ -40,7 +40,7 @@ class FixEndDatesCommand extends Command
 
         $allPeople = $this->repository->findAll();
         foreach ($allPeople as $person) {
-            if($person->getThemeAffiliations()->count() === 0){
+            if ($person->getThemeAffiliations()->count() === 0) {
                 $io->text("$person has no affiliations");
                 $unaffiliated++;
                 $this->entityManager->remove($person);
@@ -60,9 +60,16 @@ class FixEndDatesCommand extends Command
                     new \DateTimeImmutable('2001-01-01')
                 );
                 if ($endDate !== null) {
-                    if($this->historicityManager->endAffiliations($person->getSuperviseeAffiliations()->toArray(), $endDate) ||
-                    $this->historicityManager->endAffiliations($person->getSupervisorAffiliations()->toArray(), $endDate) ||
-                    $this->historicityManager->endAffiliations($person->getRoomAffiliations()->toArray(), $endDate)){
+                    if ($this->historicityManager->endAffiliations(
+                        array_merge(
+                            $person->getSuperviseeAffiliations()->toArray(),
+                            $person->getSponseeAffiliations()->toArray(),
+                            $person->getRoomAffiliations()->toArray(),
+                            $person->getSupervisorAffiliations(),
+                            $person->getSponsorAffiliations()
+                        ),
+                        $endDate
+                    )) {
                         $io->text("$person, ended at {$endDate->format('n/j/Y')}");
                         $updated++;
                     }

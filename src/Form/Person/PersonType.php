@@ -9,14 +9,15 @@ namespace App\Form\Person;
 use App\Entity\Building;
 use App\Entity\Person;
 use App\Form\Fields\HistoricalCollectionType;
-use App\Form\Fields\PositionWhenJoinedType;
 use App\Form\Fields\UnitType;
+use App\Repository\BuildingRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -24,7 +25,9 @@ use Vich\UploaderBundle\Form\Type\VichFileType;
 
 class PersonType extends AbstractType
 {
-    public function __construct(private Security $security) {}
+    public function __construct(private Security $security)
+    {
+    }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -63,6 +66,20 @@ class PersonType extends AbstractType
                 'required' => false,
                 'class' => Building::class,
                 'help' => 'Non-IGB campus address building',
+                'placeholder' => 'Other (please specify)',
+                'attr' => [
+                    'data-controller' => 'tom-select',
+                    'data-other-entry-target' => 'select',
+                    'data-action' => 'change->other-entry#toggle',
+                ],
+                'query_builder' => fn(BuildingRepository $repository) => $repository->createQueryBuilderForDropdown(),
+            ])
+            ->add('otherAddress', TextareaType::class, [
+                'label' => 'Other address',
+                'required' => false,
+                'attr' => [
+                    'data-other-entry-target' => 'other',
+                ],
             ])
             ->add('imageFile', VichFileType::class, [
                 'required' => false,
@@ -72,16 +89,16 @@ class PersonType extends AbstractType
                 'label' => 'Portrait',
             ])
             ->add('themeAffiliations', HistoricalCollectionType::class, [
+                // todo check out delete_empty
                 'entry_type' => ThemeAffiliationType::class,
-            ])
-            ->add('supervisorAffiliations', HistoricalCollectionType::class, [
-                'entry_type' => SupervisorType::class,
-            ])
-            ->add('superviseeAffiliations', HistoricalCollectionType::class, [
-                'entry_type' => SuperviseeType::class,
+                'entry_options' => [
+                    'show_position_when_joined' => $options['show_position_when_joined'],
+                ],
+                'required' => true,
             ])
             ->add('roomAffiliations', HistoricalCollectionType::class, [
                 'entry_type' => RoomAffiliationType::class,
+                'required' => true,
             ])
             ->add('unit', UnitType::class)
             ->add('otherUnit', TextType::class, [
@@ -101,8 +118,7 @@ class PersonType extends AbstractType
                         'data-controller' => 'tom-select',
                     ],
                     'required' => false,
-                ])
-            ->add('positionWhenJoined', PositionWhenJoinedType::class);
+                ]);
         }
         if ($this->security->isGranted('ROLE_KEY_MANAGER')) {
             $builder
@@ -120,6 +136,8 @@ class PersonType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Person::class,
+        ])->setRequired([
+            'show_position_when_joined',
         ]);
     }
 }

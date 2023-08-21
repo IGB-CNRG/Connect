@@ -36,6 +36,13 @@ class ThemeRepository extends ServiceEntityRepository implements ServiceSubscrib
             ->orderBy('t.shortName');
     }
 
+    public function createCurrentFormSortedQueryBuilder(): QueryBuilder
+    {
+        $qb = $this->createFormSortedQueryBuilder();
+        $this->historicityManager()->addCurrentConstraint($qb, 't');
+        return $qb;
+    }
+
     public function findCurrentNonResearchThemes()
     {
         $qb = $this->createQueryBuilder('t')

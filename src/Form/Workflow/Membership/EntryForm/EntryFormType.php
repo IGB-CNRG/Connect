@@ -8,7 +8,7 @@ namespace App\Form\Workflow\Membership\EntryForm;
 
 use App\Entity\Building;
 use App\Entity\Person;
-use App\Form\Fields\PositionWhenJoinedType;
+use App\Form\Fields\HistoricalCollectionType;
 use App\Form\Fields\UnitType;
 use App\Repository\BuildingRepository;
 use Gregwar\CaptchaBundle\Type\CaptchaType;
@@ -17,6 +17,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -36,17 +37,21 @@ class EntryFormType extends AbstractType
             ->add('netid', TextType::class, [
                 'required' => false,
                 'label' => 'person.netid',
+                'help' => 'If you have not yet been assigned a netid, leave blank',
             ])
             ->add('uin', TextType::class, [
-                'required' => true,
+                'required' => !$options['allow_skip_uin'],
                 'label' => 'UIN',
+                'help' => '9-digit number, found on your I-Card',
             ])
             ->add('email', EmailType::class, [
                 'required' => true,
+                'help' => 'Please use Illinois email if you have one'
             ])
             ->add('officeWorkOnly', CheckboxType::class, [
                 'required' => false,
                 'label' => 'Office work only?',
+                'help' => 'Check this box if you will not be working in a lab'
             ])
             ->add('roomAffiliations', CollectionType::class, [
                 'entry_type' => RoomAffiliationType::class,
@@ -71,25 +76,14 @@ class EntryFormType extends AbstractType
                     'data-other-entry-target' => 'other',
                 ],
             ])
-            ->add('supervisorAffiliations', CollectionType::class, [
-                'entry_type' => SupervisorAffiliationType::class,
-                'label' => false,
-                'entry_options' => [
-                    'label' => false,
-                ],
-                'allow_add' => false,
-                'allow_delete' => false,
-            ])
             // note we no longer collect dept phone (which should be the same as igb phone anyway)
             //  or cell phones (as we no longer collect home address, etc.)
-            ->add('themeAffiliations', CollectionType::class, [
+            ->add('themeAffiliations', HistoricalCollectionType::class, [
                 'entry_type' => ThemeAffiliationType::class,
-                'label' => false,
                 'entry_options' => [
-                    'label' => false,
+                    'show_position_when_joined' => $options['show_position_when_joined'],
                 ],
-                'allow_add' => false,
-                'allow_delete' => false,
+                'required' => true,
             ])
             ->add('officeNumber', TextType::class, [
                 'required' => false,
@@ -100,11 +94,22 @@ class EntryFormType extends AbstractType
                 'label' => 'Building',
                 'class' => Building::class,
                 'help' => 'Non-IGB campus address building',
+                'placeholder' => 'Other (please specify)',
                 'attr' => [
                     'data-controller' => 'tom-select',
+                    'data-other-entry-target' => 'select',
+                    'data-action' => 'change->other-entry#toggle',
                 ],
                 'query_builder' => fn(BuildingRepository $repository) => $repository->createQueryBuilderForDropdown(),
-            ]);
+            ])
+            ->add('otherAddress', TextareaType::class, [
+                'label' => 'Other address',
+                'required' => false,
+                'attr' => [
+                    'data-other-entry-target' => 'other',
+                ],
+            ])
+        ;
         if ($options['use_captcha']) {
             // only show captcha when we're not logged in
             $builder->add('captcha', CaptchaType::class);
@@ -117,9 +122,6 @@ class EntryFormType extends AbstractType
 //                'help' => 'Check this box to bypass the rest of the new member workflow without sending any further notifications',
 //            ]);
         }
-        if($options['show_position_when_joined']){
-            $builder->add('positionWhenJoined', PositionWhenJoinedType::class);
-        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -130,6 +132,7 @@ class EntryFormType extends AbstractType
             ->setRequired([
                 'allow_silent',
                 'show_position_when_joined',
+                'allow_skip_uin',
                 'use_captcha',
             ]);
     }
