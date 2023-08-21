@@ -42,13 +42,16 @@ class EntryFormType extends AbstractType
             ->add('uin', TextType::class, [
                 'required' => !$options['allow_skip_uin'],
                 'label' => 'UIN',
+                'help' => '9-digit number, found on your I-Card',
             ])
             ->add('email', EmailType::class, [
                 'required' => true,
+                'help' => 'Please use Illinois email if you have one'
             ])
             ->add('officeWorkOnly', CheckboxType::class, [
                 'required' => false,
                 'label' => 'Office work only?',
+                'help' => 'Check this box if you will not be working in a lab'
             ])
             ->add('roomAffiliations', CollectionType::class, [
                 'entry_type' => RoomAffiliationType::class,
