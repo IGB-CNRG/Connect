@@ -1,0 +1,22 @@
+{% apply inline_css(source('@styles/foundation-emails.css'), source('@styles/email_overrides.css')) %}
+    <html lang="en">
+    <head>
+        <title>{{ subject }}</title>
+    </head>
+    <body>
+    {% apply inky_to_html %}
+        <container>
+            {% block body %}
+
+            {% endblock %}
+
+            <row>
+                <columns>
+                    {{ get_setting('notification_signature')|raw }}
+                </columns>
+            </row>
+        </container>
+    {% endapply %}
+    </body>
+    </html>
+{% endapply %}

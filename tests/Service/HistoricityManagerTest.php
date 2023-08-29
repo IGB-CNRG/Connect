@@ -71,4 +71,48 @@ class HistoricityManagerTest extends KernelTestCase
         $this->assertEquals($differentExitReason, $ta2->getExitReason());
         $this->assertEquals($exitReason, $ta3->getExitReason());
     }
+
+    public function testGetEarliest()
+    {
+        $fourWeeks = new DateTimeImmutable('4 weeks ago');
+        $threeWeeks = new DateTimeImmutable('3 weeks ago');
+        $oneWeek = new DateTimeImmutable('1 week ago');
+
+        $da1 = (new RoomAffiliation())
+            ->setStartedAt($fourWeeks);
+        $da2 = (new RoomAffiliation())
+            ->setStartedAt($threeWeeks);
+        $da3 = (new RoomAffiliation())
+            ->setStartedAt($oneWeek);
+
+        $this->assertEquals($fourWeeks, $this->historicityManager->getEarliest([$da1, $da2, $da3]));
+        $this->assertEquals($fourWeeks, $this->historicityManager->getEarliest([$da1, $da3, $da2]));
+        $this->assertEquals($fourWeeks, $this->historicityManager->getEarliest([$da3, $da1, $da2]));
+        $this->assertEquals($fourWeeks, $this->historicityManager->getEarliest([$da3, $da2, $da1]));
+        $this->assertEquals($fourWeeks, $this->historicityManager->getEarliest([$da2, $da1, $da3]));
+        $this->assertEquals($fourWeeks, $this->historicityManager->getEarliest([$da2, $da3, $da1]));
+        $this->assertNull($this->historicityManager->getEarliest([]));
+    }
+
+    public function testGetLatest()
+    {
+        $fourWeeks = new DateTimeImmutable('4 weeks ago');
+        $threeWeeks = new DateTimeImmutable('3 weeks ago');
+        $oneWeek = new DateTimeImmutable('1 week ago');
+
+        $da1 = (new RoomAffiliation())
+            ->setEndedAt($fourWeeks);
+        $da2 = (new RoomAffiliation())
+            ->setEndedAt($threeWeeks);
+        $da3 = (new RoomAffiliation())
+            ->setEndedAt($oneWeek);
+
+        $this->assertEquals($oneWeek, $this->historicityManager->getLatest([$da1, $da2, $da3]));
+        $this->assertEquals($oneWeek, $this->historicityManager->getLatest([$da1, $da3, $da2]));
+        $this->assertEquals($oneWeek, $this->historicityManager->getLatest([$da3, $da1, $da2]));
+        $this->assertEquals($oneWeek, $this->historicityManager->getLatest([$da3, $da2, $da1]));
+        $this->assertEquals($oneWeek, $this->historicityManager->getLatest([$da2, $da1, $da3]));
+        $this->assertEquals($oneWeek, $this->historicityManager->getLatest([$da2, $da3, $da1]));
+        $this->assertNull($this->historicityManager->getLatest([]));
+    }
 }

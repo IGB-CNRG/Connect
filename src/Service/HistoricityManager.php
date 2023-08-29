@@ -32,7 +32,7 @@ class HistoricityManager
      * @param string $exitReason
      * @return void
      */
-    public function endAffiliations(array $affiliations, DateTimeInterface $endDate, ?string $exitReason=null): bool
+    public function endAffiliations(array $affiliations, DateTimeInterface $endDate, ?string $exitReason = null): bool
     {
         $updated = false;
         foreach ($affiliations as $affiliation) {
@@ -45,5 +45,45 @@ class HistoricityManager
             }
         }
         return $updated;
+    }
+
+    /**
+     * @param HistoricalEntityInterface[] $entities
+     * @return DateTimeInterface|null
+     */
+    public function getEarliest(array $entities): ?DateTimeInterface
+    {
+        $initial = isset($entities[0]) ? $entities[0]->getStartedAt() : null;
+
+        return array_reduce($entities, function ($carry, HistoricalEntityInterface $item) {
+            if ($carry === null || $item->getStartedAt() === null) {
+                return null;
+            }
+            if ($carry < $item->getStartedAt()) {
+                return $carry;
+            }
+
+            return $item->getStartedAt();
+        }, $initial);
+    }
+
+    /**
+     * @param HistoricalEntityInterface[] $entities
+     * @return DateTimeInterface|null
+     */
+    public function getLatest(array $entities): ?DateTimeInterface
+    {
+        $initial = isset($entities[0]) ? $entities[0]->getEndedAt() : null;
+
+        return array_reduce($entities, function ($carry, HistoricalEntityInterface $item) {
+            if ($carry === null || $item->getEndedAt() === null) {
+                return null;
+            }
+            if ($carry > $item->getEndedAt()) {
+                return $carry;
+            }
+
+            return $item->getEndedAt();
+        }, $initial);
     }
 }

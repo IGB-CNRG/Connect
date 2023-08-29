@@ -1,0 +1,55 @@
+{% extends 'workflow/email_base.html.twig' %}
+{% block body %}
+    <row>
+        <columns><h3>Entries</h3></columns>
+    </row>
+
+    <row>
+        <columns>
+            <table class="digest-table">
+                <tr>
+                    <th>Name</th>
+                    <th>Start Date</th>
+                    <th>Themes</th>
+                </tr>
+                {% for entry in entries %}
+                    <tr>
+                        <td>{{ entry.person }}</td>
+                        <td>{{ entry.date|date('n/j/Y') }}</td>
+                        <td>{{ entry.notes }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </columns>
+    </row>
+
+    <row>
+        <columns><h3>Exits</h3></columns>
+    </row>
+
+    <row>
+        <columns>
+            <table class="digest-table">
+                <tr>
+                    <th>Name</th>
+                    <th>Start Date</th>
+                    <th>Themes</th>
+                    <th>Exit Reason</th>
+                </tr>
+                {% for exit in exits %}
+                    <tr>
+                        <td>{{ exit.person }}</td>
+                        <td>{{ exit.date|date('n/j/Y') }}</td>
+                        <td>{{ exit.notes }}</td>
+                        <td>
+                            {% if exit.person.exitForm is not null %}
+                                {{ exit.person.exitForm.exitReason }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </columns>
+    </row>
+
+{% endblock %}
