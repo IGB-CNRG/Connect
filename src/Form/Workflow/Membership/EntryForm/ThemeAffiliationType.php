@@ -24,14 +24,12 @@ class ThemeAffiliationType extends AbstractType
     {
         $builder
             ->add('theme', ThemeType::class, [
-                'expanded' => true,
                 'query_builder' => function (ThemeRepository $themeRepository) {
                     return $themeRepository->createCurrentFormSortedQueryBuilder();
                 },
             ])
             ->add('memberCategory', MemberCategoryType::class, [
                 'label' => 'entry_form.member_category',
-                'expanded' => true,
             ])
             ->add('sponsorAffiliations', HistoricalCollectionType::class, [
                 'entry_type' => SponsorAffiliationType::class,
