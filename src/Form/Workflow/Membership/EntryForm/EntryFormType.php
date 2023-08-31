@@ -34,6 +34,10 @@ class EntryFormType extends AbstractType
             ->add('lastName', TextType::class, [
                 'required' => true,
             ])
+            ->add('preferredFirstName', TextType::class, [
+                'required' => false,
+                'help' => 'Leave blank if same as first name'
+            ])
             ->add('netid', TextType::class, [
                 'required' => false,
                 'label' => 'person.netid',

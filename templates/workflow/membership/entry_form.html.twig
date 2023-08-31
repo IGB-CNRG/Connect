@@ -19,6 +19,9 @@
                 <div class="col-lg">{{ form_row(form.firstName) }}</div>
                 <div class="col-lg">{{ form_row(form.lastName) }}</div>
             </div>
+            <div class="row">
+                <div class="col-lg-6">{{ form_row(form.preferredFirstName) }}</div>
+            </div>
             <div class="row" {{ stimulus_controller('username-check', {'url': path('_api_/people{._format}_get_collection')})
             |stimulus_controller('uin-check', {'url':path('_api_/people{._format}_get_collection')})
             |stimulus_controller('netid-autofill') }}>
