@@ -39,9 +39,11 @@ class DigestSubscriber implements EventSubscriberInterface, ServiceSubscriberInt
             $subject = $event->getSubject();
             $date = match ($bufferName) {
                 DigestBuffer::ENTRY_BUFFER => $this->historicityManager()->getEarliest(
-                    $subject->getThemeAffiliations()
+                    $subject->getThemeAffiliations()->toArray()
                 ),
-                DigestBuffer::EXIT_BUFFER => $this->historicityManager()->getLatest($subject->getThemeAffiliations()),
+                DigestBuffer::EXIT_BUFFER => $this->historicityManager()->getLatest(
+                    $subject->getThemeAffiliations()->toArray()
+                ),
             };
             $themes = array_unique(
                 array_map(fn(ThemeAffiliation $themeAffiliation) => $themeAffiliation->getTheme(),
