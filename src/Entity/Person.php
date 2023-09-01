@@ -887,7 +887,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     public function getSupervisorAffiliations(): array
     {
         return array_merge(
-            array_map
+            ...array_map
             (
                 fn(ThemeAffiliation $affiliation) => $affiliation->getSupervisorAffiliations()->toArray(),
                 $this->getThemeAffiliations()->toArray()
@@ -928,7 +928,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     public function getSponsorAffiliations(): array
     {
         return array_merge(
-            array_map
+            ...array_map
             (
                 fn(ThemeAffiliation $affiliation) => $affiliation->getSponsorAffiliations()->toArray(),
                 $this->getThemeAffiliations()->toArray()
