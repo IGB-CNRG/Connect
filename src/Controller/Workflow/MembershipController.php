@@ -450,7 +450,19 @@ class MembershipController extends AbstractController
             $person->removeRoomAffiliation($roomAffiliation);
         }
 
-        // todo handle supervisor/sponsor affiliations
+        // handle empty supervisor/sponsor affiliations
+        foreach($person->getThemeAffiliations() as $themeAffiliation){
+            foreach($themeAffiliation->getSponsorAffiliations() as $sponsorAffiliation){
+                if(!$sponsorAffiliation->getSponsor()){
+                    $themeAffiliation->removeSponsorAffiliation($sponsorAffiliation);
+                }
+            }
+            foreach($themeAffiliation->getSupervisorAffiliations() as $supervisorAffiliation){
+                if(!$supervisorAffiliation->getSupervisor()){
+                    $themeAffiliation->removeSupervisorAffiliation($supervisorAffiliation);
+                }
+            }
+        }
 
         $person->setUsername($person->getNetid());
         $person->setMembershipUpdatedAt(new DateTimeImmutable());
