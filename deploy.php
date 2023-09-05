@@ -7,7 +7,7 @@ require 'contrib/webpack_encore.php';
 
 // Config
 
-set('repository', 'git@github.com:IGBIllinois/CONNECT.git');
+set('repository', 'git@github.com:IGB-CNRG/Connect.git');
 
 add('shared_files', []);
 add('shared_dirs', ['public/media', 'public/uploads']);
