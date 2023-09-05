@@ -3,6 +3,7 @@
 namespace App\Tests\Entity;
 
 use App\Entity\Building;
+use DateTime;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
@@ -14,14 +15,31 @@ class HistoricalEntityTest extends TestCase
 
         // Test isCurrent
         $this->assertTrue($building->isCurrent(), 'No date information should result in a "current" entity');
-        $building->setStartedAt(new \DateTime('next week'));
+        $building->setStartedAt(new DateTime('next week'));
         $this->assertFalse($building->isCurrent(), 'Start date in the future should result in a non-current entity');
-        $building->setStartedAt(new \DateTime('2 days ago'));
+        $building->setStartedAt(new DateTime('2 days ago'));
         $this->assertTrue($building->isCurrent(), 'Start date in the past should result in a "current" entity');
-        $building->setEndedAt(new \DateTime('next week'));
+        $building->setEndedAt(new DateTime('next week'));
         $this->assertTrue($building->isCurrent(), 'End date in the future should result in a "current" entity');
-        $building->setEndedAt(new \DateTime('1 day ago'));
+        $building->setEndedAt(new DateTime('1 day ago'));
         $this->assertFalse($building->isCurrent(), 'End date in the past should result in a non-current entity');
+        $building->setStartedAt(new DateTime('today'))
+            ->setEndedAt(new DateTime('next week'));
+        $this->assertTrue($building->isCurrent(), 'Start date today should result in a current entity');
+        $building->setStartedAt(new DateTime('1 week ago'))
+            ->setEndedAt(new DateTime('today'));
+        $this->assertTrue($building->isCurrent(), 'End date today should result in a current entity');
+    }
+
+    public function testWasCurrentOnDate()
+    {
+        $building = new Building();
+
+        $someDate = new DateTime('8/23/23');
+        $building->setStartedAt($someDate);
+        $this->assertTrue($building->wasCurrentAtDate($someDate), 'Entities should be current on the day they begin');
+        $building->setStartedAt(null)->setEndedAt($someDate);
+        $this->assertTrue($building->wasCurrentAtDate($someDate), 'Entities should be current on the day they end');
     }
 
     public function testOverlap()

@@ -60,7 +60,8 @@ trait HistoricalEntityTrait
 
     public function wasCurrentAtDate(DateTimeInterface $date): bool
     {
-        return ($this->getStartedAt() === null || $this->getStartedAt() < $date)
-               && ($this->getEndedAt() === null || $this->getEndedAt() > $date);
+        $dateFormat = 'Ymd'; // Compare by string to avoid problems with times not matching up
+        return ($this->getStartedAt() === null || $this->getStartedAt()->format($dateFormat) <= $date->format($dateFormat))
+               && ($this->getEndedAt() === null || $this->getEndedAt()->format($dateFormat) >= $date->format($dateFormat));
     }
 }

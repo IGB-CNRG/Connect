@@ -16,6 +16,15 @@
         {% endif %}
         {{ person.name }}
     </h1>
+    {% if not person.isCurrent %}
+        <div class="callout callout-info">
+            This person is no longer associated with the IGB.
+        </div>
+    {% elseif not person.isMember %}
+        <div class="callout callout-info">
+            This person is not an IGB member.
+        </div>
+    {% endif %}
     <div class="row mb-2">
         <div class="col-lg"> {# todo play with the columns a bit for different sizes #}
             <div class="card mb-3">
@@ -44,14 +53,12 @@
                                 <td></td>{% endif %}
                         </tr>
                     {% endif %}
-                    {% if person.preferredFirstName %}
-                        <tr>
-                            <th>Preferred First Name</th>
-                            <td>{{ person.preferredFirstName }}</td>
-                            {% if is_granted('PERSON_EDIT', person) %}
-                                <td></td>{% endif %}
-                        </tr>
-                    {% endif %}
+                    <tr>
+                        <th>Preferred First Name</th>
+                        <td>{{ person.preferredFirstName }}</td>
+                        {% if is_granted('PERSON_EDIT', person) %}
+                            <td></td>{% endif %}
+                    </tr>
                     <tr>
                         <th>IGB Username</th>
                         <td>{{ person.username }}</td>
@@ -77,6 +84,18 @@
                             <td class="shrink"></td>
                         {% endif %}
                     </tr>
+                    {% if person.isMember %}
+                        <tr>
+                            <th>Start date</th>
+                            <td>{{ person.themeAffiliations|member|earliest|date('n/j/Y') }}</td>
+                        </tr>
+                    {% endif %}
+                    {% if not person.isCurrent %}
+                        <tr>
+                            <th>End date</th>
+                            <td>{{ person.themeAffiliations|latest|date('n/j/Y') }}</td>
+                        </tr>
+                    {% endif %}
                 </table>
             </div>
 
@@ -329,7 +348,7 @@
                             <th>Membership status</th>
                             <td>
                                 {{ workflow_place_label(person)|trans }}
-                                since {{ person.membershipUpdatedAt|date('n/j/y') }}
+                                - last updated {{ person.membershipUpdatedAt|date('n/j/y') }}
                             </td>
                             <td class="shrink"></td>
                         </tr>

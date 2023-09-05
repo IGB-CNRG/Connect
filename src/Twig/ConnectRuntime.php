@@ -6,10 +6,13 @@
 
 namespace App\Twig;
 
+use App\Entity\HistoricalEntityInterface;
 use App\Entity\Person;
 use App\Entity\SupervisorAffiliation;
 use App\Entity\Theme;
+use App\Entity\ThemeAffiliation;
 use App\Service\HistoricityManager;
+use DateTimeInterface;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ReadableCollection;
 use Twig\Extension\RuntimeExtensionInterface;
@@ -26,6 +29,13 @@ class ConnectRuntime implements RuntimeExtensionInterface
     public function getCurrent(Collection $collection): Collection
     {
         return $this->historicityManager->getCurrentEntities($collection);
+    }
+
+    public function getMember(Collection $collection): ReadableCollection
+    {
+        return $collection->filter(function (ThemeAffiliation $themeAffiliation) {
+            return !$themeAffiliation->getTheme()->getIsOutsideGroup();
+        });
     }
 
     public function getRoleName(string $rawRole): string
@@ -49,5 +59,29 @@ class ConnectRuntime implements RuntimeExtensionInterface
         return $collection->filter(function(SupervisorAffiliation $affiliation) use ($theme) {
             return $affiliation->getSuperviseeThemeAffiliation()->getTheme() === $theme;
         });
+    }
+
+    /**
+     * @param Collection|HistoricalEntityInterface[] $entities
+     * @return DateTimeInterface|null
+     */
+    public function earliest(Collection|array $entities): ?DateTimeInterface
+    {
+        if($entities instanceof Collection){
+            $entities = $entities->toArray();
+        }
+        return $this->historicityManager->getEarliest($entities);
+    }
+
+    /**
+     * @param Collection|HistoricalEntityInterface[] $entities
+     * @return DateTimeInterface|null
+     */
+    public function latest(Collection|array $entities): ?DateTimeInterface
+    {
+        if($entities instanceof Collection){
+            $entities = $entities->toArray();
+        }
+        return $this->historicityManager->getLatest($entities);
     }
 }

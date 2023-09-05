@@ -252,6 +252,22 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
             })->count() > 0;
     }
 
+    #[Groups(['person:read'])]
+    public function getIsMember(): bool
+    {
+        return $this->getThemeAffiliations()->filter(function (ThemeAffiliation $themeAffiliation) {
+                return !$themeAffiliation->getTheme()->getIsOutsideGroup();
+            })->count() > 0;
+    }
+
+    #[Groups(['person:read'])]
+    public function getIsCurrentMember(): bool
+    {
+        return $this->getThemeAffiliations()->filter(function (ThemeAffiliation $themeAffiliation) {
+                return $themeAffiliation->isCurrent() && !$themeAffiliation->getTheme()->getIsOutsideGroup();
+            })->count() > 0;
+    }
+
     public function setImageFile(?File $imageFile = null): void
     {
         $this->imageFile = $imageFile;
