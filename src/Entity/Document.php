@@ -34,7 +34,7 @@ class Document
     private ?Person $person = null;
 
     #[Vich\UploadableField(mapping: 'person_document', fileNameProperty: 'fileName', mimeType: 'mimeType', originalName: 'originalName')]
-    #[Assert\File(maxSize: "20M")]
+    #[Assert\File(maxSize: "100M")]
     private ?File $file = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
