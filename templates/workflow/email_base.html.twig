@@ -1,0 +1,80 @@
+{% apply inline_css(source('@styles/foundation-emails.css'), source('@styles/email_overrides.css')) %}
+    <html lang="en">
+    <head>
+        <title>{{ subject }}</title>
+    </head>
+    <body>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700');
+
+        @font-face {
+            font-family: 'Open+Sans';
+            font-style: normal;
+            font-weight: 400;
+        }
+    </style>
+    {% apply inky_to_html %}
+        <container>
+            <div class="email-header">
+                <a href="https://illinois.edu" style="border:0;">
+                    <img alt="University of Illinois Urbana-Champaign"
+                         src="https://skins.webservices.illinois.edu/files/62990/wizard_header.jpg?iIndex=0301T102014"
+                         style="vertical-align:top;width:100%;border:0;">
+                </a>
+                <row>
+                    <columns class="email-subtitle-column">
+                        <div class="email-subtitle">Carl R. Woese Institute for Genomic Biology | Connect</div>
+                    </columns>
+                </row>
+            </div>
+            <div class="email-content">
+                <spacer size="36px"></spacer>
+                {% block body %}
+
+                {% endblock %}
+                <row>
+                    <columns>
+                        {{ get_setting('notification_signature')|raw }}
+                    </columns>
+                </row>
+                <spacer size="24px"></spacer>
+            </div>
+            <div class="email-footer">
+                <spacer size="11px"></spacer>
+                <row>
+                    <columns>
+                        <center>
+                        <img alt="university logo" height="38" src="https://webservices.illinois.edu/webservices/images/skin/illinois/footerI.png" width="26">
+                        </center>
+                    </columns>
+                </row>
+                <spacer size="11px"></spacer>
+                <row>
+                    <columns>
+                        <p class="text-center"><a href="https://www.igb.illinois.edu/" style="color: #e2e3e4;">Carl R. Woese Institute for Genomic Biology</a></p>
+                        <p class="text-center email-footer-address">University of Illinois</p>
+                        <p class="text-center email-footer-address">1206 West Gregory Drive | MC-195 | Urbana, IL 61801</p>
+                        <p class="text-center email-footer-address">Contact: info-igb@illinois.edu</p>
+                    </columns>
+                </row>
+                <row>
+                    <columns>
+                        <center>
+                        <table class="email-socials">
+                            <tr>
+                                <td><a href="https://www.facebook.com/IGB.Illinois/" style="text-decoration:none;" target="_blank"><img alt="Facebook" height="28" src="https://skins.webservices.illinois.edu/webservices/public/social/logo-circle-white/Facebook.png" style="height:28px; width:28px;" title="Facebook" width="28"></a></td>
+                                <td><a href="https://www.instagram.com/igbillinois/" style="text-decoration:none;" target="_blank"><img alt="Instagram" height="28" src="https://skins.webservices.illinois.edu/webservices/public/social/logo-circle-white/Instagram.png" style="height:28px; width:28px;" title="Instagram" width="28"></a></td>
+                                <td><a href="https://twitter.com/IGBIllinois" style="text-decoration:none;" target="_blank"><img alt="Twitter" height="28" src="https://skins.webservices.illinois.edu/webservices/public/social/logo-circle-white/Twitter.png" style="height:28px; width:28px;" title="Twitter" width="28"></a></td>
+                                <td><a href="https://www.youtube.com/user/IGBIllinois" style="text-decoration:none;" target="_blank"><img alt="YouTube" height="28" src="https://skins.webservices.illinois.edu/webservices/public/social/logo-circle-white/YouTube.png" style="height:28px; width:28px;" title="YouTube" width="28"></a></td>
+                            </tr>
+                        </table>
+                        </center>
+                    </columns>
+                </row>
+                <spacer size="12px"></spacer>
+            </div>
+        </container>
+    {% endapply %}
+    </body>
+    </html>
+{% endapply %}

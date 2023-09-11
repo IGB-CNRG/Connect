@@ -1,0 +1,2 @@
+# Sends the weekly entry/exit digest every Friday at 4:30
+30 4 * * 5 root cd `cat /etc/connect_dir` && symfony console app:send-digest
