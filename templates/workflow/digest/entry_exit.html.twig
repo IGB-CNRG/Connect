@@ -1,11 +1,15 @@
 {% extends 'workflow/email_base.html.twig' %}
 {% block body %}
     <row>
-        <columns><h3>Entries</h3></columns>
+        <columns>
+            <h1>Connect Weekly Digest</h1>
+            <p>The following entries and exits have occurred this week:</p>
+        </columns>
     </row>
-
     <row>
         <columns>
+            <h2>Entries</h2>
+
             <table class="digest-table">
                 <tr>
                     <th>Name</th>
@@ -22,13 +26,9 @@
             </table>
         </columns>
     </row>
-
-    <row>
-        <columns><h3>Exits</h3></columns>
-    </row>
-
     <row>
         <columns>
+            <h2>Exits</h2>
             <table class="digest-table">
                 <tr>
                     <th>Name</th>

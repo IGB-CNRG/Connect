@@ -56,6 +56,20 @@ is a production server, set `APP_ENV=prod`.
 With the config finished, you can run `dep deploy` to deploy the latest release. Continue to
 the [Data import](#data-import) section below to complete first-run setup.
 
+### Cron setup
+
+Create a link in /etc/cron.d to the file connect.cron:
+
+```shell
+ln -s /path/to/deployment/current/connect.cron /etc/cron.d/connect
+```
+
+You will also need to create a file called `/etc/connect_dir` containing the connect installation directory:
+
+```shell
+echo "/path/to/deployment/current >> /etc/connect_dir"
+```
+
 ### Updating
 
 To update with deployer, simply run `dep deploy` to deploy the latest commit from the Github repo.

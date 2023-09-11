@@ -10,6 +10,7 @@ use App\Entity\DigestBuffer;
 use App\Repository\DigestBufferRepository;
 use App\Settings\SettingManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,22 +18,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
-use Twig\Environment;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
 
 #[AsCommand(
     name: 'app:send-digest',
-    description: 'Add a short description for your command',
+    description: 'Send a digest of all entries and exits (since the last time the digest was sent)',
 )]
 class SendDigestCommand extends Command
 {
     public function __construct(
         private readonly DigestBufferRepository $digestBufferRepository,
         private readonly EntityManagerInterface $entityManager,
-        private readonly Environment $twig,
         private readonly SettingManager $settingManager,
         private readonly MailerInterface $mailer,
         string $name = null
@@ -54,22 +49,21 @@ class SendDigestCommand extends Command
         // Add people to email from digest buffer
         $subject = 'Entry/Exit Digest';
         try {
-            $html = $this->twig->render('workflow/digest/entry_exit.html.twig', [
-                'subject' => $subject,
-                'entries' => $entryDigests,
-                'exits' => $exitDigests,
-            ]);
-
-            $email = (new Email())
+            $email = (new TemplatedEmail())
                 ->from($this->settingManager->get('notification_from'))
                 ->to($this->settingManager->get('digest_recipients'))
                 ->subject($subject)
-                ->html($html);
+                ->htmlTemplate('workflow/digest/entry_exit.html.twig')
+                ->context([
+                    'subject' => $subject,
+                    'entries' => $entryDigests,
+                    'exits' => $exitDigests,
+                ]);
 
             $this->mailer->send($email);
 
             // remove people from the buffer if the email sent successfully
-            foreach (array_merge($entryDigests, $exitDigests) as $digest){
+            foreach (array_merge($entryDigests, $exitDigests) as $digest) {
                 $this->digestBufferRepository->remove($digest);
             }
             $this->entityManager->flush();
@@ -77,10 +71,6 @@ class SendDigestCommand extends Command
             $io->success('Digest sent!');
 
             return Command::SUCCESS;
-        } catch (LoaderError|RuntimeError|SyntaxError $e) {
-            // Twig error
-            // display the error and exit
-            dump($e);
         } catch (TransportExceptionInterface $e) {
             // Mailer error
             // display the error and exit

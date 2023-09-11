@@ -3,6 +3,57 @@
  * All rights reserved.
  */
 
+body {
+    background: #f1f1f2;
+}
+
+
+/* Email styles */
+table.container {
+    max-width: 800px;
+    width: auto;
+}
+
+.email-header {
+    background: #13294B;
+}
+.email-subtitle-column {
+    padding-top: 10px;
+    padding-right: 5%;
+    padding-left: 5%;
+    padding-bottom: 12px !important;
+}
+.email-subtitle {
+    color: #E2E3E4 !important;
+    text-align: center !important;
+    font-size: 20px;
+}
+
+.email-content {
+    background: #fff;
+    /*padding: 36px 5% 24px 5%;*/
+}
+
+.email-footer {
+    background: #13294B;
+}
+.email-footer-address {
+    font-size: 85%;
+    color: #e2e3e4;
+    line-height:24px
+}
+
+table.email-socials {
+    width: auto !important;
+}
+table.email-socials td {
+    width: 42px;
+    text-align: center;
+}
+
+.digest-table {
+    width: 100%;
+}
 .digest-table th {
     font-weight: bold;
     border-bottom: 1px solid #666;
