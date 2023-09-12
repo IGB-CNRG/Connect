@@ -18,9 +18,13 @@
                 </tr>
                 {% for entry in entries %}
                     <tr>
-                        <td>{{ entry.person }}</td>
+                        <td><a href="{{ url('person_view', {'slug':entry.person.slug}) }}">{{ entry.person }}</a></td>
                         <td>{{ entry.date|date('n/j/Y') }}</td>
                         <td>{{ entry.notes }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3">No entries</td>
                     </tr>
                 {% endfor %}
             </table>
@@ -38,7 +42,7 @@
                 </tr>
                 {% for exit in exits %}
                     <tr>
-                        <td>{{ exit.person }}</td>
+                        <td><a href="{{ url('person_view', {'slug':exit.person.slug}) }}">{{ exit.person }}</a></td>
                         <td>{{ exit.date|date('n/j/Y') }}</td>
                         <td>{{ exit.notes }}</td>
                         <td>
@@ -46,6 +50,10 @@
                                 {{ exit.person.exitForm.exitReason }}
                             {% endif %}
                         </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4">No exits</td>
                     </tr>
                 {% endfor %}
             </table>
