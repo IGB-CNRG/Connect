@@ -12,7 +12,7 @@
             <li>If any previous theme affiliations should end when this one begins, select them below.</li>
         </ul>
     </div>
-    {% form_theme form "form_themes/_inline-buttons-theme.html.twig" %}
+    {% form_theme form "form_themes/_inline-buttons-theme.html.twig" 'form_themes/_themeAffiliation.html.twig' %}
     {{ block('form_card') }}
 {% endblock %}
 {% block form_card_body %}
@@ -24,9 +24,19 @@
         <div class="col-lg">{{ form_row(form.title) }}</div>
         <div class="col-lg">{{ form_row(form.themeRoles) }}</div>
     </div>
-    <div class="row">
-        <div class="col-lg">{{ form_row(form.facultySponsors) }}</div>
-        <div class="col-lg">{{ form_row(form.supervisors) }}</div>
+    <div class="row mb-2">
+        <div class="col-lg" {{ stimulus_controller('form-collection', {'confirmDeletion':false}) }}>
+            {{ form_row(form.sponsorAffiliations) }}
+            <button type="button" class="btn btn-sm btn-success" data-action="form-collection#add">Add
+                Sponsor
+            </button>
+        </div>
+        <div class="col-lg" {{ stimulus_controller('form-collection', {'confirmDeletion':false}) }}>
+            {{ form_row(form.supervisorAffiliations) }}
+            <button type="button" class="btn btn-sm btn-success" data-action="form-collection#add">Add
+                Supervisor
+            </button>
+        </div>
     </div>
     {% if form.positionWhenJoined is defined %}
         <div class="row">

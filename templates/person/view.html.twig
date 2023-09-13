@@ -196,7 +196,7 @@
                     </table>
                 </div>
             {% endfor %}
-            {% if is_granted('PERSON_EDIT', person) %}
+            {% if workflow_has_marked_place(person, 'active') and is_granted('PERSON_EDIT', person) %}
                 <a class="btn btn-sm btn-success mb-3"
                    href="{{ path('person_add_theme_affiliation', {'slug': person.slug}) }}"
                 >
