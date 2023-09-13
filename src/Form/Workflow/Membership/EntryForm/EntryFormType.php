@@ -88,6 +88,7 @@ class EntryFormType extends AbstractType
                     'show_position_when_joined' => $options['show_position_when_joined'],
                 ],
                 'required' => true,
+                'allow_delete' => false,
             ])
             ->add('officeNumber', TextType::class, [
                 'required' => false,

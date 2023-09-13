@@ -109,46 +109,48 @@
 {% endblock %}
 
 {% block theme_affiliation_row %}
-    <div class="collection-row">
-        <div class="row">
-            <div class="col-lg">{{ form_row(form.theme) }}</div>
-            <div class="col-lg">
-                {% if form.vars.name != "0" %}
-                    <div class="float-end">
-                        <a href="#" data-action="form-collection#deleteRow">
-                            <span class="fa fa-trash"></span>
-                        </a>
-                    </div>
-                {% endif %}
-                {{ form_row(form.memberCategory) }}
-            </div>
-        </div>
-        <div class="row mb-2">
-            <div class="col-lg" {{ stimulus_controller('form-collection', {'confirmDeletion':false}) }}>
-                {{ form_row(form.sponsorAffiliations) }}
-                <button type="button" class="btn btn-sm btn-success" data-action="form-collection#add">
-                    <span class="fa fa-plus"></span> Add faculty sponsor
-                </button>
-            </div>
-            <div class="col-lg" {{ stimulus_controller('form-collection', {'confirmDeletion':false}) }}>
-                {{ form_row(form.supervisorAffiliations) }}
-                <button type="button" class="btn btn-sm btn-success" data-action="form-collection#add">
-                    <span class="fa fa-plus"></span> Add supervisor
-                </button>
-            </div>
-        </div>
-        {% if form.positionWhenJoined is defined %}
+    {% if form.theme is defined %}
+        <div class="collection-row">
             <div class="row">
-                <div class="col">
-                    {{ form_row(form.positionWhenJoined) }}
+                <div class="col-lg">{{ form_row(form.theme) }}</div>
+                <div class="col-lg">
+                    {% if form.vars.name != "0" %} {# todo need a better condition #}
+                        <div class="float-end">
+                            <a href="#" data-action="form-collection#deleteRow">
+                                <span class="fa fa-trash"></span>
+                            </a>
+                        </div>
+                    {% endif %}
+                    {{ form_row(form.memberCategory) }}
                 </div>
             </div>
-        {% endif %}
-        <div class="row">
-            <div class="col-lg">{{ form_row(form.startedAt) }}</div>
-            <div class="col-lg">{{ form_row(form.endedAt) }}</div>
+            <div class="row mb-2">
+                <div class="col-lg" {{ stimulus_controller('form-collection', {'confirmDeletion':false}) }}>
+                    {{ form_row(form.sponsorAffiliations) }}
+                    <button type="button" class="btn btn-sm btn-success" data-action="form-collection#add">
+                        <span class="fa fa-plus"></span> Add faculty sponsor
+                    </button>
+                </div>
+                <div class="col-lg" {{ stimulus_controller('form-collection', {'confirmDeletion':false}) }}>
+                    {{ form_row(form.supervisorAffiliations) }}
+                    <button type="button" class="btn btn-sm btn-success" data-action="form-collection#add">
+                        <span class="fa fa-plus"></span> Add supervisor
+                    </button>
+                </div>
+            </div>
+            {% if form.positionWhenJoined is defined %}
+                <div class="row">
+                    <div class="col">
+                        {{ form_row(form.positionWhenJoined) }}
+                    </div>
+                </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-lg">{{ form_row(form.startedAt) }}</div>
+                <div class="col-lg">{{ form_row(form.endedAt) }}</div>
+            </div>
         </div>
-    </div>
+    {% endif %}
 {% endblock %}
 
 {% block sponsor_affiliation_row %}
@@ -179,7 +181,9 @@
 
 
 {% block room_affiliation_row %}
-    {{ form_row(form.room, {'row_attr':{'class':'mb-0'}}) }}
+    {% if form.room is defined %}
+        {{ form_row(form.room, {'row_attr':{'class':'mb-0'}}) }}
+    {% endif %}
 {% endblock %}
 
 

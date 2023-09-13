@@ -53,7 +53,7 @@ class HistoricityManager
      */
     public function getEarliest(array $entities): ?DateTimeInterface
     {
-        $initial = isset($entities[0]) ? $entities[0]->getStartedAt() : null;
+        $initial = isset(array_values($entities)[0]) ? array_values($entities)[0]->getStartedAt() : null;
 
         return array_reduce($entities, function ($carry, HistoricalEntityInterface $item) {
             if ($carry === null || $item->getStartedAt() === null) {
@@ -73,7 +73,7 @@ class HistoricityManager
      */
     public function getLatest(array $entities): ?DateTimeInterface
     {
-        $initial = isset($entities[0]) ? $entities[0]->getEndedAt() : null;
+        $initial = isset(array_values($entities)[0]) ? array_values($entities)[0]->getEndedAt() : null;
 
         return array_reduce($entities, function ($carry, HistoricalEntityInterface $item) {
             if ($carry === null || $item->getEndedAt() === null) {
