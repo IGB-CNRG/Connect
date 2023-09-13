@@ -9,14 +9,22 @@ namespace App\Service;
 use App\Entity\HistoricalEntityInterface;
 use DateTimeInterface;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ReadableCollection;
 use Doctrine\ORM\QueryBuilder;
 
 class HistoricityManager
 {
-    public function getCurrentEntities(Collection $collection): Collection
+    public function getCurrentEntities(Collection $collection): ReadableCollection
     {
-        return $collection->filter(function ($entity) {
+        return $collection->filter(function (HistoricalEntityInterface $entity) {
             return $entity->isCurrent();
+        });
+    }
+
+    public function getCurrentAndFutureEntities(Collection $collection): ReadableCollection
+    {
+        return $collection->filter(function (HistoricalEntityInterface $entity) {
+            return !$entity->isPast();
         });
     }
 

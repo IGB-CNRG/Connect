@@ -79,10 +79,10 @@ class MembershipController extends AbstractController
         }
 
         // add new empty affiliations if there are no current affiliations (there shouldn't be!)
-        if ($historicityManager->getCurrentEntities($person->getRoomAffiliations())->count() === 0) {
+        if ($historicityManager->getCurrentAndFutureEntities($person->getRoomAffiliations())->count() === 0) {
             $person->addRoomAffiliation((new RoomAffiliation()));
         }
-        if ($historicityManager->getCurrentEntities($person->getThemeAffiliations())->count() === 0) {
+        if ($historicityManager->getCurrentAndFutureEntities($person->getThemeAffiliations())->count() === 0) {
             $person->addThemeAffiliation($factory->new());
         }
 

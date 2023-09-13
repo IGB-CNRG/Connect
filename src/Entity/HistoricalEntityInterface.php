@@ -20,6 +20,8 @@ interface HistoricalEntityInterface
 
     public function isCurrent(): bool;
 
+    public function isPast(): bool;
+
     public function overlaps($that): bool;
 
     public function wasCurrentAtDate(DateTimeInterface $date): bool;

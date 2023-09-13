@@ -18,6 +18,7 @@ class ConnectExtension extends AbstractExtension
             // parameter: ['is_safe' => ['html']]
             // Reference: https://twig.symfony.com/doc/2.x/advanced.html#automatic-escaping
             new TwigFilter('current', [ConnectRuntime::class, 'getCurrent']),
+            new TwigFilter('currentAndFuture', [ConnectRuntime::class, 'getCurrentAndFuture']),
             new TwigFilter('member', [ConnectRuntime::class, 'getMember']),
             new TwigFilter('role', [ConnectRuntime::class, 'getRoleName']),
             new TwigFilter('theme', [ConnectRuntime::class, 'filterByTheme']),

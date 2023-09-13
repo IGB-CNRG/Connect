@@ -52,6 +52,13 @@ trait HistoricalEntityTrait
         return $this->wasCurrentAtDate($now);
     }
 
+    public function isPast(): bool
+    {
+        $dateFormat = 'Ymd'; // Compare by string to avoid problems with times not matching up
+        $now = new DateTimeImmutable();
+        return $this->getEndedAt() !== null && $this->getEndedAt()->format($dateFormat) < $now->format($dateFormat);
+    }
+
     public function overlaps($that): bool
     {
         return ($this->getStartedAt() === null || $that->getEndedAt() === null || $that->getEndedAt() > $this->getStartedAt())

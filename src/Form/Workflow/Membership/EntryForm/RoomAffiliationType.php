@@ -26,7 +26,7 @@ class RoomAffiliationType extends AbstractType
             $affiliation = $event->getData();
             $form = $event->getForm();
 
-            if(!$affiliation || $affiliation->isCurrent()){
+            if(!$affiliation || !$affiliation->isPast()){
                 $form->add('room', EntityType::class, [
                     'class' => Room::class,
                     'attr' => [

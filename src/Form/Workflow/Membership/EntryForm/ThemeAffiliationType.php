@@ -31,7 +31,7 @@ class ThemeAffiliationType extends AbstractType
             $affiliation = $event->getData();
             $form = $event->getForm();
 
-            if(!$affiliation || $affiliation->isCurrent()){
+            if(!$affiliation || !$affiliation->isPast()){
                 $form
                     ->add('theme', ThemeType::class, [
                         'query_builder' => function (ThemeRepository $themeRepository) {
