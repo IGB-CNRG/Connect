@@ -22,6 +22,7 @@ security:
         enable_csrf: true
         service: Symfony\Component\Ldap\Ldap
         dn_string: '%env(LDAP_DN)%'
+        success_handler: App\Security\SkipAPISuccessHandler
       switch_user: true
       logout:
         path: logout
@@ -30,7 +31,7 @@ security:
   # Note: Only the *first* access control that matches will be used
   access_control:
     - { path: ^/login, roles: PUBLIC_ACCESS } # Anyone can see the login page
-    - { path: ^/workflow/entry/entry_form, roles: PUBLIC_ACCESS } #Anyone can access the entry form
+#    - { attributes: {'_route': 'membership_entryForm'}, roles: PUBLIC_ACCESS } #Anyone can access the entry form
     - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
 
   role_hierarchy:
