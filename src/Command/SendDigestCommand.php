@@ -49,9 +49,11 @@ class SendDigestCommand extends Command
         // Add people to email from digest buffer
         $subject = 'Entry/Exit Digest';
         try {
+            $toAddresses = array_map(fn($address) => trim($address), // Get array from semicolon-delimited string
+                explode(';', $this->settingManager->get('digest_recipients')));
             $email = (new TemplatedEmail())
                 ->from($this->settingManager->get('notification_from'))
-                ->to($this->settingManager->get('digest_recipients'))
+                ->to(...$toAddresses)
                 ->subject($subject)
                 ->htmlTemplate('workflow/digest/entry_exit.html.twig')
                 ->context([
