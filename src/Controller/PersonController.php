@@ -26,6 +26,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -144,7 +145,11 @@ class PersonController extends AbstractController
     ): Response {
         $themeAffiliation = (new ThemeAffiliation())
             ->setPerson($person);
-        $form = $this->createForm(ThemeAffiliationType::class, $themeAffiliation, ['show_position_when_joined'=>$this->isGranted('ROLE_ADMIN')])
+        $form = $this->createForm(
+            ThemeAffiliationType::class,
+            $themeAffiliation,
+            ['show_position_when_joined' => $this->isGranted('ROLE_ADMIN')]
+        )
             ->add('endPreviousAffiliations', EntityType::class, [
                 'required' => false,
                 'mapped' => false,
@@ -186,7 +191,11 @@ class PersonController extends AbstractController
         EntityManagerInterface $em,
         ActivityLogger $logger
     ): Response {
-        $form = $this->createForm(EndAffiliationType::class, $themeAffiliation, ['data_class'=>ThemeAffiliation::class]);
+        $form = $this->createForm(
+            EndAffiliationType::class,
+            $themeAffiliation,
+            ['data_class' => ThemeAffiliation::class]
+        );
         $form->add('save', SubmitType::class);
 
         $form->handleRequest($request);
@@ -268,7 +277,11 @@ class PersonController extends AbstractController
         ActivityLogger $logger
     ): Response {
         $this->denyAccessUnlessGranted('PERSON_EDIT', $person);
-        $form = $this->createForm(EndAffiliationType::class, $roomAffiliation, ['data_class'=>RoomAffiliation::class]);
+        $form = $this->createForm(
+            EndAffiliationType::class,
+            $roomAffiliation,
+            ['data_class' => RoomAffiliation::class]
+        );
         $form->add('save', SubmitType::class);
 
         $form->handleRequest($request);
@@ -284,6 +297,16 @@ class PersonController extends AbstractController
             'person' => $person,
             'roomAffiliation' => $roomAffiliation,
             'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/_fragments/non-unique-error', name: 'person_nonuniqueerrorfragment')]
+    public function nonUniqueErrorFragment(#[MapQueryParameter] int $id, PersonRepository $personRepository): Response
+    {
+        $person = $personRepository->find($id);
+        // todo when we enable the workflow, show a different message when not logged in
+        return $this->render('person/_nonUniqueError.html.twig', [
+            'person' => $person,
         ]);
     }
 }

@@ -62,7 +62,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(['log:person', 'log:related_person'])]
+    #[Groups(['log:person', 'log:related_person', 'person:read'])]
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]

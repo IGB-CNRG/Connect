@@ -4,7 +4,6 @@
  */
 
 import {Controller} from "@hotwired/stimulus";
-import Routing from "fos-router";
 
 const $ = require("jquery");
 
@@ -12,6 +11,7 @@ export default class extends Controller {
     static targets = ['uin'];
     static values = {
         'url': String,
+        'errorUrl': String,
     };
 
     checkIfUinUnique() {
@@ -26,8 +26,17 @@ export default class extends Controller {
                     $(this.uinTarget).next('.invalid-feedback').remove();
                     if (data.length === 1) {
                         const person = data[0];
-                        const personUrl = Routing.generate('person_view', {'slug': person.slug});
-                        $(this.uinTarget).addClass('is-invalid').after('<div class="invalid-feedback">A user with this UIN already exists: <a href="' + personUrl + '">' + person.name + '</a></div>');
+                        // todo make sure the person we found isn't the same as the person we're editing
+                        fetch(`${this.errorUrlValue}?id=${person.id}`).then(response=>{
+                            if(response.status===200){
+                                return response.text();
+                            }
+                        }).then(html => {
+                            $(this.uinTarget).addClass('is-invalid').after(html);
+                        }).catch(function (err) {
+                            // There was an error
+                            console.warn('Something went wrong.', err);
+                        });
                     } else {
                         $(this.uinTarget).removeClass('is-invalid');
                     }
