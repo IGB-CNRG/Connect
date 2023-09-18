@@ -26,9 +26,14 @@ class ConnectRuntime implements RuntimeExtensionInterface
         $this->historicityManager = $historicityManager;
     }
 
-    public function getCurrent(Collection $collection): Collection
+    public function getCurrent(Collection $collection): ReadableCollection
     {
         return $this->historicityManager->getCurrentEntities($collection);
+    }
+
+    public function getCurrentAndFuture(Collection $collection): ReadableCollection
+    {
+        return $this->historicityManager->getCurrentAndFutureEntities($collection);
     }
 
     public function getMember(Collection $collection): ReadableCollection

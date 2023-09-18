@@ -16,7 +16,7 @@
         {% endif %}
         {{ person.name }}
     </h1>
-    {% if not person.isCurrent %}
+    {% if workflow_has_marked_place(person, 'inactive') %}
         <div class="callout callout-info">
             This person is no longer associated with the IGB.
         </div>
@@ -99,7 +99,7 @@
                 </table>
             </div>
 
-            {% for themeAffiliation in person.themeAffiliations|current %}
+            {% for themeAffiliation in person.themeAffiliations|currentAndFuture %}
                 <div class="card mb-3">
                     <div class="card-header">
                         <span class="fas fa-users-between-lines float-end text-muted mt-1"></span>
@@ -116,7 +116,7 @@
                                 </a>
                             </td>
                         {% endif %}
-                        {% for sponsorAffiliation in themeAffiliation.sponsorAffiliations|current %}
+                        {% for sponsorAffiliation in themeAffiliation.sponsorAffiliations|currentAndFuture %}
                             <tr>
                                 <th>Faculty Sponsor</th>
                                 <td>
@@ -148,7 +148,7 @@
                                 {% endif %}
                             </tr>
                         {% endfor %}
-                        {% for supervisorAffiliation in themeAffiliation.supervisorAffiliations|current %}
+                        {% for supervisorAffiliation in themeAffiliation.supervisorAffiliations|currentAndFuture %}
                             <tr>
                                 <th>Supervisor</th>
                                 <td>
@@ -180,11 +180,11 @@
                                 {% endif %}
                             </tr>
                         {% endfor %}
-                        {% if person.superviseeAffiliations|current|theme(themeAffiliation.theme)|length >0 %}
+                        {% if person.superviseeAffiliations|currentAndFuture|theme(themeAffiliation.theme)|length >0 %}
                             <tr>
                                 <th>Supervisee(s)</th>
                                 <td>
-                                    {% for superviseeAffiliation in person.superviseeAffiliations|current|theme(themeAffiliation.theme) %}
+                                    {% for superviseeAffiliation in person.superviseeAffiliations|currentAndFuture|theme(themeAffiliation.theme) %}
                                         <a class="text-nowrap"
                                            href="{{ path('person_view', {'slug': superviseeAffiliation.supervisee.slug}) }}">{{ superviseeAffiliation.supervisee }}</a>
                                     {% endfor %}
@@ -196,7 +196,7 @@
                     </table>
                 </div>
             {% endfor %}
-            {% if is_granted('PERSON_EDIT', person) %}
+            {% if workflow_has_marked_place(person, 'active') and is_granted('PERSON_EDIT', person) %}
                 <a class="btn btn-sm btn-success mb-3"
                    href="{{ path('person_add_theme_affiliation', {'slug': person.slug}) }}"
                 >
@@ -602,9 +602,15 @@
         {% endif %}
     {% endif %}
 
+    {% if workflow_can(person, constant('App\\Workflow\\Membership::TRANS_REACTIVATE')) %}
+        <a class="btn btn-success" href="{{ path('membership_reentryForm', {'slug': person.slug}) }}">
+            <span class="fa fa-door-open"></span> Re-entry form
+        </a>
+    {% endif %}
+
     {% if workflow_can(person, constant('App\\Workflow\\Membership::TRANS_FORCE_EXIT_FORM')) %}
         <a class="btn btn-danger" href="{{ path('membership_exitForm', {'slug': person.slug}) }}">
-            <span class="fa fa-user-minus"></span> Exit form
+            <span class="fa fa-door-closed"></span> Exit form
         </a>
     {% endif %}
 {% endblock %}

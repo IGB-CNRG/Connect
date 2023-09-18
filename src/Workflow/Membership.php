@@ -7,14 +7,27 @@
 namespace App\Workflow;
 
 use App\Entity\Person;
+use App\Entity\RoomAffiliation;
+use App\Entity\ThemeAffiliation;
+use App\Log\ActivityLogger;
+use App\Service\EntityManagerAware;
+use App\Service\HistoricityManagerAware;
 use App\Workflow\Approval\ApprovalStrategy;
+use DateTimeImmutable;
 use Symfony\Component\DependencyInjection\Attribute\TaggedLocator;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\Workflow\Transition;
 use Symfony\Component\Workflow\WorkflowInterface;
+use Symfony\Contracts\Service\Attribute\SubscribedService;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
+use Symfony\Contracts\Service\ServiceSubscriberTrait;
 
-class Membership
+class Membership implements ServiceSubscriberInterface
 {
+    use ServiceSubscriberTrait;
+    use HistoricityManagerAware;
+    use EntityManagerAware;
+
     public const PLACE_NEED_ENTRY_FORM = 'need_entry_form';
     public const PLACE_ENTRY_FORM_SUBMITTED = 'entry_form_submitted';
     public const PLACE_NEED_CERTIFICATES = 'need_certificates';
@@ -104,9 +117,10 @@ class Membership
      */
     public function getApprovalEmails(Person $person, ?Transition $transition = null): array
     {
-        if($approvalStrategy = $this->getApprovalStrategy($person, $transition)){
+        if ($approvalStrategy = $this->getApprovalStrategy($person, $transition)) {
             return $approvalStrategy->getApprovalEmails($person);
         }
+
         return [];
     }
 
@@ -141,5 +155,70 @@ class Membership
     public function getPlace(Person $person): string
     {
         return array_keys($this->membershipStateMachine->getMarking($person)->getPlaces())[0];
+    }
+
+    public function processEntry(Person $person, $trySilent = false): void
+    {
+        // Get the earliest start date from the new theme affiliations added
+        $newAffiliations = $person->getThemeAffiliations()->filter(
+            fn(ThemeAffiliation $themeAffiliation) => $themeAffiliation->getId() === null
+        );
+        $startDate = $this->historicityManager()->getEarliest($newAffiliations->toArray());
+
+        // handle empty room affiliations. only update new ones.
+        $newRooms = $person->getRoomAffiliations()->filter(
+            fn(RoomAffiliation $affiliation) => $affiliation->getId() === null
+        );
+        foreach ($newRooms as $roomAffiliation) {
+            $roomAffiliation->setStartedAt($startDate);
+            if (!$roomAffiliation->getRoom()) {
+                $person->removeRoomAffiliation($roomAffiliation);
+            }
+        }
+
+        // handle empty supervisor/sponsor affiliations
+        foreach ($newAffiliations as $themeAffiliation) {
+            foreach ($themeAffiliation->getSponsorAffiliations() as $sponsorAffiliation) {
+                $sponsorAffiliation->setStartedAt($themeAffiliation->getStartedAt())
+                    ->setEndedAt($themeAffiliation->getEndedAt());
+                if (!$sponsorAffiliation->getSponsor()) {
+                    $themeAffiliation->removeSponsorAffiliation($sponsorAffiliation);
+                }
+            }
+            foreach ($themeAffiliation->getSupervisorAffiliations() as $supervisorAffiliation) {
+                $supervisorAffiliation->setStartedAt($themeAffiliation->getStartedAt())
+                    ->setEndedAt($themeAffiliation->getEndedAt());
+                if (!$supervisorAffiliation->getSupervisor()) {
+                    $themeAffiliation->removeSupervisorAffiliation($supervisorAffiliation);
+                }
+            }
+        }
+
+        if (!$person->getUsername()) {
+            $person->setUsername($person->getNetid());
+        }
+        $person->setMembershipUpdatedAt(new DateTimeImmutable());
+        $this->entityManager()->persist($person);
+
+        // if possible, reactivate. otherwise, if possible, force entry. otherwise, submit entry for approval.
+        // todo when workflows are re-enabled, this needs to be updated with the REENTER transition for non-silent forms
+        if ($this->membershipStateMachine->can($person, Membership::TRANS_REACTIVATE)) {
+            $this->logger()->log($person, 'Reactivated');
+            $this->membershipStateMachine->apply($person, Membership::TRANS_REACTIVATE);
+        } elseif ($this->membershipStateMachine->can($person, Membership::TRANS_FORCE_ENTRY_FORM)
+            && $trySilent) {
+            $this->logger()->log($person, 'Silently submitted entry form', false);
+            $this->membershipStateMachine->apply($person, Membership::TRANS_FORCE_ENTRY_FORM);
+//        } else {
+//            $logger->log($person, 'Submitted entry form');
+//            $membershipStateMachine->apply($person, Membership::TRANS_SUBMIT_ENTRY_FORM);
+        }
+    }
+
+
+    #[SubscribedService]
+    private function logger(): ActivityLogger
+    {
+        return $this->container->get(__CLASS__.'::'.__FUNCTION__);
     }
 }

@@ -10,9 +10,6 @@ use App\Entity\Document;
 use App\Entity\ExitForm;
 use App\Entity\Person;
 use App\Entity\RoomAffiliation;
-use App\Entity\SponsorAffiliation;
-use App\Entity\SupervisorAffiliation;
-use App\Entity\ThemeAffiliation;
 use App\Enum\DocumentCategory;
 use App\Form\Workflow\ApproveType;
 use App\Form\Workflow\Membership\Certificate\CertificateUploadType;
@@ -24,13 +21,12 @@ use App\Log\ActivityLogger;
 use App\Repository\PersonRepository;
 use App\Service\CertificateHelper;
 use App\Service\HistoricityManager;
+use App\Service\ThemeAffiliationFactory;
 use App\Workflow\Membership;
-use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,26 +38,55 @@ class MembershipController extends AbstractController
 {
     /**
      * This route provides a blank entry form for a new user
+     * @param Person|null $person
      * @param Request $request
      * @param EntityManagerInterface $em
-     * @param ActivityLogger $logger
      * @param WorkflowInterface $membershipStateMachine
+     * @param ThemeAffiliationFactory $factory
+     * @param Membership $membership
+     * @param HistoricityManager $historicityManager
      * @return Response
      */
-    #[Route('/membership/entry-form', name: 'membership_entryForm')]
+    #[Route('/membership/entry-form', name: 'membership_entryForm', defaults: ['person' => null])]
+    #[Route('membership/entry-form/{slug}', name: 'membership_continueEntryForm')]
+    #[Route('membership/reentry-form/{slug}', name: 'membership_reentryForm')] // todo does this even need to be a separate route from continue?
     #[IsGranted('ROLE_APPROVER')] // todo remove this when we go live with the workflow
     public function entryForm(
+        ?Person $person,
         Request $request,
         EntityManagerInterface $em,
-        ActivityLogger $logger,
-        WorkflowInterface $membershipStateMachine
+        WorkflowInterface $membershipStateMachine,
+        ThemeAffiliationFactory $factory,
+        Membership $membership,
+        HistoricityManager $historicityManager
     ): Response {
-        $themeAffiliation = (new ThemeAffiliation())
-            ->addSponsorAffiliation(new SponsorAffiliation())
-            ->addSupervisorAffiliation(new SupervisorAffiliation());
-        $person = (new Person())
-            ->addRoomAffiliation(new RoomAffiliation())
-            ->addThemeAffiliation($themeAffiliation);
+        if ($person === null && $request->get('_route') !== "membership_entryForm") {
+            throw $this->createNotFoundException();
+        }
+        if ($person === null) {
+            $person = new Person();
+        }
+
+        if ($request->get('_route') === "membership_reentryForm"
+            && !$membershipStateMachine->can($person, Membership::TRANS_REACTIVATE)) {
+            throw $this->createAccessDeniedException();
+        }
+        if (($request->get('_route') === "membership_entryForm"
+                || $request->get('_route') === "membership_continueEntryForm")
+            && !($membershipStateMachine->can($person, Membership::TRANS_FORCE_ENTRY_FORM)
+                || $membershipStateMachine->can($person, Membership::TRANS_SUBMIT_ENTRY_FORM))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        // add new empty affiliations if there are no current affiliations (there shouldn't be!)
+        if ($historicityManager->getCurrentAndFutureEntities($person->getRoomAffiliations())->count() === 0) {
+            $person->addRoomAffiliation((new RoomAffiliation()));
+        }
+        if ($historicityManager->getCurrentAndFutureEntities($person->getThemeAffiliations())->count() === 0) {
+            $person->addThemeAffiliation($factory->new());
+        }
+
+        // todo the allow_silent logic might need to change when we enable the workflow
         $form = $this->createForm(EntryFormType::class, $person, [
             'allow_silent' => $membershipStateMachine->can($person, Membership::TRANS_FORCE_ENTRY_FORM),
             'show_position_when_joined' => $this->isGranted('ROLE_ADMIN'),
@@ -72,55 +97,8 @@ class MembershipController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->processEntryForm(
-                $form,
-                $person,
-                $themeAffiliation->getStartedAt(),
-                $em,
-                $logger,
-                $membershipStateMachine
-            );
-            $em->flush();
-
-            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
-        }
-
-        return $this->render('workflow/membership/entry_form.html.twig', [
-            'person' => $person,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    #[Route('membership/entry-form/{slug}', name: 'membership_continueEntryForm')]
-    public function continueEntryForm(
-        Person $person,
-        Request $request,
-        EntityManagerInterface $em,
-        WorkflowInterface $membershipStateMachine,
-        ActivityLogger $logger
-    ): Response {
-        if ($this->getUser() !== $person) {
-            throw $this->createAccessDeniedException();
-        }
-        // Create any missing affiliations
-        if ($person->getRoomAffiliations()->count() === 0) {
-            $roomAffiliation = new RoomAffiliation();
-            $person->addRoomAffiliation($roomAffiliation);
-        }
-
-        $form = $this->createForm(EntryFormType::class, $person, [
-            'allow_silent' => $this->isGranted('ROLE_APPROVER'),
-            'show_position_when_joined' => $this->isGranted('ROLE_ADMIN'),
-            'use_captcha' => !$this->isGranted('IS_AUTHENTICATED_FULLY'),
-        ])
-            ->add('submit', SubmitType::class);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            // todo what do we do if the person has more than one theme affiliation? does it matter?
-            $startDate = $person->getThemeAffiliations()[0]->getStartedAt();
-
-            $this->processEntryForm($form, $person, $startDate, $em, $logger, $membershipStateMachine);
+            $silent = $form->has('isSilent') && $form->get('isSilent')->getData();
+            $membership->processEntry($person, $silent);
 
             $em->flush();
 
@@ -393,6 +371,8 @@ class MembershipController extends AbstractController
         ]);
     }
 
+    // todo move this function to Membership
+
     /**
      * @param HistoricityManager $historicityManager
      * @param Person $person
@@ -425,59 +405,4 @@ class MembershipController extends AbstractController
         }
     }
 
-    /**
-     * Processes a submitted entry form. This function flushes the Entity Manager!
-     *
-     * @param FormInterface $form
-     * @param Person $person
-     * @param DateTimeInterface $startDate
-     * @param EntityManagerInterface $em
-     * @param ActivityLogger $logger
-     * @param WorkflowInterface $membershipStateMachine
-     * @return void
-     */
-    protected function processEntryForm(
-        FormInterface $form,
-        Person $person,
-        DateTimeInterface $startDate,
-        EntityManagerInterface $em,
-        ActivityLogger $logger,
-        WorkflowInterface $membershipStateMachine
-    ): void {
-        $roomAffiliation = $person->getRoomAffiliations()[0];
-        $roomAffiliation->setStartedAt($startDate);
-        if (!$roomAffiliation->getRoom()) {
-            $person->removeRoomAffiliation($roomAffiliation);
-        }
-
-        // handle empty supervisor/sponsor affiliations
-        foreach($person->getThemeAffiliations() as $themeAffiliation){
-            foreach($themeAffiliation->getSponsorAffiliations() as $sponsorAffiliation){
-                if(!$sponsorAffiliation->getSponsor()){
-                    $themeAffiliation->removeSponsorAffiliation($sponsorAffiliation);
-                }
-            }
-            foreach($themeAffiliation->getSupervisorAffiliations() as $supervisorAffiliation){
-                if(!$supervisorAffiliation->getSupervisor()){
-                    $themeAffiliation->removeSupervisorAffiliation($supervisorAffiliation);
-                }
-            }
-        }
-
-        $person->setUsername($person->getNetid());
-        $person->setMembershipUpdatedAt(new DateTimeImmutable());
-        $em->persist($person);
-
-        // Logging has to happen after the entity has been persisted, so we don't get an error.
-        //  The API Platform serializer takes over and serializes even in non-API contexts, and the config option to
-        //  turn off IRI generation doesn't seem to work some fraction of the time (cannot consistently replicate).
-        //  https://github.com/api-platform/api-platform/issues/1527
-//         if($form->has('isSilent') && $form->get('isSilent')->getData()) {
-        $logger->log($person, 'Silently submitted entry form', false);
-        $membershipStateMachine->apply($person, Membership::TRANS_FORCE_ENTRY_FORM);
-//        } else {
-//            $logger->log($person, 'Submitted entry form');
-//            $membershipStateMachine->apply($person, Membership::TRANS_SUBMIT_ENTRY_FORM);
-//        }
-    }
 }

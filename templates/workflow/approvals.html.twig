@@ -15,7 +15,7 @@
                 <tr>
                     <td><a href="{{ path('person_view', {'slug': person.slug}) }}">{{ person }}</a></td>
                     <td>
-                        {% for themeAffiliation in person.themeAffiliations|current %}
+                        {% for themeAffiliation in person.themeAffiliations|currentAndFuture %}
                             <div class="{{ html_classes('theme-row', {'text-muted': not themeAffiliation.isCurrent}) }}">
 
                                 <a href="{{ path('theme_view', {'shortName': themeAffiliation.theme.shortName}) }}">{{ themeAffiliation.theme.shortName }}</a>

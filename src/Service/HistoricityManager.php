@@ -9,14 +9,22 @@ namespace App\Service;
 use App\Entity\HistoricalEntityInterface;
 use DateTimeInterface;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ReadableCollection;
 use Doctrine\ORM\QueryBuilder;
 
 class HistoricityManager
 {
-    public function getCurrentEntities(Collection $collection): Collection
+    public function getCurrentEntities(Collection $collection): ReadableCollection
     {
-        return $collection->filter(function ($entity) {
+        return $collection->filter(function (HistoricalEntityInterface $entity) {
             return $entity->isCurrent();
+        });
+    }
+
+    public function getCurrentAndFutureEntities(Collection $collection): ReadableCollection
+    {
+        return $collection->filter(function (HistoricalEntityInterface $entity) {
+            return !$entity->isPast();
         });
     }
 
@@ -53,7 +61,7 @@ class HistoricityManager
      */
     public function getEarliest(array $entities): ?DateTimeInterface
     {
-        $initial = isset($entities[0]) ? $entities[0]->getStartedAt() : null;
+        $initial = isset(array_values($entities)[0]) ? array_values($entities)[0]->getStartedAt() : null;
 
         return array_reduce($entities, function ($carry, HistoricalEntityInterface $item) {
             if ($carry === null || $item->getStartedAt() === null) {
@@ -73,7 +81,7 @@ class HistoricityManager
      */
     public function getLatest(array $entities): ?DateTimeInterface
     {
-        $initial = isset($entities[0]) ? $entities[0]->getEndedAt() : null;
+        $initial = isset(array_values($entities)[0]) ? array_values($entities)[0]->getEndedAt() : null;
 
         return array_reduce($entities, function ($carry, HistoricalEntityInterface $item) {
             if ($carry === null || $item->getEndedAt() === null) {

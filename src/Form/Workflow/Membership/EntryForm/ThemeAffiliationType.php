@@ -16,32 +16,44 @@ use App\Form\Fields\ThemeType;
 use App\Repository\ThemeRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ThemeAffiliationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add('theme', ThemeType::class, [
-                'query_builder' => function (ThemeRepository $themeRepository) {
-                    return $themeRepository->createCurrentFormSortedQueryBuilder();
-                },
-            ])
-            ->add('memberCategory', MemberCategoryType::class, [
-                'label' => 'entry_form.member_category',
-            ])
-            ->add('sponsorAffiliations', HistoricalCollectionType::class, [
-                'entry_type' => SponsorAffiliationType::class,
-            ])
-            ->add('supervisorAffiliations', HistoricalCollectionType::class, [
-                'entry_type' => SupervisorAffiliationType::class,
-            ])
-            ->add('startedAt', StartDateType::class)
-            ->add('endedAt', EndDateType::class);
-        if ($options['show_position_when_joined']) {
-            $builder->add('positionWhenJoined', PositionWhenJoinedType::class);
-        }
+        // Only populate the form for new entries or current entries. We don't want to expose past
+        //  affiliations on the entry form.
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
+            /** @var ThemeAffiliation $affiliation */
+            $affiliation = $event->getData();
+            $form = $event->getForm();
+
+            if(!$affiliation || !$affiliation->isPast()){
+                $form
+                    ->add('theme', ThemeType::class, [
+                        'query_builder' => function (ThemeRepository $themeRepository) {
+                            return $themeRepository->createCurrentFormSortedQueryBuilder();
+                        },
+                    ])
+                    ->add('memberCategory', MemberCategoryType::class, [
+                        'label' => 'entry_form.member_category',
+                    ])
+                    ->add('sponsorAffiliations', HistoricalCollectionType::class, [
+                        'entry_type' => SponsorAffiliationType::class,
+                    ])
+                    ->add('supervisorAffiliations', HistoricalCollectionType::class, [
+                        'entry_type' => SupervisorAffiliationType::class,
+                    ])
+                    ->add('startedAt', StartDateType::class)
+                    ->add('endedAt', EndDateType::class);
+                if ($options['show_position_when_joined']) {
+                    $form->add('positionWhenJoined', PositionWhenJoinedType::class);
+                }
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void
