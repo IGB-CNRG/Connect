@@ -24,8 +24,8 @@ class Setting
     #[ORM\Column(type: Types::TEXT)]
     private ?string $value = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $displayName = null;
+    #[ORM\ManyToOne]
+    private ?Person $user = null;
 
     public function getId(): ?int
     {
@@ -56,14 +56,14 @@ class Setting
         return $this;
     }
 
-    public function getDisplayName(): ?string
+    public function getUser(): ?Person
     {
-        return $this->displayName;
+        return $this->user;
     }
 
-    public function setDisplayName(string $displayName): self
+    public function setUser(?Person $user): static
     {
-        $this->displayName = $displayName;
+        $this->user = $user;
 
         return $this;
     }

@@ -4,8 +4,9 @@
  * All rights reserved.
  */
 
-namespace App\Twig;
+namespace App\Twig\Extension;
 
+use App\Twig\Runtime\ConnectRuntime;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 

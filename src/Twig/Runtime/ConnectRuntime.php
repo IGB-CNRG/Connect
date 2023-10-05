@@ -4,7 +4,7 @@
  * All rights reserved.
  */
 
-namespace App\Twig;
+namespace App\Twig\Runtime;
 
 use App\Entity\HistoricalEntityInterface;
 use App\Entity\Person;

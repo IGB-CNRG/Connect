@@ -6,27 +6,55 @@
 
 namespace App\Settings;
 
+use App\Entity\Person;
+use App\Entity\Setting;
 use App\Repository\SettingRepository;
+use Symfony\Contracts\Service\Attribute\SubscribedService;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
+use Symfony\Contracts\Service\ServiceSubscriberTrait;
 
-class SettingManager
+class SettingManager implements ServiceSubscriberInterface
 {
-    public function __construct(private readonly SettingRepository $repository){}
-
-    public function get(string $name): string{
-        $setting = $this->repository->findOneBy(['name'=>$name]);
-        if(!$setting){
-            return '';
+    use ServiceSubscriberTrait;
+    public function get(string $name, ?Person $user = null): ?string
+    {
+        // todo add a settings cache. load all global and user settings for the current user into the cache.
+        $setting = $this->settingRepository()->findOneBy(['name' => $name, 'user' => $user]);
+        if (!$setting) {
+            return null;
         }
+
         return $setting->getValue();
     }
 
-    public function set(string $name, string $value): bool {
-        $setting = $this->repository->findOneBy(['name'=>$name]);
-        if(!$setting){
-            return false;
+    public function set(string $name, ?string $value, ?Person $user = null): static
+    {
+        $setting = $this->settingRepository()->findOneBy(['name' => $name, 'user' => $user]);
+        if ($value) {
+            // set value, if given
+            if (!$setting) {
+                $setting = (new Setting())
+                    ->setName($name)
+                    ->setUser($user);
+            }
+            $setting->setValue($value);
+            $this->settingRepository()->save($setting);
+        } elseif ($setting) {
+            // otherwise, remove the setting, if necessary
+            $this->settingRepository()->remove($setting);
         }
-        $setting->setValue($value);
-        $this->repository->save($setting);
-        return true;
+
+        return $this;
+    }
+
+    public function displayNameFromName($name): string
+    {
+        return ucwords(str_replace('_', ' ', $name));
+    }
+
+    #[SubscribedService]
+    private function settingRepository(): SettingRepository
+    {
+        return $this->container->get(__CLASS__ . '::' . __FUNCTION__);
     }
 }

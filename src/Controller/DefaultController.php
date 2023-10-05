@@ -7,20 +7,24 @@
 namespace App\Controller;
 
 use App\Repository\FaqRepository;
+use App\Settings\SettingManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends AbstractController
 {
-//    #[Route('/', name: 'default')]
-//    public function index(): Response
-//    {
-//        // TODO eventually add some kind of dashboard here
-//        return $this->redirectToRoute('person');
-////        return $this->render('default/index.html.twig', [
-////            'controller_name' => 'DefaultController',
-////        ]);
-//    }
+    #[Route('/', name: 'default')]
+    public function index(SettingManager $settingManager): RedirectResponse
+    {
+        $defaultRoute = match($settingManager->get('default_index', $this->getUser())){
+            'all_members' => 'person_allmembers',
+            'people' => 'person_currentpeople',
+            'all_people' => 'person_allpeople',
+            default => 'person_currentmembers',
+        };
+        return $this->redirectToRoute($defaultRoute);
+    }
 
     #[Route('/copyright', name: 'copyright')]
     public function copyright()

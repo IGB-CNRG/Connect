@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+{% use 'form.html.twig' %}
+
+{% block content %}
+    <h2>My Settings</h2>
+    {% if success %}
+        <div class="callout callout-success mb-3">Settings saved!</div>
+    {% endif %}
+    {% form_theme form "form_themes/_inline-buttons-theme.html.twig" %}
+    {{ block('form_card') }}
+{% endblock %}
+
+{% block form_card_body %}
+    {{ form_row(form.default_index) }}
+{% endblock %}
+{% block form_card_footer %}
+    {{ form_row(form.save) }}
+{% endblock %}
+
+{% block title %}
+    {{ parent() }} | My Settings
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active" aria-current="page">
+        My Settings
+    </li>
+{% endblock %}

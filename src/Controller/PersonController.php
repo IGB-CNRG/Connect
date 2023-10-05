@@ -32,7 +32,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class PersonController extends AbstractController
 {
-    #[Route('/', name: 'default')]
     #[Route('/members', name: 'person_currentmembers')]
     public function currentMembers(PersonRepository $personRepository): Response
     {

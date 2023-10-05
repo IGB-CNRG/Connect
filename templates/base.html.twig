@@ -120,6 +120,11 @@
                                     <li><a class="dropdown-item" href="{{ path('admin') }}"><span
                                                     class="fa fa-gears"></span> Admin</a></li>
                                 {% endif %}
+                                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                                    <li><a class="dropdown-item" href="{{ path('app_setting') }}">
+                                            <span class="fa fa-gear"></span> My Settings
+                                        </a></li>
+                                {% endif %}
                                 {% if is_granted('ROLE_APPROVER') %}
                                     <li><a class="dropdown-item" href="{{ path('membership_approvals') }}"><span
                                                     class="fa fa-thumbs-up"></span> Approvals</a></li>
