@@ -220,6 +220,12 @@ label.required:after {
   min-width: 230px;
 }
 
+.quick-search-caption {
+  font-size: 12px;
+  display: block;
+  color: $gray-600;
+}
+
 @include media-breakpoint-between(md,lg){
   .quick-search {
     min-width: auto;

@@ -47,6 +47,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ApiFilter(SimpleSearchFilter::class, properties: [
     'firstName',
     'lastName',
+    'email',
 ], arguments: ['searchParameterName' => 'search'])]
 class Person implements UserInterface, PasswordAuthenticatedUserInterface, Serializable, LogSubjectInterface
     // TODO Is it a bug that we have to implement PasswordAuthenticatedUserInterface even though this entity doesn't handle authentication?

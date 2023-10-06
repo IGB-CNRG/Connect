@@ -20,7 +20,15 @@ export default class extends Controller {
         new TomSelect(this.element, {
             valueField: 'slug',
             labelField: 'name',
-            searchField: 'name',
+            render: {
+                option: function(item, escape){
+                    return '<div>'+
+                        '<span class="quick-search-label">'+escape(item.name)+'</span>'+
+                        '<span class="quick-search-caption">'+escape(item.email)+'</span>'+
+                        '</div>';
+                }
+            },
+            searchField: ['firstName', 'lastName', 'email'],
             sortField:[{field:'lastName'},{field:'firstName'},{field:'$score'}],
             maxOptions: 6,
             onItemAdd: clickHandler,
@@ -35,6 +43,7 @@ export default class extends Controller {
                 })
                     .then(response => response.json())
                     .then(json => {
+                        console.log(json);
                         callback(json);
                     })
                     .catch(() => {
