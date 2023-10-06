@@ -23,7 +23,7 @@ table.container {
     padding-left: 5%;
     padding-bottom: 12px !important;
 }
-.email-subtitle {
+.email-subtitle-column th {
     color: #E2E3E4 !important;
     text-align: center !important;
     font-size: 20px;
