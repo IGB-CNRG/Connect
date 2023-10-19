@@ -53,8 +53,7 @@ class SendDigestCommand extends Command
                 explode(';', $this->settingManager->get('digest_recipients')));
             $email = (new TemplatedEmail())
                 ->from($this->settingManager->get('notification_from'))
-                ->to($this->settingManager->get('notification_from'))
-                ->bcc(...$toAddresses)
+                ->to(...$toAddresses)
                 ->subject($subject)
                 ->htmlTemplate('workflow/digest/entry_exit.html.twig')
                 ->context([

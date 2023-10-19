@@ -65,7 +65,7 @@ class SettingCrudController extends AbstractCrudController
             TextField::new('name')->hideOnForm()->formatValue(function($value){
                 return $this->settingManager->displayNameFromName($value);
             }),
-            TextareaField::new('value')->renderAsHtml(true),
+            TextareaField::new('value')->setTemplatePath('admin/textarea_fix.html.twig'),
         ];
     }
 }
