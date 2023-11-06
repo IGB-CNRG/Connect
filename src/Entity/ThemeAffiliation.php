@@ -6,7 +6,6 @@
 
 namespace App\Entity;
 
-use App\Enum\ThemeRole;
 use App\Log\Loggable;
 use App\Log\LoggableAffiliationInterface;
 use App\Repository\ThemeAffiliationRepository;
@@ -48,11 +47,6 @@ class ThemeAffiliation implements HistoricalEntityInterface, LoggableAffiliation
     #[Groups(['log:person'])]
     private ?string $title = null;
 
-    #[ORM\Column(type: 'json', enumType: ThemeRole::class)]
-    #[Loggable(type:'array')]
-    #[Groups(['log:person'])]
-    private array $themeRoles = [];
-
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['log:person'])]
     private ?string $exitReason = null;
@@ -66,18 +60,24 @@ class ThemeAffiliation implements HistoricalEntityInterface, LoggableAffiliation
     #[ORM\OneToMany(mappedBy: 'sponseeThemeAffiliation', targetEntity: SponsorAffiliation::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $sponsorAffiliations;
 
+    #[ORM\ManyToMany(targetEntity: ThemeRole::class, inversedBy: 'themeAffiliations')]
+//    #[Loggable(type:'array')]
+//    #[Groups(['log:person'])]
+    private Collection $roles;
+
     public function __construct()
     {
         $this->supervisorAffiliations = new ArrayCollection();
         $this->sponsorAffiliations = new ArrayCollection();
+        $this->roles = new ArrayCollection();
     }
 
     public function __toString()
     {
         $themeName = $this->getTheme()->getShortName();
-        foreach ($this->getThemeRoles() as $index => $role) {
-            $themeName .= " " . $role->getDisplayName();
-            if ($index < count($this->getThemeRoles()) - 1) {
+        foreach ($this->getRoles() as $index => $role) {
+            $themeName .= " " . $role->getName();
+            if ($index < count($this->getRoles()) - 1) {
                 $themeName .= ',';
             }
         }
@@ -92,22 +92,6 @@ class ThemeAffiliation implements HistoricalEntityInterface, LoggableAffiliation
     {
         return $this->id;
     }
-
-    public function getIsThemeLeader(): bool
-    {
-        return in_array(ThemeRole::ThemeLeader, $this->getThemeRoles());
-    }
-
-    public function getIsThemeAdmin(): bool
-    {
-        return in_array(ThemeRole::ThemeAdmin, $this->getThemeRoles());
-    }
-
-    public function getIsLabManager(): bool
-    {
-        return in_array(ThemeRole::LabManager, $this->getThemeRoles());
-    }
-
 
     public function getPerson(): ?Person
     {
@@ -153,25 +137,6 @@ class ThemeAffiliation implements HistoricalEntityInterface, LoggableAffiliation
     public function setTitle(?string $title): self
     {
         $this->title = $title;
-
-        return $this;
-    }
-
-    /**
-     * @return ThemeRole[]
-     */
-    public function getThemeRoles(): array
-    {
-        return $this->themeRoles;
-    }
-
-    /**
-     * @param ThemeRole[] $themeRoles
-     * @return $this
-     */
-    public function setThemeRoles(array $themeRoles): self
-    {
-        $this->themeRoles = $themeRoles;
 
         return $this;
     }
@@ -296,6 +261,30 @@ class ThemeAffiliation implements HistoricalEntityInterface, LoggableAffiliation
                 $sponsorAffiliation->setSponseeThemeAffiliation(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ThemeRole>
+     */
+    public function getRoles(): Collection
+    {
+        return $this->roles;
+    }
+
+    public function addRole(ThemeRole $role): static
+    {
+        if (!$this->roles->contains($role)) {
+            $this->roles->add($role);
+        }
+
+        return $this;
+    }
+
+    public function removeRole(ThemeRole $role): static
+    {
+        $this->roles->removeElement($role);
 
         return $this;
     }

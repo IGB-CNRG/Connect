@@ -72,36 +72,6 @@ class Theme implements LogSubjectInterface, HistoricalEntityInterface
         return $this->getShortName();
     }
 
-    public function getThemeAdmins()
-    {
-        return array_values(
-            array_map(fn(ThemeAffiliation $ta) => $ta->getPerson(),
-                $this->getThemeAffiliations()->filter(
-                    fn(ThemeAffiliation $ta) => $ta->getIsThemeAdmin() && $ta->isCurrent()
-                )->toArray())
-        );
-    }
-
-    public function getThemeLeaders()
-    {
-        return array_values(
-            array_map(fn(ThemeAffiliation $ta) => $ta->getPerson(),
-                $this->getThemeAffiliations()->filter(
-                    fn(ThemeAffiliation $ta) => $ta->getIsThemeLeader() && $ta->isCurrent()
-                )->toArray())
-        );
-    }
-
-    public function getLabManagers()
-    {
-        return array_values(
-            array_map(fn(ThemeAffiliation $ta) => $ta->getPerson(),
-                $this->getThemeAffiliations()->filter(
-                    fn(ThemeAffiliation $ta) => $ta->getIsLabManager() && $ta->isCurrent()
-                )->toArray())
-        );
-    }
-
     //MARK: - Getters/Setters
     public function getId(): ?int
     {

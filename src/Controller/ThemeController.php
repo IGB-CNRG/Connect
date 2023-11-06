@@ -7,9 +7,11 @@
 namespace App\Controller;
 
 use App\Entity\Theme;
+use App\Entity\ThemeRole;
 use App\Form\Theme\FilterType;
 use App\Repository\PersonRepository;
 use App\Repository\ThemeRepository;
+use App\Repository\ThemeRoleRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -30,14 +32,16 @@ class ThemeController extends AbstractController
     }
 
     #[Route('/theme/{shortName}', name: 'theme_view')]
-    public function view(Theme $theme, PersonRepository $personRepository): Response
+    public function view(Theme $theme, PersonRepository $personRepository, ThemeRoleRepository $roleRepository): Response
     {
         $people = $personRepository->findCurrentForTheme($theme);
+        $themeRoles = array_map(fn(ThemeRole $role) => ['name'=>$role->getName(),'people'=>$personRepository->findByRoleInTheme($theme, $role)], $roleRepository->findAll());
         $filterForm = $this->createForm(FilterType::class);
         return $this->render('theme/view.html.twig', [
             'theme' => $theme,
             'people' => $people,
             'filterForm' => $filterForm->createView(),
+            'themeRoles' => $themeRoles,
         ]);
     }
 }

@@ -25,8 +25,8 @@
                                 {% if themeAffiliation.title %}
                                     ({{ themeAffiliation.title }})
                                 {% endif %}
-                                {% for role in themeAffiliation.themeRoles %}
-                                    ({{ role.displayName }})
+                                {% for role in themeAffiliation.roles %}
+                                    ({{ role.name }})
                                 {% endfor %}
 
                             </div>

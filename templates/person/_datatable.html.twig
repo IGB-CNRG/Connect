@@ -29,15 +29,15 @@
             data-search="{%- for themeAffiliation in person.themeAffiliations -%}
                         {{- themeAffiliation.theme.shortName -}},
                         {{- themeAffiliation.memberCategory.shortName??themeAffiliation.memberCategory.name -}},
-                        {%- for role in themeAffiliation.themeRoles -%}
-                            {{ role.displayName }}
+                        {%- for role in themeAffiliation.roles -%}
+                            {{ role }}
                         {%- endfor -%}
                         ;
                         {%- if themeAffiliation.theme.parentTheme -%}
                         {{- themeAffiliation.theme.parentTheme.shortName -}},
                         {{- themeAffiliation.memberCategory.shortName??themeAffiliation.memberCategory.name -}},
-                        {%- for role in themeAffiliation.themeRoles -%}
-                            {{ role.displayName }}
+                        {%- for role in themeAffiliation.roles -%}
+                            {{ role }}
                         {%- endfor -%}
                         ;
                         {%- endif -%}
@@ -52,8 +52,8 @@
                     {% if themeAffiliation.title %}
                         ({{ themeAffiliation.title }})
                     {% endif %}
-                    {% for role in themeAffiliation.themeRoles %}
-                        ({{ role.displayName }})
+                    {% for role in themeAffiliation.roles %}
+                        ({{ role }})
                     {% endfor %}
 
                 </div>

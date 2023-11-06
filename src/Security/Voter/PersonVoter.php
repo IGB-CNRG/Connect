@@ -7,7 +7,6 @@
 namespace App\Security\Voter;
 
 use App\Entity\Person;
-use App\Entity\ThemeAffiliation;
 use App\Service\HistoricityManager;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -20,7 +19,6 @@ class PersonVoter extends Voter
     public const VIEW = 'PERSON_VIEW';
     public const ADD = 'PERSON_ADD';
     public const EDIT_HISTORY = 'PERSON_EDIT_HISTORY';
-    public const REMOVE = 'PERSON_REMOVE';
     public const VIEW_DOCUMENTS = 'PERSON_VIEW_DOCUMENTS';
     public const VIEW_EXIT_REASON = 'PERSON_VIEW_EXIT_REASON';
 
@@ -34,7 +32,7 @@ class PersonVoter extends Voter
     {
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
-        return (in_array($attribute, [self::EDIT, self::VIEW, self::REMOVE])
+        return (in_array($attribute, [self::EDIT, self::VIEW])
                 && $subject instanceof Person)
             || in_array($attribute, [self::ADD, self::EDIT_HISTORY, self::VIEW_DOCUMENTS, self::VIEW_EXIT_REASON]);
     }
@@ -61,31 +59,8 @@ class PersonVoter extends Voter
                 || $this->security->isGranted('ROLE_APPROVER'),
             self::VIEW => true,
             self::ADD, self::VIEW_DOCUMENTS, self::VIEW_EXIT_REASON => $this->security->isGranted('ROLE_APPROVER'),
-            self::REMOVE => $user === $subject || $this->isEditorForPersonsTheme($user, $subject),
 
             default => false,
         };
-    }
-
-    private function isEditorForPersonsTheme(Person $user, Person $subject): bool
-    {
-        // todo this needs to be tested
-        $userThemes = array_map(function (ThemeAffiliation $themeAffiliation) {
-            return $themeAffiliation->getTheme();
-        }, $this->historicityManager->getCurrentEntities($subject->getThemeAffiliations())->toArray());
-        $adminThemes = array_map(function (ThemeAffiliation $themeAffiliation) {
-            return $themeAffiliation->getTheme();
-        }, $user->getThemeAdminThemeAffiliations()->toArray());
-        if (count(array_intersect($userThemes, $adminThemes)) > 0) {
-            return true;
-        }
-        $labManagerThemes = array_map(function (ThemeAffiliation $themeAffiliation) {
-            return $themeAffiliation->getTheme();
-        }, $user->getLabManagerThemeAffiliations()->toArray());
-        if (count(array_intersect($userThemes, $labManagerThemes)) > 0) {
-            return true;
-        }
-
-        return false;
     }
 }

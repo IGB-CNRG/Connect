@@ -285,22 +285,6 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         return $this->imageFile;
     }
 
-    public function getThemeAdminThemeAffiliations(): Collection
-    {
-        // todo unit test this
-        return $this->getThemeAffiliations()->filter(function (ThemeAffiliation $themeAffiliation) {
-            return $themeAffiliation->isCurrent() && $themeAffiliation->getIsThemeAdmin();
-        });
-    }
-
-    public function getLabManagerThemeAffiliations(): Collection
-    {
-        // todo unit test this
-        return $this->getThemeAffiliations()->filter(function (ThemeAffiliation $themeAffiliation) {
-            return $themeAffiliation->isCurrent() && $themeAffiliation->getIsLabManager();
-        });
-    }
-
     /* Getters/Setters */
 
     public function getId(): ?int

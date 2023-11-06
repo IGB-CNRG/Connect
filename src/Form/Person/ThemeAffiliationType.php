@@ -7,16 +7,16 @@
 namespace App\Form\Person;
 
 use App\Entity\ThemeAffiliation;
-use App\Enum\ThemeRole;
+use App\Entity\ThemeRole;
 use App\Form\Fields\EndDateType;
 use App\Form\Fields\HistoricalCollectionType;
 use App\Form\Fields\MemberCategoryType;
 use App\Form\Fields\PositionWhenJoinedType;
 use App\Form\Fields\StartDateType;
 use App\Form\Fields\ThemeType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -53,7 +53,7 @@ class ThemeAffiliationType extends AbstractType
                             'required' => false,
                             'help' => 'Optional',
                         ])
-                        ->add('themeRoles', EnumType::class, [
+                        ->add('roles', EntityType::class, [
                             'class' => ThemeRole::class,
                             'multiple' => true,
                             'required' => false,

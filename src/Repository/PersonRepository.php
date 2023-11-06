@@ -8,7 +8,7 @@ namespace App\Repository;
 
 use App\Entity\Person;
 use App\Entity\Theme;
-use App\Enum\ThemeRole;
+use App\Entity\ThemeRole;
 use App\Service\HistoricityManagerAware;
 use App\Workflow\Membership;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -37,13 +37,14 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
     {
         return $this->createQueryBuilder('p')
             ->leftJoin('p.themeAffiliations', 'ta')
+            ->leftJoin('ta.roles', 'tr')
             ->leftJoin('ta.memberCategory', 'mc')
             ->leftJoin('ta.theme', 't')
             ->leftJoin('t.parentTheme', 'pt')
             ->leftJoin('p.roomAffiliations', 'ra')
             ->leftJoin('ra.room', 'r')
             ->leftJoin('p.unit', 'u')
-            ->select('p,ta,t,pt,ra,r,u,mc');
+            ->select('p,ta,t,pt,ra,r,u,mc,tr');
     }
 
     public function createMembersOnlyIndexQueryBuilder(): QueryBuilder
@@ -150,15 +151,34 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
     {
         $qb = $this->createQueryBuilder('p')
             ->leftJoin('p.themeAffiliations', 'ta')
-            ->andWhere("ta.themeRoles like :role")
+            ->leftJoin('ta.roles', 'r')
+            ->andWhere("r = :role")
             ->andWhere('ta.theme = :theme')
             ->addOrderBy('p.lastName')
             ->setParameter('theme', $theme)
-            ->setParameter('role', "%$role->value%");
+            ->setParameter('role', $role);
         $this->historicityManager()->addCurrentConstraint($qb, 'ta');
 
         return $qb->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @param Theme $theme
+     * @return Person[]
+     */
+    public function findApproversInTheme(Theme $theme): array
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->leftJoin('p.themeAffiliations', 'ta')
+            ->leftJoin('ta.roles', 'r')
+            ->andWhere('ta.theme = :theme')
+            ->andWhere('r.isApprover = 1')
+            ->addOrderBy('p.lastName')
+            ->setParameter('theme', $theme);
+        $this->historicityManager()->addCurrentConstraint($qb, 'ta');
+
+        return $qb->getQuery()->getResult();
     }
 
     public function createDropdownQueryBuilder()

@@ -7,6 +7,8 @@
 namespace App\Security\Voter;
 
 use App\Entity\Person;
+use App\Entity\ThemeAffiliation;
+use App\Entity\ThemeRole;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -14,9 +16,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class StaffVoter extends Voter
 {
-    // todo what are theme admin and lab manager for?
-    public const THEME_ADMIN = 'ROLE_THEME_ADMIN';
-    public const LAB_MANAGER = 'ROLE_LAB_MANAGER';
     public const APPROVER = 'ROLE_APPROVER';
 
     public function __construct(private readonly Security $security) {}
@@ -25,7 +24,7 @@ class StaffVoter extends Voter
     {
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
-        return in_array($attribute, [self::THEME_ADMIN, self::LAB_MANAGER, self::APPROVER]);
+        return in_array($attribute, [self::APPROVER]);
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
@@ -39,13 +38,19 @@ class StaffVoter extends Voter
 
         // ... (check conditions and return true to grant permission) ...
         return match ($attribute) {
-            self::THEME_ADMIN => $user->getThemeAdminThemeAffiliations()->count() > 0,
-            self::LAB_MANAGER => $user->getLabManagerThemeAffiliations()->count() > 0,
             // todo this may be naive, but it works for now
             self::APPROVER => $this->security->isGranted('ROLE_CERTIFICATE_MANAGER')
-                              || $user->getLabManagerThemeAffiliations()->count() > 0
-                              || $user->getThemeAdminThemeAffiliations()->count() > 0,
+                || $this->isApprover($user),
             default => false,
         };
+    }
+
+    private function isApprover(Person $person): bool
+    {
+        // Return true if the person has at least one theme affiliation with at least one approver role
+        return $person->getThemeAffiliations()->filter(
+                fn(ThemeAffiliation $themeAffiliation) => $themeAffiliation->getRoles()->filter(
+                    fn(ThemeRole $role) => $role->isIsApprover())->count() > 0
+            )->count() > 0;
     }
 }

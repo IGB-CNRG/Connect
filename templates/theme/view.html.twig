@@ -12,52 +12,25 @@
                         <th>Full Name</th>
                         <td>{{ theme.fullName }}</td>
                     </tr>
-                    {% if theme.themeLeaders|length > 0 %}
-                        <tr>
-                            <th rowspan="{{ theme.themeLeaders|length }}">Theme Leader{{ theme.themeLeaders|length>1?'s':'' }}</th>
-                            <td>
-                                <a href="{{ path('person_view', {'slug': theme.themeLeaders[0].slug}) }}">{{ theme.themeLeaders[0] }}
-                            </td>
-                        </tr>
-                        {% for leader in theme.themeLeaders %}
-                            {% if loop.index > 1 %}
-                                <tr>
-                                    <td><a href="{{ path('person_view', {'slug': leader.slug}) }}">{{ leader }}</a></td>
-                                </tr>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                    {% if theme.themeAdmins|length > 0 %}
-                        <tr>
-                            <th rowspan="{{ theme.themeAdmins|length }}">Theme Admin{{ theme.themeAdmins|length>1?'s':'' }}</th>
-                            <td>
-                                <a href="{{ path('person_view', {'slug': theme.themeAdmins[0].slug}) }}">{{ theme.themeAdmins[0] }}</a>
-                            </td>
-                        </tr>
-                        {% for admin in theme.themeAdmins %}
-                            {% if loop.index > 1 %}
-                                <tr>
-                                    <td><a href="{{ path('person_view', {'slug': admin.slug}) }}">{{ admin }}</a></td>
-                                </tr>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                    {% if theme.labManagers|length > 0 %}
-                        <tr>
-                            <th rowspan="{{ theme.labManagers|length }}">Lab Manager{{ theme.labManagers|length>1?'s':'' }}</th>
-                            <td>
-                                <a href="{{ path('person_view', {'slug': theme.labManagers[0].slug}) }}">{{ theme.labManagers[0] }}</a>
-                            </td>
-                        </tr>
-                        {% for manager in theme.labManagers %}
-                            {% if loop.index > 1 %}
-                                <tr>
-                                    <td><a href="{{ path('person_view', {'slug': manager.slug}) }}">{{ manager }}</a>
-                                    </td>
-                                </tr>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
+                    {% for role in themeRoles %}
+                        {% if role.people|length > 0 %}
+                            <tr>
+                                <th rowspan="{{ role.people|length }}">{{ role.name }}</th>
+                                <td>
+                                    <a href="{{ path('person_view', {'slug': role.people[0].slug}) }}">{{ role.people[0] }}</a>
+                                </td>
+                            </tr>
+                            {% for person in role.people %}
+                                {% if loop.index > 1 %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ path('person_view', {'slug': person.slug}) }}">{{ person }}</a>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
                     <tr>
                         <th>Start Date</th>
                         <td>{{ theme.startedAt|date('n/j/Y') }}</td>

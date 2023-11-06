@@ -7,13 +7,13 @@
 namespace App\Form\Person;
 
 use App\Entity\MemberCategory;
+use App\Entity\ThemeRole;
 use App\Entity\Unit;
 use App\Form\Fields\ThemeType;
 use App\Repository\MemberCategoryRepository;
 use App\Repository\UnitRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -50,7 +50,8 @@ class FilterType extends AbstractType
                 },
                 'required' => false,
             ])
-            ->add('role', ChoiceType::class, [
+            ->add('role', EntityType::class, [
+                'class' => ThemeRole::class,
                 'multiple' => true,
                 'attr' => [
                     'data-controller' => 'tom-select',
@@ -58,11 +59,7 @@ class FilterType extends AbstractType
                     'data-action' => 'datatables#columnSearch',
                     'style' => 'width:100%',
                 ],
-                'choices' => [
-                    'Theme Leader' => 'Theme Leader',
-                    'Theme Admin' => 'Theme Admin',
-                    'Lab Manager' => 'Lab Manager'
-                ],
+                'choice_value' => fn(ThemeRole $role) => $role->__toString(),
                 'required' => false,
             ])
             ->add('unit', EntityType::class, [

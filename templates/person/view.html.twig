@@ -488,8 +488,8 @@
                         <div class="col">
                             <div class="theme-header">Theme Roles</div>
                             <div class="theme-body">
-                                {% for role in themeAffiliation.themeRoles %}
-                                    {{ role.displayName }}
+                                {% for role in themeAffiliation.roles %}
+                                    {{ role }}
                                 {% endfor %}
                             </div>
                         </div>

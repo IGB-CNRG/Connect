@@ -10,8 +10,8 @@
             {%- if links -%}</a>{%- endif -%}
             )
         {% endif %}
-        {% for role in themeAffiliation.themeRoles %}
-            {{ role.displayName }}
+        {% for role in themeAffiliation.roles %}
+            {{ role }}
         {% endfor %}
     </strong>
     {% if themeAffiliation.title %}
