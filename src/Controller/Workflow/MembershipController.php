@@ -98,7 +98,7 @@ class MembershipController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $silent = $form->has('isSilent') && $form->get('isSilent')->getData();
-            $membership->processEntry($person, $silent);
+            $membership->processEntry($person, true); // todo use the $silent variable when we enable the workflows
 
             $em->flush();
 
