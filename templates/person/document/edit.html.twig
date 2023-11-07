@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+{% use 'form.html.twig' %}
+
+{% block content %}
+    <h2>Upload Document</h2>
+    {% form_theme form "form_themes/_inline-buttons-theme.html.twig" %}
+    {{ block('form_card') }}
+{% endblock %}
+
+{% block form_card_body %}
+    {{ form_row(form.type) }}
+    {{ form_row(form.displayName) }}
+{% endblock %}
+{% block form_card_footer %}
+    {{ form_row(form.save) }}
+{% endblock %}
+
+
+
+{% block title %}
+    {{ parent() }} | Edit Document Info
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item" aria-current="page">
+        <a href="{{ path('person_currentmembers') }}">IGB Members</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        <a href="{{ path('person_view', {'slug': person.slug}) }}">{{ person.name }}</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        Edit Document Info
+    </li>
+{% endblock %}
+

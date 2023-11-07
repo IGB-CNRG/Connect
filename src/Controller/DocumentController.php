@@ -75,7 +75,7 @@ class DocumentController extends AbstractController
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
 
-        return $this->render('person/document/add.html.twig', [
+        return $this->render('person/document/edit.html.twig', [
             'person' => $person,
             'form' => $form->createView(),
         ]);
