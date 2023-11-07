@@ -13,12 +13,14 @@
             <table class="digest-table">
                 <tr>
                     <th>Name</th>
+                    <th>UIN</th>
                     <th>Start Date</th>
                     <th>Themes</th>
                 </tr>
                 {% for entry in entries %}
                     <tr>
                         <td><a href="{{ url('person_view', {'slug':entry.person.slug}) }}">{{ entry.person }}</a></td>
+                        <td>{{ entry.person.uin }}</td>
                         <td>{{ entry.date|date('n/j/Y') }}</td>
                         <td>{{ entry.notes }}</td>
                     </tr>
@@ -36,6 +38,7 @@
             <table class="digest-table">
                 <tr>
                     <th>Name</th>
+                    <th>UIN</th>
                     <th>End Date</th>
                     <th>Themes</th>
                     <th>Exit Reason</th>
@@ -43,6 +46,7 @@
                 {% for exit in exits %}
                     <tr>
                         <td><a href="{{ url('person_view', {'slug':exit.person.slug}) }}">{{ exit.person }}</a></td>
+                        <td>{{ exit.person.uin }}</td>
                         <td>{{ exit.date|date('n/j/Y') }}</td>
                         <td>{{ exit.notes }}</td>
                         <td>
