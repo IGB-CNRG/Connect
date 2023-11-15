@@ -15,6 +15,7 @@ use App\Form\Person\FilterType;
 use App\Form\Person\PersonType;
 use App\Form\Person\RoomAffiliationType;
 use App\Form\Person\ThemeAffiliationType;
+use App\Form\Workflow\Membership\ExitForm\ExitReasonType;
 use App\Log\ActivityLogger;
 use App\Repository\PersonRepository;
 use App\Service\HistoricityManager;
@@ -195,7 +196,8 @@ class PersonController extends AbstractController
             $themeAffiliation,
             ['data_class' => ThemeAffiliation::class]
         );
-        $form->add('save', SubmitType::class);
+        $form->add('exitReason', ExitReasonType::class)
+            ->add('save', SubmitType::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
