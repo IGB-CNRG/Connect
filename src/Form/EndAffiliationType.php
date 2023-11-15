@@ -7,7 +7,6 @@
 namespace App\Form;
 
 use App\Form\Fields\EndDateType;
-use App\Form\Workflow\Membership\ExitForm\ExitReasonType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -20,7 +19,6 @@ class EndAffiliationType extends AbstractType
                 'data' => new \DateTime(),
                 'required' => true,
                 'help' => null,
-            ])
-            ->add('exitReason', ExitReasonType::class);
+            ]);
     }
 }
