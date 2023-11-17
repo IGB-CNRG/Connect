@@ -6,23 +6,18 @@
 
 namespace App\Form\Workflow\Membership\ExitForm;
 
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use App\Entity\ExitReason;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ExitReasonType extends ChoiceType
+class ExitReasonType extends EntityType
 {
     public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([
-            'choices' => [
-                'Resigned' => 'Resigned',
-                'Graduated' => 'Graduated',
-                //                    'Terminated' => 'Terminated',
-                //                    'Let go' => 'Let go',
-                'Retired' => 'Retired',
-                'Deceased' => 'Deceased',
-            ],
+            'class' => ExitReason::class,
+            'choice_value' => 'name',
         ]);
     }
 }

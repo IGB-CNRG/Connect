@@ -7,6 +7,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Building;
+use App\Entity\ExitReason;
 use App\Entity\Faq;
 use App\Entity\Key;
 use App\Entity\KeyAffiliation;
@@ -100,5 +101,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Workflows');
         yield MenuItem::linkToRoute('Workflow information', 'fas fa-diagram-project', 'admin_workflow_display');
         yield MenuItem::linkToCrud('Notifications', 'fas fa-envelope', WorkflowNotification::class);
+        yield MenuItem::linkToCrud('Exit Reasons', 'fas fa-list', ExitReason::class);
     }
 }
