@@ -120,12 +120,12 @@ class EntryFormType extends AbstractType
             $builder->add('captcha', CaptchaType::class);
         }
         if ($options['allow_silent']) {
-//            $builder->add('isSilent', CheckboxType::class, [
-//                'mapped' => false,
-//                'required' => false,
-//                'label' => 'Create member silently',
-//                'help' => 'Check this box to bypass the rest of the new member workflow without sending any further notifications',
-//            ]);
+            $builder->add('isSilent', CheckboxType::class, [
+                'mapped' => false,
+                'required' => false,
+                'label' => 'Create member silently',
+                'help' => 'Check this box to bypass the rest of the new member workflow without sending any further notifications',
+            ]);
         }
     }
 

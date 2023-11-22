@@ -50,7 +50,6 @@ class MembershipController extends AbstractController
     #[Route('/membership/entry-form', name: 'membership_entryForm', defaults: ['person' => null])]
     #[Route('membership/entry-form/{slug}', name: 'membership_continueEntryForm')]
     #[Route('membership/reentry-form/{slug}', name: 'membership_reentryForm')] // todo does this even need to be a separate route from continue?
-    #[IsGranted('ROLE_APPROVER')] // todo remove this when we go live with the workflow
     public function entryForm(
         ?Person $person,
         Request $request,

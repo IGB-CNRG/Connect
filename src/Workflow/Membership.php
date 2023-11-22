@@ -202,16 +202,20 @@ class Membership implements ServiceSubscriberInterface
 
         // if possible, reactivate. otherwise, if possible, force entry. otherwise, submit entry for approval.
         // todo when workflows are re-enabled, this needs to be updated with the REENTER transition for non-silent forms
-        if ($this->membershipStateMachine->can($person, Membership::TRANS_REACTIVATE)) {
+        if ($this->membershipStateMachine->can($person, Membership::TRANS_REACTIVATE)
+            && $trySilent) {
             $this->logger()->log($person, 'Reactivated');
             $this->membershipStateMachine->apply($person, Membership::TRANS_REACTIVATE);
         } elseif ($this->membershipStateMachine->can($person, Membership::TRANS_FORCE_ENTRY_FORM)
             && $trySilent) {
             $this->logger()->log($person, 'Silently submitted entry form', false);
             $this->membershipStateMachine->apply($person, Membership::TRANS_FORCE_ENTRY_FORM);
-//        } else {
-//            $logger->log($person, 'Submitted entry form');
-//            $membershipStateMachine->apply($person, Membership::TRANS_SUBMIT_ENTRY_FORM);
+        } elseif($this->membershipStateMachine->can($person, Membership::TRANS_REENTER)) {
+            $this->logger()->log($person, 'Submitted entry form');
+            $this->membershipStateMachine->apply($person, Membership::TRANS_REENTER);
+        } else {
+            $this->logger()->log($person, 'Submitted entry form');
+            $this->membershipStateMachine->apply($person, Membership::TRANS_SUBMIT_ENTRY_FORM);
         }
     }
 

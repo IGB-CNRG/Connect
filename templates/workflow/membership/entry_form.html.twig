@@ -81,11 +81,9 @@
     <div class="card mb-3">
         <div class="card-body">
             {% if form.captcha is defined %}
-                <hr/>
                 {{ form_row(form.captcha) }}
             {% endif %}
             {% if form.isSilent is defined %}
-                <hr/>
                 {{ form_row(form.isSilent) }}
             {% endif %}
             <div class="callout callout-info mb-0">
