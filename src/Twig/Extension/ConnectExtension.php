@@ -25,7 +25,7 @@ class ConnectExtension extends AbstractExtension
             new TwigFilter('theme', [ConnectRuntime::class, 'filterByTheme']),
             new TwigFilter('earliest', [ConnectRuntime::class, 'earliest']),
             new TwigFilter('latest', [ConnectRuntime::class, 'latest']),
-
+            new TwigFilter('format_text_table', [ConnectRuntime::class, 'formatPlainTextTable']),
         ];
     }
 

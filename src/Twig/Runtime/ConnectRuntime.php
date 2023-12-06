@@ -89,4 +89,44 @@ class ConnectRuntime implements RuntimeExtensionInterface
         }
         return $this->historicityManager->getLatest($entities);
     }
+
+    /**
+     * Takes a tab-delimited table and space-pads it to align correctly
+     * @param string $tableString
+     * @return string
+     */
+    public function formatPlainTextTable(string $tableString): string
+    {
+        $rows = explode("\n", $tableString);
+        $table = [];
+        foreach($rows as $row){
+            if(trim($row) !== '') {
+                $table[] = explode("\t", trim($row));
+            }
+        }
+
+        $numColumns = count($table[0]);
+        $numRows = count($table);
+        for($col = 0; $col < $numColumns; $col++){
+            // Find the max length of each column
+            $maxColumnLength = 0;
+            for($row = 0; $row < $numRows; $row++){
+                $value = $table[$row][$col] ?? '';
+                $maxColumnLength = max($maxColumnLength, strlen($value));
+            }
+
+            // Pad each cell in the column to that length + 2
+            for($row = 0; $row < $numRows; $row++){
+                $value = $table[$row][$col] ?? '';
+                $table[$row][$col] = str_pad($value, $maxColumnLength + 2, " ", STR_PAD_RIGHT);
+            }
+        }
+
+        // Re-join the table
+        $rows = [];
+        foreach($table as $row){
+            $rows[] = join("", $row);
+        }
+        return join("\n", $rows);
+    }
 }

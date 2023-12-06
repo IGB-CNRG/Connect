@@ -56,6 +56,7 @@ class SendDigestCommand extends Command
                 ->to(...$toAddresses)
                 ->subject($subject)
                 ->htmlTemplate('workflow/digest/entry_exit.html.twig')
+                ->textTemplate('workflow/digest/entry_exit.txt.twig')
                 ->context([
                     'subject' => $subject,
                     'entries' => $entryDigests,

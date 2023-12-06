@@ -26,4 +26,20 @@ class DigestController extends AbstractController
             'exits' => $exitDigests,
         ]);
     }
+
+    #[Route('/digest/preview/txt', name: 'app_workflow_digest_digestpreviewtxt')]
+    public function digestPreviewText(DigestBufferRepository $digestBufferRepository): Response
+    {
+        $subject = 'Entry/Exit Digest';
+        $entryDigests = $digestBufferRepository->findBy(['bufferName' => DigestBuffer::ENTRY_BUFFER]);
+        $exitDigests = $digestBufferRepository->findBy(['bufferName' => DigestBuffer::EXIT_BUFFER]);
+
+        $response = $this->render('workflow/digest/entry_exit.txt.twig', [
+            'subject' => $subject,
+            'entries' => $entryDigests,
+            'exits' => $exitDigests,
+        ]);
+        $response->headers->set('Content-Type', 'text/plain');
+        return $response;
+    }
 }
