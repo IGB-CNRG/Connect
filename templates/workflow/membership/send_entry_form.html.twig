@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+{% use 'form.html.twig' %}
+
+{% block title %}{{ parent() }} | Send Entry Form{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active" aria-current="page">
+        Send Entry Form
+    </li>
+{% endblock %}
+
+{% block content %}
+    <h2>Send IGB Entry Form</h2>
+
+    <div class="callout callout-info">
+        An email will be sent to the address entered below with instructions on how to access the IGB entry form.
+    </div>
+
+    {% form_theme form "form_themes/_inline-buttons-theme.html.twig" %}
+    {{ block('form_card') }}
+{% endblock %}
+{% block form_card_body %}
+    {{ form_row(form.email) }}
+{% endblock %}
+{% block form_card_footer %}
+    {{ form_row(form.send) }}
+{% endblock %}
+
+

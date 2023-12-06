@@ -214,6 +214,7 @@
       <path value="$PROJECT_DIR$/vendor/twig/inky-extra" />
       <path value="$PROJECT_DIR$/vendor/twig/cssinliner-extra" />
       <path value="$PROJECT_DIR$/vendor/league/html-to-markdown" />
+      <path value="$PROJECT_DIR$/vendor/html2text/html2text" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

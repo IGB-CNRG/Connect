@@ -81,6 +81,15 @@
                                         <span class="fa fa-user-minus"></span> Exit Form
                                     </a>
                                 </li>
+                                {% if is_granted("PERSON_ADD") %}
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item"
+                                           href="{{ path('membership_sendEntryForm') }}">
+                                            <span class="fa fa-paper-plane"></span> Send Entry Form
+                                        </a>
+                                    </li>
+                                {% endif %}
                             </ul>
                         </li>
 
@@ -129,6 +138,7 @@
                                     <li><a class="dropdown-item" href="{{ path('membership_approvals') }}"><span
                                                     class="fa fa-thumbs-up"></span> Approvals</a></li>
                                 {% endif %}
+                                <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{{ path('logout') }}"><span
                                                 class="fa fa-right-from-bracket"></span> Logout</a></li>
                             </ul>

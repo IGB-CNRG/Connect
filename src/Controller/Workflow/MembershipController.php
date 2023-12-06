@@ -16,23 +16,29 @@ use App\Form\Workflow\Membership\Certificate\CertificateUploadType;
 use App\Form\Workflow\Membership\EntryForm\EntryFormType;
 use App\Form\Workflow\Membership\ExitForm\ExitFormApprovalType;
 use App\Form\Workflow\Membership\ExitForm\ExitFormType;
+use App\Form\Workflow\Membership\SendEntryFormType;
 use App\Form\Workflow\RejectType;
 use App\Log\ActivityLogger;
 use App\Repository\PersonRepository;
 use App\Service\CertificateHelper;
 use App\Service\HistoricityManager;
 use App\Service\ThemeAffiliationFactory;
+use App\Settings\SettingManager;
 use App\Workflow\Membership;
 use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Html2Text\Html2Text;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Workflow\WorkflowInterface;
+use Twig\Environment;
 
 class MembershipController extends AbstractController
 {
@@ -367,6 +373,46 @@ class MembershipController extends AbstractController
         return $this->render('workflow/membership/approve_exit_form.html.twig', [
             'person' => $person,
             'form' => $form,
+        ]);
+    }
+
+    #[Route('/membership/send-entry-form', name: 'membership_sendEntryForm')]
+    public function sendEntryForm(
+        Request $request,
+        SettingManager $settingManager,
+        Environment $twig,
+        MailerInterface $mailer
+    ) {
+        $form = $this->createForm(SendEntryFormType::class)
+            ->add('send', SubmitType::class);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            // send an email to the address given
+            $toAddress = $form->get('email')->getData();
+            $subject = 'IGB Entry Form Request';
+            $htmlMessage = $settingManager->get('entry_invitation_template');
+
+            $html2text = new Html2Text($htmlMessage);
+            $textMessage = $html2text->getText();
+
+            $email = (new TemplatedEmail())
+                ->from($settingManager->get('notification_from'))
+                ->to($toAddress)
+                ->subject($subject)
+                ->htmlTemplate('workflow/membership/entry_invitation.html.twig')
+                ->textTemplate('workflow/membership/entry_invitation.txt.twig')
+                ->context([
+                    'subject' => $subject,
+                    'message' => $htmlMessage,
+                    'plainTextMessage' => $textMessage,
+                ]);
+
+            $mailer->send($email);
+        }
+
+        return $this->render('workflow/membership/send_entry_form.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 
