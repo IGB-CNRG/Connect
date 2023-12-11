@@ -38,7 +38,6 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Workflow\WorkflowInterface;
-use Twig\Environment;
 
 class MembershipController extends AbstractController
 {
@@ -380,9 +379,10 @@ class MembershipController extends AbstractController
     public function sendEntryForm(
         Request $request,
         SettingManager $settingManager,
-        Environment $twig,
         MailerInterface $mailer
     ) {
+        $success = false;
+        $toAddress = null;
         $form = $this->createForm(SendEntryFormType::class)
             ->add('send', SubmitType::class);
 
@@ -409,10 +409,14 @@ class MembershipController extends AbstractController
                 ]);
 
             $mailer->send($email);
+
+            $success = true;
         }
 
         return $this->render('workflow/membership/send_entry_form.html.twig', [
             'form' => $form->createView(),
+            'invitationSent' => $success,
+            'toAddress' => $toAddress,
         ]);
     }
 

@@ -12,9 +12,15 @@
 {% block content %}
     <h2>Send IGB Entry Form</h2>
 
-    <div class="callout callout-info">
-        An email will be sent to the address entered below with instructions on how to access the IGB entry form.
-    </div>
+    {% if invitationSent %}
+        <div class="callout callout-success">
+            Invitation sent to {{ toAddress }}! You can now safely close this window.
+        </div>
+    {% else %}
+        <div class="callout callout-info">
+            An email will be sent to the address entered below with instructions on how to access the IGB entry form.
+        </div>
+    {% endif %}
 
     {% form_theme form "form_themes/_inline-buttons-theme.html.twig" %}
     {{ block('form_card') }}
