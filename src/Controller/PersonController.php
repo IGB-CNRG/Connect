@@ -305,8 +305,19 @@ class PersonController extends AbstractController
     public function nonUniqueErrorFragment(#[MapQueryParameter] int $id, PersonRepository $personRepository): Response
     {
         $person = $personRepository->find($id);
+
         // todo when we enable the workflow, show a different message when not logged in
         return $this->render('person/_nonUniqueError.html.twig', [
+            'person' => $person,
+        ]);
+    }
+
+    #[Route('//_fragments/non-unique-invitation', name: 'person_nonuniqueinvitationfragment')]
+    public function nonUniqueEntryInvitationFragment(#[MapQueryParameter] int $id, PersonRepository $personRepository)
+    {
+        $person = $personRepository->find($id);
+
+        return $this->render('person/_nonUniqueInvitation.html.twig', [
             'person' => $person,
         ]);
     }

@@ -7,6 +7,7 @@ import {Controller} from "@hotwired/stimulus";
 
 const $ = require("jquery");
 
+// todo convert usages of this controller to user-check
 export default class extends Controller {
     static targets = ['uin'];
     static values = {
