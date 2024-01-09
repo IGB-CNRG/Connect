@@ -1,9 +1,10 @@
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
 import {Controller} from "@hotwired/stimulus";
+import debounce from "debounce";
 
 const $ = require("jquery");
 
@@ -14,14 +15,26 @@ export default class extends Controller {
         'url': String,
         'errorUrl': String,
         'excludeId': Number,
+        'numeric': Boolean,
     };
+
+    initialize() {
+        this.debounceCheck = debounce(this.debounceCheck.bind(this), 300);
+    }
 
     /**
      * return true if user is unique
      */
     checkIfUnique() {
+        // first we do some rudimentary input validation
+        if(this.inputTarget.value === ''){
+            return this.clearError();
+        }
+        if(this.numericValue && !(/^\d*$/.test(this.inputTarget.value))){
+            return this.clearError();
+        }
+
         const url = this.urlValue + '?' + this.fieldValue + '=' + this.inputTarget.value;
-        console.log(url);
         return fetch(url, {
             headers: {
                 'Accept': 'application/json',
@@ -30,46 +43,46 @@ export default class extends Controller {
         }).then(response => {
             if (response.status === 200) {
                 return response.json().then(data => {
-                    console.log(data)
                     if (data.length >= 1) {
                         const person = data[0];
                         if(!this.hasExcludeIdValue || this.excludeIdValue !== person.id) {
-                            fetch(`${this.errorUrlValue}?id=${person.id}`).then(response => {
+                            const error = fetch(`${this.errorUrlValue}?id=${person.id}`).then(response => {
                                 if (response.status === 200) {
                                     return response.text();
                                 }
-                            }).then(html => {
-                                $(this.inputTarget).next('.invalid-feedback').remove();
-                                $(this.inputTarget).addClass('is-invalid').after(html);
                             }).catch(function (err) {
                                 // There was an error
                                 console.warn('Something went wrong.', err);
+                                return 'Something went wrong! Please reload the page and try again.';
                             });
-                            return false;
+                            return this.setError(error);
                         }
+                        return this.clearError();
                     } else {
-                        $(this.inputTarget).next('.invalid-feedback').remove();
-                        $(this.inputTarget).removeClass('is-invalid');
-                        return true;
+                        return this.clearError();
                     }
                 });
             }
         });
     }
 
-    submitCheck(event){
-        event.preventDefault();
-        console.log(this.submitTarget.form)
-        this.checkIfUnique()
-            .then(isUnique=>{
-                if(isUnique){
-                    console.log('submitting form!');
-                    this.submitTarget.form.submit();
-                }
-            })
+    setError(message){
+        $(this.inputTarget).next('.invalid-feedback').remove();
+        this.inputTarget.setCustomValidity('This person is already in Connect'); // todo a more general error message?
+        message.then(html=>{
+            $(this.inputTarget).addClass('is-invalid').attr('aria-invalid', true).after(html);
+        });
+        return false;
     }
 
-    connect(){
-        console.log(this.hasExcludeIdValue, this.excludeIdValue)
+    clearError(){
+        $(this.inputTarget).next('.invalid-feedback').remove();
+        this.inputTarget.setCustomValidity('');
+        $(this.inputTarget).removeClass('is-invalid').removeAttr('aria-invalid');
+        return true;
+    }
+
+    debounceCheck(){
+        this.checkIfUnique();
     }
 }

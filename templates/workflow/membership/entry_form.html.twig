@@ -22,11 +22,17 @@
             <div class="row">
                 <div class="col-lg-6">{{ form_row(form.preferredFirstName) }}</div>
             </div>
-            <div class="row" {{ stimulus_controller('username-check', {'url': path('_api_/people{._format}_get_collection'), 'errorUrl': path('person_nonuniqueerrorfragment')})
-            |stimulus_controller('uin-check', {'url':path('_api_/people{._format}_get_collection'), 'errorUrl': path('person_nonuniqueerrorfragment')})
-            |stimulus_controller('netid-autofill') }}>
-                <div class="col-lg">{{ form_row(form.netid, {'attr':{'data-action':'netid-autofill#updateFields change->username-check#checkIfUsernameUnique', 'data-username-check-target':'username'}}) }}</div>
-                <div class="col-lg">{{ form_row(form.uin, {'attr':{'data-action':'change->uin-check#checkIfUinUnique', 'data-uin-check-target':'uin'}}) }}</div>
+            <div class="row" {{ stimulus_controller('netid-autofill') }}>
+                <div class="col-lg">
+                    <div class="associated-user-input" {{ stimulus_controller('user-check', {'field':'username', 'url': path('_api_/people{._format}_get_collection'), 'errorUrl': path('person_nonuniqueerrorfragment'), 'excludeId': person.id}) }}>
+                        {{ form_row(form.netid, {'attr':{'data-action':'netid-autofill#updateFields user-check#debounceCheck', 'data-user-check-target':'input'}}) }}
+                    </div>
+                </div>
+                <div class="col-lg">
+                    <div class="associated-user-input" {{ stimulus_controller('user-check', {'field':'uin', 'url':path('_api_/people{._format}_get_collection'), 'errorUrl': path('person_nonuniqueerrorfragment'), 'excludeId': person.id, numeric:true}) }}>
+                        {{ form_row(form.uin, {'attr':{'data-action':'user-check#debounceCheck', 'data-user-check-target':'input'}}) }}
+                    </div>
+                </div>
                 <div class="col-lg">{{ form_row(form.email, {'attr':{'data-netid-autofill-target':'email'}}) }}</div>
             </div>
         </div>

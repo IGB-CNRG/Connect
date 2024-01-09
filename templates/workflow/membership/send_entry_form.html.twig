@@ -23,15 +23,17 @@
     {% endif %}
 
     {% form_theme form "form_themes/_inline-buttons-theme.html.twig" %}
-    <div {{ stimulus_controller('user-check', {'field':'email','url': path('_api_/people{._format}_get_collection'), 'errorUrl': path('person_nonuniqueinvitationfragment')}) }}>
-        {{ block('form_card') }}
-    </div>
+
+    {{ block('form_card') }}
+
 {% endblock %}
 {% block form_card_body %}
-    {{ form_row(form.email, {'attr':{'data-action':'change->user-check#checkIfUnique','data-user-check-target':'input'}}) }}
+    <div {{ stimulus_controller('user-check', {'field':'email','url': path('_api_/people{._format}_get_collection'), 'errorUrl': path('person_nonuniqueinvitationfragment')}) }}>
+        {{ form_row(form.email, {'attr':{'data-action':'user-check#debounceCheck','data-user-check-target':'input'}}) }}
+    </div>
 {% endblock %}
 {% block form_card_footer %}
-    {{ form_row(form.send, {'attr':{'data-action':'user-check#submitCheck', 'data-user-check-target':'submit'}}) }}
+    {{ form_row(form.send) }}
 {% endblock %}
 
 
