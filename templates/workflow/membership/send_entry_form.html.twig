@@ -28,7 +28,7 @@
 
 {% endblock %}
 {% block form_card_body %}
-    <div {{ stimulus_controller('user-check', {'field':'email','url': path('_api_/people{._format}_get_collection'), 'errorUrl': path('person_nonuniqueinvitationfragment')}) }}>
+    <div {{ stimulus_controller('user-check', {'field':'email'}) }}>
         {{ form_row(form.email, {'attr':{'data-action':'user-check#debounceCheck','data-user-check-target':'input'}}) }}
     </div>
 {% endblock %}

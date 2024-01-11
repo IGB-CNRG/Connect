@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -27,7 +27,6 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -298,27 +297,6 @@ class PersonController extends AbstractController
             'person' => $person,
             'roomAffiliation' => $roomAffiliation,
             'form' => $form->createView(),
-        ]);
-    }
-
-    #[Route('/_fragments/non-unique-error', name: 'person_nonuniqueerrorfragment')]
-    public function nonUniqueErrorFragment(#[MapQueryParameter] int $id, PersonRepository $personRepository): Response
-    {
-        $person = $personRepository->find($id);
-
-        // todo when we enable the workflow, show a different message when not logged in
-        return $this->render('person/_nonUniqueError.html.twig', [
-            'person' => $person,
-        ]);
-    }
-
-    #[Route('//_fragments/non-unique-invitation', name: 'person_nonuniqueinvitationfragment')]
-    public function nonUniqueEntryInvitationFragment(#[MapQueryParameter] int $id, PersonRepository $personRepository)
-    {
-        $person = $personRepository->find($id);
-
-        return $this->render('person/_nonUniqueInvitation.html.twig', [
-            'person' => $person,
         ]);
     }
 }

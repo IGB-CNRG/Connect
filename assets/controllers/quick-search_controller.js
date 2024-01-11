@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -9,11 +9,8 @@ import 'tom-select/dist/css/tom-select.bootstrap5.css';
 import Routing from "fos-router";
 
 export default class extends Controller {
-    static values = {
-        'apiUrl': String,
-    };
+
     connect() {
-        const apiUrl = this.apiUrlValue;
         const clickHandler = (value, item) => {
             window.location.assign(Routing.generate('person_view', {'slug':value}));
         }
@@ -33,7 +30,7 @@ export default class extends Controller {
             maxOptions: 6,
             onItemAdd: clickHandler,
             load: function (query, callback) {
-                const url = `${apiUrl}?search=` + encodeURIComponent(query);
+                const url = Routing.generate('_api_/people{._format}_get_collection', {'search': query});
 
                 fetch(url, {
                     credentials: 'same-origin',

@@ -5,6 +5,7 @@
 
 import {Controller} from "@hotwired/stimulus";
 import debounce from "debounce";
+import Routing from "fos-router";
 
 const $ = require("jquery");
 
@@ -12,8 +13,6 @@ export default class extends Controller {
     static targets = ['input', 'submit'];
     static values = {
         'field': String,
-        'url': String,
-        'errorUrl': String,
         'excludeId': Number,
         'numeric': Boolean,
     };
@@ -34,7 +33,7 @@ export default class extends Controller {
             return this.clearError();
         }
 
-        const url = this.urlValue + '?' + this.fieldValue + '=' + this.inputTarget.value;
+        const url = Routing.generate('_api_/people{._format}_get_collection', {[this.fieldValue]: this.inputTarget.value});
         return fetch(url, {
             headers: {
                 'Accept': 'application/json',
@@ -46,16 +45,7 @@ export default class extends Controller {
                     if (data.length >= 1) {
                         const person = data[0];
                         if(!this.hasExcludeIdValue || this.excludeIdValue !== person.id) {
-                            const error = fetch(`${this.errorUrlValue}?id=${person.id}`).then(response => {
-                                if (response.status === 200) {
-                                    return response.text();
-                                }
-                            }).catch(function (err) {
-                                // There was an error
-                                console.warn('Something went wrong.', err);
-                                return 'Something went wrong! Please reload the page and try again.';
-                            });
-                            return this.setError(error);
+                            return this.setError(this.errorMessage(person));
                         }
                         return this.clearError();
                     } else {
@@ -66,12 +56,16 @@ export default class extends Controller {
         });
     }
 
+    errorMessage(person){
+        const href = Routing.generate('person_view', {'slug':person.slug});
+
+        return `This person is already in Connect: <a href="${href}">${person.name}</a>`; // todo how can we change this message if anonymous?
+    }
+
     setError(message){
         $(this.inputTarget).next('.invalid-feedback').remove();
         this.inputTarget.setCustomValidity('This person is already in Connect'); // todo a more general error message?
-        message.then(html=>{
-            $(this.inputTarget).addClass('is-invalid').attr('aria-invalid', true).after(html);
-        });
+        $(this.inputTarget).addClass('is-invalid').attr('aria-invalid', true).after(`<div class="invalid-feedback">${message}</div>`);
         return false;
     }
 

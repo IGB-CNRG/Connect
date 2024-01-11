@@ -39,7 +39,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ApiResource(
     operations: [
         new Get(),
-        new GetCollection(),
+        new GetCollection(options: ['expose'=>true]),
     ],
     normalizationContext: ['groups' => 'person:read']
 )]
