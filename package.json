@@ -21,6 +21,9 @@
         "watch": "encore dev --watch",
         "build": "encore production --progress"
     },
+    "engines": {
+        "node": ">=18.0.0"
+    },
     "dependencies": {
         "@babel/core": "^7.17.0",
         "@babel/plugin-proposal-class-properties": "^7.18.6",
@@ -33,6 +36,7 @@
         "datatables.net-buttons-bs5": "^2.2.3",
         "datatables.net-responsive": "^2.2.9",
         "datatables.net-responsive-bs5": "^2.2.9",
+        "debounce": "^2.0.0",
         "dotenv": "^16.0.1",
         "jquery": "^3.6.0",
         "jquery-lazy": "^1.7.11",
