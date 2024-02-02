@@ -4,11 +4,12 @@
  */
 
 import {Controller} from "@hotwired/stimulus"
-import debounce from 'debounce'
+// import debounce from 'debounce'
 
 export default class extends Controller {
     initialize() {
-        this.debouncedSubmit = debounce(this.debouncedSubmit.bind(this), 300)
+        // todo add this back in after we resolve debounce dependency issues (node>=18, 16 on server)
+        // this.debouncedSubmit = debounce(this.debouncedSubmit.bind(this), 300)
     }
 
     submit(e) {
