@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -52,6 +52,101 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
         return $this->createIndexQueryBuilder()
             ->andWhere('ta is not null')
             ->andWhere('t.isOutsideGroup = false');
+    }
+
+    public function directoryQueryBuilder(
+        ?string $query,
+        ?string $sort = null,
+        string $sortDirection = 'asc',
+        array $themes = [],
+        array $memberCategories = [],
+        array $themeRoles = [],
+        array $units = []
+    ): QueryBuilder {
+        $qb = $this->createMembersOnlyIndexQueryBuilder();
+        $this->historicityManager()->addCurrentConstraint($qb, 'ta');
+        if ($query) {
+            $qb->andWhere('p.firstName LIKE :query OR p.lastName LIKE :query')
+                ->setParameter('query', '%'.$query.'%');
+        }
+        if ($sort) {
+            if ($sort === 'name') {
+                $qb->orderBy('p.lastName', $sortDirection)
+                    ->addOrderBy('p.firstName', $sortDirection);
+            } else {
+                $qb->orderBy('p.'.$sort, $sortDirection);
+            }
+        }
+
+        $addedSecondJoin = false;
+        // Add theme query
+        $queries = [];
+        foreach ($themes as $i => $id) {
+            if ($id) {
+                $queries[] = "t2.shortName = :theme{$i}";
+                $qb->setParameter("theme{$i}", $id);
+            }
+        }
+        if (count($queries) > 0) {
+            if(!$addedSecondJoin){
+                $qb->leftJoin('p.themeAffiliations', 'ta2');
+                $this->historicityManager()->addCurrentConstraint($qb, 'ta2');
+                $addedSecondJoin = true;
+            }
+            $qb->leftJoin('ta2.theme', 't2')
+                ->andWhere('('.join(' or ', $queries).')');
+            $addedSecondJoin = true;
+        }
+
+        // Add member category query
+        $queries = [];
+        foreach ($memberCategories as $i => $id) {
+            if ($id) {
+                $queries[] = "mc2.friendlyName = :type{$i}";
+                $qb->setParameter("type{$i}", $id);
+            }
+        }
+        if (count($queries) > 0) {
+            if(!$addedSecondJoin){
+                $qb->leftJoin('p.themeAffiliations', 'ta2');
+                $this->historicityManager()->addCurrentConstraint($qb, 'ta2');
+                $addedSecondJoin = true;
+            }
+            $qb->leftJoin('ta2.memberCategory', 'mc2')
+                ->andWhere('('.join(' or ', $queries).')');
+        }
+
+        // Add theme role query
+        $queries = [];
+        foreach ($themeRoles as $i => $id) {
+            if ($id) {
+                $queries[] = "tr2.id = :role{$i}";
+                $qb->setParameter("role{$i}", $id);
+            }
+        }
+        if (count($queries) > 0) {
+            if(!$addedSecondJoin){
+                $qb->leftJoin('p.themeAffiliations', 'ta2');
+                $this->historicityManager()->addCurrentConstraint($qb, 'ta2');
+                $addedSecondJoin = true;
+            }
+            $qb->leftJoin('ta2.roles', 'tr2')
+                ->andWhere('('.join(' or ', $queries).')');
+        }
+
+        // Add unit query
+        $queries = [];
+        foreach ($units as $i => $id) {
+            if ($id) {
+                $queries[] = "u.id = :unit{$i}";
+                $qb->setParameter("unit{$i}", $id);
+            }
+        }
+        if (count($queries) > 0) {
+            $qb->andWhere('('.join(' or ', $queries).')');
+        }
+
+        return $qb;
     }
 
     /**
@@ -111,6 +206,7 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
             ->setParameter('theme', $theme);
         $this->historicityManager()->addCurrentConstraint($qb, 'ta');
         $this->historicityManager()->addCurrentConstraint($qb, 'ta2');
+
         return $qb->getQuery()
             ->getResult();
     }

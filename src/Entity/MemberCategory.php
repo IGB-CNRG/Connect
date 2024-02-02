@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -39,6 +39,9 @@ class MemberCategory
 
     #[ORM\Column]
     private ?bool $needsCertificates = true;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $friendlyName = null;
 
     public function __construct()
     {
@@ -129,6 +132,18 @@ class MemberCategory
     public function setNeedsCertificates(bool $needsCertificates): self
     {
         $this->needsCertificates = $needsCertificates;
+
+        return $this;
+    }
+
+    public function getFriendlyName(): ?string
+    {
+        return $this->friendlyName;
+    }
+
+    public function setFriendlyName(?string $friendlyName): static
+    {
+        $this->friendlyName = $friendlyName;
 
         return $this;
     }

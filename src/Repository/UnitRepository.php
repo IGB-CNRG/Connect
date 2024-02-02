@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -33,5 +33,13 @@ class UnitRepository extends ServiceEntityRepository
             ->select('u,p,c')
             ->addOrderBy('p.name')
             ->addOrderBy('u.name');
+    }
+
+    /**
+     * @return Unit[]
+     */
+    public function findAllFormSorted()
+    {
+        return $this->createFormSortedQueryBuilder()->getQuery()->getResult();
     }
 }

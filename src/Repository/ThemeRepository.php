@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -76,4 +76,13 @@ class ThemeRepository extends ServiceEntityRepository implements ServiceSubscrib
             ->getResult();
     }
 
+    public function findCurrentNonOutsideThemes()
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->andWhere('t.isOutsideGroup=false')
+            ->addOrderBy('t.shortName');
+        $this->historicityManager()->addCurrentConstraint($qb, 't');
+        return $qb->getQuery()
+            ->getResult();
+    }
 }

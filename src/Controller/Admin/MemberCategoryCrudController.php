@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -33,6 +33,7 @@ class MemberCategoryCrudController extends AbstractCrudController
         return [
             TextField::new('name'),
             TextField::new('shortName'),
+            TextField::new('friendlyName')->setLabel('User-friendly Name')->setHelp('This name will be used on the IGB website directory'),
             BooleanField::new('canSupervise')->renderAsSwitch(false),
             BooleanField::new('needsCertificates')->renderAsSwitch(false)
         ];

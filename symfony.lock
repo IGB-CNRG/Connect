@@ -12,6 +12,9 @@
             "src/ApiResource/.gitignore"
         ]
     },
+    "babdev/pagerfanta-bundle": {
+        "version": "4.x-dev"
+    },
     "behat/transliterator": {
         "version": "v1.3.0"
     },

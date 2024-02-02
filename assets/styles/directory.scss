@@ -1,0 +1,160 @@
+/*!
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
+ * All rights reserved.
+ */
+@use "sass:math";
+// Load Adobe Fonts (Scala, Scala Sans)
+@import url("https://use.typekit.net/bge0xqa.css");
+
+// Customize bootstrap variables
+@import "~bootstrap/scss/functions";
+
+$blue: #13294B;
+$teal: #20c997;
+$orange: #FC5F05;
+
+$primary: $orange;
+$info: $teal;
+
+$font-size-root: 18px;
+$font-family-sans-serif: "ff-scala-sans-pro", sans-serif;
+
+$arrows: rgb(112,112,112);
+$arrows-faded: rgb(112,112,112, 0.5);
+
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/bootstrap";
+
+// Responsive border classes
+@each $breakpoint in map-keys($grid-breakpoints) {
+  @include media-breakpoint-up($breakpoint) {
+    $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+
+    .border#{$infix}-top {      border-top: var(--bs-border-width) var(--bs-border-style) rgba(112,112,112,1) !important; }
+    .border#{$infix}-end {    border-right: var(--bs-border-width) var(--bs-border-style) rgba(112,112,112,1) !important; }
+    .border#{$infix}-bottom {   border-bottom: var(--bs-border-width) var(--bs-border-style) rgba(112,112,112,1) !important; }
+    .border#{$infix}-start {     border-left: var(--bs-border-width) var(--bs-border-style) rgba(112,112,112,1) !important; }
+
+    .border#{$infix}-top-0 {    border-top: 0 !important; }
+    .border#{$infix}-end-0 {  border-right: 0 !important; }
+    .border#{$infix}-bottom-0 { border-bottom: 0 !important; }
+    .border#{$infix}-start-0 {   border-left: 0 !important; }
+
+    .border#{$infix}-x {
+      border-left: var(--bs-border-width) var(--bs-border-style) rgba(112,112,112,1) !important;
+      border-right: var(--bs-border-width) var(--bs-border-style) rgba(112,112,112,1) !important;
+    }
+
+    .border#{$infix}-y {
+      border-top: var(--bs-border-width) var(--bs-border-style) rgba(112,112,112,1) !important;
+      border-bottom: var(--bs-border-width) var(--bs-border-style) rgba(112,112,112,1) !important;
+    }
+
+    .w#{$infix}-25 { width: 25%; }
+    .w#{$infix}-50 { width: 50%; }
+    .w#{$infix}-75 { width: 75%; }
+    .w#{$infix}-100 { width: 100%; }
+    .w#{$infix}-auto { width: auto; }
+  }
+}
+
+// These styles are just for development
+//body {
+//  padding-top: 2rem;
+//  padding-bottom: 2rem;
+//}
+
+#title {
+  font-family: "ff-scala", serif;
+  font-size: 43px;
+  font-weight: bold;
+}
+
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#search-wrapper {
+  position: relative;
+  max-width: 805px;
+  width: 100%;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  margin-bottom: 4rem;
+
+  #search-icon {
+    color: $gray-600;
+    position: absolute;
+    right: 2.5rem;
+    top: 7.75px; // This is .375rem + 1px for the padding + border of the search box
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  #search-input {
+    border-radius: math.div(1rem*1.5 + .375rem*2, 2);
+    border-color: $orange;
+    padding-right: .75rem+1.5rem;
+  }
+}
+
+.filter-wrapper {
+  background-color: #f7f8fa;
+  width: 100%;
+
+  .filter-label {
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: .1rem;
+    padding-bottom: 1rem
+  }
+}
+
+#directory-table {
+  th {
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: .1rem;
+    border-top: 1px solid rgba(112,112,112,1);
+    border-bottom: 1px solid rgba(112,112,112,1);
+    padding: 1.25rem 0.5rem;
+
+    a {
+      color: black;
+      text-decoration: none;
+    }
+
+    .arrows {
+      color: $arrows;
+    }
+    .arrows-faded {
+      color: $arrows-faded;
+    }
+  }
+  td {
+    border-bottom: 1px solid rgba(112,112,112,0.5);
+    padding: 1rem 0.5rem;
+    vertical-align: middle;
+  }
+}
+
+#pager-wrapper {
+  //width: 100%;
+
+  .pagination__item {
+    padding: 0.5rem 1rem;
+    border-left: var(--bs-border-width) var(--bs-border-style) var(--bs-secondary-color);
+    text-decoration: none;
+    color: black;
+  }
+  .pagination__item--disabled {
+    color: $gray-200;
+  }
+  .pagination__item--current-page {
+    color: white;
+    background-color: $orange;
+  }
+}

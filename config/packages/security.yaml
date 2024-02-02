@@ -31,13 +31,14 @@ security:
   # Note: Only the *first* access control that matches will be used
   access_control:
     - { path: ^/login, roles: PUBLIC_ACCESS } # Anyone can see the login page
-#    - { attributes: {'_route': 'membership_entryForm'}, roles: PUBLIC_ACCESS } #Anyone can access the entry form
+    #    - { attributes: {'_route': 'membership_entryForm'}, roles: PUBLIC_ACCESS } #Anyone can access the entry form
+    - { path: ^/directory, roles: PUBLIC_ACCESS }
     - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
 
   role_hierarchy:
     ROLE_ADMIN:
       - ROLE_ALLOWED_TO_SWITCH
-#      - ROLE_KEY_MANAGER
+      #      - ROLE_KEY_MANAGER
       - ROLE_CERTIFICATE_MANAGER
       - ROLE_APPROVER
     ROLE_CERTIFICATE_MANAGER:

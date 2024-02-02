@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2022 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -28,5 +28,19 @@ class MemberCategoryRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('mc')
             ->addOrderBy('mc.name');
+    }
+
+    /**
+     * Fetches all unique friendly names from the MemberCategory entity
+     *
+     * @return string[] An array of unique friendly names
+     */
+    public function fetchAllFriendlyNames(): array
+    {
+        return $this->createQueryBuilder('mc')
+            ->select('distinct mc.friendlyName')
+            ->addOrderBy('mc.friendlyName')
+            ->getQuery()
+            ->getSingleColumnResult();
     }
 }
