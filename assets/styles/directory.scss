@@ -129,9 +129,13 @@ form {
 
     .arrows {
       color: $arrows;
+      font-size: .75rem;
+      margin-top: 6px;
     }
     .arrows-faded {
       color: $arrows-faded;
+      font-size: .75rem;
+      margin-top: 7px;
     }
   }
   td {
