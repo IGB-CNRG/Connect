@@ -237,7 +237,7 @@
                     </tr>
                     <tr>
                         <th>Office Phone</th>
-                        <td>{{ person.officePhone }}</td>
+                        <td>{{ person.officePhone|phone_number }}</td>
                         {% if is_granted('PERSON_EDIT', person) %}
                             <td></td>{% endif %}
                     </tr>

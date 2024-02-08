@@ -203,7 +203,7 @@
                     </div>
                 </td>
                 <td>{% if person.unit is not null %}{{ person.unit.name }}{% endif %}</td>
-                <td class="text-nowrap">{{ person.officePhone }}</td>
+                <td class="text-nowrap">{{ person.officePhone|phone_number }}</td>
                 <td>
                     {% for affiliation in person.roomAffiliations %}
                         {{ affiliation.room.number }}{% if not loop.last %}, {% endif %}
@@ -246,7 +246,7 @@
                 {% if person.officePhone is not null %}
                     <div class="row">
                         <div class="col-2">Phone:</div>
-                        <div class="col-10">{{ person.officePhone }}</div>
+                        <div class="col-10">{{ person.officePhone|phone_number }}</div>
                     </div>
                 {% endif %}
                 {% if person.roomAffiliations is not empty %}
