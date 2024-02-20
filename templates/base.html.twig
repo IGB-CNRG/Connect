@@ -100,14 +100,15 @@
 
                     </ul>
 
-                    <form class="d-flex quick-search" role="search">
+                    <form class="d-flex quick-search" role="search" data-controller="quick-search">
                         <input class="form-control me-2"
                                type="search"
                                placeholder="Quick Search"
                                aria-label="Search"
-                               data-controller="quick-search"
-                               data-quick-search-api-url-value="{{ path('_api_/people{._format}_get_collection') }}"
+                               data-quick-search-target="query"
+                               data-action="quick-search#debouncedSearch keydown.up->quick-search#scrollUp:prevent keydown.down->quick-search#scrollDown:prevent keydown.enter->quick-search#chooseResult:prevent focus->quick-search#tryReopen"
                         />
+                        <div class="quick-search-results d-none" data-quick-search-target="resultList" data-action="click@window->quick-search#clickOutside"></div>
                     </form>
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown">

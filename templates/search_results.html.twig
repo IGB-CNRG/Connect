@@ -1,0 +1,6 @@
+{% for person in people %}
+    <a href="{{ path('person_view', {'slug':person.slug}) }}" class="quick-search-result{% if loop.first %} selected{% endif %}" data-action="mouseenter->quick-search#select" data-quick-search-target="result">
+        <span class="quick-search-label">{{ person.name }}</span>
+        <span class="quick-search-caption">{{ person.email }}</span>
+    </a>
+{% endfor %}

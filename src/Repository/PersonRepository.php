@@ -88,7 +88,7 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
             }
         }
         if (count($queries) > 0) {
-            if(!$addedSecondJoin){
+            if (!$addedSecondJoin) {
                 $qb->leftJoin('p.themeAffiliations', 'ta2');
                 $this->historicityManager()->addCurrentConstraint($qb, 'ta2');
                 $addedSecondJoin = true;
@@ -107,7 +107,7 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
             }
         }
         if (count($queries) > 0) {
-            if(!$addedSecondJoin){
+            if (!$addedSecondJoin) {
                 $qb->leftJoin('p.themeAffiliations', 'ta2');
                 $this->historicityManager()->addCurrentConstraint($qb, 'ta2');
                 $addedSecondJoin = true;
@@ -125,7 +125,7 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
             }
         }
         if (count($queries) > 0) {
-            if(!$addedSecondJoin){
+            if (!$addedSecondJoin) {
                 $qb->leftJoin('p.themeAffiliations', 'ta2');
                 $this->historicityManager()->addCurrentConstraint($qb, 'ta2');
                 $addedSecondJoin = true;
@@ -299,5 +299,17 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
     {
         return $this->createQueryBuilder('p')
             ->addOrderBy('p.lastName');
+    }
+
+    public function findByQuery(string $query)
+    {
+        return $this->createSortedQueryBuilder()
+            ->andWhere(
+                'p.firstName LIKE :query OR p.lastName LIKE :query OR p.preferredFirstName LIKE :query OR p.email like :query or p.username like :query or p.netid like :query'
+            )
+            ->setParameter('query', '%'.$query.'%')
+            ->setMaxResults(6)
+            ->getQuery()
+            ->getResult();
     }
 }

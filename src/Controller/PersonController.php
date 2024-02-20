@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -308,6 +308,17 @@ class PersonController extends AbstractController
         // todo when we enable the workflow, show a different message when not logged in
         return $this->render('person/_nonUniqueError.html.twig', [
             'person' => $person,
+        ]);
+    }
+
+    #[Route('/_fragments/search-results', name: 'person_searchresultsfragment', options: ['expose' => true])]
+    public function searchResultsFragment(
+        #[MapQueryParameter] string $query, PersonRepository $personRepository
+    ): Response
+    {
+        $people = $personRepository->findByQuery($query);
+        return $this->render('search_results.html.twig', [
+            'people' => $people,
         ]);
     }
 }
