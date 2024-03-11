@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -71,7 +71,7 @@ class NotificationDispatcher implements ServiceSubscriberInterface
             'subject' => $notification->getSubject(),
         ]);
 
-        // Render the recipients
+        // Render the list of recipients
         $recipientTemplate = $this->twig()->createTemplate($notification->getRecipients());
         $recipients = $this->twig()->render($recipientTemplate, [
             'approvers' => $this->getApprovalEmails($notification, $subject),

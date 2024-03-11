@@ -1,5 +1,5 @@
 entry_form:
-  unit: UIUC home department
+  unit: UIUC home department/unit
   room: "IGB Office/Lab/Cubicle #"
   phone: "Office phone #"
   supervisor: Supervisor

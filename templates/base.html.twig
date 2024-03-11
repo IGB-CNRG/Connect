@@ -122,6 +122,7 @@
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
                                data-bs-toggle="dropdown" aria-expanded="false">
                                 <span class="fa fa-id-badge"></span> {{ app.user.name }}
+                                <twig:ApprovalBadge small="true" class="position-absolute" style="top:0.75rem; right: 0.25rem;"/>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
                                 {% if is_granted('ROLE_ADMIN') %}
@@ -135,7 +136,7 @@
                                 {% endif %}
                                 {% if is_granted('ROLE_APPROVER') %}
                                     <li><a class="dropdown-item" href="{{ path('membership_approvals') }}"><span
-                                                    class="fa fa-thumbs-up"></span> Approvals</a></li>
+                                                    class="fa fa-thumbs-up"></span> Approvals <twig:ApprovalBadge style="vertical-align: text-bottom;"/></a></li>
                                 {% endif %}
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{{ path('logout') }}"><span

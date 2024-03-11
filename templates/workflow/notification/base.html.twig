@@ -1,7 +1,4 @@
-<html lang="en">
-<head><title>{{ subject }}</title></head>
-<body>
-{{ body|raw }}
-{{ get_setting('notification_signature')|raw }}
-</body>
-</html>
+{% extends 'workflow/email_base.html.twig' %}
+{% block body %}
+    {{ body|raw }}
+{% endblock %}

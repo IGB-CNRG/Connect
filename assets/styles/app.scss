@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -59,19 +59,6 @@ $info: $teal;
 .shrink {
   width: 0.1%;
   white-space: nowrap;
-}
-
-/* Placeholders */
-// TODO these can be removed from the final product, once we have art
-.placeholder-image {
-  background-color: $gray-200;
-  color: $gray-600;
-  font-size: x-large;
-  font-weight: bold;
-  padding: 3rem;
-  .text-muted {
-    color: $gray-500 !important;
-  }
 }
 
 /* Breadcrumbs */

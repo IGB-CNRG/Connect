@@ -1,0 +1,6 @@
+{% if computed.pendingApprovalCount > 0 %}
+    <div{{ attributes.defaults({class: 'badge rounded-pill text-bg-danger'~(small?' p-2':'')}) }}>
+        {% if not small %}{{ computed.pendingApprovalCount }}{% endif %}
+        <span class="visually-hidden">pending approvals</span>
+    </div>
+{% endif %}

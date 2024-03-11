@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -25,7 +25,6 @@ use App\Service\HistoricityManager;
 use App\Service\ThemeAffiliationFactory;
 use App\Settings\SettingManager;
 use App\Workflow\Membership;
-use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Html2Text\Html2Text;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -102,7 +101,7 @@ class MembershipController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $silent = $form->has('isSilent') && $form->get('isSilent')->getData();
-            $membership->processEntry($person, true); // todo use the $silent variable when we enable the workflows
+            $membership->processEntry($person, $silent);
 
             $em->flush();
 
@@ -284,7 +283,7 @@ class MembershipController extends AbstractController
         Person $person,
         Request $request,
         EntityManagerInterface $entityManager,
-        HistoricityManager $historicityManager,
+        Membership $membership,
         ActivityLogger $logger,
         WorkflowInterface $membershipStateMachine
     ): Response {
@@ -301,8 +300,7 @@ class MembershipController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             if ($membershipStateMachine->can($person, Membership::TRANS_FORCE_EXIT_FORM)) {
                 // Set exit reason and end date on all current theme, supervisor, and room affiliations
-                $this->processExit(
-                    $historicityManager,
+                $membership->processExit(
                     $person,
                     $exitForm->getEndedAt(),
                     $exitForm->getExitReason(),
@@ -337,7 +335,7 @@ class MembershipController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         WorkflowInterface $membershipStateMachine,
-        HistoricityManager $historicityManager,
+        Membership $membership,
         ActivityLogger $logger
     ): Response {
         $form = $this->createForm(
@@ -351,8 +349,7 @@ class MembershipController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $endedAt = $form->get('endedAt')->getData();
             $exitReason = $form->get('exitReason')->getData();
-            $this->processExit(
-                $historicityManager,
+            $membership->processExit(
                 $person,
                 $endedAt,
                 $exitReason,
@@ -419,39 +416,4 @@ class MembershipController extends AbstractController
             'toAddress' => $toAddress,
         ]);
     }
-
-    // todo move this function to Membership
-
-    /**
-     * @param HistoricityManager $historicityManager
-     * @param Person $person
-     * @param DateTimeInterface $endedAt
-     * @param string $exitReason
-     * @param string $forwardingEmail
-     * @return void
-     */
-    protected function processExit(
-        HistoricityManager $historicityManager,
-        Person $person,
-        DateTimeInterface $endedAt,
-        string $exitReason,
-        ?string $forwardingEmail
-    ): void {
-        $historicityManager->endAffiliations(
-            array_merge(
-                $person->getRoomAffiliations()->toArray(),
-                $person->getThemeAffiliations()->toArray(),
-                $person->getSponsorAffiliations(),
-                $person->getSponseeAffiliations()->toArray(),
-                $person->getSupervisorAffiliations(),
-                $person->getSuperviseeAffiliations()->toArray(),
-            ),
-            $endedAt,
-            $exitReason
-        );
-        if ($forwardingEmail) {
-            $person->setEmail($forwardingEmail);
-        }
-    }
-
 }

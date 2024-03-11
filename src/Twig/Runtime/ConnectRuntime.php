@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -11,6 +11,9 @@ use App\Entity\Person;
 use App\Entity\SupervisorAffiliation;
 use App\Entity\Theme;
 use App\Entity\ThemeAffiliation;
+use App\Entity\ThemeRole;
+use App\Repository\PersonRepository;
+use App\Repository\ThemeRoleRepository;
 use App\Service\HistoricityManager;
 use DateTimeInterface;
 use Doctrine\Common\Collections\Collection;
@@ -19,11 +22,12 @@ use Twig\Extension\RuntimeExtensionInterface;
 
 class ConnectRuntime implements RuntimeExtensionInterface
 {
-    private HistoricityManager $historicityManager;
 
-    public function __construct(HistoricityManager $historicityManager)
-    {
-        $this->historicityManager = $historicityManager;
+    public function __construct(
+        private readonly HistoricityManager $historicityManager,
+        private readonly PersonRepository $personRepository,
+        private readonly ThemeRoleRepository $roleRepository
+    ) {
     }
 
     public function getCurrent(Collection $collection): ReadableCollection
@@ -46,7 +50,7 @@ class ConnectRuntime implements RuntimeExtensionInterface
     public function getRoleName(string $rawRole): string
     {
         $roleNames = array_flip(Person::USER_ROLES);
-        if(key_exists($rawRole, $roleNames)){
+        if (key_exists($rawRole, $roleNames)) {
             return $roleNames[$rawRole];
         } else {
             return $rawRole;
@@ -61,7 +65,7 @@ class ConnectRuntime implements RuntimeExtensionInterface
      */
     public function filterByTheme(Collection $collection, Theme $theme): ReadableCollection
     {
-        return $collection->filter(function(SupervisorAffiliation $affiliation) use ($theme) {
+        return $collection->filter(function (SupervisorAffiliation $affiliation) use ($theme) {
             return $affiliation->getSuperviseeThemeAffiliation()->getTheme() === $theme;
         });
     }
@@ -72,9 +76,10 @@ class ConnectRuntime implements RuntimeExtensionInterface
      */
     public function earliest(Collection|array $entities): ?DateTimeInterface
     {
-        if($entities instanceof Collection){
+        if ($entities instanceof Collection) {
             $entities = $entities->toArray();
         }
+
         return $this->historicityManager->getEarliest($entities);
     }
 
@@ -84,9 +89,10 @@ class ConnectRuntime implements RuntimeExtensionInterface
      */
     public function latest(Collection|array $entities): ?DateTimeInterface
     {
-        if($entities instanceof Collection){
+        if ($entities instanceof Collection) {
             $entities = $entities->toArray();
         }
+
         return $this->historicityManager->getLatest($entities);
     }
 
@@ -99,24 +105,24 @@ class ConnectRuntime implements RuntimeExtensionInterface
     {
         $rows = explode("\n", $tableString);
         $table = [];
-        foreach($rows as $row){
-            if(trim($row) !== '') {
+        foreach ($rows as $row) {
+            if (trim($row) !== '') {
                 $table[] = explode("\t", trim($row));
             }
         }
 
         $numColumns = count($table[0]);
         $numRows = count($table);
-        for($col = 0; $col < $numColumns; $col++){
+        for ($col = 0; $col < $numColumns; $col++) {
             // Find the max length of each column
             $maxColumnLength = 0;
-            for($row = 0; $row < $numRows; $row++){
+            for ($row = 0; $row < $numRows; $row++) {
                 $value = $table[$row][$col] ?? '';
                 $maxColumnLength = max($maxColumnLength, strlen($value));
             }
 
             // Pad each cell in the column to that length + 2
-            for($row = 0; $row < $numRows; $row++){
+            for ($row = 0; $row < $numRows; $row++) {
                 $value = $table[$row][$col] ?? '';
                 $table[$row][$col] = str_pad($value, $maxColumnLength + 2, " ", STR_PAD_RIGHT);
             }
@@ -124,9 +130,26 @@ class ConnectRuntime implements RuntimeExtensionInterface
 
         // Re-join the table
         $rows = [];
-        foreach($table as $row){
+        foreach ($table as $row) {
             $rows[] = join("", $row);
         }
+
         return join("\n", $rows);
+    }
+
+    /**
+     * @param Theme $theme
+     * @return Collection|ThemeAffiliation[]
+     */
+    public function getThemeRoles(Theme $theme): Collection|array
+    {
+        // todo this is duplicated in ThemeController. Is there a more central place we can put this?
+        return array_map(
+            fn(ThemeRole $role) => [
+                'name' => $role->getName(),
+                'people' => $this->personRepository->findByRoleInTheme($theme, $role),
+            ],
+            $this->roleRepository->findAll()
+        );
     }
 }
