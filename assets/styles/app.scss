@@ -3,6 +3,8 @@
  * All rights reserved.
  */
 
+@use 'sass:color';
+
 // Customize bootstrap variables
 @import "~bootstrap/scss/functions";
 
@@ -93,12 +95,12 @@ $info: $teal;
   }
 }
 
-$callout-background-lighten: 50%;
+$callout-background-lighten: 70%;
 @each $color, $value in $theme-colors {
   .callout-#{$color} {
-    border-left-color: $value;
-    background-color: lighten($value, $callout-background-lighten);
-    color: color-contrast(lighten($value, $callout-background-lighten));
+    border-color: $value;
+    background-color: color.scale($value, $lightness: $callout-background-lighten);
+    color: color-contrast(color.scale($value, $lightness: $callout-background-lighten));
   }
   .callout-border-#{$color} {
     border-left-color: $value;

@@ -35,14 +35,20 @@
                 </div>
                 {{ form_end(filterForm) }}
 
-                <div class="callout callout-info">
+                <p class="mb-0">
                     {# todo this copy needs a second look #}
                     Selecting an option from each dropdown will search for members who match <strong>all</strong>
                     options. Selecting multiple options from a single dropdown will search for members who match
                     <strong>any</strong> of those options. For example, if you select MME, MMG, and Faculty, both MME
                     Faculty and MMG Faculty will be displayed.
-                </div>
+                </p>
             </div>
+        </div>
+
+        <div class="callout mt-2">
+            <strong>Legend</strong><br/>
+            <span class="fas fa-calendar-day text-warning" title="Previous affiliation"></span> Previous affiliation<br/>
+            <span class="fas fa-building text-info" title="Non IGB member"></span> Building access only; Not an IGB theme
         </div>
     </div>
 {% endblock %}
