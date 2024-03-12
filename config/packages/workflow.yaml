@@ -112,9 +112,10 @@ framework:
                         label: Approve exit form
                 reenter:
                     from: inactive
-                    to: need_entry_form
+                    to: entry_form_submitted
 
                 reactivate: # does a member need to go through the entry process again? will they need new certificates?
                     from: inactive
                     to: active
+                    guard: "is_granted('ROLE_APPROVER')"
 

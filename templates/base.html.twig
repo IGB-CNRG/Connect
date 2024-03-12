@@ -81,6 +81,15 @@
                                         <span class="fa fa-user-minus"></span> Exit Form
                                     </a>
                                 </li>
+                                {% if is_granted("PERSON_ADD") %}
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item"
+                                           href="{{ path('membership_sendEntryForm') }}">
+                                            <span class="fa fa-paper-plane"></span> Send Entry Form
+                                        </a>
+                                    </li>
+                                {% endif %}
                             </ul>
                         </li>
 
@@ -115,6 +124,7 @@
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
                                data-bs-toggle="dropdown" aria-expanded="false">
                                 <span class="fa fa-id-badge"></span> {{ app.user.name }}
+                                <twig:ApprovalBadge small="true" class="position-absolute" style="top:0.75rem; right: 0.25rem;"/>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
                                 {% if is_granted('ROLE_ADMIN') %}
@@ -128,8 +138,9 @@
                                 {% endif %}
                                 {% if is_granted('ROLE_APPROVER') %}
                                     <li><a class="dropdown-item" href="{{ path('membership_approvals') }}"><span
-                                                    class="fa fa-thumbs-up"></span> Approvals</a></li>
+                                                    class="fa fa-thumbs-up"></span> Approvals <twig:ApprovalBadge style="vertical-align: text-bottom;"/></a></li>
                                 {% endif %}
+                                <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{{ path('logout') }}"><span
                                                 class="fa fa-right-from-bracket"></span> Logout</a></li>
                             </ul>

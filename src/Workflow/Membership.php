@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -14,6 +14,7 @@ use App\Service\EntityManagerAware;
 use App\Service\HistoricityManagerAware;
 use App\Workflow\Approval\ApprovalStrategy;
 use DateTimeImmutable;
+use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\TaggedLocator;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\Workflow\Transition;
@@ -202,16 +203,43 @@ class Membership implements ServiceSubscriberInterface
 
         // if possible, reactivate. otherwise, if possible, force entry. otherwise, submit entry for approval.
         // todo when workflows are re-enabled, this needs to be updated with the REENTER transition for non-silent forms
-        if ($this->membershipStateMachine->can($person, Membership::TRANS_REACTIVATE)) {
+        if ($this->membershipStateMachine->can($person, Membership::TRANS_REACTIVATE)
+            && $trySilent) {
             $this->logger()->log($person, 'Reactivated');
             $this->membershipStateMachine->apply($person, Membership::TRANS_REACTIVATE);
         } elseif ($this->membershipStateMachine->can($person, Membership::TRANS_FORCE_ENTRY_FORM)
             && $trySilent) {
             $this->logger()->log($person, 'Silently submitted entry form', false);
             $this->membershipStateMachine->apply($person, Membership::TRANS_FORCE_ENTRY_FORM);
-//        } else {
-//            $logger->log($person, 'Submitted entry form');
-//            $membershipStateMachine->apply($person, Membership::TRANS_SUBMIT_ENTRY_FORM);
+        } elseif ($this->membershipStateMachine->can($person, Membership::TRANS_REENTER)) {
+            $this->logger()->log($person, 'Submitted entry form');
+            $this->membershipStateMachine->apply($person, Membership::TRANS_REENTER);
+        } else {
+            $this->logger()->log($person, 'Submitted entry form');
+            $this->membershipStateMachine->apply($person, Membership::TRANS_SUBMIT_ENTRY_FORM);
+        }
+    }
+
+    public function processExit(
+        Person $person,
+        DateTimeInterface $endedAt,
+        string $exitReason,
+        ?string $forwardingEmail
+    ): void {
+        $this->historicityManager()->endAffiliations(
+            array_merge(
+                $person->getRoomAffiliations()->toArray(),
+                $person->getThemeAffiliations()->toArray(),
+                $person->getSponsorAffiliations(),
+                $person->getSponseeAffiliations()->toArray(),
+                $person->getSupervisorAffiliations(),
+                $person->getSuperviseeAffiliations()->toArray(),
+            ),
+            $endedAt,
+            $exitReason
+        );
+        if ($forwardingEmail) {
+            $person->setEmail($forwardingEmail);
         }
     }
 

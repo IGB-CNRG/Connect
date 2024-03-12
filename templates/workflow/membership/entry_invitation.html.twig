@@ -1,0 +1,11 @@
+{% extends 'workflow/email_base.html.twig' %}
+
+{% block body %}
+    <row>
+        <columns>
+            <h1>{{ subject }}</h1>
+            {{ message|raw }}
+        </columns>
+    </row>
+{% endblock %}
+

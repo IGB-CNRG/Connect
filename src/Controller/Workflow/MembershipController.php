@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -16,20 +16,24 @@ use App\Form\Workflow\Membership\Certificate\CertificateUploadType;
 use App\Form\Workflow\Membership\EntryForm\EntryFormType;
 use App\Form\Workflow\Membership\ExitForm\ExitFormApprovalType;
 use App\Form\Workflow\Membership\ExitForm\ExitFormType;
+use App\Form\Workflow\Membership\SendEntryFormType;
 use App\Form\Workflow\RejectType;
 use App\Log\ActivityLogger;
 use App\Repository\PersonRepository;
 use App\Service\CertificateHelper;
 use App\Service\HistoricityManager;
 use App\Service\ThemeAffiliationFactory;
+use App\Settings\SettingManager;
 use App\Workflow\Membership;
-use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Html2Text\Html2Text;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -50,7 +54,6 @@ class MembershipController extends AbstractController
     #[Route('/membership/entry-form', name: 'membership_entryForm', defaults: ['person' => null])]
     #[Route('membership/entry-form/{slug}', name: 'membership_continueEntryForm')]
     #[Route('membership/reentry-form/{slug}', name: 'membership_reentryForm')] // todo does this even need to be a separate route from continue?
-    #[IsGranted('ROLE_APPROVER')] // todo remove this when we go live with the workflow
     public function entryForm(
         ?Person $person,
         Request $request,
@@ -98,7 +101,7 @@ class MembershipController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $silent = $form->has('isSilent') && $form->get('isSilent')->getData();
-            $membership->processEntry($person, true); // todo use the $silent variable when we enable the workflows
+            $membership->processEntry($person, $silent);
 
             $em->flush();
 
@@ -280,7 +283,7 @@ class MembershipController extends AbstractController
         Person $person,
         Request $request,
         EntityManagerInterface $entityManager,
-        HistoricityManager $historicityManager,
+        Membership $membership,
         ActivityLogger $logger,
         WorkflowInterface $membershipStateMachine
     ): Response {
@@ -297,8 +300,7 @@ class MembershipController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             if ($membershipStateMachine->can($person, Membership::TRANS_FORCE_EXIT_FORM)) {
                 // Set exit reason and end date on all current theme, supervisor, and room affiliations
-                $this->processExit(
-                    $historicityManager,
+                $membership->processExit(
                     $person,
                     $exitForm->getEndedAt(),
                     $exitForm->getExitReason(),
@@ -333,7 +335,7 @@ class MembershipController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         WorkflowInterface $membershipStateMachine,
-        HistoricityManager $historicityManager,
+        Membership $membership,
         ActivityLogger $logger
     ): Response {
         $form = $this->createForm(
@@ -347,8 +349,7 @@ class MembershipController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $endedAt = $form->get('endedAt')->getData();
             $exitReason = $form->get('exitReason')->getData();
-            $this->processExit(
-                $historicityManager,
+            $membership->processExit(
                 $person,
                 $endedAt,
                 $exitReason,
@@ -371,38 +372,48 @@ class MembershipController extends AbstractController
         ]);
     }
 
-    // todo move this function to Membership
+    #[Route('/membership/send-entry-form', name: 'membership_sendEntryForm')]
+    public function sendEntryForm(
+        Request $request,
+        SettingManager $settingManager,
+        MailerInterface $mailer
+    ) {
+        $success = false;
+        $toAddress = null;
+        $form = $this->createForm(SendEntryFormType::class)
+            ->add('send', SubmitType::class);
 
-    /**
-     * @param HistoricityManager $historicityManager
-     * @param Person $person
-     * @param DateTimeInterface $endedAt
-     * @param string $exitReason
-     * @param string $forwardingEmail
-     * @return void
-     */
-    protected function processExit(
-        HistoricityManager $historicityManager,
-        Person $person,
-        DateTimeInterface $endedAt,
-        string $exitReason,
-        ?string $forwardingEmail
-    ): void {
-        $historicityManager->endAffiliations(
-            array_merge(
-                $person->getRoomAffiliations()->toArray(),
-                $person->getThemeAffiliations()->toArray(),
-                $person->getSponsorAffiliations(),
-                $person->getSponseeAffiliations()->toArray(),
-                $person->getSupervisorAffiliations(),
-                $person->getSuperviseeAffiliations()->toArray(),
-            ),
-            $endedAt,
-            $exitReason
-        );
-        if ($forwardingEmail) {
-            $person->setEmail($forwardingEmail);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            // send an email to the address given
+            $toAddress = $form->get('email')->getData();
+            $subject = 'IGB Entry Form Request';
+            $htmlMessage = $settingManager->get('entry_invitation_template');
+
+            $html2text = new Html2Text($htmlMessage);
+            $textMessage = $html2text->getText();
+
+            $email = (new TemplatedEmail())
+                ->from($settingManager->get('notification_from'))
+                ->to($toAddress)
+                ->subject($subject)
+                ->htmlTemplate('workflow/membership/entry_invitation.html.twig')
+                ->textTemplate('workflow/membership/entry_invitation.txt.twig')
+                ->context([
+                    'subject' => $subject,
+                    'message' => $htmlMessage,
+                    'plainTextMessage' => $textMessage,
+                ]);
+
+            $mailer->send($email);
+
+            $success = true;
         }
-    }
 
+        return $this->render('workflow/membership/send_entry_form.html.twig', [
+            'form' => $form->createView(),
+            'invitationSent' => $success,
+            'toAddress' => $toAddress,
+        ]);
+    }
 }

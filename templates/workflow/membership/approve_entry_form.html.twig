@@ -13,76 +13,131 @@
 
 {% block content %}
     {# TODO rework this for multiple themes, sponsors, supervisors #}
-    <div class="row">
-        <div class="col-lg">
-            <p class="approval-label">{{ 'person.firstName'|trans }}</p>
-            <p class="approval-field">{{ person.firstName }}</p>
-        </div>
-        <div class="col-lg">
-            <p class="approval-label">{{ 'person.lastName'|trans }}</p>
-            <p class="approval-field">{{ person.lastName }}</p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg">
-            <p class="approval-label">{{ 'person.netid'|trans }}</p>
-            <p class="approval-field">{{ person.netid }}</p>
-        </div>
-        <div class="col-lg">
-            <p class="approval-label">{{ 'person.uin'|trans }}</p>
-            <p class="approval-field">{{ person.uin }}</p>
-        </div>
-        <div class="col-lg">
-            <p class="approval-label">{{ 'person.email'|trans }}</p>
-            <p class="approval-field">{{ person.email }}</p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg">
-            <p class="approval-label">{{ 'entry_form.room'|trans }}</p>
-            <p class="approval-field">{{ person.roomAffiliations|length>0 ? person.roomAffiliations[0].room : '' }}</p>
-        </div>
-        <div class="col-lg">
-            <p class="approval-label">{{ 'entry_form.phone'|trans }}</p>
-            <p class="approval-field">{{ person.officePhone|phone_number }}</p>
+    <h2>{{ person.name }} Entry Request Form</h2>
+    <div class="card mb-3">
+        <div class="card-header">Personal Info</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg">
+                    <p class="approval-label">{{ 'person.firstName'|trans }}</p>
+                    <p class="approval-field">{{ person.firstName }}</p>
+                </div>
+                <div class="col-lg">
+                    <p class="approval-label">{{ 'person.lastName'|trans }}</p>
+                    <p class="approval-field">{{ person.lastName }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg">
+                    <p class="approval-label">{{ 'person.netid'|trans }}</p>
+                    <p class="approval-field">{{ person.netid }}</p>
+                </div>
+                <div class="col-lg">
+                    <p class="approval-label">{{ 'person.uin'|trans }}</p>
+                    <p class="approval-field">{{ person.uin }}</p>
+                </div>
+                <div class="col-lg">
+                    <p class="approval-label">{{ 'person.email'|trans }}</p>
+                    <p class="approval-field">{{ person.email }}</p>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col">
-            <p class="approval-label">Office work only?</p>
-            <p class="approval-field">{{ person.officeWorkOnly ? 'Yes' : 'No' }}</p>
+
+    <div class="card mb-3">
+        <div class="card-header">UIUC Contact Info</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg">
+                    <div class="mb-2">Preferred Campus Address</div>
+                    <div class="mb-2 form-text">Leave blank if preferred address is IGB</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg">
+                    <p class="approval-label">Office number</p>
+                    <p class="approval-field">{{ person.officeNumber }}</p>
+                </div>
+                <div class="col-lg" data-controller="other-entry">
+                    <p class="approval-label">Building</p>
+                    <p class="approval-field">{{ person.officeBuilding??'Other (please specify)' }}</p>
+                    {% if person.officeBuilding is null %}
+                        <p class="approval-label">Other address</p>
+                        <p class="approval-field">{{ person.otherAddress }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-lg">
+                    <p class="approval-label">{{ 'entry_form.unit'|trans }}</p>
+                    <p class="approval-field">{{ person.unit??person.otherUnit??'' }}</p>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg">
-            <p class="approval-label">{{ 'entry_form.unit'|trans }}</p>
-            <p class="approval-field">{{ person.unit??person.otherUnit??'' }}</p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg">
-            <p class="approval-label">{{ 'entry_form.supervisor'|trans }}</p>
-            <p class="approval-field">{{ person.supervisorAffiliations|length>0 ? person.supervisorAffiliations[0].supervisor : '' }}</p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg">
-            <p class="approval-label">{{ 'person.theme'|trans }}</p>
-            <p class="approval-field">{{ person.themeAffiliations|length > 0 ? person.themeAffiliations[0].theme.shortName }}</p>
-        </div>
-        <div class="col-lg">
-            <p class="approval-label">{{ 'entry_form.member_category'|trans }}</p>
-            <p class="approval-field">{{ person.themeAffiliations|length > 0 ? person.themeAffiliations[0].memberCategory }}</p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg">
-            <p class="approval-label">{{ 'person.started_at'|trans }}</p>
-            <p class="approval-field">{% if person.themeAffiliations|length>0 and person.themeAffiliations[0].startedAt is not null %}{{ person.themeAffiliations[0].startedAt|date('n/j/Y') }}{% endif %}</p>
-        </div>
-        <div class="col-lg">
-            <p class="approval-label">{{ 'person.ended_at'|trans }}</p>
-            <p class="approval-field">{% if person.themeAffiliations|length>0 and person.themeAffiliations[0].endedAt is not null %}{{ person.themeAffiliations[0].endedAt|date('n/j/Y') }}{% endif %}</p>
+
+    {#    todo section break #}
+
+    <div class="card mb-3">
+        <div class="card-header">IGB Appointment Info</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg">
+                    <p class="approval-label">{{ 'entry_form.room'|trans }}</p>
+                    <p class="approval-field">{{ person.roomAffiliations|length>0 ? person.roomAffiliations[0].room : '' }}</p>
+                </div>
+                <div class="col-lg">
+                    <p class="approval-label">{{ 'entry_form.phone'|trans }}</p>
+                    <p class="approval-field">{{ person.officePhone }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <p class="approval-label">Office work only?</p>
+                    <p class="approval-field">{{ person.officeWorkOnly ? 'Yes' : 'No' }}</p>
+                </div>
+            </div>
+            <hr>
+            {% for themeAffiliation in person.themeAffiliations|currentAndFuture %}
+                <div class="row">
+                    <div class="col-lg">
+                        <p class="approval-label">{{ 'person.theme'|trans }}</p>
+                        <p class="approval-field">{{ themeAffiliation.theme.shortName }}</p>
+                    </div>
+                    <div class="col-lg">
+                        <p class="approval-label">{{ 'entry_form.member_category'|trans }}</p>
+                        <p class="approval-field">{{ themeAffiliation.memberCategory }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg">
+                        <p class="approval-label">{{ 'entry_form.sponsors'|trans }}</p>
+                        {% for sponsorAffiliation in themeAffiliation.sponsorAffiliations %}
+                            <p class="approval-field">{{ sponsorAffiliation.sponsor }}</p>
+                        {% endfor %}
+                    </div>
+                    <div class="col-lg">
+                        <p class="approval-label">{{ 'entry_form.supervisors'|trans }}</p>
+                        {% for supervisorAffiliation in themeAffiliation.supervisorAffiliations %}
+                            <p class="approval-field">{{ supervisorAffiliation.supervisor }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg">
+                        <p class="approval-label">{{ 'person.started_at'|trans }}</p>
+                        <p class="approval-field">{% if themeAffiliation.startedAt is not null %}{{ themeAffiliation.startedAt|date('n/j/Y') }}{% endif %}</p>
+                    </div>
+                    <div class="col-lg">
+                        <p class="approval-label">{{ 'person.ended_at'|trans }}</p>
+                        <p class="approval-field">{% if themeAffiliation.endedAt is not null %}{{ themeAffiliation.endedAt|date('n/j/Y') }}{% endif %}</p>
+                    </div>
+                </div>
+                {% if not loop.last %}
+                    <hr>
+                {% endif %}
+            {% endfor %}
         </div>
     </div>
 
@@ -90,18 +145,18 @@
 
     {% if person.membershipNote %}
         <div class="callout callout-border-info">
-        <p>This entry form was previously returned to the new IGB member with the following reason:</p>
-        <p class="ms-2">{{ person.membershipNote }}</p>
+            <p>This entry form was previously returned to the new IGB member with the following reason:</p>
+            <p class="ms-2">{{ person.membershipNote }}</p>
         </div>
     {% endif %}
 
     {# todo need better wording from Darci #}
     <div class="d-flex">
-            <div class="p-2" style="flex:1">
-                <p>Check the box below to approve this entry form</p>
-                {{ form(approvalForm) }}
-            </div>
-            <div class="flex-grow-0 p-2"><strong>OR</strong></div>
-            <div class="p-2" style="flex:1">{{ form(rejectionForm) }}</div>
+        <div class="p-2" style="flex:1">
+            <p>Check the box below to approve this entry form</p>
+            {{ form(approvalForm) }}
+        </div>
+        <div class="flex-grow-0 p-2"><strong>OR</strong></div>
+        <div class="p-2" style="flex:1">{{ form(rejectionForm) }}</div>
     </div>
 {% endblock %}

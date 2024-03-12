@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -9,6 +9,7 @@ namespace App\Twig\Extension;
 use App\Twig\Runtime\ConnectRuntime;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
+use Twig\TwigFunction;
 
 class ConnectExtension extends AbstractExtension
 {
@@ -32,7 +33,7 @@ class ConnectExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-
+            new TwigFunction('themeRoles', [ConnectRuntime::class, 'getThemeRoles']),
         ];
     }
 }

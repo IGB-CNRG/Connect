@@ -1,5 +1,5 @@
 entry_form:
-  unit: UIUC home department
+  unit: UIUC home department/unit
   room: "IGB Office/Lab/Cubicle #"
   phone: "Office phone #"
   supervisor: Supervisor
@@ -36,7 +36,7 @@ membership:
     label: Exit form submitted, waiting for approval
     approval_title: "Exit form"
   inactive:
-    label: Inactive
+    label: Exit form received
   # Transitions
   submit_entry_form:
     label: Entry form submission

@@ -214,6 +214,8 @@
       <path value="$PROJECT_DIR$/vendor/twig/inky-extra" />
       <path value="$PROJECT_DIR$/vendor/twig/cssinliner-extra" />
       <path value="$PROJECT_DIR$/vendor/league/html-to-markdown" />
+      <path value="$PROJECT_DIR$/vendor/html2text/html2text" />
+      <path value="$PROJECT_DIR$/vendor/symfony/ux-twig-component" />
       <path value="$PROJECT_DIR$/vendor/pagerfanta/core" />
       <path value="$PROJECT_DIR$/vendor/babdev/pagerfanta-bundle" />
       <path value="$PROJECT_DIR$/vendor/pagerfanta/doctrine-orm-adapter" />

@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+{% use 'form.html.twig' %}
+
+{% block title %}{{ parent() }} | Send Entry Form{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active" aria-current="page">
+        Send Entry Form
+    </li>
+{% endblock %}
+
+{% block content %}
+    <h2>Send IGB Entry Form</h2>
+
+    {% if invitationSent %}
+        <div class="callout callout-success">
+            Invitation sent to {{ toAddress }}! You can now safely close this window.
+        </div>
+    {% else %}
+        <div class="callout callout-info">
+            An email will be sent to the address entered below with instructions on how to access the IGB entry form.
+        </div>
+    {% endif %}
+
+    {% form_theme form "form_themes/_inline-buttons-theme.html.twig" %}
+
+    {{ block('form_card') }}
+
+{% endblock %}
+{% block form_card_body %}
+    <div {{ stimulus_controller('user-check', {'field':'email'}) }}>
+        {{ form_row(form.email, {'attr':{'data-action':'user-check#debounceCheck','data-user-check-target':'input'}}) }}
+    </div>
+{% endblock %}
+{% block form_card_footer %}
+    {{ form_row(form.send) }}
+{% endblock %}
+
+

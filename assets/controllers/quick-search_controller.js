@@ -4,7 +4,6 @@
  */
 
 import {Controller} from "@hotwired/stimulus";
-import 'tom-select/dist/css/tom-select.bootstrap5.css';
 import Routing from "fos-router";
 import debounce from "debounce";
 

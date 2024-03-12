@@ -16,8 +16,8 @@
         {% endif %}
         {{ person.name }}
     </h1>
-    {% if workflow_has_marked_place(person, 'inactive') %}
-        <div class="callout callout-info">
+    {% if not person.isCurrent %}
+        <div class="callout callout-warning">
             This person is no longer associated with the IGB.
         </div>
     {% elseif not person.isMember %}
@@ -347,8 +347,7 @@
                         <tr>
                             <th>Membership status</th>
                             <td>
-                                {{ workflow_place_label(person)|trans }}
-                                - last updated {{ person.membershipUpdatedAt|date('n/j/y') }}
+                                {{ workflow_place_label(person)|trans }}. Status last updated {{ person.membershipUpdatedAt|date('n/j/y') }}
                             </td>
                             <td class="shrink"></td>
                         </tr>

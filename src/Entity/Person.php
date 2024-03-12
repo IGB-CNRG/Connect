@@ -43,7 +43,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
     ],
     normalizationContext: ['groups' => 'person:read']
 )]
-#[ApiFilter(SearchFilter::class, properties: ['id' => 'exact', 'username' => 'exact', 'uin' => 'exact'])]
+#[ApiFilter(SearchFilter::class, properties: ['id' => 'exact', 'username' => 'exact', 'uin' => 'exact', 'email'=>'exact'])]
 #[ApiFilter(SimpleSearchFilter::class, properties: [
     'firstName',
     'lastName',
