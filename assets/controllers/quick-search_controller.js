@@ -42,7 +42,7 @@ export default class extends Controller {
                     return '<div class="px-2">An error has occurred. Please try reloading the page.</div>';
                 }
                 return response.text()
-            }) // todo handle this differently when not logged in/error
+            })
             .then(html => {
                 this.resultListTarget.innerHTML = html;
                 if(html === ''){

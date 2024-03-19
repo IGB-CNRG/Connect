@@ -105,6 +105,7 @@ class MembershipController extends AbstractController
 
             $em->flush();
 
+            // todo this needs to show a success message if we're anonymous
             return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
         }
 

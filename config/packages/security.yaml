@@ -31,7 +31,8 @@ security:
   # Note: Only the *first* access control that matches will be used
   access_control:
     - { path: ^/login, roles: PUBLIC_ACCESS } # Anyone can see the login page
-    - { attributes: {'_route': 'membership_entryForm'}, roles: PUBLIC_ACCESS } #Anyone can access the entry form
+    - { attributes: {'_route': 'membership_entryForm'}, roles: PUBLIC_ACCESS } # Anyone can access the entry form
+    - { attributes: {'_route': '_api_/people{._format}_get_collection'}, roles: PUBLIC_ACCESS } # Entry form needs to be able to access this api
     - { path: ^/admin, roles: ROLE_ADMIN } # Only admins can access the admin portal
     - { path: ^/directory, roles: PUBLIC_ACCESS }
     - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
