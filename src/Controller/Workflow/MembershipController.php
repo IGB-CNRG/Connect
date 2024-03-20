@@ -105,10 +105,13 @@ class MembershipController extends AbstractController
 
             $em->flush();
 
-            // todo this needs to show a success message if we're anonymous
-            return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
+            // Show a success message if we're anonymous, otherwise show the newly-added person
+            if($this->getUser()) {
+                return $this->redirectToRoute('person_view', ['slug' => $person->getSlug()]);
+            } else {
+                return $this->render('workflow/membership/entry_form_success.html.twig');
+            }
         }
-
         return $this->render('workflow/membership/entry_form.html.twig', [
             'person' => $person,
             'form' => $form->createView(),

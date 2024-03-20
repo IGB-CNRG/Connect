@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+
+    <div class="callout callout-success">
+        <h2>Entry Form Submitted</h2>
+        <p>Thank you for submitting your IGB Entry Form! The form has been sent to the appropriate IGB staff member(s) for
+            approval. Once your form has been approved, you will receive an email with additional information.</p>
+        <p>You can now safely close this window.</p>
+    </div>
+
+{% endblock %}
+
+{% block title %}
+    {{ parent() }} | Entry Form Submitted
+{% endblock %}
+
