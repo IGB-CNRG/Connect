@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -24,7 +24,7 @@ class ThemeApproval implements ApprovalStrategy
      */
     public function getApprovers(Person $person): array
     {
-        $themes = $this->currentThemes($person);
+        $themes = $this->currentAndFutureThemes($person);
         $approvers = [];
         foreach ($themes as $theme) {
             $approvers = array_merge($approvers, $this->personRepository->findApproversInTheme($theme));
@@ -36,7 +36,7 @@ class ThemeApproval implements ApprovalStrategy
 
     public function getApprovalEmails(Person $person): array
     {
-        $themes = $this->currentThemes($person);
+        $themes = $this->currentAndFutureThemes($person);
         $emails = [];
         foreach ($themes as $theme) {
             if($theme->getAdminEmail()) {
@@ -54,11 +54,11 @@ class ThemeApproval implements ApprovalStrategy
      * @param Person $person
      * @return Theme[]
      */
-    private function currentThemes(Person $person): array
+    private function currentAndFutureThemes(Person $person): array
     {
         return array_unique(
             array_map(fn(ThemeAffiliation $affiliation) => $affiliation->getTheme(),
-                $this->historicityManager->getCurrentEntities($person->getThemeAffiliations())->toArray())
+                $this->historicityManager->getCurrentAndFutureEntities($person->getThemeAffiliations())->toArray())
         );
     }
 }

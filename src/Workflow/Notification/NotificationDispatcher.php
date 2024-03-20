@@ -106,7 +106,7 @@ class NotificationDispatcher implements ServiceSubscriberInterface
             )
         );
         
-        $approvalEmails = $this->membership()->getApprovalEmails($subject, $transition);
+        $approvalEmails = $this->membership()->getApprovalEmails($subject/*, $transition*/);
         $approvalEmailString = join(
             ",",
             $approvalEmails
