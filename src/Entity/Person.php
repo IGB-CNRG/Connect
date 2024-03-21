@@ -253,6 +253,13 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
             })->count() > 0;
     }
 
+    public function getIsCurrentOrFuture(): bool
+    {
+        return $this->getThemeAffiliations()->filter(function (ThemeAffiliation $themeAffiliation) {
+                return !$themeAffiliation->isPast();
+            })->count() > 0;
+    }
+
     #[Groups(['person:read'])]
     public function getIsMember(): bool
     {

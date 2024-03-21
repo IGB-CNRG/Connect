@@ -16,7 +16,7 @@
         {% endif %}
         {{ person.name }}
     </h1>
-    {% if not person.isCurrent %}
+    {% if not person.isCurrentOrFuture %}
         <div class="callout callout-warning">
             This person is no longer associated with the IGB.
         </div>
@@ -90,7 +90,7 @@
                             <td>{{ person.themeAffiliations|member|earliest|date('n/j/Y') }}</td>
                         </tr>
                     {% endif %}
-                    {% if not person.isCurrent %}
+                    {% if not person.isCurrentOrFuture %}
                         <tr>
                             <th>End date</th>
                             <td>{{ person.themeAffiliations|latest|date('n/j/Y') }}</td>
