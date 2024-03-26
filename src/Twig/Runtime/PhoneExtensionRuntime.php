@@ -6,6 +6,7 @@
 
 namespace App\Twig\Runtime;
 
+use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberFormat;
 use libphonenumber\PhoneNumberUtil;
 use Twig\Extension\RuntimeExtensionInterface;
@@ -23,7 +24,12 @@ class PhoneExtensionRuntime implements RuntimeExtensionInterface
         if(!$numberStr){
             return '';
         }
-        $numberProto = $this->phoneNumberUtil->parse($numberStr, 'US');
+        try {
+            $numberProto = $this->phoneNumberUtil->parse($numberStr, 'US');
+        } catch (NumberParseException $e) {
+            return $numberStr;
+        }
+
         return $this->phoneNumberUtil->format($numberProto, PhoneNumberFormat::NATIONAL);
     }
 }
