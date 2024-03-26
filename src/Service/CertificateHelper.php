@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -14,13 +14,6 @@ class CertificateHelper
     const DRS_BIOSAFETY = "DRS Understanding Biosafety";
     const IGB_LAB = "IGB Lab Workers";
     const IGB_STAFF = "IGB Support Staff";
-
-    const URL = [
-        self::DRS_LAB_SAFETY=>'',
-        self::DRS_BIOSAFETY=>'',
-        self::IGB_LAB=>'',
-        self::IGB_STAFF=>'',
-    ];
 
     /**
      * @param Person $person

@@ -28,7 +28,7 @@ framework:
                 certificates_submitted:
                     metadata:
                         completion: 75
-                        approvalStrategy: App\Workflow\Approval\ReceptionApproval
+                        approvalStrategy: App\Workflow\Approval\ThemeApproval
                         approval_route: membership_approveCertificates
                         label: Training certificates submitted
                 active:
@@ -78,13 +78,13 @@ framework:
                     from: certificates_submitted
                     to: active
                     metadata:
-                        approvalStrategy: App\Workflow\Approval\ReceptionApproval
+                        approvalStrategy: App\Workflow\Approval\ThemeApproval
                         label: Approve certificates
                 return_certificates:
                     from: certificates_submitted
                     to: need_certificates
                     metadata:
-                        approvalStrategy: App\Workflow\Approval\ReceptionApproval
+                        approvalStrategy: App\Workflow\Approval\ThemeApproval
                         label: Return certificates
                 force_entry_form:
                     from: need_entry_form
