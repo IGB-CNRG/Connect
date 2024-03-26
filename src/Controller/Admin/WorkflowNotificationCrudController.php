@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -19,11 +19,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CodeEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 class WorkflowNotificationCrudController extends AbstractCrudController
 {
+    public function __construct(private readonly AdminUrlGenerator $urlGenerator){}
     public static function getEntityFqcn(): string
     {
         return WorkflowNotification::class;
@@ -37,6 +39,7 @@ class WorkflowNotificationCrudController extends AbstractCrudController
         return $actions
             ->add(Crud::PAGE_INDEX, $sendTestEmail)
             ->add(Crud::PAGE_DETAIL, $sendTestEmail)
+            ->add(Crud::PAGE_EDIT, $sendTestEmail)
             ->add(Crud::PAGE_INDEX, Action::DETAIL);
     }
 
@@ -126,7 +129,7 @@ class WorkflowNotificationCrudController extends AbstractCrudController
         $notificationDispatcher = $this->container->get(NotificationDispatcher::class);
         $notificationDispatcher->sendNotification($notification, $user);
 
-        return $this->redirect($context->getReferrer());
+        return $this->redirect($context->getReferrer() ?? $this->urlGenerator->setController(static::class)->setAction('index')->generateUrl());
     }
 
     public static function getSubscribedServices(): array
