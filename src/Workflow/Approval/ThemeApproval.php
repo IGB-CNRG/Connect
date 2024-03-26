@@ -36,18 +36,7 @@ class ThemeApproval implements ApprovalStrategy
 
     public function getApprovalEmails(Person $person): array
     {
-        $themes = $this->currentAndFutureThemes($person);
-        $emails = [];
-        foreach ($themes as $theme) {
-            if($theme->getAdminEmail()) {
-                $emails[] = $theme->getAdminEmail();
-            }
-            if($theme->getLabManagerEmail()) {
-                $emails[] = $theme->getLabManagerEmail();
-            }
-        }
-
-        return $emails;
+        return array_map(fn(Person $approver) => $approver->getEmail(), $this->getApprovers($person));
     }
 
     /**

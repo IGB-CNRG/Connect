@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -15,7 +15,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class ThemeCrudController extends AbstractCrudController
@@ -52,15 +51,13 @@ class ThemeCrudController extends AbstractCrudController
             TextField::new('fullName'),
             BooleanField::new('isNonResearch')->onlyOnForms(),
             BooleanField::new('isOutsideGroup')->onlyOnForms(),
-            AssociationField::new('parentTheme')->onlyOnForms()->setFormTypeOptions([
+            AssociationField::new('parentTheme')->setFormTypeOptions([
                 'query_builder' => function (ThemeRepository $themeRepository) {
                     return $themeRepository->createFormSortedQueryBuilder()->andWhere('t.parentTheme is null');
                 },
             ])->setRequired(false),
             DateField::new('startedAt')->onlyOnForms(),
             DateField::new('endedAt'),
-            EmailField::new('adminEmail'),
-            EmailField::new('labManagerEmail'),
         ];
     }
 }

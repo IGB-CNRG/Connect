@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -44,12 +44,6 @@ class Theme implements LogSubjectInterface, HistoricalEntityInterface
 
     #[ORM\Column(type: 'boolean')]
     private bool $isOutsideGroup = false;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $adminEmail = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $labManagerEmail = null;
 
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'subgroups')]
     private ?self $parentTheme = null;
@@ -182,30 +176,6 @@ class Theme implements LogSubjectInterface, HistoricalEntityInterface
     public function setIsOutsideGroup(bool $isOutsideGroup): self
     {
         $this->isOutsideGroup = $isOutsideGroup;
-
-        return $this;
-    }
-
-    public function getAdminEmail(): ?string
-    {
-        return $this->adminEmail;
-    }
-
-    public function setAdminEmail(?string $adminEmail): self
-    {
-        $this->adminEmail = $adminEmail;
-
-        return $this;
-    }
-
-    public function getLabManagerEmail(): ?string
-    {
-        return $this->labManagerEmail;
-    }
-
-    public function setLabManagerEmail(?string $labManagerEmail): self
-    {
-        $this->labManagerEmail = $labManagerEmail;
 
         return $this;
     }
