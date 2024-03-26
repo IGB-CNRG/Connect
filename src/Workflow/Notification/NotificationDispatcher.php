@@ -58,7 +58,7 @@ class NotificationDispatcher implements ServiceSubscriberInterface
         // Render the notification
         $template = $this->twig()->createTemplate($notification->getTemplate());
         $themes = array_map(fn(ThemeAffiliation $ta) => $ta->getTheme(),
-            $this->historicityManager()->getCurrentEntities($subject->getThemeAffiliations())->toArray());
+            $this->historicityManager()->getCurrentAndFutureEntities($subject->getThemeAffiliations())->toArray());
         $body = $this->twig()->render($template, [
             // todo what arguments do we want to provide?
             'member' => $subject,
