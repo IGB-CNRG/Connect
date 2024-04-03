@@ -5,18 +5,18 @@ The following entries and exits have occurred this week:
 Entries
 
 {%~ apply format_text_table %}
-Name	UIN	Start Date	Themes
+Name	NetID	UIN	Start Date	Themes
 {%~ for entry in entries %}
-{{ entry.person }}	{{ entry.person.uin }}	{{ entry.date|date('n/j/Y') }}	{{ entry.notes }}
+{{ entry.person }}	{{ entry.person.netid }}	{{ entry.person.uin }}	{{ entry.date|date('n/j/Y') }}	{{ entry.notes }}
 {% endfor ~%}
 {% endapply ~%}
 
 Exits
 
 {%~ apply format_text_table %}
-Name	UIN	Start Date	Themes	Exit Reason
+Name	NetID	UIN	Start Date	Themes	Exit Reason
 {%~ for exit in exits %}
-{{ exit.person }}	{{ exit.person.uin }}	{{ exit.date|date('n/j/Y') }}	{{ exit.notes }}	{% if exit.person.exitForm is not null %}{{ exit.person.exitForm.exitReason }}{% endif %}
+{{ exit.person }}	{{ exit.person.netid }}	{{ exit.person.uin }}	{{ exit.date|date('n/j/Y') }}	{{ exit.notes }}	{% if exit.person.exitForm is not null %}{{ exit.person.exitForm.exitReason }}{% endif %}
 
 {% endfor ~%}
 {% endapply ~%}
