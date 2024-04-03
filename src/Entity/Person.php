@@ -58,6 +58,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         'Connect Admin' => 'ROLE_ADMIN',
         //        'Key Manager' => 'ROLE_KEY_MANAGER',
         'Certificate Manager' => 'ROLE_CERTIFICATE_MANAGER',
+        'HR' => 'ROLE_HR',
     ];
 
     #[ORM\Id]

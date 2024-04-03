@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -56,9 +56,11 @@ class PersonVoter extends Voter
             // anyone who can edit can also edit history, for now
             // todo who else can edit?
             self::EDIT, self::EDIT_HISTORY => $this->security->isGranted('ROLE_CERTIFICATE_MANAGER')
-                || $this->security->isGranted('ROLE_APPROVER'),
+                || $this->security->isGranted('ROLE_APPROVER')
+                || $this->security->isGranted('ROLE_HR'),
             self::VIEW => true,
-            self::ADD, self::VIEW_DOCUMENTS, self::VIEW_EXIT_REASON => $this->security->isGranted('ROLE_APPROVER'),
+            self::ADD, self::VIEW_DOCUMENTS, self::VIEW_EXIT_REASON => $this->security->isGranted('ROLE_APPROVER')
+                || $this->security->isGranted('ROLE_HR'),
 
             default => false,
         };
