@@ -24,12 +24,12 @@
             </div>
             <div class="row" {{ stimulus_controller('netid-autofill') }}>
                 <div class="col-lg">
-                    <div {{ stimulus_controller('user-check', {'field':'username', 'excludeId': person.id}) }}>
+                    <div {{ stimulus_controller('user-check', {'field':'username', 'excludeId': person.id, 'anonymous':not is_granted('IS_AUTHENTICATED_FULLY')}) }}>
                         {{ form_row(form.netid, {'attr':{'data-action':'netid-autofill#updateFields user-check#debounceCheck', 'data-user-check-target':'input'}}) }}
                     </div>
                 </div>
                 <div class="col-lg">
-                    <div {{ stimulus_controller('user-check', {'field':'uin', 'excludeId': person.id, numeric:true}) }}>
+                    <div {{ stimulus_controller('user-check', {'field':'uin', 'excludeId': person.id, numeric:true, 'anonymous':not is_granted('IS_AUTHENTICATED_FULLY')}) }}>
                         {{ form_row(form.uin, {'attr':{'data-action':'user-check#debounceCheck', 'data-user-check-target':'input'}}) }}
                     </div>
                 </div>

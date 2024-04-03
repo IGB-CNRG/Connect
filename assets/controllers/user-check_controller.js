@@ -15,6 +15,7 @@ export default class extends Controller {
         'field': String,
         'excludeId': Number,
         'numeric': Boolean,
+        'anonymous': Boolean,
     };
 
     initialize() {
@@ -58,8 +59,11 @@ export default class extends Controller {
 
     errorMessage(person){
         const href = Routing.generate('person_view', {'slug':person.slug});
-
-        return `This person is already in Connect: <a href="${href}">${person.name}</a>`; // todo how can we change this message if anonymous?
+        if(this.anonymousValue){
+            return 'You have previously submitted an IGB entry form. Please contact your lab manager or theme admin for more information.';
+        } else {
+            return `This person is already in Connect: <a href="${href}">${person.name}</a>`;
+        }
     }
 
     setError(message){
