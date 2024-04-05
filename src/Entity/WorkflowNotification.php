@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -46,6 +46,9 @@ class WorkflowNotification
 
     #[ORM\Column]
     private ?bool $isAllMemberCategories = false;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $replyToPerson = null;
 
 
     public function __construct()
@@ -176,6 +179,18 @@ class WorkflowNotification
     public function setIsAllMemberCategories(bool $isAllMemberCategories): self
     {
         $this->isAllMemberCategories = $isAllMemberCategories;
+
+        return $this;
+    }
+
+    public function isReplyToPerson(): ?bool
+    {
+        return $this->replyToPerson;
+    }
+
+    public function setReplyToPerson(?bool $replyToPerson): static
+    {
+        $this->replyToPerson = $replyToPerson;
 
         return $this;
     }

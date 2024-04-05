@@ -25,7 +25,10 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 class WorkflowNotificationCrudController extends AbstractCrudController
 {
-    public function __construct(private readonly AdminUrlGenerator $urlGenerator){}
+    public function __construct(private readonly AdminUrlGenerator $urlGenerator)
+    {
+    }
+
     public static function getEntityFqcn(): string
     {
         return WorkflowNotification::class;
@@ -100,6 +103,9 @@ class WorkflowNotificationCrudController extends AbstractCrudController
             BooleanField::new('isAllMemberCategories')
                 ->setLabel('All Member Categories')
                 ->onlyOnForms(),
+            BooleanField::new('replyToPerson')
+                ->setLabel('Set reply-to to member')
+                ->onlyOnForms(),
             ChoiceField::new('transitionName')
                 ->setLabel('Workflow event')
                 ->setChoices($choices)
@@ -129,7 +135,11 @@ class WorkflowNotificationCrudController extends AbstractCrudController
         $notificationDispatcher = $this->container->get(NotificationDispatcher::class);
         $notificationDispatcher->sendNotification($notification, $user);
 
-        return $this->redirect($context->getReferrer() ?? $this->urlGenerator->setController(static::class)->setAction('index')->generateUrl());
+        return $this->redirect(
+            $context->getReferrer()
+            ??
+            $this->urlGenerator->setController(static::class)->setAction('index')->generateUrl()
+        );
     }
 
     public static function getSubscribedServices(): array
