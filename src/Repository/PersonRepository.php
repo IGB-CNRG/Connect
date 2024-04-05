@@ -66,8 +66,7 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
         $qb = $this->createMembersOnlyIndexQueryBuilder();
         $this->historicityManager()->addCurrentConstraint($qb, 'ta');
         if ($query) {
-            $qb->andWhere('p.firstName LIKE :query OR p.lastName LIKE :query')
-                ->setParameter('query', '%'.$query.'%');
+            $this->addQuerySearch($qb, $query);
         }
         if ($sort) {
             if ($sort === 'name') {
@@ -83,8 +82,8 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
         $queries = [];
         foreach ($themes as $i => $id) {
             if ($id) {
-                $queries[] = "t2.shortName = :theme{$i}";
-                $qb->setParameter("theme{$i}", $id);
+                $queries[] = "t2.shortName = :theme$i";
+                $qb->setParameter("theme$i", $id);
             }
         }
         if (count($queries) > 0) {
@@ -102,8 +101,8 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
         $queries = [];
         foreach ($memberCategories as $i => $id) {
             if ($id) {
-                $queries[] = "mc2.friendlyName = :type{$i}";
-                $qb->setParameter("type{$i}", $id);
+                $queries[] = "mc2.friendlyName = :type$i";
+                $qb->setParameter("type$i", $id);
             }
         }
         if (count($queries) > 0) {
@@ -120,8 +119,8 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
         $queries = [];
         foreach ($themeRoles as $i => $id) {
             if ($id) {
-                $queries[] = "tr2.id = :role{$i}";
-                $qb->setParameter("role{$i}", $id);
+                $queries[] = "tr2.id = :role$i";
+                $qb->setParameter("role$i", $id);
             }
         }
         if (count($queries) > 0) {
@@ -138,8 +137,8 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
         $queries = [];
         foreach ($units as $i => $id) {
             if ($id) {
-                $queries[] = "u.id = :unit{$i}";
-                $qb->setParameter("unit{$i}", $id);
+                $queries[] = "u.id = :unit$i";
+                $qb->setParameter("unit$i", $id);
             }
         }
         if (count($queries) > 0) {
@@ -152,7 +151,7 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
     /**
      * @return Person[]
      */
-    public function findCurrentForMembersOnlyIndex()
+    public function findCurrentForMembersOnlyIndex(): array
     {
         $qb = $this->createMembersOnlyIndexQueryBuilder();
         $this->historicityManager()->addCurrentConstraint($qb, 'ta');
@@ -164,7 +163,7 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
     /**
      * @return Person[]
      */
-    public function findAllForMembersOnlyIndex()
+    public function findAllForMembersOnlyIndex(): array
     {
         return $this->createMembersOnlyIndexQueryBuilder()
             ->getQuery()
@@ -174,7 +173,7 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
     /**
      * @return Person[]
      */
-    public function findCurrentForIndex()
+    public function findCurrentForIndex(): array
     {
         $qb = $this->createIndexQueryBuilder();
         $this->historicityManager()->addCurrentConstraint($qb, 'ta');
@@ -186,7 +185,7 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
     /**
      * @return Person[]
      */
-    public function findAllForIndex()
+    public function findAllForIndex(): array
     {
         return $this->createIndexQueryBuilder()
             ->getQuery()
@@ -277,7 +276,7 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
         return $qb->getQuery()->getResult();
     }
 
-    public function createDropdownQueryBuilder()
+    public function createDropdownQueryBuilder(): QueryBuilder
     {
         $qb = $this->createQueryBuilder('p')
             ->leftJoin('p.themeAffiliations', 'ta')
@@ -288,14 +287,14 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
         return $qb;
     }
 
-    public function createSupervisorDropdownQueryBuilder()
+    public function createSupervisorDropdownQueryBuilder(): QueryBuilder
     {
         return $this->createDropdownQueryBuilder()
             ->leftJoin('ta.memberCategory', 'mc')
             ->andWhere('mc.canSupervise = true');
     }
 
-    public function createSortedQueryBuilder()
+    public function createSortedQueryBuilder(): QueryBuilder
     {
         return $this->createQueryBuilder('p')
             ->addOrderBy('p.lastName');
@@ -303,13 +302,22 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
 
     public function findByQuery(string $query)
     {
-        return $this->createSortedQueryBuilder()
-            ->andWhere(
-                'p.firstName LIKE :query OR p.lastName LIKE :query OR p.preferredFirstName LIKE :query OR p.email like :query or p.username like :query or p.netid like :query'
-            )
-            ->setParameter('query', '%'.$query.'%')
-            ->setMaxResults(6)
+        $qb = $this->createSortedQueryBuilder();
+        $this->addQuerySearch($qb, $query);
+
+        return $qb->setMaxResults(6)
             ->getQuery()
             ->getResult();
+    }
+
+    private function addQuerySearch(QueryBuilder $builder, string $query): void
+    {
+        $queryWords = explode(' ', $query);
+        foreach ($queryWords as $i => $word) {
+            $builder->andWhere(
+                "p.firstName LIKE :query$i OR p.lastName LIKE :query$i OR p.preferredFirstName LIKE :query$i OR p.email LIKE :query$i OR p.username LIKE :query$i OR p.netid LIKE :query$i"
+            )
+                ->setParameter("query$i", '%'.$word.'%');
+        }
     }
 }
