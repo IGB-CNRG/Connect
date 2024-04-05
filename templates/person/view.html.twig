@@ -330,6 +330,10 @@
                         Admin Info
                     </div>
                     <table class="table">
+                        <tr>
+                            <th>Office Work Only</th>
+                            <td>{{ person.officeWorkOnly ? 'Yes' : 'No' }}</td>
+                        </tr>
                         {% if is_granted('ROLE_ADMIN') %}
                             <tr>
                                 <th>Connect Roles</th>
