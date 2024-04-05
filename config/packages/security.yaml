@@ -46,6 +46,8 @@ security:
       - ROLE_APPROVER
     ROLE_CERTIFICATE_MANAGER:
       - ROLE_APPROVER
+    ROLE_HR:
+      - ROLE_APPROVER
 
 when@test:
   security:

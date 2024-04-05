@@ -30,6 +30,10 @@ class ThemeApproval implements ApprovalStrategy
             $approvers = array_merge($approvers, $this->personRepository->findApproversInTheme($theme));
         }
 
+        if(count($approvers) === 0){
+            // Add HR people if there are no approvers found
+            $approvers = $this->personRepository->findByRole('ROLE_HR');
+        }
 
         return $approvers;
     }
