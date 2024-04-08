@@ -89,7 +89,7 @@ class WorkflowNotificationCrudController extends AbstractCrudController
                 ->setFormTypeOption('help_html', true),
             TextField::new('recipients')
                 ->setHelp(
-                    'Enter email addresses, separated by commas. You can also use the following keywords:
+                    'Enter email addresses, separated by semicolons. You can also use the following keywords:
                         <dl>
                         <dt>{{member}}</dt>
                         <dd>The IGB member</dd>

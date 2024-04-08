@@ -78,10 +78,12 @@ class NotificationDispatcher implements ServiceSubscriberInterface
             // todo what recipients do we want to provide?
             'member' => $subject->getEmail(),
         ]);
+        $toAddresses = array_map(fn($address) => trim($address), // Get array from semicolon-delimited string
+            explode(';', $recipients));
 
         $email = (new Email())
             ->from($this->settingManager()->get('notification_from'))
-            ->to($recipients)
+            ->to(...$toAddresses)
             ->subject($notification->getSubject())
             ->html($html);
 
@@ -112,7 +114,7 @@ class NotificationDispatcher implements ServiceSubscriberInterface
         
         $approvalEmails = $this->membership()->getApprovalEmails($subject/*, $transition*/);
         $approvalEmailString = join(
-            ",",
+            ";",
             $approvalEmails
         );
 
