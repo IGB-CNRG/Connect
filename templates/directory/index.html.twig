@@ -49,99 +49,118 @@
     {# title #}
     <h1 id="title" class="mb-4">IGB Directory</h1>
     <form
-        method="get"
-        action="{{ path('app_directory') }}"
-        data-controller="autosubmit"
+            method="get"
+            action="{{ path('app_directory') }}"
+            data-controller="autosubmit"
     >
-    {# search bar #}
-    <div id="search-wrapper">
-        <svg xmlns="http://www.w3.org/2000/svg" id="search-icon" stroke-width="2"
-             stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-            <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"/>
-            <path d="M21 21l-6 -6"/>
-        </svg>
-        <input id="search-input" type="search" class="form-control" name="query" placeholder="Search by name" value="{{ query }}" autocomplete="off" data-action="keydown.enter->autosubmit#submit"/>
-    </div>
+        {# search bar #}
+        <div id="search-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" id="search-icon" stroke-width="2"
+                 stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"/>
+                <path d="M21 21l-6 -6"/>
+            </svg>
+            <input id="search-input" type="search" class="form-control" name="query" placeholder="Search by name"
+                   value="{{ query }}" autocomplete="off" data-action="keydown.enter->autosubmit#submit"/>
+        </div>
 
-    {# filters #}
-    <div class="filter-wrapper px-3 py-md-4 mb-4">
-        <div class="row">
-            <div class="col-md-3 col-xl-2 border-md-end border-bottom border-md-bottom-0 border-1 border-secondary">
-                <div class="p-4 py-md-0">
-                    <div class="filter-label">Show</div>
-                    <select name="pageSize" id="page-size-select" class="form-select" data-action="autosubmit#submit">
-                        <option value="10"{% if pageSize=='10' %} selected{% endif %}>10 entries</option>
-                        <option value="25"{% if pageSize=='25' %} selected{% endif %}>25 entries</option>
-                        <option value="50"{% if pageSize=='50' %} selected{% endif %}>50 entries</option>
-                        <option value="100"{% if pageSize=='100' %} selected{% endif %}>100 entries</option>
-                    </select>
-{#                    <div class="d-block d-md-none mt-3">#}
-{#                        <div class="filter-label">Sort by</div>#}
-{#                        <select name="sort" id="sort-select" class="form-select" data-action="autosubmit#submit">#}
-{#                            <option value="name"{% if sort=='name' %} selected{% endif %}>Name</option>#}
-{#                            <option value="email"{% if sort=='email' %} selected{% endif %}>Email</option>#}
-{#                            <option value="unit"{% if sort=='unit' %} selected{% endif %}>Unit</option>#}
-{#                            <option value="officePhone"{% if sort=='officePhone' %} selected{% endif %}>Phone</option>#}
-{#                        </select>#}
-{#                    </div>#}
-                </div>
-            </div>
-            <div class="col-md-9 col-xl-10">
-                <div class="p-4 py-md-0">
-                    <div class="filter-label">Filter by</div>
-                    <div class="row mb-3">
-                        <div class="col-md-3 mb-2 mb-md-0">
-                            <select name="theme[]" id="theme-select" class="form-select" data-action="autosubmit#submit" multiple="multiple" data-controller="tom-select">
-                                <option value="">Themes</option>
-                                {% for theme in themes %}
-                                    <option value="{{ theme.shortName }}"
-                                            {% if theme.shortName in selectedThemes %}selected{% endif %}>{{ theme.shortName }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-3 mb-2 mb-md-0">
-                            <select name="type[]" id="employee-type" class="form-select" data-action="autosubmit#submit" multiple="multiple" data-controller="tom-select">
-                                <option value="">Employee type</option>
-                                {% for memberCategory in memberCategories %}
-                                    <option value="{{ memberCategory }}"
-                                            {% if memberCategory in selectedTypes %}selected{% endif %}>{{ memberCategory }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-3 mb-2 mb-md-0">
-                            <select name="role[]" id="role-select" class="form-select" data-action="autosubmit#submit" multiple="multiple" data-controller="tom-select">
-                                <option value="">Role</option>
-                                {% for role in roles %}
-                                    <option value="{{ role.id }}"
-                                            {% if role.id in selectedRoles %}selected{% endif %}>{{ role.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <select name="unit[]" id="unit-select" class="form-select" data-action="autosubmit#submit" multiple="multiple" data-controller="tom-select">
-                                <option value="">Unit</option>
-                                {% for groupName, unitGroup in unitGroups %}
-                                    <optgroup label="{{ groupName }}">
-                                        {% for unit in unitGroup %}
-                                            <option value="{{ unit.id }}"
-                                                    {% if unit.id in selectedUnits %}
-                                            selected{% endif %}>{{ unit.name }}</option>
-                                        {% endfor %}
-                                    </optgroup>
-                                {% endfor %}
-                            </select>
-                        </div>
+        {# filters #}
+        <div class="filter-wrapper px-3 py-md-4 mb-4">
+            <div class="row">
+                <div class="col-md-3 col-xl-2 border-md-end border-bottom border-md-bottom-0 border-1 border-secondary">
+                    <div class="p-4 py-md-0">
+                        <div class="filter-label">Show</div>
+                        <select name="pageSize" id="page-size-select" class="form-select"
+                                data-action="autosubmit#submit">
+                            <option value="10"{% if pageSize=='10' %} selected{% endif %}>10 entries</option>
+                            <option value="25"{% if pageSize=='25' %} selected{% endif %}>25 entries</option>
+                            <option value="50"{% if pageSize=='50' %} selected{% endif %}>50 entries</option>
+                            <option value="100"{% if pageSize=='100' %} selected{% endif %}>100 entries</option>
+                        </select>
+                        {#                    <div class="d-block d-md-none mt-3"> #}
+                        {#                        <div class="filter-label">Sort by</div> #}
+                        {#                        <select name="sort" id="sort-select" class="form-select" data-action="autosubmit#submit"> #}
+                        {#                            <option value="name"{% if sort=='name' %} selected{% endif %}>Name</option> #}
+                        {#                            <option value="email"{% if sort=='email' %} selected{% endif %}>Email</option> #}
+                        {#                            <option value="unit"{% if sort=='unit' %} selected{% endif %}>Unit</option> #}
+                        {#                            <option value="officePhone"{% if sort=='officePhone' %} selected{% endif %}>Phone</option> #}
+                        {#                        </select> #}
+                        {#                    </div> #}
                     </div>
-                    <div>
-                        Selecting an option from each dropdown will search for members who match <strong>all</strong>
-                        options. Selecting multiple options from a single dropdown will search for IGB members who match
-                        <strong>any</strong> of those options.
+                </div>
+                <div class="col-md-9 col-xl-10">
+                    <div class="p-4 py-md-0">
+                        <div class="filter-label">Filter by</div>
+                        <div class="row mb-3">
+                            <div class="col-md-3 mb-2 mb-md-0">
+                                <select name="theme[]" id="theme-select" class="form-select"
+                                        data-action="autosubmit#submit" multiple="multiple"
+                                        data-controller="tom-select">
+                                    <option value="">Themes</option>
+                                    {% for groupName, themeGroup in themeGroups %}
+                                        <optgroup label="{{ groupName }}">
+                                            {% for theme in themeGroup %}
+                                                <option value="{{ theme.shortName }}"
+                                                        {% if theme.shortName in selectedThemes %}selected{% endif %}>
+                                                    {{ theme.shortName }}
+                                                    {% if theme.parentTheme is not null %}
+                                                        ({{ theme.parentTheme.shortName }})
+                                                    {% endif %}
+                                                </option>
+                                            {% endfor %}
+                                        </optgroup>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-2 mb-md-0">
+                                <select name="type[]" id="employee-type" class="form-select"
+                                        data-action="autosubmit#submit" multiple="multiple"
+                                        data-controller="tom-select">
+                                    <option value="">Employee type</option>
+                                    {% for memberCategory in memberCategories %}
+                                        <option value="{{ memberCategory }}"
+                                                {% if memberCategory in selectedTypes %}selected{% endif %}>{{ memberCategory }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-2 mb-md-0">
+                                <select name="role[]" id="role-select" class="form-select"
+                                        data-action="autosubmit#submit" multiple="multiple"
+                                        data-controller="tom-select">
+                                    <option value="">Role</option>
+                                    {% for role in roles %}
+                                        <option value="{{ role.id }}"
+                                                {% if role.id in selectedRoles %}selected{% endif %}>{{ role.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select name="unit[]" id="unit-select" class="form-select"
+                                        data-action="autosubmit#submit" multiple="multiple"
+                                        data-controller="tom-select">
+                                    <option value="">Unit</option>
+                                    {% for groupName, unitGroup in unitGroups %}
+                                        <optgroup label="{{ groupName }}">
+                                            {% for unit in unitGroup %}
+                                                <option value="{{ unit.id }}"
+                                                        {% if unit.id in selectedUnits %}
+                                                selected{% endif %}>{{ unit.name }}</option>
+                                            {% endfor %}
+                                        </optgroup>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            Selecting an option from each dropdown will search for members who match
+                            <strong>all</strong> options. Selecting multiple options from a single dropdown will search
+                            for IGB members who match <strong>any</strong> of those options.
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
     </form>
 
@@ -154,8 +173,7 @@
                     ...app.request.query.all(),
                     sort: 'name',
                     sortDirection: sort == 'name' and sortDirection == 'asc' ? 'desc' : 'asc'
-                }) }}">
-                Name {{ _self.sortArrow('name', sort, sortDirection) }}
+                }) }}"> Name {{ _self.sortArrow('name', sort, sortDirection) }}
                 </a>
             </th>
             <th>
@@ -163,8 +181,7 @@
                     ...app.request.query.all(),
                     sort: 'email',
                     sortDirection: sort == 'email' and sortDirection == 'asc' ? 'desc' : 'asc'
-                }) }}">
-                Email {{ _self.sortArrow('email', sort, sortDirection) }}
+                }) }}"> Email {{ _self.sortArrow('email', sort, sortDirection) }}
                 </a>
             </th>
             <th>Theme</th>
@@ -173,8 +190,7 @@
                     ...app.request.query.all(),
                     sort: 'unit',
                     sortDirection: sort == 'unit' and sortDirection == 'asc' ? 'desc' : 'asc'
-                }) }}">
-                Unit {{ _self.sortArrow('unit', sort, sortDirection) }}
+                }) }}"> Unit {{ _self.sortArrow('unit', sort, sortDirection) }}
                 </a>
             </th>
             <th>
@@ -182,8 +198,7 @@
                     ...app.request.query.all(),
                     sort: 'officePhone',
                     sortDirection: sort == 'officePhone' and sortDirection == 'asc' ? 'desc' : 'asc'
-                }) }}">
-                Phone {{ _self.sortArrow('officePhone', sort, sortDirection) }}
+                }) }}"> Phone {{ _self.sortArrow('officePhone', sort, sortDirection) }}
                 </a>
             </th>
             <th>Room</th>
@@ -265,7 +280,8 @@
 
     {# pagination bar #}
     <div class="d-flex flex-column flex-md-row w-md-100" id="pager-wrapper">
-        <div class="flex-grow-1 p-2 border-md-top border-md-bottom">Showing {{ people.currentPageOffsetStart }} to {{ people.currentPageOffsetEnd }}
+        <div class="flex-grow-1 p-2 border-md-top border-md-bottom">Showing {{ people.currentPageOffsetStart }}
+            to {{ people.currentPageOffsetEnd }}
             of {{ people.count }} entries
         </div>
         <div class="flex flex-row border-md-0 border-top border-bottom border-end border-md-end-0 border-start border-md-start-0">

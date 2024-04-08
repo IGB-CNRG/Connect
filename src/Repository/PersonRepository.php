@@ -83,6 +83,7 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
         foreach ($themes as $i => $id) {
             if ($id) {
                 $queries[] = "t2.shortName = :theme$i";
+                $queries[] = "parentTheme.shortName = :theme$i";
                 $qb->setParameter("theme$i", $id);
             }
         }
@@ -93,6 +94,7 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
                 $addedSecondJoin = true;
             }
             $qb->leftJoin('ta2.theme', 't2')
+                ->leftJoin('t2.parentTheme', 'parentTheme')
                 ->andWhere('('.join(' or ', $queries).')');
             $addedSecondJoin = true;
         }

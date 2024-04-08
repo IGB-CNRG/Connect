@@ -58,6 +58,23 @@ class DirectoryController extends AbstractController
         $themes = $themeRepository->findCurrentNonOutsideThemes();
         $roles = $roleRepository->findAll();
 
+        // Group themes by research/non-research
+        $themeGroups = [];
+        foreach ($themes as $themeToGroup) {
+            $group = 'Research Themes';
+            if ($themeToGroup->getIsOutsideGroup()) {
+                $group = 'Outside Groups';
+            }
+            if ($themeToGroup->getIsNonResearch()) {
+                $group = 'Non-research groups';
+            }
+
+            if(!key_exists($group, $themeGroups)){
+                $themeGroups[$group] = [];
+            }
+            $themeGroups[$group][] = $themeToGroup;
+        }
+
         // Group units by
         $units = $unitRepository->findAllFormSorted();
         $unitGroups = [];
@@ -81,7 +98,7 @@ class DirectoryController extends AbstractController
             'people' => $pager,
             'form' => $filterForm,
             'memberCategories' => $friendlyNames,
-            'themes' => $themes,
+            'themeGroups' => $themeGroups,
             'roles' => $roles,
             'unitGroups' => $unitGroups,
             'query' => $query,
