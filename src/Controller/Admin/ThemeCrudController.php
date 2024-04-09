@@ -56,7 +56,7 @@ class ThemeCrudController extends AbstractCrudController
                     return $themeRepository->createFormSortedQueryBuilder()->andWhere('t.parentTheme is null');
                 },
             ])->setRequired(false),
-            DateField::new('startedAt')->onlyOnForms(),
+            DateField::new('startedAt')->hideOnIndex(),
             DateField::new('endedAt'),
         ];
     }
