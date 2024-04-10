@@ -106,6 +106,7 @@ class HistoricityManagerTest extends KernelTestCase
             ->setEndedAt($threeWeeks);
         $da3 = (new RoomAffiliation())
             ->setEndedAt($oneWeek);
+        $da4 = (new RoomAffiliation());
 
         $this->assertEquals($oneWeek, $this->historicityManager->getLatest([$da1, $da2, $da3]));
         $this->assertEquals($oneWeek, $this->historicityManager->getLatest([$da1, $da3, $da2]));
@@ -114,5 +115,9 @@ class HistoricityManagerTest extends KernelTestCase
         $this->assertEquals($oneWeek, $this->historicityManager->getLatest([$da2, $da1, $da3]));
         $this->assertEquals($oneWeek, $this->historicityManager->getLatest([$da2, $da3, $da1]));
         $this->assertNull($this->historicityManager->getLatest([]));
+        $this->assertNull($this->historicityManager->getLatest([$da1, $da2, $da3, $da4]));
+        $this->assertNull($this->historicityManager->getLatest([$da2, $da3, $da4, $da1]));
+        $this->assertNull($this->historicityManager->getLatest([$da3, $da4, $da1, $da2]));
+        $this->assertNull($this->historicityManager->getLatest([$da4, $da3, $da1, $da2]));
     }
 }

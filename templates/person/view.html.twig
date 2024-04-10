@@ -90,7 +90,7 @@
                             <td>{{ person.themeAffiliations|member|earliest|date('n/j/Y') }}</td>
                         </tr>
                     {% endif %}
-                    {% if not person.isCurrentOrFuture %}
+                    {% if person.themeAffiliations|latest is not null %}
                         <tr>
                             <th>End date</th>
                             <td>{{ person.themeAffiliations|latest|date('n/j/Y') }}</td>
@@ -192,7 +192,14 @@
                             </tr>
                         {% endif %}
 
-
+                        {% if themeAffiliation.endedAt is not null %}
+                            <tr>
+                                <th>End date</th>
+                                <td>
+                                    {{ themeAffiliation.endedAt|date('n/j/Y') }}
+                                </td>
+                            </tr>
+                        {% endif %}
                     </table>
                 </div>
             {% endfor %}
