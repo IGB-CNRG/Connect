@@ -104,7 +104,7 @@ class WorkflowNotificationCrudController extends AbstractCrudController
                 ->setLabel('All Member Categories')
                 ->onlyOnForms(),
             BooleanField::new('replyToPerson')
-                ->setLabel('Set reply-to to member')
+                ->setLabel('Set \'from\' address to the member\'s email')
                 ->onlyOnForms(),
             ChoiceField::new('transitionName')
                 ->setLabel('Workflow event')

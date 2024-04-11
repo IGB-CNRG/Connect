@@ -87,8 +87,8 @@ class NotificationDispatcher implements ServiceSubscriberInterface
             ->subject($notification->getSubject())
             ->html($html);
 
-        if($notification->isReplyToPerson()){
-            $email->replyTo($subject->getEmail());
+        if($notification->isReplyToPerson() && $subject->getEmail()){
+            $email->from($subject->getEmail());
         }
 
         // Send the notification to each recipient
