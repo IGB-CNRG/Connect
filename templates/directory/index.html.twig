@@ -15,6 +15,9 @@
 {% macro theme(affiliation) %}
     <a href="#">{{ affiliation.theme }}</a>
     {{ affiliation.memberCategory.friendlyName }}
+    {% if affiliation.title %}
+        - {{ affiliation.title }}
+    {% endif %}
     {% if affiliation.roles is not empty %}
         ({% for role in affiliation.roles %}{{ role.name }}{% if not loop.last %}, {% endif %}{% endfor %})
     {% endif %}
