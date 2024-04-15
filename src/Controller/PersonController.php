@@ -33,44 +33,27 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class PersonController extends AbstractController
 {
-    #[Route('/members', name: 'person_currentmembers')]
-    public function currentMembers(PersonRepository $personRepository): Response
-    {
-        $people = $personRepository->findCurrentForMembersOnlyIndex();
-
-        return $this->index($people);
-    }
-
-    #[Route('/members/all', name: 'person_allmembers')]
-    public function allMembers(PersonRepository $personRepository): Response
-    {
-        $people = $personRepository->findAllForMembersOnlyIndex();
-
-        return $this->index($people);
-    }
-
-    #[Route('/people', name: 'person_currentpeople')]
-    public function currentPeople(PersonRepository $personRepository): Response
-    {
-        $people = $personRepository->findCurrentForIndex();
-
-        return $this->index($people);
-    }
-
-    #[Route('/people/all', name: 'person_allpeople')]
-    public function allPeople(PersonRepository $personRepository): Response
-    {
-        $people = $personRepository->findAllForIndex();
-
-        return $this->index($people);
-    }
-
     /**
-     * @param mixed $people
+     * @param PersonRepository $personRepository
+     * @param bool $past
+     * @param bool $allPeople
      * @return Response
      */
-    protected function index(mixed $people): Response
+    #[Route('/members', name: 'person_currentmembers', defaults: ['past' => false, 'allPeople' => false])]
+    #[Route('/members/all', name: 'person_allmembers', defaults: ['past' => true, 'allPeople' => false])]
+    #[Route('/people', name: 'person_currentpeople', defaults: ['past' => false, 'allPeople' => true])]
+    #[Route('/people/all', name: 'person_allpeople', defaults: ['past' => true, 'allPeople' => true])]
+    public function index(PersonRepository $personRepository, bool $past, bool $allPeople): Response
     {
+        if ($past) {
+            $people = $allPeople
+                ? $personRepository->findAllForIndex()
+                : $personRepository->findAllForMembersOnlyIndex();
+        } else {
+            $people = $allPeople
+                ? $personRepository->findCurrentForIndex()
+                : $personRepository->findCurrentForMembersOnlyIndex();
+        }
         $filterForm = $this->createForm(FilterType::class);
 
         return $this->render('person/index.html.twig', [
@@ -305,6 +288,7 @@ class PersonController extends AbstractController
     public function nonUniqueErrorFragment(#[MapQueryParameter] int $id, PersonRepository $personRepository): Response
     {
         $person = $personRepository->find($id);
+
         // todo when we enable the workflow, show a different message when not logged in
         return $this->render('person/_nonUniqueError.html.twig', [
             'person' => $person,
@@ -313,10 +297,11 @@ class PersonController extends AbstractController
 
     #[Route('/_fragments/search-results', name: 'person_searchresultsfragment', options: ['expose' => true])]
     public function searchResultsFragment(
-        #[MapQueryParameter] string $query, PersonRepository $personRepository
-    ): Response
-    {
+        #[MapQueryParameter] string $query,
+        PersonRepository $personRepository
+    ): Response {
         $people = $personRepository->findByQuery($query);
+
         return $this->render('search_results.html.twig', [
             'people' => $people,
         ]);
