@@ -8,7 +8,6 @@ namespace App\Twig\Runtime;
 
 use App\Entity\HistoricalEntityInterface;
 use App\Entity\Person;
-use App\Entity\SponsorAffiliation;
 use App\Entity\SupervisorAffiliation;
 use App\Entity\Theme;
 use App\Entity\ThemeAffiliation;
@@ -152,73 +151,5 @@ class ConnectRuntime implements RuntimeExtensionInterface
             ],
             $this->roleRepository->findAll()
         );
-    }
-
-    /**
-     * @param Collection|Person[] $people
-     * @return Person[]
-     */
-    public function byLastName(Collection|array $people): array
-    {
-        $array = $people;
-        if ($people instanceof Collection) {
-            $array = $people->toArray();
-        }
-        usort($array, function (Person $a, Person $b) {
-            return strcmp($a->getLastName(), $b->getLastName());
-        });
-
-        return $array;
-    }
-
-    /**
-     * @param Collection|SupervisorAffiliation[] $supervisors
-     * @return SupervisorAffiliation[]
-     */
-    public function supervisorsByLastName(Collection|array $supervisors): array
-    {
-        $array = $supervisors;
-        if ($supervisors instanceof Collection) {
-            $array = $supervisors->toArray();
-        }
-        usort($array, function (SupervisorAffiliation $a, SupervisorAffiliation $b) {
-            return strcmp($a->getSupervisor()->getLastName(), $b->getSupervisor()->getLastName());
-        });
-
-        return $array;
-    }
-
-    /**
-     * @param Collection|SupervisorAffiliation[] $supervisees
-     * @return SupervisorAffiliation[]
-     */
-    public function superviseesByLastName(Collection|array $supervisees): array
-    {
-        $array = $supervisees;
-        if ($supervisees instanceof Collection) {
-            $array = $supervisees->toArray();
-        }
-        usort($array, function (SupervisorAffiliation $a, SupervisorAffiliation $b) {
-            return strcmp($a->getSupervisee()->getLastName(), $b->getSupervisee()->getLastName());
-        });
-
-        return $array;
-    }
-
-    /**
-     * @param Collection|SponsorAffiliation[] $sponsors
-     * @return SupervisorAffiliation[]
-     */
-    public function sponsorsByLastName(Collection|array $sponsors): array
-    {
-        $array = $sponsors;
-        if ($sponsors instanceof Collection) {
-            $array = $sponsors->toArray();
-        }
-        usort($array, function (SponsorAffiliation $a, SponsorAffiliation $b) {
-            return strcmp($a->getSponsor()->getLastName(), $b->getSponsor()->getLastName());
-        });
-
-        return $array;
     }
 }

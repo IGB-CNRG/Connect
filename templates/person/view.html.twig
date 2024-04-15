@@ -113,7 +113,7 @@
                                     <span class="fas fa-minus-square"></span> </a>
                             </td>
                         {% endif %}
-                        {% for sponsorAffiliation in themeAffiliation.sponsorAffiliations|currentAndFuture|sponsorsByLastName %}
+                        {% for sponsorAffiliation in themeAffiliation.sponsorAffiliations|currentAndFuture|sort((a,b)=>a.sponsor.lastName <=> b.sponsor.lastName) %}
                             <tr>
                                 <th>Faculty Sponsor</th>
                                 <td>
@@ -145,7 +145,7 @@
                                 {% endif %}
                             </tr>
                         {% endfor %}
-                        {% for supervisorAffiliation in themeAffiliation.supervisorAffiliations|currentAndFuture|supervisorsByLastName %}
+                        {% for supervisorAffiliation in themeAffiliation.supervisorAffiliations|currentAndFuture|sort((a,b)=>a.supervisor.lastName <=> b.supervisor.lastName) %}
                             <tr>
                                 <th>Supervisor</th>
                                 <td>
@@ -177,11 +177,12 @@
                                 {% endif %}
                             </tr>
                         {% endfor %}
+                        {# todo we should make sure these supervisee times overlap the theme affiliation time #}
                         {% if person.superviseeAffiliations|currentAndFuture|theme(themeAffiliation.theme)|length >0 %}
                             <tr>
                                 <th>Supervisee(s)</th>
                                 <td>
-                                    {% for superviseeAffiliation in person.superviseeAffiliations|currentAndFuture|theme(themeAffiliation.theme)|superviseesByLastName %}
+                                    {% for superviseeAffiliation in person.superviseeAffiliations|currentAndFuture|theme(themeAffiliation.theme)|sort((a,b)=>a.supervisee.lastName <=> b.supervisee.lastName) %}
                                         <a class="text-nowrap"
                                            href="{{ path('person_view', {'slug': superviseeAffiliation.supervisee.slug}) }}">{{ superviseeAffiliation.supervisee }}</a>
                                     {% endfor %}
@@ -523,7 +524,7 @@
                         <div class="col">
                             <div class="theme-header">Supervisor(s)</div>
                             <div class="theme-body">
-                                {% for supervisorAffiliation in themeAffiliation.supervisorAffiliations %}
+                                {% for supervisorAffiliation in themeAffiliation.supervisorAffiliations|sort((a, b) => a.startedAt <=> b.startedAt) %}
                                     <div class="row">
                                         <div class="col"><a
                                                     href="{{ path('person_view', {'slug':supervisorAffiliation.supervisor.slug}) }}">{{ supervisorAffiliation.supervisor }}</a>
@@ -543,7 +544,7 @@
                             {% if person.superviseeAffiliations|theme(themeAffiliation.theme)|length >0 %}
                                 <div class="theme-header">Supervisee(s)</div>
                                 <div class="theme-body">
-                                    {% for superviseeAffiliation in person.superviseeAffiliations|theme(themeAffiliation.theme)|superviseesByLastName %}
+                                    {% for superviseeAffiliation in person.superviseeAffiliations|theme(themeAffiliation.theme)|sort((a,b)=>a.supervisee.lastName <=> b.supervisee.lastName) %}
                                         <div class="row">
                                             <div class="col"><a
                                                         href="{{ path('person_view', {'slug':superviseeAffiliation.supervisee.slug}) }}">{{ superviseeAffiliation.supervisee }}</a>
