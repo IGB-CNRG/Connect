@@ -66,6 +66,15 @@ class Theme implements LogSubjectInterface, HistoricalEntityInterface
         return $this->getShortName();
     }
 
+    public function getRootTheme()
+    {
+        $root = $this;
+        while($root->getParentTheme() !== null){
+            $root = $root->getParentTheme();
+        }
+        return $root;
+    }
+
     //MARK: - Getters/Setters
     public function getId(): ?int
     {

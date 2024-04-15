@@ -27,6 +27,10 @@ class ConnectExtension extends AbstractExtension
             new TwigFilter('earliest', [ConnectRuntime::class, 'earliest']),
             new TwigFilter('latest', [ConnectRuntime::class, 'latest']),
             new TwigFilter('format_text_table', [ConnectRuntime::class, 'formatPlainTextTable']),
+            new TwigFilter('byLastName', [ConnectRuntime::class, 'byLastName']),
+            new TwigFilter('supervisorsByLastName', [ConnectRuntime::class, 'supervisorsByLastName']),
+            new TwigFilter('superviseesByLastName', [ConnectRuntime::class, 'superviseesByLastName']),
+            new TwigFilter('sponsorsByLastName', [ConnectRuntime::class, 'sponsorsByLastName']),
         ];
     }
 

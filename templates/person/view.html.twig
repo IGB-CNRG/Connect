@@ -4,9 +4,8 @@
 {% block content %}
     <div class="float-end">
         {% if is_granted('PERSON_EDIT', person) %}
-            <a class="btn btn-primary" href="{{ path('person_edit', {'slug': person.slug}) }}">
-                <span class="fa fa-pencil"></span> Edit
-            </a>
+            <a class="btn btn-primary" href="{{ path('person_edit', {'slug': person.slug}) }}"> <span
+                        class="fa fa-pencil"></span> Edit </a>
         {% endif %}
     </div>
     <h1>
@@ -29,8 +28,7 @@
         <div class="col-lg"> {# todo play with the columns a bit for different sizes #}
             <div class="card mb-3">
                 <div class="card-header">
-                    <span class="fas fa-user float-end text-muted mt-1"></span>
-                    Personal Info
+                    <span class="fas fa-user float-end text-muted mt-1"></span> Personal Info
                 </div>
                 <table class="table">
                     <tr>
@@ -112,11 +110,10 @@
                             <td class="shrink pe-3 text-end">
                                 <a class="text-danger"
                                    href="{{ path('person_end_theme_affiliation', {'id': themeAffiliation.id, 'slug': person.slug}) }}">
-                                    <span class="fas fa-minus-square"></span>
-                                </a>
+                                    <span class="fas fa-minus-square"></span> </a>
                             </td>
                         {% endif %}
-                        {% for sponsorAffiliation in themeAffiliation.sponsorAffiliations|currentAndFuture %}
+                        {% for sponsorAffiliation in themeAffiliation.sponsorAffiliations|currentAndFuture|sponsorsByLastName %}
                             <tr>
                                 <th>Faculty Sponsor</th>
                                 <td>
@@ -148,7 +145,7 @@
                                 {% endif %}
                             </tr>
                         {% endfor %}
-                        {% for supervisorAffiliation in themeAffiliation.supervisorAffiliations|currentAndFuture %}
+                        {% for supervisorAffiliation in themeAffiliation.supervisorAffiliations|currentAndFuture|supervisorsByLastName %}
                             <tr>
                                 <th>Supervisor</th>
                                 <td>
@@ -184,7 +181,7 @@
                             <tr>
                                 <th>Supervisee(s)</th>
                                 <td>
-                                    {% for superviseeAffiliation in person.superviseeAffiliations|currentAndFuture|theme(themeAffiliation.theme) %}
+                                    {% for superviseeAffiliation in person.superviseeAffiliations|currentAndFuture|theme(themeAffiliation.theme)|superviseesByLastName %}
                                         <a class="text-nowrap"
                                            href="{{ path('person_view', {'slug': superviseeAffiliation.supervisee.slug}) }}">{{ superviseeAffiliation.supervisee }}</a>
                                     {% endfor %}
@@ -206,18 +203,14 @@
             {% if workflow_has_marked_place(person, 'active') and is_granted('PERSON_EDIT', person) %}
                 <a class="btn btn-sm btn-success mb-3"
                    href="{{ path('person_add_theme_affiliation', {'slug': person.slug}) }}"
-                >
-                    <span class="fas fa-plus"></span>
-                    Add Theme
-                </a>
+                > <span class="fas fa-plus"></span> Add Theme </a>
             {% endif %}
         </div>
 
         <div class="col-lg">
             <div class="card mb-3">
                 <div class="card-header">
-                    <span class="fas fa-address-card float-end text-muted mt-1"></span>
-                    Contact Info
+                    <span class="fas fa-address-card float-end text-muted mt-1"></span> Contact Info
                 </div>
                 <table class="table">
                     <tr>
@@ -236,9 +229,8 @@
                         {% if is_granted('PERSON_EDIT', person) %}
                             <td class="shrink pe-3">
                                 <a class="text-success"
-                                   href="{{ path('person_add_room', {'slug': person.slug}) }}">
-                                    <span class="fas fa-plus-square"></span>
-                                </a>
+                                   href="{{ path('person_add_room', {'slug': person.slug}) }}"> <span
+                                            class="fas fa-plus-square"></span> </a>
                             </td>
                         {% endif %}
                     </tr>
@@ -268,9 +260,7 @@
                     {% if is_granted('PERSON_EDIT', person) %}
                         <div class="card-body">
                             <a href="{{ path('person_upload_document', {'slug': person.slug}) }}"
-                               class="btn btn-sm btn-success">
-                                <span class="fa fa-plus"></span> Add document
-                            </a>
+                               class="btn btn-sm btn-success"> <span class="fa fa-plus"></span> Add document </a>
                         </div>
                     {% endif %}
                     <table class="table">
@@ -288,12 +278,10 @@
                                     {% if is_granted("PERSON_EDIT", person) %}
                                         <a class="text-decoration-none"
                                            href="{{ path('person_edit_document', {'id': document.id, 'slug': person.slug}) }}">
-                                            <span class="fa fa-pencil"></span>
-                                        </a>
+                                            <span class="fa fa-pencil"></span> </a>
                                         <a class="text-decoration-none"
                                            href="{{ path('person_delete_document', {'id': document.id, 'slug': person.slug}) }}">
-                                            <span class="fa fa-trash"></span>
-                                        </a>
+                                            <span class="fa fa-trash"></span> </a>
                                     {% endif %}
                                 </td>
                             </tr>
@@ -305,8 +293,7 @@
             {% if is_granted('ROLE_KEY_MANAGER') %}
                 <div class="card mb-3">
                     <div class="card-header">
-                        <span class="fas fa-key float-end text-muted mt-1"></span>
-                        Key Info
+                        <span class="fas fa-key float-end text-muted mt-1"></span> Key Info
                     </div>
                     <table class="table">
                         <tr>
@@ -333,8 +320,7 @@
             {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_APPROVER') %}
                 <div class="card mb-3">
                     <div class="card-header">
-                        <span class="fas fa-gears float-end text-muted mt-1"></span>
-                        Admin Info
+                        <span class="fas fa-gears float-end text-muted mt-1"></span> Admin Info
                     </div>
                     <table class="table">
                         <tr>
@@ -358,7 +344,8 @@
                         <tr>
                             <th>Membership status</th>
                             <td>
-                                {{ workflow_place_label(person)|trans }}. Status last updated {{ person.membershipUpdatedAt|date('n/j/y') }}
+                                {{ workflow_place_label(person)|trans }}. Status last
+                                updated {{ person.membershipUpdatedAt|date('n/j/y') }}
                             </td>
                             <td class="shrink"></td>
                         </tr>
@@ -374,9 +361,7 @@
                             <td class="shrink">
                                 <a class="text-success"
                                    href="{{ path('person_update_last_review', {'slug': person.slug}) }}"
-                                   title="Update last reviewed date">
-                                    <span class="fas fa-square-check"></span>
-                                </a>
+                                   title="Update last reviewed date"> <span class="fas fa-square-check"></span> </a>
                             </td>
                         </tr>
                     </table>
@@ -422,9 +407,7 @@
             {% if is_granted("PERSON_EDIT", person) %}
                 <div class="card-body">
                     <a href="{{ path('person_add_room', {'slug': person.slug}) }}"
-                       class="btn btn-sm btn-success">
-                        <span class="fa fa-plus"></span> Add Room
-                    </a>
+                       class="btn btn-sm btn-success"> <span class="fa fa-plus"></span> Add Room </a>
                 </div>
             {% endif %}
             <table class="table"> {# todo maybe these tables should be grids so they line up with each other #}
@@ -457,9 +440,7 @@
             <div class="card-body">
                 {% if is_granted("PERSON_EDIT", person) %}
                     <a href="{{ path('person_add_theme_affiliation', {'slug': person.slug}) }}"
-                       class="btn btn-sm btn-success mb-3">
-                        <span class="fa fa-plus"></span> Add
-                    </a>
+                       class="btn btn-sm btn-success mb-3"> <span class="fa fa-plus"></span> Add </a>
                 {% endif %}
 
                 {% for themeAffiliation in person.themeAffiliations %}
@@ -542,7 +523,6 @@
                         <div class="col">
                             <div class="theme-header">Supervisor(s)</div>
                             <div class="theme-body">
-                                {# todo we need to display start and end dates here #}
                                 {% for supervisorAffiliation in themeAffiliation.supervisorAffiliations %}
                                     <div class="row">
                                         <div class="col"><a
@@ -560,6 +540,27 @@
                                     </div>
                                 {% endfor %}
                             </div>
+                            {% if person.superviseeAffiliations|theme(themeAffiliation.theme)|length >0 %}
+                                <div class="theme-header">Supervisee(s)</div>
+                                <div class="theme-body">
+                                    {% for superviseeAffiliation in person.superviseeAffiliations|theme(themeAffiliation.theme)|superviseesByLastName %}
+                                        <div class="row">
+                                            <div class="col"><a
+                                                        href="{{ path('person_view', {'slug':superviseeAffiliation.supervisee.slug}) }}">{{ superviseeAffiliation.supervisee }}</a>
+                                            </div>
+                                            <div class="col">
+                                                {% if superviseeAffiliation.startedAt is not null %}
+                                                    {{ superviseeAffiliation.startedAt|date('n/j/Y') }}
+                                                {% endif %}
+                                                -
+                                                {% if superviseeAffiliation.endedAt is not null %}
+                                                    {{ superviseeAffiliation.endedAt|date('n/j/Y') }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                     {% if not loop.last %}
@@ -613,15 +614,13 @@
     {% endif %}
 
     {% if workflow_can(person, constant('App\\Workflow\\Membership::TRANS_REACTIVATE')) %}
-        <a class="btn btn-success" href="{{ path('membership_reentryForm', {'slug': person.slug}) }}">
-            <span class="fa fa-door-open"></span> Re-entry form
-        </a>
+        <a class="btn btn-success" href="{{ path('membership_reentryForm', {'slug': person.slug}) }}"> <span
+                    class="fa fa-door-open"></span> Re-entry form </a>
     {% endif %}
 
     {% if workflow_can(person, constant('App\\Workflow\\Membership::TRANS_FORCE_EXIT_FORM')) %}
-        <a class="btn btn-danger" href="{{ path('membership_exitForm', {'slug': person.slug}) }}">
-            <span class="fa fa-door-closed"></span> Exit form
-        </a>
+        <a class="btn btn-danger" href="{{ path('membership_exitForm', {'slug': person.slug}) }}"> <span
+                    class="fa fa-door-closed"></span> Exit form </a>
     {% endif %}
 {% endblock %}
 
