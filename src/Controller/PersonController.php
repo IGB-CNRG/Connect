@@ -20,10 +20,13 @@ use App\Log\ActivityLogger;
 use App\Repository\PersonRepository;
 use App\Service\HistoricityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Pagerfanta\Doctrine\ORM\QueryAdapter;
+use Pagerfanta\Pagerfanta;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,30 +38,83 @@ class PersonController extends AbstractController
 {
     /**
      * @param PersonRepository $personRepository
+     * @param HistoricityManager $historicityManager
+     * @param Request $request
      * @param bool $past
      * @param bool $allPeople
+     * @param int $page
+     * @param string $sort
+     * @param string $sortDirection
      * @return Response
      */
     #[Route('/members', name: 'person_currentmembers', defaults: ['past' => false, 'allPeople' => false])]
     #[Route('/members/all', name: 'person_allmembers', defaults: ['past' => true, 'allPeople' => false])]
     #[Route('/people', name: 'person_currentpeople', defaults: ['past' => false, 'allPeople' => true])]
     #[Route('/people/all', name: 'person_allpeople', defaults: ['past' => true, 'allPeople' => true])]
-    public function index(PersonRepository $personRepository, bool $past, bool $allPeople): Response
-    {
-        if ($past) {
-            $people = $allPeople
-                ? $personRepository->findAllForIndex()
-                : $personRepository->findAllForMembersOnlyIndex();
-        } else {
-            $people = $allPeople
-                ? $personRepository->findCurrentForIndex()
-                : $personRepository->findCurrentForMembersOnlyIndex();
+    public function index(
+        PersonRepository $personRepository,
+        HistoricityManager $historicityManager,
+        FormFactoryInterface $formFactory,
+        Request $request,
+        bool $past,
+        bool $allPeople,
+        #[MapQueryParameter] int $page = 1,
+        #[MapQueryParameter] string $sort = 'name',
+        #[MapQueryParameter] string $sortDirection = 'asc',
+    ): Response {
+        // Set defaults
+        $pageSize = 10;
+        $query = null;
+        $themesToFilter = [];
+        $typesToFilter = [];
+        $rolesToFilter = [];
+        $unitsToFilter = [];
+
+        // No-name form gives us a cleaner query string, but stops handleRequest() from working correctly
+        $filterForm = $formFactory->createNamed('', FilterType::class, null, ['method'=>'GET']);
+        $filterForm->handleRequest($request);
+        if ($filterForm->isSubmitted()) {
+            // Pull parameters from form
+            $pageSize = $filterForm->get('pageSize')->getData();
+            $query = $filterForm->get('query')->getData();
+            $themesToFilter = $filterForm->get('theme')->getData()->toArray();
+            $typesToFilter = $filterForm->get('employeeType')->getData()->toArray();
+            $rolesToFilter = $filterForm->get('role')->getData()->toArray();
+            $unitsToFilter = $filterForm->get('unit')->getData()->toArray();
         }
-        $filterForm = $this->createForm(FilterType::class);
+
+        if ($allPeople) {
+            $qb = $personRepository->createIndexQueryBuilder();
+        } else {
+            $qb = $personRepository->createMembersOnlyIndexQueryBuilder();
+        }
+        if (!$past) {
+            $historicityManager->addCurrentConstraint($qb, 'ta');
+        }
+
+        $personRepository->addIndexFilters(
+            $qb,
+            $query,
+            $sort,
+            $sortDirection,
+            $themesToFilter,
+            $typesToFilter,
+            $rolesToFilter,
+            $unitsToFilter,
+            !$past
+        );
+
+        $pager = Pagerfanta::createForCurrentPageWithMaxPerPage(
+            new QueryAdapter($qb),
+            $page,
+            $pageSize
+        );
 
         return $this->render('person/index.html.twig', [
-            'people' => $people,
+            'people' => $pager,
             'filterForm' => $filterForm->createView(),
+            'sort' => $sort,
+            'sortDirection' => $sortDirection,
         ]);
     }
 

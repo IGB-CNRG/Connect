@@ -6,7 +6,6 @@
 
 namespace App\Controller;
 
-use App\Form\Person\FilterType;
 use App\Repository\MemberCategoryRepository;
 use App\Repository\PersonRepository;
 use App\Repository\ThemeRepository;
@@ -53,7 +52,6 @@ class DirectoryController extends AbstractController
             $page,
             $pageSize
         );
-        $filterForm = $this->createForm(FilterType::class);
         $friendlyNames = $memberCategoryRepository->fetchAllFriendlyNames();
         $themes = $themeRepository->findCurrentNonOutsideThemes();
         $roles = $roleRepository->findAll();
@@ -96,7 +94,6 @@ class DirectoryController extends AbstractController
 
         return $this->render('directory/index.html.twig', [
             'people' => $pager,
-            'form' => $filterForm,
             'memberCategories' => $friendlyNames,
             'themeGroups' => $themeGroups,
             'roles' => $roles,

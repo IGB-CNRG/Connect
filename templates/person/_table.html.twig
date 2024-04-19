@@ -1,0 +1,253 @@
+{% block person_table %}
+    {# table for big screens #}
+    <div class="card d-md-block d-none mb-3">
+        <table class="table person-table">
+            <thead>
+            <tr>
+                <th></th>
+                <th>
+                    <a href="{{ path(app.current_route, {
+                        ...app.current_route_parameters,
+                        ...app.request.query.all(),
+                        sort: 'name',
+                        sortDirection: sort == 'name' and sortDirection == 'asc' ? 'desc' : 'asc'
+                    }) }}"> Name
+                        {% with {sortName:'name'} %}
+                            {{ block('sortArrow') }}
+                        {% endwith %}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ path(app.current_route, {
+                        ...app.current_route_parameters,
+                        ...app.request.query.all(),
+                        sort: 'email',
+                        sortDirection: sort == 'email' and sortDirection == 'asc' ? 'desc' : 'asc'
+                    }) }}"> Email
+                        {% with {sortName:'email'} %}
+                            {{ block('sortArrow') }}
+                        {% endwith %}
+                    </a>
+                </th>
+                <th>Theme</th>
+                <th>
+                    <a href="{{ path(app.current_route, {
+                        ...app.current_route_parameters,
+                        ...app.request.query.all(),
+                        sort: 'unit',
+                        sortDirection: sort == 'unit' and sortDirection == 'asc' ? 'desc' : 'asc'
+                    }) }}"> Unit
+                        {% with {sortName:'unit'} %}
+                            {{ block('sortArrow') }}
+                        {% endwith %}
+                    </a>
+                </th>
+                <th>Room</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for person in people %}
+                {# @var \App\Entity\Person person #}
+                <tr>
+                    <td class="shrink">
+                        {% if person.imageName is not null %}
+                            <img class="portrait-sm"
+                                 src="{{ vich_uploader_asset(person, 'imageFile') | imagine_filter('small_thumb') }}"
+                                 alt="Portrait"/>
+                        {% endif %}
+                    </td>
+                    <td><a href="{{ path('person_view', {'slug':person.slug}) }}">{{ person }}</a></td>
+                    <td>{{ person.email }}</td>
+                    <td>
+                        {% for themeAffiliation in person.themeAffiliations %}
+                            <div class="{{ html_classes('theme-row', {'text-muted': not themeAffiliation.isCurrent}) }}">
+
+                                {% if not themeAffiliation.isCurrent %}
+                                    <span class="fas fa-calendar-day text-warning" title="Previous affiliation"></span>
+                                {% endif %}
+                                {% if themeAffiliation.theme.isOutsideGroup %}
+                                    <span class="fas fa-building text-info" title="Non IGB member"></span>
+                                {% endif %}
+
+                                <a href="{{ path('theme_view', {'shortName': themeAffiliation.theme.shortName}) }}">{{ themeAffiliation.theme.shortName }}</a>
+
+                                {{ themeAffiliation.memberCategory.shortName??themeAffiliation.memberCategory.name }}
+
+                                {% if themeAffiliation.title %}
+                                    ({{ themeAffiliation.title }})
+                                {% endif %}
+                                {% for role in themeAffiliation.roles %}
+                                    ({{ role }})
+                                {% endfor %}
+
+                            </div>
+                        {% endfor %}
+                    </td>
+                    <td>{% if person.unit is not null %}{{ person.unit.name }}{% else %}None{% endif %}</td>
+                    <td>
+                        {% for affiliation in person.roomAffiliations %}
+                            {{ affiliation.room.number }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {# list for small screens #}
+    {# todo we need a sort dropdown or something for small screens #}
+    <div class="d-block d-md-none w-100">
+        {% for person in people %}
+            {# @var \App\Entity\Person person #}
+            <div class="mb-3 card">
+                <div class="card-header fw-bold position-relative">
+                    {% if person.imageName is not null %}
+                        <img class="portrait-sm-mobile"
+                             src="{{ vich_uploader_asset(person, 'imageFile') | imagine_filter('large_thumb') }}"
+                             alt="Portrait"/>
+                    {% endif %}
+                    <a href="{{ path('person_view', {'slug':person.slug}) }}">{{ person }}</a>
+                </div>
+                <div class="card-body">
+                    {% if person.email is not null %}
+                        <div class="row">
+                            <div class="col-2">Email:</div>
+                            <div class="col-10">{{ person.email }}</div>
+                        </div>
+                    {% endif %}
+                    {% if person.themeAffiliations is not empty %}
+                        <div class="row">
+                            <div class="col-2">Theme:</div>
+                            <div class="col-10">
+                                {% for themeAffiliation in person.themeAffiliations %}
+                                    <div class="{{ html_classes('', {'text-muted': not themeAffiliation.isCurrent}) }}">
+                                        {% if not themeAffiliation.isCurrent %}
+                                            <span class="fas fa-calendar-day text-warning"
+                                                  title="Previous affiliation"></span>
+                                        {% endif %}
+                                        {% if themeAffiliation.theme.isOutsideGroup %}
+                                            <span class="fas fa-building text-info" title="Non IGB member"></span>
+                                        {% endif %}
+
+                                        <a href="{{ path('theme_view', {'shortName': themeAffiliation.theme.shortName}) }}">{{ themeAffiliation.theme.shortName }}</a>
+
+                                        {{ themeAffiliation.memberCategory.shortName??themeAffiliation.memberCategory.name }}
+
+                                        {% if themeAffiliation.title %}
+                                            ({{ themeAffiliation.title }})
+                                        {% endif %}
+                                        {% for role in themeAffiliation.roles %}
+                                            ({{ role }})
+                                        {% endfor %}
+
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if person.unit is not null %}
+                        <div class="row">
+                            <div class="col-2">Unit:</div>
+                            <div class="col-10">{{ person.unit.name }}</div>
+                        </div>
+                    {% endif %}
+                    {% if person.roomAffiliations is not empty %}
+                        <div class="row">
+                            <div class="col-2">Room:</div>
+                            <div class="col-10">
+                                {% for affiliation in person.roomAffiliations %}
+                                    {{ affiliation.room.number }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block person_table_header %}
+    <div class="row">
+        <div class="col-md-8 col-12">
+            <h3>{{ title }}</h3>
+        </div>
+        <div class="col-md-4 col-12 mb-3">
+            {{ form_widget(filterForm.query, {'attr':{'class':'drop-shadow'}}) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block person_table_footer %}
+    <div class="d-flex flex-column align-items-center flex-md-row w-100 flex-wrap justify-content-center mb-2">
+        <div class="d-flex flex-row align-items-center flex-grow-1 mb-2 w-100 w-md-auto justify-content-between">
+            <div class="flex-grow-0 me-2">
+                {# table size dropdown #}
+                {{ form_widget(filterForm.pageSize, {'attr':{'class':'drop-shadow'}}) }}
+            </div>
+            <div class="flex-md-grow-1">
+                Showing {{ people.currentPageOffsetStart }}
+                to {{ people.currentPageOffsetEnd }}
+                of {{ people.count }} people
+            </div>
+        </div>
+        <div class="flex-grow-0 mb-2 w-100 w-md-auto">
+            {# todo hook up this button #}
+            <a href="#" class="btn btn-primary me-2 w-100 w-md-auto"> <span class="fas fa-file-excel"></span> Download
+                Report </a>
+        </div>
+        <div class="flex-grow-0 mb-2">
+            {# pagination bar #}
+            {{ pagerfanta(people, 'twitter_bootstrap5') }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block person_table_filters %}
+    <div class="card mb-3">
+        <div class="card-header collapse-header">
+            Filter
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% if filterForm.theme is defined %}
+                    <div class="col-lg-6 col-xl">{{ form_row(filterForm.theme) }}</div>
+                {% endif %}
+                <div class="col-lg-6 col-xl">{{ form_row(filterForm.employeeType) }}</div>
+                {% if filterForm.role is defined %}
+                    <div class="col-lg-6 col-xl">{{ form_row(filterForm.role) }}</div>
+                {% endif %}
+                <div class="col-lg-6 col-xl">{{ form_row(filterForm.unit) }}</div>
+            </div>
+
+            <p class="mb-0">
+                Selecting an option from each dropdown will search for members who match <strong>all</strong> options.
+                Selecting multiple options from a single dropdown will search for members who match <strong>any</strong>
+                of those options. For example, if you select MME, MMG, and Faculty, both MME Faculty and MMG Faculty
+                will be displayed.
+            </p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block person_table_legend %}
+    <div class="callout mb-2">
+        <strong>Legend</strong><br/> <span class="fas fa-calendar-day text-warning"
+                                           title="Previous affiliation"></span> Previous affiliation<br/> <span
+                class="fas fa-building text-info" title="Non IGB member"></span> Building access only; Not an IGB theme
+    </div>
+{% endblock %}
+
+{% block sortArrow %}
+    {% if sort == sortName %}
+        {% if sortDirection == 'asc' %}
+            <span class="fa fa-sort-up arrows float-end"></span>
+        {% else %}
+            <span class="fa fa-sort-down arrows float-end"></span>
+        {% endif %}
+    {% else %}
+        <span class="fa fa-sort arrows-faded float-end"></span>
+    {% endif %}
+{% endblock %}

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -14,6 +14,8 @@ use App\Repository\MemberCategoryRepository;
 use App\Repository\UnitRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -22,15 +24,33 @@ class FilterType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('query', SearchType::class, [
+                'attr' => [
+                    'data-action' => 'keydown.enter->autosubmit#submit', // todo when we add turbo, we can add autosubmit#debouncedSubmit
+                    'placeholder' => 'Search',
+                    'autocomplete' => 'off',
+                ],
+                'required' => false,
+            ])
+            ->add('pageSize', ChoiceType::class, [
+                'choices' => [
+                    '10 per page'=>10,
+                    '25 per page'=>25,
+                    '50 per page'=>50,
+                    '100 per page'=>100
+                ],
+                'attr' => [
+                    'data-action' => 'autosubmit#submit',
+                ]
+            ])
             ->add('theme', ThemeType::class, [
                 'multiple' => true,
                 'attr' => [
                     'data-controller' => 'tom-select',
                     'data-placeholder' => 'Filter by theme',
-                    'data-action' => 'datatables#columnSearch',
+                    'data-action' => 'autosubmit#submit',
                     'style' => 'width:100%',
                 ],
-                'choice_value' => 'shortName',
                 'required' => false,
             ])
             ->add('employeeType', EntityType::class, [
@@ -39,12 +59,9 @@ class FilterType extends AbstractType
                 'attr' => [
                     'data-controller' => 'tom-select',
                     'data-placeholder' => 'Filter by employee type',
-                    'data-action' => 'datatables#columnSearch',
+                    'data-action' => 'autosubmit#submit',
                     'style' => 'width:100%',
                 ],
-                'choice_value' => function (MemberCategory $category) {
-                    return $category->getShortName() ?? $category->getName();
-                },
                 'query_builder' => function (MemberCategoryRepository $repository) {
                     return $repository->createFormSortedQueryBuilder();
                 },
@@ -56,10 +73,9 @@ class FilterType extends AbstractType
                 'attr' => [
                     'data-controller' => 'tom-select',
                     'data-placeholder' => 'Filter by employee type',
-                    'data-action' => 'datatables#columnSearch',
+                    'data-action' => 'autosubmit#submit',
                     'style' => 'width:100%',
                 ],
-                'choice_value' => fn(ThemeRole $role) => $role->__toString(),
                 'required' => false,
             ])
             ->add('unit', EntityType::class, [
@@ -68,11 +84,9 @@ class FilterType extends AbstractType
                 'attr' => [
                     'data-controller' => 'tom-select',
                     'data-placeholder' => 'Filter by unit',
-                    'data-action' => 'datatables#columnSearch',
-                    'data-column' => 3,
+                    'data-action' => 'autosubmit#submit',
                     'style' => 'width:100%',
                 ],
-                'choice_value' => fn(Unit $unit) => $unit->__toString(),
                 'query_builder' => fn(UnitRepository $unitRepository) => $unitRepository->createFormSortedQueryBuilder(),
                 'choice_filter' => fn(Unit $unit) => $unit->getChildUnits()->count()===0,
                 'group_by' => function (Unit $choice, $key, $value) {
@@ -89,7 +103,7 @@ class FilterType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            // Configure your form options here
+            'csrf_protection' => false,
         ]);
     }
 }

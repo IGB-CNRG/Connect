@@ -47,11 +47,222 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
             ->select('p,ta,t,pt,ra,r,u,mc,tr');
     }
 
+    private function addPagerParams(
+        QueryBuilder $qb,
+        ?string $sort,
+        string $sortDirection,
+    ) {
+        if ($sort) {
+            if ($sort === 'name') {
+                $qb->orderBy('p.lastName', $sortDirection)
+                    ->addOrderBy('p.firstName', $sortDirection);
+            } elseif ($sort === 'unit') {
+                $qb->orderBy('u.name', $sortDirection);
+            } else {
+                $qb->orderBy('p.'.$sort, $sortDirection);
+            }
+        }
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param bool $addedSecondJoin
+     * @param array $filters
+     * @param callable $queryCallback function(QueryBuilder $qb, $index, $value) Should return an array of queries to
+     *     include and should set needed parameters on $qb.
+     * @param callable $joinCallback
+     * @param bool $currentOnly
+     * @return bool
+     */
+    private function addFilter(
+        QueryBuilder $qb,
+        bool $addedSecondJoin,
+        array $filters,
+        callable $queryCallback,
+        callable $joinCallback,
+        bool $currentOnly
+    ): bool {
+        $queries = [];
+        foreach ($filters as $i => $filter) {
+            if ($filter) {
+                $queries = array_merge($queries, $queryCallback($qb, $i, $filter));
+            }
+        }
+        if (count($queries) > 0) {
+            if (!$addedSecondJoin) {
+                $qb->leftJoin('p.themeAffiliations', 'ta2');
+                if ($currentOnly) {
+                    $this->historicityManager()->addCurrentConstraint($qb, 'ta2');
+                }
+                $addedSecondJoin = true;
+            }
+            $joinCallback($qb);
+            $qb->andWhere('('.join(' or ', $queries).')');
+        }
+
+        return $addedSecondJoin;
+    }
+
+    private function addThemeIdFilter(
+        QueryBuilder $qb,
+        bool $addedSecondJoin,
+        array $themes,
+        bool $currentOnly
+    ): bool {
+        return $this->addFilter(
+            $qb,
+            $addedSecondJoin,
+            $themes,
+            function ($qb2, $i, $id) {
+                $qb2->setParameter("theme$i", $id);
+
+                return ["t2.id = :theme$i", "parentTheme.id = :theme$i"];
+            },
+            function ($qb2) {
+                $qb2->leftJoin('ta2.theme', 't2')
+                    ->leftJoin('t2.parentTheme', 'parentTheme');
+            },
+            $currentOnly
+        );
+    }
+
+    private function addThemeShortNameFilter(
+        QueryBuilder $qb,
+        bool $addedSecondJoin,
+        array $themes,
+        bool $currentOnly
+    ): bool {
+        return $this->addFilter(
+            $qb,
+            $addedSecondJoin,
+            $themes,
+            function ($qb2, $i, $id) {
+                $qb2->setParameter("theme$i", $id);
+
+                return ["t2.shortName = :theme$i", "parentTheme.shortName = :theme$i"];
+            },
+            function ($qb2) {
+                $qb2->leftJoin('ta2.theme', 't2')
+                    ->leftJoin('t2.parentTheme', 'parentTheme');
+            },
+            $currentOnly
+        );
+    }
+
+    private function addMemberCategoryIdFilter(
+        QueryBuilder $qb,
+        bool $addedSecondJoin,
+        array $memberCategories,
+        bool $currentOnly
+    ): bool {
+        return $this->addFilter(
+            $qb,
+            $addedSecondJoin,
+            $memberCategories,
+            function ($qb2, $i, $id) {
+                $qb2->setParameter("type$i", $id);
+
+                return ["mc2.id = :type$i"];
+            },
+            function ($qb2) {
+                $qb2->leftJoin('ta2.memberCategory', 'mc2');
+            },
+            $currentOnly
+        );
+    }
+
+    private function addFriendlyMemberCategoryFilter(
+        QueryBuilder $qb,
+        bool $addedSecondJoin,
+        array $memberCategories,
+        bool $currentOnly
+    ): bool {
+        return $this->addFilter(
+            $qb,
+            $addedSecondJoin,
+            $memberCategories,
+            function ($qb2, $i, $id) {
+                $qb2->setParameter("type$i", $id);
+
+                return ["mc2.friendlyName = :type$i"];
+            },
+            function ($qb2) {
+                $qb2->leftJoin('ta2.memberCategory', 'mc2');
+            },
+            $currentOnly
+        );
+    }
+
+    private function addRoleIdFilter(
+        QueryBuilder $qb,
+        bool $addedSecondJoin,
+        array $roleIds,
+        bool $currentOnly
+    ): bool {
+        return $this->addFilter(
+            $qb,
+            $addedSecondJoin,
+            $roleIds,
+            function ($qb2, $i, $id) {
+                $qb2->setParameter("role$i", $id);
+
+                return ["tr2.id = :role$i"];
+            },
+            function ($qb2) {
+                $qb2->leftJoin('ta2.roles', 'tr2');
+            },
+            $currentOnly
+        );
+    }
+
+    private function addUnitIdFilter(
+        QueryBuilder $qb,
+        bool $addedSecondJoin,
+        array $unitIds,
+        bool $currentOnly
+    ): bool {
+        return $this->addFilter(
+            $qb,
+            $addedSecondJoin,
+            $unitIds,
+            function ($qb2, $i, $id) {
+                $qb2->setParameter("unit$i", $id);
+
+                return ["u.id = :unit$i"];
+            },
+            function ($qb2) {
+            },
+            $currentOnly
+        );
+    }
+
     public function createMembersOnlyIndexQueryBuilder(): QueryBuilder
     {
         return $this->createIndexQueryBuilder()
             ->andWhere('ta is not null')
             ->andWhere('t.isOutsideGroup = false');
+    }
+
+    public function addIndexFilters(
+        QueryBuilder $qb,
+        ?string $query,
+        ?string $sort = null,
+        string $sortDirection = 'asc',
+        array $themes = [],
+        array $memberCategories = [],
+        array $themeRoles = [],
+        array $units = [],
+        bool $currentOnly = true
+    ): QueryBuilder {
+        $this->addQuerySearch($qb, $query);
+        $this->addPagerParams($qb, $sort, $sortDirection);
+
+        $addedSecondJoin = $this->addThemeIdFilter($qb, false, $themes, $currentOnly);
+        $addedSecondJoin = $this->addMemberCategoryIdFilter($qb, $addedSecondJoin, $memberCategories, $currentOnly);
+        $addedSecondJoin = $this->addRoleIdFilter($qb, $addedSecondJoin, $themeRoles, $currentOnly);
+        $this->addUnitIdFilter($qb, $addedSecondJoin, $units, $currentOnly);
+
+        return $qb;
     }
 
     public function directoryQueryBuilder(
@@ -65,87 +276,14 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
     ): QueryBuilder {
         $qb = $this->createMembersOnlyIndexQueryBuilder();
         $this->historicityManager()->addCurrentConstraint($qb, 'ta');
-        if ($query) {
-            $this->addQuerySearch($qb, $query);
-        }
-        if ($sort) {
-            if ($sort === 'name') {
-                $qb->orderBy('p.lastName', $sortDirection)
-                    ->addOrderBy('p.firstName', $sortDirection);
-            } else {
-                $qb->orderBy('p.'.$sort, $sortDirection);
-            }
-        }
 
-        $addedSecondJoin = false;
-        // Add theme query
-        $queries = [];
-        foreach ($themes as $i => $id) {
-            if ($id) {
-                $queries[] = "t2.shortName = :theme$i";
-                $queries[] = "parentTheme.shortName = :theme$i";
-                $qb->setParameter("theme$i", $id);
-            }
-        }
-        if (count($queries) > 0) {
-            if (!$addedSecondJoin) {
-                $qb->leftJoin('p.themeAffiliations', 'ta2');
-                $this->historicityManager()->addCurrentConstraint($qb, 'ta2');
-                $addedSecondJoin = true;
-            }
-            $qb->leftJoin('ta2.theme', 't2')
-                ->leftJoin('t2.parentTheme', 'parentTheme')
-                ->andWhere('('.join(' or ', $queries).')');
-            $addedSecondJoin = true;
-        }
+        $this->addQuerySearch($qb, $query);
+        $this->addPagerParams($qb, $sort, $sortDirection);
 
-        // Add member category query
-        $queries = [];
-        foreach ($memberCategories as $i => $id) {
-            if ($id) {
-                $queries[] = "mc2.friendlyName = :type$i";
-                $qb->setParameter("type$i", $id);
-            }
-        }
-        if (count($queries) > 0) {
-            if (!$addedSecondJoin) {
-                $qb->leftJoin('p.themeAffiliations', 'ta2');
-                $this->historicityManager()->addCurrentConstraint($qb, 'ta2');
-                $addedSecondJoin = true;
-            }
-            $qb->leftJoin('ta2.memberCategory', 'mc2')
-                ->andWhere('('.join(' or ', $queries).')');
-        }
-
-        // Add theme role query
-        $queries = [];
-        foreach ($themeRoles as $i => $id) {
-            if ($id) {
-                $queries[] = "tr2.id = :role$i";
-                $qb->setParameter("role$i", $id);
-            }
-        }
-        if (count($queries) > 0) {
-            if (!$addedSecondJoin) {
-                $qb->leftJoin('p.themeAffiliations', 'ta2');
-                $this->historicityManager()->addCurrentConstraint($qb, 'ta2');
-                $addedSecondJoin = true;
-            }
-            $qb->leftJoin('ta2.roles', 'tr2')
-                ->andWhere('('.join(' or ', $queries).')');
-        }
-
-        // Add unit query
-        $queries = [];
-        foreach ($units as $i => $id) {
-            if ($id) {
-                $queries[] = "u.id = :unit$i";
-                $qb->setParameter("unit$i", $id);
-            }
-        }
-        if (count($queries) > 0) {
-            $qb->andWhere('('.join(' or ', $queries).')');
-        }
+        $addedSecondJoin = $this->addThemeShortNameFilter($qb, false, $themes, true);
+        $addedSecondJoin = $this->addFriendlyMemberCategoryFilter($qb, $addedSecondJoin, $memberCategories, true);
+        $addedSecondJoin = $this->addRoleIdFilter($qb, $addedSecondJoin, $themeRoles, true);
+        $this->addUnitIdFilter($qb, $addedSecondJoin, $units, true);
 
         return $qb;
     }
@@ -191,24 +329,6 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
     {
         return $this->createIndexQueryBuilder()
             ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * @param Theme $theme
-     * @return Person[]
-     */
-    public function findCurrentForTheme(Theme $theme): array
-    {
-        $qb = $this->createIndexQueryBuilder()
-            ->leftJoin('p.themeAffiliations', 'ta2')
-            ->leftJoin('ta2.theme', 't2')
-            ->andWhere('(ta2.theme = :theme or t2.parentTheme = :theme)')
-            ->setParameter('theme', $theme);
-        $this->historicityManager()->addCurrentConstraint($qb, 'ta');
-        $this->historicityManager()->addCurrentConstraint($qb, 'ta2');
-
-        return $qb->getQuery()
             ->getResult();
     }
 
@@ -312,14 +432,16 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
             ->getResult();
     }
 
-    private function addQuerySearch(QueryBuilder $builder, string $query): void
+    private function addQuerySearch(QueryBuilder $builder, ?string $query): void
     {
-        $queryWords = explode(' ', $query);
-        foreach ($queryWords as $i => $word) {
-            $builder->andWhere(
-                "p.firstName LIKE :query$i OR p.lastName LIKE :query$i OR p.preferredFirstName LIKE :query$i OR p.email LIKE :query$i OR p.username LIKE :query$i OR p.netid LIKE :query$i"
-            )
-                ->setParameter("query$i", '%'.$word.'%');
+        if ($query) {
+            $queryWords = explode(' ', $query);
+            foreach ($queryWords as $i => $word) {
+                $builder->andWhere(
+                    "p.firstName LIKE :query$i OR p.lastName LIKE :query$i OR p.preferredFirstName LIKE :query$i OR p.email LIKE :query$i OR p.username LIKE :query$i OR p.netid LIKE :query$i"
+                )
+                    ->setParameter("query$i", '%'.$word.'%');
+            }
         }
     }
 }

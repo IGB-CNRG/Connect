@@ -18,7 +18,25 @@ $info: $teal;
 @import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/bootstrap";
 
+@each $breakpoint in map-keys($grid-breakpoints) {
+  @include media-breakpoint-up($breakpoint) {
+    $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+
+    .w#{$infix}-25 { width: 25%; }
+    .w#{$infix}-50 { width: 50%; }
+    .w#{$infix}-75 { width: 75%; }
+    .w#{$infix}-100 { width: 100%; }
+    .w#{$infix}-auto { width: auto !important; }
+  }
+}
+
 @import "progress-circular";
+
+$drop-shadow: 0.15rem 0.15rem 0.4rem $gray-400, -0.15rem -0.15rem 0.4rem #fff;
+
+body {
+  background-color: $gray-100;
+}
 
 .login-main {
   background-image: url("../images/IGB.jpg");
@@ -51,10 +69,25 @@ $info: $teal;
   border-bottom: 2px solid $orange;
 }
 
+.drop-shadow {
+  box-shadow: $drop-shadow;
+}
+
 /* Tables */
 .card {
   .table {
     margin: 0;
+    th, td{
+      background-color: transparent;
+    }
+  }
+  box-shadow: $drop-shadow;
+}
+
+.btn {
+  box-shadow: $drop-shadow;
+  &:hover {
+    box-shadow: 0.15rem 0.15rem 0.4rem $gray-500, -0.15rem -0.15rem 0.4rem #fff;
   }
 }
 
@@ -69,16 +102,18 @@ $info: $teal;
   background-color: $gray-200;
   margin-top: 3.5rem;
   margin-bottom: 1.5rem;
-  box-shadow: 3px 3px 8px #eee;
+  box-shadow: 0.15rem 0.15rem 0.4rem $gray-200;
 }
 
 /* Callout boxes */
 .callout {
+  background-color: #fff;
   padding: 1rem;
   margin-bottom: 1.25rem;
   border: 1px solid $gray-300;
   border-left-width: 0.25rem;
   border-radius: $border-radius;
+  box-shadow: $drop-shadow;
 
   ul {
     margin: 0;
@@ -170,6 +205,17 @@ $callout-background-lighten: 70%;
   object-fit: cover;
 }
 
+.portrait-sm-mobile {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border-radius: 1rem;
+  object-fit: cover;
+  right: 0.5rem;
+  top: 0.5rem;
+  //box-shadow: 0.15rem 0.15rem 0.4rem $gray-500, -0.15rem -0.15rem 0.4rem #fff;
+}
+
 .td-no-portrait {
   padding-left: calc(1rem + 35px) !important;
 }
@@ -250,6 +296,31 @@ label.required:after {
 }
 
 /* Person table styles */
+$arrows: rgb(112,112,112);
+$arrows-faded: rgb(112,112,112, 0.5);
+.person-table {
+  th {
+    a {
+      color: black;
+      text-decoration: none;
+    }
+
+    .arrows {
+      color: $arrows;
+      font-size: .75rem;
+      margin-top: 6px;
+    }
+    .arrows-faded {
+      color: $arrows-faded;
+      font-size: .75rem;
+      margin-top: 7px;
+    }
+  }
+  td {
+    vertical-align: middle;
+  }
+}
+
 .theme-row {
   border-bottom: 1px solid $gray-200;
   padding: 0.25rem 0;
@@ -260,6 +331,13 @@ label.required:after {
   &:first-child {
     padding-top: 0;
   }
+}
+
+ul.pagination {
+  margin-bottom: 0 !important;
+  box-shadow: $drop-shadow;
+  border-radius: $border-radius;
+
 }
 
 /* Membership workflow */

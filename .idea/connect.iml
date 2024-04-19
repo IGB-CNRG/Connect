@@ -216,6 +216,8 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/pagerfanta/doctrine-orm-adapter" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/pagerfanta/twig" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/giggsey/libphonenumber-for-php-lite" />
+      <excludeFolder url="file://$MODULE_DIR$/public/bundles/apiplatform" />
+      <excludeFolder url="file://$MODULE_DIR$/public/bundles/easyadmin" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
