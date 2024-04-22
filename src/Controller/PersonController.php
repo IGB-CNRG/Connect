@@ -115,6 +115,8 @@ class PersonController extends AbstractController
             'filterForm' => $filterForm->createView(),
             'sort' => $sort,
             'sortDirection' => $sortDirection,
+            'currentOnly' => !$past,
+            'membersOnly' => !$allPeople,
         ]);
     }
 

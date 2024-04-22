@@ -32,7 +32,7 @@ $info: $teal;
 
 @import "progress-circular";
 
-$drop-shadow: 0.15rem 0.15rem 0.4rem $gray-400, -0.15rem -0.15rem 0.4rem #fff;
+$drop-shadow: 0.15rem 0.15rem 0.4rem #0004, -0.15rem -0.15rem 0.4rem #fff6;
 
 body {
   background-color: $gray-100;
@@ -87,7 +87,7 @@ body {
 .btn {
   box-shadow: $drop-shadow;
   &:hover {
-    box-shadow: 0.15rem 0.15rem 0.4rem $gray-500, -0.15rem -0.15rem 0.4rem #fff;
+    box-shadow: 0.15rem 0.15rem 0.4rem #0007, -0.15rem -0.15rem 0.4rem #fff9;
   }
 }
 

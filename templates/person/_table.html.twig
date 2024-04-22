@@ -194,9 +194,21 @@
             </div>
         </div>
         <div class="flex-grow-0 mb-2 w-100 w-md-auto">
-            {# todo hook up this button #}
-            <a href="#" class="btn btn-primary me-2 w-100 w-md-auto"> <span class="fas fa-file-excel"></span> Download
-                Report </a>
+            <a href="
+                {%- if theme is defined -%}
+                {{ path('report_people', {
+                                'currentOnly': currentOnly,
+                                'membersOnly': membersOnly,
+                                'theme[0]': theme.id,
+                                ...app.request.query.all()
+                            }) }}{%- else -%}
+                {{ path('report_people', {
+                                'currentOnly': currentOnly,
+                                'membersOnly': membersOnly,
+                                ...app.request.query.all()
+                            }) }}
+                {%- endif -%}
+                " class="btn btn-primary me-2 w-100 w-md-auto"> <span class="fas fa-file-excel"></span> Download Report </a>
         </div>
         <div class="flex-grow-0 mb-2">
             {# pagination bar #}

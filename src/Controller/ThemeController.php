@@ -102,6 +102,8 @@ class ThemeController extends AbstractController
             'themeRoles' => $themeRoles,
             'sort' => $sort,
             'sortDirection' => $sortDirection,
+            'currentOnly' => true,
+            'membersOnly' => false,
         ]);
     }
 }
