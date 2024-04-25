@@ -13,7 +13,10 @@
     {{- person.lastName -}}, {{ person.preferredFirstName ? person.preferredFirstName : person.firstName }}
 {% endmacro %}
 {% macro theme(affiliation) %}
-    <a href="#">{{ affiliation.theme }}</a>
+    <a href="{{ path('app_directory', {
+        ...app.request.query.all(),
+        'theme': {'0': affiliation.theme.shortName}
+    }) }}">{{ affiliation.theme }}</a>
     {{ affiliation.memberCategory.friendlyName }}
     {% if affiliation.title %}
         - {{ affiliation.title }}
