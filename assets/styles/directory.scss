@@ -58,11 +58,10 @@ $arrows-faded: rgb(112,112,112, 0.5);
   }
 }
 
-// These styles are just for development
-//body {
-//  padding-top: 2rem;
-//  padding-bottom: 2rem;
-//}
+.row {
+  max-width: 1260px; // requested by Gabe 4/25/24
+  margin: auto; // requested by Gabe 4/25/24
+}
 
 #title {
   font-family: "ff-scala", serif;
@@ -114,6 +113,7 @@ form {
 }
 
 #directory-table {
+  max-width: 1260px; // requested by Gabe 4/25/24
   th {
     text-transform: uppercase;
     font-weight: bold;
