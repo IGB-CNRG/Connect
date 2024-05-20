@@ -267,7 +267,13 @@
                     <table class="table">
                         {% for document in person.documents %}
                             <tr>
-                                <td><a href="{{ asset(vich_uploader_asset(document, 'file')) }}">{{ document }}</a></td>
+                                <td>
+                                    {% if vich_uploader_asset(document, 'file') is not null %}
+                                        <a href="{{ asset(vich_uploader_asset(document, 'file')) }}">{{ document }}</a>
+                                    {% else %}
+                                        {{ document }}<br/><span class="text-danger"> File not found! A problem may have occurred during upload.</span>
+                                    {% endif %}
+                                </td>
                                 <td class="shrink text-end text-muted">
                                     Uploaded by {{ document.uploadedBy }}<br/>
                                     {{ document.createdAt|date('n/j/Y') }}
