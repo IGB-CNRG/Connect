@@ -15,7 +15,12 @@
     <h2 class="mb-3">{{ person }} Training Certificates</h2>
     {% for document in person.documents %}
         {% if document.type == constant('App\\Enum\\DocumentCategory::Certificate') %}
-            <p><a href="{{ asset(vich_uploader_asset(document, 'file')) }}">{{ document }}</a></p>
+            {% if vich_uploader_asset(document, 'file') is not null %}
+                <p><a href="{{ asset(vich_uploader_asset(document, 'file')) }}">{{ document }}</a></p>
+            {% else %}
+                <p class="text-danger">"{{ document }}" file not found. There may have been a problem with the upload.
+                    Please return the form and ask the user to try to upload this one again.</p>
+            {% endif %}
         {% endif %}
     {% endfor %}
 
@@ -28,7 +33,6 @@
         </div>
     {% endif %}
 
-    {# todo need better wording from Darci #}
     <div class="d-flex">
         <div class="p-2" style="flex:1">
             <p>Check the box below to approve these certificates</p>

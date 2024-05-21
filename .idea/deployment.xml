@@ -1,28 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="www-app-php81" deleteMissingItems="true" confirmBeforeUploading="false">
+  <component name="PublishConfigData" deleteMissingItems="true" confirmBeforeUploading="false">
     <option name="confirmBeforeUploading" value="false" />
-    <serverData>
-      <paths name="www-app-php81">
-        <serverdata>
-          <mappings>
-            <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
-          </mappings>
-          <excludedPaths>
-            <excludedPath path="/.env.local" />
-            <excludedPath path="/node_modules" />
-            <excludedPath path="/public/bundles" />
-            <excludedPath path="/var" />
-            <excludedPath path="/vendor" />
-            <excludedPath path="/public/build" />
-            <excludedPath path="/public/uploads" />
-            <excludedPath path="/public/media" />
-            <excludedPath local="true" path="$PROJECT_DIR$/docker-compose.local.yml" />
-            <excludedPath path="/install-config.local.yml" />
-            <excludedPath path="/.php-version" />
-          </excludedPaths>
-        </serverdata>
-      </paths>
-    </serverData>
   </component>
 </project>
