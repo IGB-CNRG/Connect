@@ -97,6 +97,7 @@
 
     {# list for small screens #}
     {# todo we need a sort dropdown or something for small screens #}
+    {% with {col1class: 'col-3 col-sm-2', col2class: 'col-9 col-sm-10'} %}
     <div class="d-block d-md-none w-100">
         {% for person in people %}
             {# @var \App\Entity\Person person #}
@@ -112,14 +113,14 @@
                 <div class="card-body">
                     {% if person.email is not null %}
                         <div class="row">
-                            <div class="col-2">Email:</div>
-                            <div class="col-10">{{ person.email }}</div>
+                            <div class="{{ col1class }}">Email:</div>
+                            <div class="{{ col2class }}">{{ person.email }}</div>
                         </div>
                     {% endif %}
                     {% if person.themeAffiliations is not empty %}
                         <div class="row">
-                            <div class="col-2">Theme:</div>
-                            <div class="col-10">
+                            <div class="{{ col1class }}">Theme:</div>
+                            <div class="{{ col2class }}">
                                 {% for themeAffiliation in person.themeAffiliations %}
                                     <div class="{{ html_classes('', {'text-muted': not themeAffiliation.isCurrent}) }}">
                                         {% if not themeAffiliation.isCurrent %}
@@ -148,14 +149,14 @@
                     {% endif %}
                     {% if person.unit is not null %}
                         <div class="row">
-                            <div class="col-2">Unit:</div>
-                            <div class="col-10">{{ person.unit.name }}</div>
+                            <div class="{{ col1class }}">Unit:</div>
+                            <div class="{{ col2class }}">{{ person.unit.name }}</div>
                         </div>
                     {% endif %}
                     {% if person.roomAffiliations is not empty %}
                         <div class="row">
-                            <div class="col-2">Room:</div>
-                            <div class="col-10">
+                            <div class="{{ col1class }}">Room:</div>
+                            <div class="{{ col2class }}">
                                 {% for affiliation in person.roomAffiliations %}
                                     {{ affiliation.room.number }}{% if not loop.last %}, {% endif %}
                                 {% endfor %}
@@ -167,6 +168,7 @@
             </div>
         {% endfor %}
     </div>
+    {% endwith %}
 {% endblock %}
 
 {% block person_table_header %}
@@ -212,7 +214,7 @@
         </div>
         <div class="flex-grow-0 mb-2">
             {# pagination bar #}
-            {{ pagerfanta(people, 'twitter_bootstrap5') }}
+            {{ pagerfanta(people, 'twitter_bootstrap5', {'proximity':2,'prev_message':'<span class="d-none d-md-block">Previous</span><span class="d-md-none d-block">&lt;</span>','next_message':'<span class="d-none d-md-block">Next</span><span class="d-md-none d-block">&gt;</span>'}) }}
         </div>
     </div>
 {% endblock %}
