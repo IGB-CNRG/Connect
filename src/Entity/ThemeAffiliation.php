@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -110,7 +110,7 @@ class ThemeAffiliation implements HistoricalEntityInterface, LoggableAffiliation
         return $this->theme;
     }
 
-    public function setTheme(Theme $theme): self
+    public function setTheme(?Theme $theme): self
     {
         $this->theme = $theme;
 

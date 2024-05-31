@@ -43,46 +43,69 @@ class ThemeRepository extends ServiceEntityRepository implements ServiceSubscrib
         return $qb;
     }
 
-    public function findCurrentNonResearchThemes()
+    /**
+     * @return Theme[]
+     */
+    public function findCurrentThemes(): array
     {
         $qb = $this->createQueryBuilder('t')
-            ->andWhere('t.isNonResearch=true')
-            ->andWhere('t.isOutsideGroup=false')
             ->addOrderBy('t.shortName');
         $this->historicityManager()->addCurrentConstraint($qb, 't');
         return $qb->getQuery()
             ->getResult();
     }
 
-    public function findCurrentOutsideGroups()
+    /**
+     * @return Theme[][]
+     */
+    public function findCurrentThemesGroupedByType(): array
+    {
+        $themes = $this->findCurrentThemes();
+
+        return $this->getThemeGroups($themes);
+    }
+
+    /**
+     * @return Theme[][]
+     */
+    public function findDirectoryThemesGroupedByType(): array
+    {
+        $themes = $this->findThemesToDisplayInDirectory();
+
+        return $this->getThemeGroups($themes);
+    }
+
+    /**
+     * @return Theme[]
+     */
+    public function findThemesToDisplayInDirectory(): array
     {
         $qb = $this->createQueryBuilder('t')
-            ->andWhere('t.isNonResearch=false')
-            ->andWhere('t.isOutsideGroup=true')
+            ->leftJoin('t.themeType', 'tt')
+            ->andWhere('tt.displayInDirectory=true')
+            ->addOrderBy('tt.id')
             ->addOrderBy('t.shortName');
         $this->historicityManager()->addCurrentConstraint($qb, 't');
         return $qb->getQuery()
             ->getResult();
     }
 
-    public function findCurrentThemes()
+    /**
+     * @param Theme[] $themes
+     * @return Theme[][]
+     */
+    protected function getThemeGroups(array $themes): array
     {
-        $qb = $this->createQueryBuilder('t')
-            ->andWhere('t.isNonResearch=false')
-            ->andWhere('t.isOutsideGroup=false')
-            ->addOrderBy('t.shortName');
-        $this->historicityManager()->addCurrentConstraint($qb, 't');
-        return $qb->getQuery()
-            ->getResult();
-    }
+        $themeGroups = [];
+        foreach ($themes as $themeToGroup) {
+            $group = $themeToGroup->getThemeType()->getName();
 
-    public function findCurrentNonOutsideThemes()
-    {
-        $qb = $this->createQueryBuilder('t')
-            ->andWhere('t.isOutsideGroup=false')
-            ->addOrderBy('t.shortName');
-        $this->historicityManager()->addCurrentConstraint($qb, 't');
-        return $qb->getQuery()
-            ->getResult();
+            if (!key_exists($group, $themeGroups)) {
+                $themeGroups[$group] = [];
+            }
+            $themeGroups[$group][] = $themeToGroup;
+        }
+
+        return $themeGroups;
     }
 }

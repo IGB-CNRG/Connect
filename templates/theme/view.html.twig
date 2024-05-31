@@ -6,7 +6,7 @@
     <div class="row">
         <div class="col-lg-8">
             <div class="card mb-3">
-                <div class="card-header">Theme Info</div>
+                <div class="card-header">{{ theme.themeType.name}} Info</div>
                 <table class="table">
                     <tr>
                         <th>Full Name</th>
@@ -39,18 +39,6 @@
                         <tr>
                             <th>End Date</th>
                             <td>{{ theme.endedAt|date('n/j/Y') }}</td>
-                        </tr>
-                    {% endif %}
-                    {% if theme.isNonResearch %}
-                        <tr>
-                            <th>Non-Research Theme</th>
-                            <td>Yes</td>
-                        </tr>
-                    {% endif %}
-                    {% if theme.isOutsideGroup %}
-                        <tr>
-                            <th>Outside Group</th>
-                            <td>Yes</td>
                         </tr>
                     {% endif %}
                 </table>

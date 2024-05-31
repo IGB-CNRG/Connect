@@ -65,7 +65,7 @@
                                 {% if not themeAffiliation.isCurrent %}
                                     <span class="fas fa-calendar-day text-warning" title="Previous affiliation"></span>
                                 {% endif %}
-                                {% if themeAffiliation.theme.isOutsideGroup %}
+                                {% if not themeAffiliation.theme.themeType.isMember %}
                                     <span class="fas fa-building text-info" title="Non IGB member"></span>
                                 {% endif %}
 
@@ -127,7 +127,7 @@
                                             <span class="fas fa-calendar-day text-warning"
                                                   title="Previous affiliation"></span>
                                         {% endif %}
-                                        {% if themeAffiliation.theme.isOutsideGroup %}
+                                        {% if not themeAffiliation.theme.themeType.isMember %}
                                             <span class="fas fa-building text-info" title="Non IGB member"></span>
                                         {% endif %}
 
@@ -248,9 +248,9 @@
 
 {% block person_table_legend %}
     <div class="callout mb-2">
-        <strong>Legend</strong><br/> <span class="fas fa-calendar-day text-warning"
-                                           title="Previous affiliation"></span> Previous affiliation<br/> <span
-                class="fas fa-building text-info" title="Non IGB member"></span> Building access only; Not an IGB theme
+        <strong>Legend</strong><br/>
+        <span class="fas fa-calendar-day text-warning" title="Previous affiliation"></span> Previous affiliation<br/>
+        <span class="fas fa-building text-info" title="Non IGB member"></span> Not an IGB Theme or Staff Group
     </div>
 {% endblock %}
 

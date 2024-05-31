@@ -33,23 +33,21 @@ class Theme implements LogSubjectInterface, HistoricalEntityInterface
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $fullName = null;
 
-    #[ORM\Column(type: 'boolean')]
-    private bool $isNonResearch = false;
-
     #[ORM\OneToMany(mappedBy: 'theme', targetEntity: ThemeAffiliation::class, orphanRemoval: true)]
     private Collection $themeAffiliations;
 
     #[ORM\OneToMany(mappedBy: 'theme', targetEntity: Log::class)]
     private Collection $logs;
 
-    #[ORM\Column(type: 'boolean')]
-    private bool $isOutsideGroup = false;
-
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'subgroups')]
     private ?self $parentTheme = null;
 
     #[ORM\OneToMany(mappedBy: 'parentTheme', targetEntity: self::class)]
     private Collection $subgroups;
+
+    #[ORM\ManyToOne(inversedBy: 'themes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?ThemeType $themeType = null;
 
     public function __construct()
     {
@@ -60,18 +58,20 @@ class Theme implements LogSubjectInterface, HistoricalEntityInterface
 
     public function __toString()
     {
-        if($this->getParentTheme()){
+        if ($this->getParentTheme()) {
             return "{$this->getShortName()} ({$this->getParentTheme()})";
         }
+
         return $this->getShortName();
     }
 
-    public function getRootTheme()
+    public function getRootTheme(): Theme
     {
         $root = $this;
-        while($root->getParentTheme() !== null){
+        while ($root->getParentTheme() !== null) {
             $root = $root->getParentTheme();
         }
+
         return $root;
     }
 
@@ -101,18 +101,6 @@ class Theme implements LogSubjectInterface, HistoricalEntityInterface
     public function setFullName(string $fullName): self
     {
         $this->fullName = $fullName;
-
-        return $this;
-    }
-
-    public function getIsNonResearch(): bool
-    {
-        return $this->isNonResearch;
-    }
-
-    public function setIsNonResearch(bool $isNonResearch): self
-    {
-        $this->isNonResearch = $isNonResearch;
 
         return $this;
     }
@@ -177,17 +165,6 @@ class Theme implements LogSubjectInterface, HistoricalEntityInterface
         return $this;
     }
 
-    public function getIsOutsideGroup(): ?bool
-    {
-        return $this->isOutsideGroup;
-    }
-
-    public function setIsOutsideGroup(bool $isOutsideGroup): self
-    {
-        $this->isOutsideGroup = $isOutsideGroup;
-
-        return $this;
-    }
 
     public function getParentTheme(): ?self
     {
@@ -227,6 +204,18 @@ class Theme implements LogSubjectInterface, HistoricalEntityInterface
                 $subgroup->setParentTheme(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getThemeType(): ?ThemeType
+    {
+        return $this->themeType;
+    }
+
+    public function setThemeType(?ThemeType $themeType): static
+    {
+        $this->themeType = $themeType;
 
         return $this;
     }

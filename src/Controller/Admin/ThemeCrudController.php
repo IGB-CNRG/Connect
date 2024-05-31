@@ -13,7 +13,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
@@ -38,8 +37,8 @@ class ThemeCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('Theme')
-            ->setEntityLabelInPlural('Themes')
+            ->setEntityLabelInSingular('Theme/Group')
+            ->setEntityLabelInPlural('Themes/Groups')
             ->setDefaultSort(['shortName' => 'ASC'])
             ;
     }
@@ -49,8 +48,7 @@ class ThemeCrudController extends AbstractCrudController
         return [
             TextField::new('shortName'),
             TextField::new('fullName'),
-            BooleanField::new('isNonResearch')->onlyOnForms(),
-            BooleanField::new('isOutsideGroup')->onlyOnForms(),
+            AssociationField::new('themeType'),
             AssociationField::new('parentTheme')->setFormTypeOptions([
                 'query_builder' => function (ThemeRepository $themeRepository) {
                     return $themeRepository->createFormSortedQueryBuilder()->andWhere('t.parentTheme is null');

@@ -3,38 +3,18 @@
 {% block title %}{{ parent() }} | Themes{% endblock %}
 
 {% block content %}
-    <h1>Themes</h1>
-    <div class="row">
-        {% for column in themes|batch(themes|length/3|round(0,'ceil')) %}
-            <div class="col-lg">
-                {% for theme in column %}
-                    <p><a href="{{ path('theme_view', {'shortName': theme.shortName}) }}">{{ theme.shortName }}</a></p>
-                {% endfor %}
-            </div>
-        {% endfor %}
-    </div>
-
-    <h1>Non-research Themes</h1>
-    <div class="row">
-        {% for column in nonResearchThemes|batch(nonResearchThemes|length/3|round(0,'ceil')) %}
-            <div class="col-lg">
-                {% for theme in column %}
-                    <p><a href="{{ path('theme_view', {'shortName': theme.shortName}) }}">{{ theme.shortName }}</a></p>
-                {% endfor %}
-            </div>
-        {% endfor %}
-    </div>
-
-    <h1>Outside Groups</h1>
-    <div class="row">
-        {% for column in outsideGroups|batch(outsideGroups|length/3|round(0,'ceil')) %}
-            <div class="col-lg">
-                {% for theme in column %}
-                    <p><a href="{{ path('theme_view', {'shortName': theme.shortName}) }}">{{ theme.shortName }}</a></p>
-                {% endfor %}
-            </div>
-        {% endfor %}
-    </div>
+    {% for group, themes in themeGroups %}
+        <h1>{{ group }}</h1>
+        <div class="row">
+            {% for column in themes|batch(themes|length/3|round(0,'ceil')) %}
+                <div class="col-lg">
+                    {% for theme in column %}
+                        <p><a href="{{ path('theme_view', {'shortName': theme.shortName}) }}">{{ theme.shortName }}</a></p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
 {% endblock %}
 
 {% block breadcrumb %}

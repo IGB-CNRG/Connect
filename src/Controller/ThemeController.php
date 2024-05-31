@@ -27,14 +27,10 @@ class ThemeController extends AbstractController
     #[Route('/theme', name: 'theme')]
     public function index(ThemeRepository $repository): Response
     {
-        $themes = $repository->findCurrentThemes();
-        $nonResearchThemes = $repository->findCurrentNonResearchThemes();
-        $outsideGroups = $repository->findCurrentOutsideGroups();
+        $themeGroups = $repository->findCurrentThemesGroupedByType();
 
         return $this->render('theme/index.html.twig', [
-            'themes' => $themes,
-            'nonResearchThemes' => $nonResearchThemes,
-            'outsideGroups' => $outsideGroups,
+            'themeGroups' => $themeGroups,
         ]);
     }
 

@@ -43,7 +43,7 @@ class ConnectRuntime implements RuntimeExtensionInterface
     public function getMember(Collection $collection): ReadableCollection
     {
         return $collection->filter(function (ThemeAffiliation $themeAffiliation) {
-            return !$themeAffiliation->getTheme()->getIsOutsideGroup();
+            return $themeAffiliation->getTheme()->getThemeType()->isIsMember();
         });
     }
 

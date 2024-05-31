@@ -265,7 +265,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     public function getIsMember(): bool
     {
         return $this->getThemeAffiliations()->filter(function (ThemeAffiliation $themeAffiliation) {
-                return !$themeAffiliation->getTheme()->getIsOutsideGroup();
+                return $themeAffiliation->getTheme()->getThemeType()->isIsMember();
             })->count() > 0;
     }
 
@@ -273,7 +273,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     public function getIsCurrentMember(): bool
     {
         return $this->getThemeAffiliations()->filter(function (ThemeAffiliation $themeAffiliation) {
-                return $themeAffiliation->isCurrent() && !$themeAffiliation->getTheme()->getIsOutsideGroup();
+                return $themeAffiliation->isCurrent() && $themeAffiliation->getTheme()->getThemeType()->isIsMember();
             })->count() > 0;
     }
 

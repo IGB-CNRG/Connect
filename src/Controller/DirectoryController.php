@@ -53,25 +53,8 @@ class DirectoryController extends AbstractController
             $pageSize
         );
         $friendlyNames = $memberCategoryRepository->fetchAllFriendlyNames();
-        $themes = $themeRepository->findCurrentNonOutsideThemes();
         $roles = $roleRepository->findAll();
-
-        // Group themes by research/non-research
-        $themeGroups = [];
-        foreach ($themes as $themeToGroup) {
-            $group = 'Research Themes';
-            if ($themeToGroup->getIsOutsideGroup()) {
-                $group = 'Outside Groups';
-            }
-            if ($themeToGroup->getIsNonResearch()) {
-                $group = 'Non-research groups';
-            }
-
-            if(!key_exists($group, $themeGroups)){
-                $themeGroups[$group] = [];
-            }
-            $themeGroups[$group][] = $themeToGroup;
-        }
+        $themeGroups = $themeRepository->findDirectoryThemesGroupedByType();
 
         // Group units by
         $units = $unitRepository->findAllFormSorted();

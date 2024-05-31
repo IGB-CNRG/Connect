@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -26,15 +26,7 @@ class ThemeType extends EntityType
             'query_builder' => function (ThemeRepository $themeRepository) {
                 return $themeRepository->createFormSortedQueryBuilder();
             },
-            'group_by' => function (Theme $choice, $key, $value){
-                if($choice->getIsOutsideGroup()){
-                    return 'Outside Groups';
-                }
-                if($choice->getIsNonResearch()){
-                    return 'Non-research';
-                }
-                return 'Research Themes';
-            }
+            'group_by' => 'themeType.name',
         ]);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -18,6 +18,7 @@ use App\Entity\Room;
 use App\Entity\Setting;
 use App\Entity\Theme;
 use App\Entity\ThemeRole;
+use App\Entity\ThemeType;
 use App\Entity\Unit;
 use App\Entity\WorkflowNotification;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
@@ -93,8 +94,9 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Keys', 'fas fa-list', Key::class);
         yield MenuItem::linkToCrud('Key Assignments', 'fas fa-list', KeyAffiliation::class);
         yield MenuItem::linkToCrud('Rooms', 'fas fa-list', Room::class);
-        yield MenuItem::linkToCrud('Themes', 'fas fa-list', Theme::class);
+        yield MenuItem::linkToCrud('Themes/Groups', 'fas fa-list', Theme::class);
         yield MenuItem::linkToCrud('Theme Roles', 'fas fa-list', ThemeRole::class);
+        yield MenuItem::linkToCrud('Theme Types', 'fas fa-list', ThemeType::class);
         yield MenuItem::section('UIUC');
         yield MenuItem::linkToCrud('Buildings', 'fas fa-list', Building::class);
         yield MenuItem::linkToCrud('Units', 'fas fa-list', Unit::class);

@@ -239,8 +239,9 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
     public function createMembersOnlyIndexQueryBuilder(): QueryBuilder
     {
         return $this->createIndexQueryBuilder()
+            ->leftJoin('t.themeType', 'tt')
             ->andWhere('ta is not null')
-            ->andWhere('t.isOutsideGroup = false');
+            ->andWhere('tt.isMember = true');
     }
 
     public function addIndexFilters(
@@ -274,7 +275,11 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
         array $themeRoles = [],
         array $units = []
     ): QueryBuilder {
-        $qb = $this->createMembersOnlyIndexQueryBuilder();
+        $qb = $this->createIndexQueryBuilder()
+            ->leftJoin('t.themeType', 'tt')
+            ->andWhere('ta is not null')
+            ->andWhere('tt.displayInDirectory = true');
+        $this->historicityManager()->addCurrentConstraint($qb, 't');
         $this->historicityManager()->addCurrentConstraint($qb, 'ta');
 
         $this->addQuerySearch($qb, $query);

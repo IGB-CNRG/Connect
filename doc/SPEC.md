@@ -445,9 +445,19 @@ Uses HistoricalEntityTrait
 
 - shortName (string)
 - fullName (string)
-- isNonResearch (boolean)
-- isOutsideGroup (boolean)
+- themeType (ManyToOne, ThemeType)
 - themeMembers (OneToMany, ThemeAffiliation)
+
+#### ThemeRole
+
+- name (string)
+- isApprover (boolean)
+
+#### ThemeType
+
+- name (string)
+- isMember (boolean)
+- displayInDirectory (boolean)
 
 #### Building
 
@@ -497,13 +507,7 @@ Uses HistoricalEntityTrait
 - person (ManyToOne, Person)
 - theme (ManyToOne, Theme)
 - memberCategory (ManyToOne, MemberCategory)
-
-#### ThemeLeaderAffiliation
-
-Uses HistoricalEntityTrait
-
-- person (ManyToOne, Person)
-- theme (ManyToOne, Theme)
+- themeRoles (ManyToMany, ThemeRole)
 
 #### SupervisorAffiliation
 
