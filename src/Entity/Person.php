@@ -31,6 +31,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\Ignore;
+use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: PersonRepository::class)]
@@ -85,11 +86,13 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Loggable(displayName: 'netID')]
     #[Groups(['log:person', 'log:related_person', 'person:read'])]
+    #[Assert\Regex('/^[^.@]+$/', message: 'Please enter only your netid, not your email address. Your netid is the part before the @ in your Illinois email address.')] // no email addresses allowed
     private ?string $netid = null;
 
     #[ORM\Column(type: 'string', length: 180, unique: true, nullable: true)]
     #[Loggable]
     #[Groups(['log:person', 'person:read'])]
+    #[Assert\Regex('/^[^.@]+$/', message: 'Please enter only the IGB username, not the full email address.')] // no email addresses allowed
     private ?string $username = null;
 
     #[ORM\Column(type: 'integer', nullable: true)]
