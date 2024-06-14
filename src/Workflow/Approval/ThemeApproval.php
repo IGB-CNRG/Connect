@@ -17,7 +17,8 @@ class ThemeApproval implements ApprovalStrategy
     public function __construct(
         private readonly PersonRepository $personRepository,
         private readonly HistoricityManager $historicityManager
-    ) {}
+    ) {
+    }
 
     /**
      * @inheritDoc
@@ -34,10 +35,17 @@ class ThemeApproval implements ApprovalStrategy
             );
         }
 
-        if(count($approvers) === 0){
+        if (count($approvers) === 0) {
             // Add HR people if there are no approvers found
             $approvers = $this->personRepository->findByRole('ROLE_HR');
         }
+
+        $approvers = array_unique($approvers);
+        usort($approvers, function (Person $a, Person $b) {
+            return ($a->getLastName() <=> $b->getLastName()) === 0
+                ? ($a->getFirstName() <=> $b->getFirstName())
+                : ($a->getLastName() <=> $b->getLastName());
+        });
 
         return $approvers;
     }
