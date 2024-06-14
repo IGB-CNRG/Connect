@@ -220,6 +220,9 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\OneToMany(mappedBy: 'sponsor', targetEntity: SponsorAffiliation::class, orphanRemoval: true)]
     private Collection $sponseeAffiliations;
 
+    #[ORM\ManyToMany(targetEntity: Theme::class, mappedBy: 'approvers')]
+    private Collection $approverThemes;
+
     public function __construct()
     {
         $this->roomAffiliations = new ArrayCollection();
@@ -230,6 +233,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         $this->documents = new ArrayCollection();
         $this->superviseeAffiliations = new ArrayCollection();
         $this->sponseeAffiliations = new ArrayCollection();
+        $this->approverThemes = new ArrayCollection();
     }
 
     public function __toString()
@@ -946,5 +950,32 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
                 $this->getThemeAffiliations()->toArray()
             )
         );
+    }
+
+    /**
+     * @return Collection<int, Theme>
+     */
+    public function getApproverThemes(): Collection
+    {
+        return $this->approverThemes;
+    }
+
+    public function addApproverTheme(Theme $approverTheme): static
+    {
+        if (!$this->approverThemes->contains($approverTheme)) {
+            $this->approverThemes->add($approverTheme);
+            $approverTheme->addApprover($this);
+        }
+
+        return $this;
+    }
+
+    public function removeApproverTheme(Theme $approverTheme): static
+    {
+        if ($this->approverThemes->removeElement($approverTheme)) {
+            $approverTheme->removeApprover($this);
+        }
+
+        return $this;
     }
 }

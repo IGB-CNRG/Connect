@@ -27,7 +27,11 @@ class ThemeApproval implements ApprovalStrategy
         $themes = $this->currentAndFutureThemes($person);
         $approvers = [];
         foreach ($themes as $theme) {
-            $approvers = array_merge($approvers, $this->personRepository->findApproversInTheme($theme));
+            $approvers = array_merge(
+                $approvers,
+                $this->personRepository->findApproversInTheme($theme), // Approvers by theme role
+                $theme->getApprovers()->toArray() // Additional assigned approvers
+            );
         }
 
         if(count($approvers) === 0){

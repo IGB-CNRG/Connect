@@ -56,6 +56,7 @@ class ThemeCrudController extends AbstractCrudController
             ])->setRequired(false),
             DateField::new('startedAt')->hideOnIndex(),
             DateField::new('endedAt'),
+            AssociationField::new('approvers')->setHelp('Select any <i>additional</i> approvers necessary for this group. Any theme admins, lab managers, etc. should be designated in their respective Connect records.'),
         ];
     }
 }

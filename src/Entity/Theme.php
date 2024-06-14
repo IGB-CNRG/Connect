@@ -49,11 +49,15 @@ class Theme implements LogSubjectInterface, HistoricalEntityInterface
     #[ORM\JoinColumn(nullable: false)]
     private ?ThemeType $themeType = null;
 
+    #[ORM\ManyToMany(targetEntity: Person::class, inversedBy: 'approverThemes')]
+    private Collection $approvers;
+
     public function __construct()
     {
         $this->themeAffiliations = new ArrayCollection();
         $this->logs = new ArrayCollection();
         $this->subgroups = new ArrayCollection();
+        $this->approvers = new ArrayCollection();
     }
 
     public function __toString()
@@ -216,6 +220,30 @@ class Theme implements LogSubjectInterface, HistoricalEntityInterface
     public function setThemeType(?ThemeType $themeType): static
     {
         $this->themeType = $themeType;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Person>
+     */
+    public function getApprovers(): Collection
+    {
+        return $this->approvers;
+    }
+
+    public function addApprover(Person $approver): static
+    {
+        if (!$this->approvers->contains($approver)) {
+            $this->approvers->add($approver);
+        }
+
+        return $this;
+    }
+
+    public function removeApprover(Person $approver): static
+    {
+        $this->approvers->removeElement($approver);
 
         return $this;
     }
