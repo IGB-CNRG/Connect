@@ -8,7 +8,7 @@ entry_form:
   sponsors: Faculty Sponsor(s)
   member_category: Position type
 person:
-  theme: Theme
+  theme: Theme/Group
   started_at: Start date
   ended_at: End date
   netid: NetID

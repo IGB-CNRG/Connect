@@ -1,11 +1,12 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
 namespace App\Form\Workflow\Membership\EntryForm;
 
+use App\Entity\Theme;
 use App\Entity\ThemeAffiliation;
 use App\Form\Fields\EndDateType;
 use App\Form\Fields\HistoricalCollectionType;
@@ -36,6 +37,16 @@ class ThemeAffiliationType extends AbstractType
                     ->add('theme', ThemeType::class, [
                         'query_builder' => function (ThemeRepository $themeRepository) {
                             return $themeRepository->createCurrentFormSortedQueryBuilder();
+                        },
+                        'choice_label' => function (Theme $theme) {
+                            $label = $theme->getFullName();
+                            if($theme->getShortName() !== $theme->getFullName()){ // todo can we make short name optional?
+                                $label = $theme->getShortName().' - '.$label;
+                            }
+                            if($theme->getParentTheme()){
+                                $label = $label . " ({$theme->getParentTheme()->getShortName()})";
+                            }
+                            return $label;
                         },
                     ])
                     ->add('memberCategory', MemberCategoryType::class, [

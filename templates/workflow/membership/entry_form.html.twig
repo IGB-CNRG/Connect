@@ -157,6 +157,26 @@
     {% endif %}
 {% endblock %}
 
+{#{% block _entry_form_themeAffiliations_entry_theme_widget %}#}
+{#    <div {{ block('widget_container_attributes') }}>#}
+{#        <div class="row">#}
+{#        {% for choice in choices %}#}
+{#            <div class="mb-1 col-lg">#}
+{#                <span>{{ choice.label }}</span>#}
+{#                {% for id, choicechoice in choice.choices %}#}
+{#                    {{- form_widget(form.children[id], {#}
+{#                        parent_label_class: label_attr.class|default(''),#}
+{#                        translation_domain: choice_translation_domain,#}
+{#                        valid: valid,#}
+{#                    }) -}}#}
+{#                {% endfor %}#}
+{#            </div>#}
+{#        {% endfor %}#}
+{#        </div>#}
+{#    </div>#}
+{#{% endblock %}#}
+
+
 {% block sponsor_affiliation_row %}
     <div class="collection-row">
         {% if form.vars.name != "0" %}
