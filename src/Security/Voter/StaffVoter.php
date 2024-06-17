@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -18,7 +18,9 @@ class StaffVoter extends Voter
 {
     public const APPROVER = 'ROLE_APPROVER';
 
-    public function __construct(private readonly Security $security) {}
+    public function __construct(private readonly Security $security)
+    {
+    }
 
     protected function supports(string $attribute, $subject): bool
     {
@@ -48,9 +50,17 @@ class StaffVoter extends Voter
     private function isApprover(Person $person): bool
     {
         // Return true if the person has at least one theme affiliation with at least one approver role
-        return $person->getThemeAffiliations()->filter(
+        if ($person->getThemeAffiliations()->filter(
                 fn(ThemeAffiliation $themeAffiliation) => $themeAffiliation->getRoles()->filter(
-                    fn(ThemeRole $role) => $role->isIsApprover())->count() > 0
-            )->count() > 0;
+                        fn(ThemeRole $role) => $role->isIsApprover()
+                    )->count() > 0
+            )->count() > 0) {
+            return true;
+        }
+        if ($person->getApproverThemes()->count() > 0) {
+            return true;
+        }
+
+        return false;
     }
 }
