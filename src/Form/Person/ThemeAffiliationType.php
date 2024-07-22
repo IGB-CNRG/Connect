@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -69,7 +69,9 @@ class ThemeAffiliationType extends AbstractType
                             'entry_type' => SupervisorType::class,
                             'label'=> 'Supervisor(s)'
                         ])
-                        ->add('startedAt', StartDateType::class);
+                        ->add('startedAt', StartDateType::class, [
+                            'required' => (!$themeAffiliation || $themeAffiliation->getId() === null),
+                        ]);
                 }
             });
         if($options['show_position_when_joined']){

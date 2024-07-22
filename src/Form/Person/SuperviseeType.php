@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -49,7 +49,9 @@ class SuperviseeType extends AbstractType
                         'query_builder' => function(PersonRepository $repository){
                             return $repository->createSortedQueryBuilder();
                         },
-                    ])->add('startedAt', StartDateType::class);
+                    ])->add('startedAt', StartDateType::class, [
+                        'required' => (!$superviseeAffiliation || $superviseeAffiliation->getId() === null),
+                    ]);
                 }
             });
     }
