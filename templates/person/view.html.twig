@@ -347,6 +347,14 @@
                                     {% endfor %}</td>
                                 <td class="shrink"></td>
                             </tr>
+                            {% if person.hideFromDirectory %}
+                                <tr>
+                                    <th>Hide from directory</th>
+                                    <td>
+                                        Yes
+                                    </td>
+                                </tr>
+                            {% endif %}
                         {% endif %}
                         <tr>
                             <th>Membership status</th>

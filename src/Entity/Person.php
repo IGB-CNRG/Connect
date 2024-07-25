@@ -182,6 +182,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     #[ORM\Column(type: 'text', nullable: true)]
     #[Groups(['log:person'])]
+    #[Loggable]
     private ?string $otherAddress = null;
 
     #[ORM\Column(length: 255)]
@@ -190,6 +191,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
 
     #[ORM\Column(nullable: true)]
     #[Groups(['log:person'])]
+    #[Loggable]
     private ?bool $officeWorkOnly = null;
 
     #[ORM\Column(type: 'datetime')]
@@ -203,9 +205,11 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     private ?ExitForm $exitForm = null;
 
     #[ORM\ManyToOne(inversedBy: 'people')]
+    #[Loggable]
     private ?Unit $unit = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Loggable]
     private ?string $otherUnit = null;
 
     #[ORM\ManyToOne(targetEntity: self::class)]
@@ -224,6 +228,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     private Collection $approverThemes;
 
     #[ORM\Column(nullable: true)]
+    #[Loggable]
     private ?bool $hideFromDirectory = null;
 
     public function __construct()
