@@ -223,6 +223,9 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[ORM\ManyToMany(targetEntity: Theme::class, mappedBy: 'approvers')]
     private Collection $approverThemes;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $hideFromDirectory = null;
+
     public function __construct()
     {
         $this->roomAffiliations = new ArrayCollection();
@@ -975,6 +978,18 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         if ($this->approverThemes->removeElement($approverTheme)) {
             $approverTheme->removeApprover($this);
         }
+
+        return $this;
+    }
+
+    public function isHideFromDirectory(): ?bool
+    {
+        return $this->hideFromDirectory;
+    }
+
+    public function setHideFromDirectory(?bool $hideFromDirectory): static
+    {
+        $this->hideFromDirectory = $hideFromDirectory;
 
         return $this;
     }

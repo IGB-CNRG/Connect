@@ -277,6 +277,7 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
     ): QueryBuilder {
         $qb = $this->createIndexQueryBuilder()
             ->leftJoin('t.themeType', 'tt')
+            ->andWhere('p.hideFromDirectory is null or p.hideFromDirectory = 0')
             ->andWhere('ta is not null')
             ->andWhere('tt.displayInDirectory = true');
         $this->historicityManager()->addCurrentConstraint($qb, 't');

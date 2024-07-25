@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -117,6 +117,9 @@ class PersonType extends AbstractType
                     'attr' => [
                         'data-controller' => 'tom-select',
                     ],
+                    'required' => false,
+                ])
+                ->add('hideFromDirectory', CheckboxType::class, [
                     'required' => false,
                 ]);
         }
