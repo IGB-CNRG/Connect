@@ -97,7 +97,7 @@ class ReportController extends AbstractController
         #[MapQueryParameter] string $sort = 'name',
         #[MapQueryParameter] string $sortDirection = 'asc',
         #[MapQueryParameter] array $theme = [],
-        #[MapQueryParameter] array $type = [],
+        #[MapQueryParameter] array $employeeType = [],
         #[MapQueryParameter] array $role = [],
         #[MapQueryParameter] array $unit = [],
         #[MapQueryParameter] bool $currentOnly = true,
@@ -108,7 +108,7 @@ class ReportController extends AbstractController
             ->setSort($sort)
             ->setSortDirection($sortDirection)
             ->setThemesToFilter($theme)
-            ->setTypesToFilter($type)
+            ->setTypesToFilter($employeeType)
             ->setRolesToFilter($role)
             ->setUnitsToFilter($unit)
             ->setCurrentOnly($currentOnly)
