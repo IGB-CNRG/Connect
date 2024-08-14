@@ -14,7 +14,6 @@
 {% endmacro %}
 {% macro theme(affiliation) %}
     <a href="{{ path('app_directory', {
-        ...app.request.query.all(),
         'theme': {'0': affiliation.theme.shortName}
     }) }}">{{ affiliation.theme }}</a>
     {{ affiliation.memberCategory.friendlyName }}
