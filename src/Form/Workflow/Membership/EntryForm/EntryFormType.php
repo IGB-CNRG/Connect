@@ -41,7 +41,8 @@ class EntryFormType extends AbstractType
             ->add('netid', TextType::class, [
                 'required' => false,
                 'label' => 'person.netid',
-                'help' => 'If you have not yet been assigned a netid, leave blank',
+                'help' => 'Your NetID is the first part of your Illinois email address. If you have not yet been assigned a netid, leave blank.',
+                'attr'=>['placeholder' => 'NetID',],
             ])
             ->add('uin', TextType::class, [
                 'required' => !$options['allow_skip_uin'],
@@ -50,7 +51,8 @@ class EntryFormType extends AbstractType
             ])
             ->add('email', EmailType::class, [
                 'required' => true,
-                'help' => 'Please use Illinois email if you have one'
+                'help' => 'Please use your Illinois email if you have one',
+                'attr'=>['placeholder' => 'NetID@illinois.edu',],
             ])
             ->add('officeWorkOnly', CheckboxType::class, [
                 'required' => false,
