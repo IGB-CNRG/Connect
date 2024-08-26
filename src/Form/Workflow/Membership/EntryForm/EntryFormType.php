@@ -39,7 +39,7 @@ class EntryFormType extends AbstractType
                 'help' => 'Leave blank if same as first name'
             ])
             ->add('netid', TextType::class, [
-                'required' => false,
+                'required' => true,
                 'label' => 'person.netid',
                 'help' => 'Your NetID is the first part of your Illinois email address. If you have not yet been assigned a netid, leave blank.',
                 'attr'=>['placeholder' => 'NetID',],
