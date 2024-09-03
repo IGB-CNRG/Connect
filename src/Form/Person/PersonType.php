@@ -107,6 +107,11 @@ class PersonType extends AbstractType
                 'attr' => [
                     'data-other-entry-target' => 'other',
                 ],
+            ])
+            ->add('officeWorkOnly', CheckboxType::class, [
+                'required' => false,
+                'label' => 'Office work only?',
+                'help' => 'Check this box if this person will not be working in a lab'
             ]);
         // show/hide fields based on user roles
         if ($this->security->isGranted('ROLE_ADMIN')) {
