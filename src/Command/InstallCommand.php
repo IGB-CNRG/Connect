@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -43,8 +43,7 @@ class InstallCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $configPath = $input->getArgument('config');
         $skipTo = $input->getOption('skip-to');
-        $skipImportFaculty = false;
-        $skipImportSql = $skipImportFaculty || $skipTo === 'import-faculty';
+        $skipImportSql = false;
         $skipFirstRun = $skipImportSql || $skipTo === 'import-sql';
         $skipCreateDatabase = $skipFirstRun || $skipTo === 'initialize-admin-user';
         $skipPrecheck = $skipCreateDatabase || $skipTo === 'create-database';
@@ -92,17 +91,6 @@ class InstallCommand extends Command
         if(!$skipImportSql) {
             $io->title('Loading sql file');
             $this->runSqlFile($config['import-sql']);
-        }
-
-        // import faculty spreadsheet
-        if(!$skipImportFaculty) {
-            $io->title('Importing Faculty Master List');
-            $importFacultySpreadsheetCommand = $this->getApplication()->find('app:import-faculty-spreadsheet');
-            $importFacultySpreadsheetInput = new ArrayInput([
-                'file' => $config['import-faculty']['file'],
-                'rows' => $config['import-faculty']['rows'],
-            ]);
-            $importFacultySpreadsheetCommand->run($importFacultySpreadsheetInput, $output);
         }
 
         $io->success('Installation succeeded');

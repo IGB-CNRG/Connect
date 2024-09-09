@@ -149,19 +149,6 @@ initialize-admin-user:
 
 # Defines an SQL file with initial settings that will be imported
 import-sql: filename.sql
-
-# Defines connection parameters for the IGB People Database
-import-people:
-  host: 127.0.0.1
-  port: 3306
-  database: people
-  username: people
-  password: ChangeMe!
-
-# Defines the path to the faculty master list spreadsheet, and its length
-import-faculty:
-  file: Faculty.xlsx
-  rows: 444
 ```
 
 This file defines the parameters that are passed to each install step. Copy this file to `install-config.local.yml` and
@@ -196,36 +183,3 @@ You will use this IGB username and password to log in to Connect.
 
 Units, Keys, Member Categories, Rooms, and Themes are set manually. You can either import these from an existing
 installation of Connect or enter them manually in EasyAdmin.
-
-#### People database import
-
-First, copy the `users` directory from the people database images folder into a folder called `people_images`.
-
-Use the following console command to automatically import all pertinent data from the People database and import
-portraits, filling in the MySQL password where indicated. For a full list of options for this command, use the `-h`
-flag.
-
-```shell
-symfony console app:import-people -p <MYSQL_PASSWORD>
-```
-
-Note that this command will ignore any IGB members whose details cannot be determined from the People database, such as
-those members who have left the IGB and are marked as "alumnus."
-
-#### Faculty/Affiliate master list import
-
-Use the following console command to create or update all faculty and affiliates from the master list spreadsheet.
-Replace SPREADSHEET_PATH with the path to the master list spreadsheet, and HIGHEST_ROW with the number of the last row
-in the spreadsheet.
-
-```shell
-symfony console app:import-faculty-spreadsheet <SPREADSHEET_PATH> <HIGHEST_ROW>
-```
-
-#### Key assignment import
-
-Use the following console command to import the list of key assignments:
-
-```shell
-symfony console app:import-assigned-keys <SPREADSHEET_PATH> <HIGHEST_ROW>
-```
