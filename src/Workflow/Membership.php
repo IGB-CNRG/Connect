@@ -166,34 +166,47 @@ class Membership implements ServiceSubscriberInterface
         );
         $startDate = $this->historicityManager()->getEarliest($newAffiliations->toArray());
 
-        // handle empty room affiliations. only update new ones.
+        // remove any empty room affiliations
+        foreach ($person->getRoomAffiliations() as $roomAffiliation) {
+            if (!$roomAffiliation->getRoom()) {
+                $person->removeRoomAffiliation($roomAffiliation);
+            }
+        }
+        // handle new room affiliations
         $newRooms = $person->getRoomAffiliations()->filter(
             fn(RoomAffiliation $affiliation) => $affiliation->getId() === null
         );
         foreach ($newRooms as $roomAffiliation) {
             $roomAffiliation->setStartedAt($startDate);
-            if (!$roomAffiliation->getRoom()) {
-                $person->removeRoomAffiliation($roomAffiliation);
-            }
+
         }
 
-        // handle empty supervisor/sponsor affiliations
-        foreach ($newAffiliations as $themeAffiliation) {
+        // remove any empty supervisor/sponsor affiliations.
+        foreach($person->getThemeAffiliations() as $themeAffiliation) {
             foreach ($themeAffiliation->getSponsorAffiliations() as $sponsorAffiliation) {
-                $sponsorAffiliation->setStartedAt($themeAffiliation->getStartedAt())
-                    ->setEndedAt($themeAffiliation->getEndedAt());
                 if (!$sponsorAffiliation->getSponsor()) {
                     $themeAffiliation->removeSponsorAffiliation($sponsorAffiliation);
                 }
             }
             foreach ($themeAffiliation->getSupervisorAffiliations() as $supervisorAffiliation) {
-                $supervisorAffiliation->setStartedAt($themeAffiliation->getStartedAt())
-                    ->setEndedAt($themeAffiliation->getEndedAt());
                 if (!$supervisorAffiliation->getSupervisor()) {
                     $themeAffiliation->removeSupervisorAffiliation($supervisorAffiliation);
                 }
             }
         }
+
+        // handle new supervisor/sponsor affiliations
+        foreach ($newAffiliations as $themeAffiliation) {
+            foreach ($themeAffiliation->getSponsorAffiliations() as $sponsorAffiliation) {
+                $sponsorAffiliation->setStartedAt($themeAffiliation->getStartedAt())
+                    ->setEndedAt($themeAffiliation->getEndedAt());
+            }
+            foreach ($themeAffiliation->getSupervisorAffiliations() as $supervisorAffiliation) {
+                $supervisorAffiliation->setStartedAt($themeAffiliation->getStartedAt())
+                    ->setEndedAt($themeAffiliation->getEndedAt());
+            }
+        }
+
 
         if (!$person->getUsername()) {
             $person->setUsername($person->getNetid());
