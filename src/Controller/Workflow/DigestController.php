@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2024 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -10,7 +10,7 @@ use App\Entity\DigestBuffer;
 use App\Repository\DigestBufferRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class DigestController extends AbstractController
 {

@@ -17,6 +17,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\Attribute\TaggedLocator;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Workflow\Transition;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -88,7 +89,7 @@ class NotificationDispatcher implements ServiceSubscriberInterface
             ->html($html);
 
         if($notification->isReplyToPerson() && $subject->getEmail()){
-            $email->from($subject->getEmail());
+            $email->from(new Address($subject->getEmail(), $subject->getName()));
         }
 
         // Send the notification to each recipient
