@@ -13,6 +13,7 @@ use App\Report\Column\FirstNameColumn;
 use App\Report\Column\LastNameColumn;
 use App\Report\Column\MemberCategoryColumn;
 use App\Report\Column\NetidColumn;
+use App\Report\Column\RoomColumn;
 use App\Report\Column\StartedAtColumn;
 use App\Report\Column\StatusColumn;
 use App\Report\Column\ThemeColumn;
@@ -50,6 +51,7 @@ class PersonReportBuilder implements ServiceSubscriberInterface
     private bool $memberCategoryColumns = true;
     private bool $startedAtColumns = true;
     private bool $endedAtColumns = true;
+    private bool $roomColumns = true;
 
     public function getReport(): PersonReport
     {
@@ -60,6 +62,7 @@ class PersonReportBuilder implements ServiceSubscriberInterface
         }
         if ($this->currentOnly) {
             $this->historicityManager()->addCurrentConstraint($qb, 'ta');
+            $this->historicityManager()->addCurrentConstraint($qb, 'ra');
         }
         $this->personRepository()->addIndexFilters(
             $qb,
@@ -81,6 +84,14 @@ class PersonReportBuilder implements ServiceSubscriberInterface
         foreach ($people as $person) {
             if($person->getThemeAffiliations()->count() > $maxThemes){
                 $maxThemes = $person->getThemeAffiliations()->count();
+            }
+        }
+
+        // look through $people and figure out how many room columns we need
+        $maxRooms = 0;
+        foreach ($people as $person) {
+            if($person->getRoomAffiliations()->count() > $maxRooms){
+                $maxRooms = $person->getRoomAffiliations()->count();
             }
         }
 
@@ -121,6 +132,12 @@ class PersonReportBuilder implements ServiceSubscriberInterface
             }
             if($this->endedAtColumns){
                 $columns[] = new EndedAtColumn($i+1);
+            }
+        }
+
+        for($i=0; $i<$maxRooms; $i++){
+            if($this->roomColumns){
+                $columns[] = new RoomColumn($i+1);
             }
         }
 
