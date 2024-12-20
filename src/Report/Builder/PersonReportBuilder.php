@@ -62,7 +62,6 @@ class PersonReportBuilder implements ServiceSubscriberInterface
         }
         if ($this->currentOnly) {
             $this->historicityManager()->addCurrentConstraint($qb, 'ta');
-            $this->historicityManager()->addCurrentConstraint($qb, 'ra');
         }
         $this->personRepository()->addIndexFilters(
             $qb,

@@ -35,13 +35,19 @@ class PersonRepository extends ServiceEntityRepository implements ServiceSubscri
 
     public function createIndexQueryBuilder(): QueryBuilder
     {
-        return $this->createQueryBuilder('p')
+        return $this
+            ->createQueryBuilder('p')
             ->leftJoin('p.themeAffiliations', 'ta')
             ->leftJoin('ta.roles', 'tr')
             ->leftJoin('ta.memberCategory', 'mc')
             ->leftJoin('ta.theme', 't')
             ->leftJoin('t.parentTheme', 'pt')
-            ->leftJoin('p.roomAffiliations', 'ra')
+            ->leftJoin(
+                'p.roomAffiliations',
+                'ra',
+                'WITH',
+                '(ra.endedAt is null or ra.endedAt>=CURRENT_TIMESTAMP()) and (ra.startedAt is null or ra.startedAt<=CURRENT_TIMESTAMP())',
+            )
             ->leftJoin('ra.room', 'r')
             ->leftJoin('p.unit', 'u')
             ->select('p,ta,t,pt,ra,r,u,mc,tr');
