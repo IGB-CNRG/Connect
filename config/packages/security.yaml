@@ -1,6 +1,7 @@
 security:
   # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
   password_hashers:
+    Symfony\Component\Security\Core\User\InMemoryUser: plaintext
     Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
   # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
   providers:
@@ -9,16 +10,19 @@ security:
       entity:
         class: App\Entity\Person
         property: username
+    mail_user_provider:
+      memory:
+        users:
+          sympa: {password: '%env(MAILING_LIST_PASSWORD)%', roles: ['ROLE_USER']}
   firewalls:
     dev:
       pattern: ^/(_(profiler|wdt)|css|images|js)/
       security: false
     mailing_list:
         pattern: ^/mailing-list
-        provider: app_user_provider
-        http_basic_ldap:
-          service: Symfony\Component\Ldap\Ldap
-          dn_string: '%env(LDAP_DN)%'
+        provider: mail_user_provider
+        http_basic:
+          realm: 'Mailing List'
     main:
       lazy: true
       provider: app_user_provider
