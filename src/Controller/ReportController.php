@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2024 University of Illinois Board of Trustees.
+ * Copyright (c) 2025 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -42,7 +42,7 @@ class ReportController extends AbstractController
                     }
 
                     return null;
-                }
+                },
             );
             if ($type !== null) {
                 if ($person->getUnit()) {
@@ -101,7 +101,7 @@ class ReportController extends AbstractController
         #[MapQueryParameter] array $role = [],
         #[MapQueryParameter] array $unit = [],
         #[MapQueryParameter] bool $currentOnly = true,
-        #[MapQueryParameter] bool $membersOnly = true
+        #[MapQueryParameter] bool $membersOnly = true,
     ): Response {
         $report = $reportBuilder
             ->setQuery($query)
@@ -126,6 +126,45 @@ class ReportController extends AbstractController
         $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         $response->headers->set('Content-Disposition', 'attachment;filename="'.$filename.'"');
         $response->headers->set('Cache-Control', 'max-age=0');
+
+        return $response;
+    }
+
+    #[Route('/mailing-list/everyone', name: 'mailing_list_everyone')]
+    public function mailingListCSV(
+        PersonReportBuilder $reportBuilder,
+        #[MapQueryParameter] string $query = '',
+        #[MapQueryParameter] string $sort = 'name',
+        #[MapQueryParameter] string $sortDirection = 'asc',
+        #[MapQueryParameter] array $theme = [],
+        #[MapQueryParameter] array $employeeType = [],
+        #[MapQueryParameter] array $role = [],
+        #[MapQueryParameter] array $unit = [],
+        #[MapQueryParameter] bool $currentOnly = true,
+        #[MapQueryParameter] bool $membersOnly = false,
+    ): Response {
+        $report = $reportBuilder
+            ->setQuery($query)
+            ->setSort($sort)
+            ->setSortDirection($sortDirection)
+            ->setThemesToFilter($theme)
+            ->setTypesToFilter($employeeType)
+            ->setRolesToFilter($role)
+            ->setUnitsToFilter($unit)
+            ->setCurrentOnly($currentOnly)
+            ->setMembersOnly($membersOnly)
+            ->getReport();
+
+        $list = $report->getMailingList();
+
+        $response = new Response();
+        $filename = 'EveryoneMailingList.csv';
+
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', 'attachment;filename="'.$filename.'"');
+        $response->headers->set('Cache-Control', 'max-age=0');
+        $response->headers->set('Content-length', strlen($list));
+        $response->setContent($list);
 
         return $response;
     }

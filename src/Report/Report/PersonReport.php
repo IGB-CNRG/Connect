@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2024 University of Illinois Board of Trustees.
+ * Copyright (c) 2025 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -70,6 +70,20 @@ class PersonReport
         }
 
         return $spreadsheet;
+    }
+
+    public function getMailingList(): string
+    {
+        $emails = array_map(
+            fn(Person $person) => $person->getEmail(),
+            $this->people
+        );
+
+        // Filter out empty emails and remove duplicates
+        $emails = array_filter($emails);
+        $emails = array_unique($emails);
+
+        return implode("\n", $emails);
     }
 
     public function useDefaultColumns(): void

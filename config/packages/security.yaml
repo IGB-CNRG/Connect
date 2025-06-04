@@ -13,6 +13,12 @@ security:
     dev:
       pattern: ^/(_(profiler|wdt)|css|images|js)/
       security: false
+    mailing_list:
+        pattern: ^/mailing-list
+        provider: app_user_provider
+        http_basic_ldap:
+          service: Symfony\Component\Ldap\Ldap
+          dn_string: '%env(LDAP_DN)%'
     main:
       lazy: true
       provider: app_user_provider
