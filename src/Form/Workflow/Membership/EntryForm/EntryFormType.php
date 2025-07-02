@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2024 University of Illinois Board of Trustees.
+ * Copyright (c) 2025 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -39,9 +39,9 @@ class EntryFormType extends AbstractType
                 'help' => 'Leave blank if same as first name'
             ])
             ->add('netid', TextType::class, [
-                'required' => true,
+                'required' => !$options['allow_skip_netid'],
                 'label' => 'person.netid',
-                'help' => 'Your NetID is the first part of your Illinois email address. If you have not yet been assigned a netid, leave blank.',
+                'help' => 'Your NetID is the first part of your Illinois email address.',
                 'attr'=>['placeholder' => 'NetID',],
             ])
             ->add('uin', TextType::class, [
@@ -140,6 +140,7 @@ class EntryFormType extends AbstractType
                 'allow_silent',
                 'show_position_when_joined',
                 'allow_skip_uin',
+                'allow_skip_netid',
                 'use_captcha',
             ]);
     }

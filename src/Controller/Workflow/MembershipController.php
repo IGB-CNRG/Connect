@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2024 University of Illinois Board of Trustees.
+ * Copyright (c) 2025 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -94,6 +94,7 @@ class MembershipController extends AbstractController
             'allow_silent' => $membershipStateMachine->can($person, Membership::TRANS_FORCE_ENTRY_FORM),
             'show_position_when_joined' => $this->isGranted('ROLE_ADMIN'),
             'allow_skip_uin' => $this->isGranted('ROLE_ADMIN'),
+            'allow_skip_netid' => $this->isGranted('PERSON_ADD'),
             'use_captcha' => !$this->isGranted('IS_AUTHENTICATED_FULLY'),
         ])
             ->add('submit', SubmitType::class);
