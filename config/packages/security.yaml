@@ -58,6 +58,8 @@ security:
       - ROLE_APPROVER
     ROLE_HR:
       - ROLE_APPROVER
+    ROLE_CNRG:
+      - ROLE_APPROVER
 
 when@test:
   security:

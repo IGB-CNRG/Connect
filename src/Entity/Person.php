@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2024 University of Illinois Board of Trustees.
+ * Copyright (c) 2025 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -60,6 +60,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
         //        'Key Manager' => 'ROLE_KEY_MANAGER',
         'Certificate Manager' => 'ROLE_CERTIFICATE_MANAGER',
         'HR' => 'ROLE_HR',
+        'CNRG' => 'ROLE_CNRG',
     ];
 
     #[ORM\Id]

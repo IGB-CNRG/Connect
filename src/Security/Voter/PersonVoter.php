@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2024 University of Illinois Board of Trustees.
+ * Copyright (c) 2025 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -21,6 +21,7 @@ class PersonVoter extends Voter
     public const EDIT_HISTORY = 'PERSON_EDIT_HISTORY';
     public const VIEW_DOCUMENTS = 'PERSON_VIEW_DOCUMENTS';
     public const VIEW_EXIT_REASON = 'PERSON_VIEW_EXIT_REASON';
+    public const VIEW_LOG = 'PERSON_VIEW_LOG';
 
     public function __construct(
         private readonly Security $security,
@@ -34,7 +35,7 @@ class PersonVoter extends Voter
         // https://symfony.com/doc/current/security/voters.html
         return (in_array($attribute, [self::EDIT, self::VIEW])
                 && $subject instanceof Person)
-            || in_array($attribute, [self::ADD, self::EDIT_HISTORY, self::VIEW_DOCUMENTS, self::VIEW_EXIT_REASON]);
+            || in_array($attribute, [self::ADD, self::EDIT_HISTORY, self::VIEW_DOCUMENTS, self::VIEW_EXIT_REASON, self::VIEW_LOG]);
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
@@ -61,6 +62,7 @@ class PersonVoter extends Voter
             self::VIEW => true,
             self::ADD, self::VIEW_DOCUMENTS, self::VIEW_EXIT_REASON => $this->security->isGranted('ROLE_APPROVER')
                 || $this->security->isGranted('ROLE_HR'),
+            self::VIEW_LOG => $this->security->isGranted('ROLE_CNRG'),
 
             default => false,
         };
