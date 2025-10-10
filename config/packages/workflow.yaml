@@ -38,6 +38,7 @@ framework:
                 exit_form_submitted:
                     metadata:
                         completion: 50
+                        approvalStrategy: App\Workflow\Approval\ThemeApproval
                         approval_route: membership_approveExitForm
                         label: Exit form submitted
                 inactive:
