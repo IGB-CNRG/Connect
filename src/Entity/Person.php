@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2025 University of Illinois Board of Trustees.
+ * Copyright (c) 2026 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -199,7 +199,7 @@ class Person implements UserInterface, PasswordAuthenticatedUserInterface, Seria
     #[Groups(['log:person'])]
     private ?DateTimeInterface $membershipUpdatedAt = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $membershipNote = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
