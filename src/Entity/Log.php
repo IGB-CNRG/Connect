@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2026 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -24,7 +24,7 @@ class Log
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'ownedLogs')]
     private ?Person $user = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'text')]
     private ?string $text = null;
 
     #[ORM\ManyToOne(targetEntity: Person::class, inversedBy: 'logs')]
