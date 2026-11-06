@@ -379,6 +379,13 @@
                                    title="Update last reviewed date"> <span class="fas fa-square-check"></span> </a>
                             </td>
                         </tr>
+                        {% if is_granted('PERSON_VIEW_GRANTS') %}
+                            <tr>
+                                <th>Associated Grants</th>
+                                <td>{{ person.associatedGrants }}</td>
+                                <td class="shrink"></td>
+                            </tr>
+                        {% endif %}
                     </table>
                 </div>
             {% endif %}

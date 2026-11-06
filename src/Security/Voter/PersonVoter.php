@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2025 University of Illinois Board of Trustees.
+ * Copyright (c) 2026 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -20,6 +20,7 @@ class PersonVoter extends Voter
     public const ADD = 'PERSON_ADD';
     public const EDIT_HISTORY = 'PERSON_EDIT_HISTORY';
     public const VIEW_DOCUMENTS = 'PERSON_VIEW_DOCUMENTS';
+    public const VIEW_GRANTS = 'PERSON_VIEW_GRANTS';
     public const VIEW_EXIT_REASON = 'PERSON_VIEW_EXIT_REASON';
     public const VIEW_LOG = 'PERSON_VIEW_LOG';
 
@@ -35,7 +36,7 @@ class PersonVoter extends Voter
         // https://symfony.com/doc/current/security/voters.html
         return (in_array($attribute, [self::EDIT, self::VIEW])
                 && $subject instanceof Person)
-            || in_array($attribute, [self::ADD, self::EDIT_HISTORY, self::VIEW_DOCUMENTS, self::VIEW_EXIT_REASON, self::VIEW_LOG]);
+            || in_array($attribute, [self::ADD, self::EDIT_HISTORY, self::VIEW_DOCUMENTS, self::VIEW_GRANTS, self::VIEW_EXIT_REASON, self::VIEW_LOG]);
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
@@ -60,7 +61,7 @@ class PersonVoter extends Voter
                 || $this->security->isGranted('ROLE_APPROVER')
                 || $this->security->isGranted('ROLE_HR'),
             self::VIEW => true,
-            self::ADD, self::VIEW_DOCUMENTS, self::VIEW_EXIT_REASON => $this->security->isGranted('ROLE_APPROVER')
+            self::ADD, self::VIEW_DOCUMENTS, self::VIEW_GRANTS, self::VIEW_EXIT_REASON => $this->security->isGranted('ROLE_APPROVER')
                 || $this->security->isGranted('ROLE_HR'),
             self::VIEW_LOG => $this->security->isGranted('ROLE_CNRG'),
 

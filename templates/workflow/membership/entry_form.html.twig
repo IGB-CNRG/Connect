@@ -75,6 +75,11 @@
             <div class="row">
                 <div class="col-lg">{{ form_row(form.officeWorkOnly) }}</div>
             </div>
+            {% if form.associatedGrants is defined %}
+                <div class="row">
+                    <div class="col-lg">{{ form_row(form.associatedGrants) }}</div>
+                </div>
+            {% endif %}
             <hr/>
             <div {{ stimulus_controller('form-collection', {'confirmDeletion':false}) }}>
                 {{ form_row(form.themeAffiliations) }}

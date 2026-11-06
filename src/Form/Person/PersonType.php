@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2024 University of Illinois Board of Trustees.
+ * Copyright (c) 2026 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -112,7 +112,12 @@ class PersonType extends AbstractType
                 'required' => false,
                 'label' => 'Office work only?',
                 'help' => 'Check this box if this person will not be working in a lab'
-            ]);
+            ])
+            ->add('associatedGrants', TextareaType::class, [
+                'required' => false,
+                'help' => 'Enter associated grant codes, separated by commas',
+            ])
+        ;
         // show/hide fields based on user roles
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $builder

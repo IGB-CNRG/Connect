@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2025 University of Illinois Board of Trustees.
+ * Copyright (c) 2026 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -92,6 +92,7 @@ class MembershipController extends AbstractController
         // todo the allow_silent logic might need to change when we enable the workflow
         $form = $this->createForm(EntryFormType::class, $person, [
             'allow_silent' => $membershipStateMachine->can($person, Membership::TRANS_FORCE_ENTRY_FORM),
+            'allow_grants' => $this->isGranted('PERSON_ADD'),
             'show_position_when_joined' => $this->isGranted('ROLE_ADMIN'),
             'allow_skip_uin' => $this->isGranted('ROLE_ADMIN'),
             'allow_skip_netid' => $this->isGranted('PERSON_ADD'),

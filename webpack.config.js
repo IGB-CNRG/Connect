@@ -99,7 +99,8 @@ Encore
         options.server = {
             type: 'https',
             options: {
-                pfx: path.join(process.env.HOME, '.symfony5/certs/default.p12'),
+                // todo this is mac-specific, and should be parameterized somehow
+                pfx: path.join(process.env.HOME, 'Library/Application Support/symfony-cli/certs/default.p12'),
             }
         }
     })

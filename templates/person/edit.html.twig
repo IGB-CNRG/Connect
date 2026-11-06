@@ -51,6 +51,9 @@
                 <div class="card-body">
                     {{ form_row(form.officeWorkOnly) }}
                     {{ form_row(form.imageFile) }}
+                    {% if form.associatedGrants is defined %}
+                        {{ form_row(form.associatedGrants) }}
+                    {% endif %}
                 </div>
             </div>
             <div class="card mb-3" data-controller="form-collection">

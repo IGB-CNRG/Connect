@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2025 University of Illinois Board of Trustees.
+ * Copyright (c) 2026 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -129,6 +129,12 @@ class EntryFormType extends AbstractType
                 'help' => 'Check this box to bypass the rest of the new member workflow without sending any further notifications',
             ]);
         }
+        if($options['allow_grants']){
+            $builder->add('associatedGrants', TextareaType::class, [
+                'required' => false,
+                'help' => 'Enter associated grant codes, separated by commas',
+            ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -138,6 +144,7 @@ class EntryFormType extends AbstractType
         ])
             ->setRequired([
                 'allow_silent',
+                'allow_grants',
                 'show_position_when_joined',
                 'allow_skip_uin',
                 'allow_skip_netid',
