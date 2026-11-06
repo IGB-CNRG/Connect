@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023 University of Illinois Board of Trustees.
+ * Copyright (c) 2026 University of Illinois Board of Trustees.
  * All rights reserved.
  */
 
@@ -13,14 +13,14 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\GuardEvent;
 use Symfony\Component\Workflow\WorkflowEvents;
 use Symfony\Contracts\Service\Attribute\SubscribedService;
+use Symfony\Contracts\Service\ServiceMethodsSubscriberTrait;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
-use Symfony\Contracts\Service\ServiceSubscriberTrait;
 
 class ApprovalGuardSubscriber implements EventSubscriberInterface, ServiceSubscriberInterface
 {
     use HistoricityManagerAware;
     use SecurityAware;
-    use ServiceSubscriberTrait;
+    use ServiceMethodsSubscriberTrait;
 
     public function approvalGuard(GuardEvent $event): void
     {
