@@ -25,7 +25,7 @@ class CertificateHelper
         if ($person->isOfficeWorkOnly()) {
             return [self::IGB_STAFF];
         } else {
-            return [self::DRS_LAB_SAFETY, self::DRS_BIOSAFETY, self::IGB_LAB, self::DRS_BSL_2];
+            return [self::DRS_LAB_SAFETY, self::DRS_BIOSAFETY, self::IGB_LAB/*, self::DRS_BSL_2*/];
         }
     }
 }
